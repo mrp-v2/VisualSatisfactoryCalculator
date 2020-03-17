@@ -29,5 +29,23 @@ namespace VisualSatisfactoryCalculator.code
 		{
 			return item;
 		}
+
+		public override int GetHashCode()
+		{
+			return item.GetHashCode();
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == null)
+			{
+				return false;
+			}
+			if (!(obj is Item))
+			{
+				return false;
+			}
+			return item == (obj as Item).item;
+		}
 	}
 }

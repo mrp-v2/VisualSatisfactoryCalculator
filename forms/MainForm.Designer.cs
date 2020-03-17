@@ -71,10 +71,10 @@
 			// 
 			// CurrentChart
 			// 
-			this.CurrentChart.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.CurrentChart.Image = global::VisualSatisfactoryCalculator.Properties.Resources.DefaultImage;
 			this.CurrentChart.Location = new System.Drawing.Point(90, 3);
 			this.CurrentChart.Name = "CurrentChart";
-			this.CurrentChart.Size = new System.Drawing.Size(100, 29);
+			this.CurrentChart.Size = new System.Drawing.Size(1082, 621);
 			this.CurrentChart.TabIndex = 1;
 			this.CurrentChart.TabStop = false;
 			// 

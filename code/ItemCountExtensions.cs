@@ -37,16 +37,6 @@ namespace VisualSatisfactoryCalculator.code
 			return flipped;
 		}
 
-		/// <summary>
-		/// Returns a copy of this ItemCount whose count has been multiplied by -1
-		/// </summary>
-		/// <param name="me"></param>
-		/// <returns></returns>
-		public static ItemCount Inverse(this ItemCount me)
-		{
-			return new ItemCount(me.GetItem(), -me.GetCount());
-		}
-
 		public static List<ItemCount> GetProducts(this List<ItemCount> me)
 		{
 			List<ItemCount> products = new List<ItemCount>();
@@ -71,6 +61,50 @@ namespace VisualSatisfactoryCalculator.code
 				}
 			}
 			return ingredients;
+		}
+
+		/// <summary>
+		/// Checks for equality based on equal contents, regardless of order
+		/// </summary>
+		/// <param name="me"></param>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public static bool EqualContents(this List<ItemCount> me, List<ItemCount> other)
+		{
+			if (me.Count != other.Count)
+			{
+				return false;
+			}
+			Dictionary<ItemCount, int> meCounts = new Dictionary<ItemCount, int>();
+			foreach (ItemCount ic in me)
+			{
+				if (meCounts.ContainsKey(ic))
+				{
+					meCounts[ic]++;
+				} else
+				{
+					meCounts.Add(ic, 1);
+				}
+			}
+			Dictionary<ItemCount, int> otherCounts = new Dictionary<ItemCount, int>();
+			foreach (ItemCount ic in other)
+			{
+				if (otherCounts.ContainsKey(ic))
+				{
+					otherCounts[ic]++;
+				} else
+				{
+					otherCounts.Add(ic, 1);
+				}
+			}
+			foreach (ItemCount ic in meCounts.Keys)
+			{
+				if (meCounts[ic] != otherCounts[ic])
+				{
+					return false;
+				}
+			}
+			return true;
 		}
 	}
 }

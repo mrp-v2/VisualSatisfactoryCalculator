@@ -52,7 +52,7 @@
             0});
 			this.ItemCountNumeric.Name = "ItemCountNumeric";
 			this.ItemCountNumeric.Size = new System.Drawing.Size(48, 20);
-			this.ItemCountNumeric.TabIndex = 0;
+			this.ItemCountNumeric.TabIndex = 2;
 			this.ItemCountNumeric.ThousandsSeparator = true;
 			this.ItemCountNumeric.Value = new decimal(new int[] {
             1,
@@ -77,7 +77,7 @@
 			this.ItemNameCombo.Location = new System.Drawing.Point(57, 3);
 			this.ItemNameCombo.Name = "ItemNameCombo";
 			this.ItemNameCombo.Size = new System.Drawing.Size(406, 21);
-			this.ItemNameCombo.TabIndex = 5;
+			this.ItemNameCombo.TabIndex = 1;
 			// 
 			// YesButton
 			// 
@@ -91,6 +91,7 @@
 			// 
 			// NoButton
 			// 
+			this.NoButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.NoButton.Location = new System.Drawing.Point(93, 45);
 			this.NoButton.Name = "NoButton";
 			this.NoButton.Size = new System.Drawing.Size(75, 23);
@@ -101,14 +102,17 @@
 			// 
 			// ItemAndCountForm
 			// 
+			this.AcceptButton = this.YesButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;
-			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.CancelButton = this.NoButton;
 			this.ClientSize = new System.Drawing.Size(487, 77);
 			this.Controls.Add(this.NoButton);
 			this.Controls.Add(this.YesButton);
 			this.Controls.Add(this.ItemPanel);
+			this.MaximizeBox = false;
+			this.MinimizeBox = false;
 			this.Name = "ItemAndCountForm";
 			this.Text = "Item Count Prompt";
 			((System.ComponentModel.ISupportInitialize)(this.ItemCountNumeric)).EndInit();

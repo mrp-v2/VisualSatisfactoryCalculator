@@ -13,7 +13,7 @@ namespace VisualSatisfactoryCalculator.code
 			string str = "";
 			foreach (Recipe recipe in me)
 			{
-				str += me.ToString() + "\n";
+				str += recipe.ToString() + "\n";
 			}
 			return str;
 		}

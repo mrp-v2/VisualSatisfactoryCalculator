@@ -84,7 +84,7 @@
 			this.ItemsPanel.Location = new System.Drawing.Point(3, 3);
 			this.ItemsPanel.Name = "ItemsPanel";
 			this.ItemsPanel.Size = new System.Drawing.Size(264, 188);
-			this.ItemsPanel.TabIndex = 2;
+			this.ItemsPanel.TabIndex = 0;
 			// 
 			// ProductsPanel
 			// 
@@ -98,7 +98,7 @@
 			this.ProductsPanel.Location = new System.Drawing.Point(3, 3);
 			this.ProductsPanel.Name = "ProductsPanel";
 			this.ProductsPanel.Size = new System.Drawing.Size(126, 182);
-			this.ProductsPanel.TabIndex = 2;
+			this.ProductsPanel.TabIndex = 0;
 			// 
 			// flowLayoutPanel2
 			// 
@@ -117,7 +117,7 @@
 			this.ProductsLabel.Location = new System.Drawing.Point(3, 0);
 			this.ProductsLabel.Name = "ProductsLabel";
 			this.ProductsLabel.Size = new System.Drawing.Size(49, 13);
-			this.ProductsLabel.TabIndex = 1;
+			this.ProductsLabel.TabIndex = 0;
 			this.ProductsLabel.Text = "Products";
 			// 
 			// ProductsList
@@ -126,14 +126,14 @@
 			this.ProductsList.Location = new System.Drawing.Point(3, 22);
 			this.ProductsList.Name = "ProductsList";
 			this.ProductsList.Size = new System.Drawing.Size(120, 95);
-			this.ProductsList.TabIndex = 3;
+			this.ProductsList.TabIndex = 0;
 			// 
 			// AddProductButton
 			// 
 			this.AddProductButton.Location = new System.Drawing.Point(3, 154);
 			this.AddProductButton.Name = "AddProductButton";
 			this.AddProductButton.Size = new System.Drawing.Size(110, 25);
-			this.AddProductButton.TabIndex = 2;
+			this.AddProductButton.TabIndex = 0;
 			this.AddProductButton.Text = "Add Product";
 			this.AddProductButton.UseVisualStyleBackColor = true;
 			this.AddProductButton.Click += new System.EventHandler(this.AddProductButton_Click);
@@ -150,7 +150,7 @@
 			this.IngredientsPanel.Location = new System.Drawing.Point(135, 3);
 			this.IngredientsPanel.Name = "IngredientsPanel";
 			this.IngredientsPanel.Size = new System.Drawing.Size(126, 182);
-			this.IngredientsPanel.TabIndex = 3;
+			this.IngredientsPanel.TabIndex = 0;
 			// 
 			// flowLayoutPanel3
 			// 
@@ -169,7 +169,7 @@
 			this.IngredientsLabel.Location = new System.Drawing.Point(3, 0);
 			this.IngredientsLabel.Name = "IngredientsLabel";
 			this.IngredientsLabel.Size = new System.Drawing.Size(59, 13);
-			this.IngredientsLabel.TabIndex = 4;
+			this.IngredientsLabel.TabIndex = 0;
 			this.IngredientsLabel.Text = "Ingredients";
 			// 
 			// IngredientsList
@@ -178,14 +178,14 @@
 			this.IngredientsList.Location = new System.Drawing.Point(3, 22);
 			this.IngredientsList.Name = "IngredientsList";
 			this.IngredientsList.Size = new System.Drawing.Size(120, 95);
-			this.IngredientsList.TabIndex = 6;
+			this.IngredientsList.TabIndex = 0;
 			// 
 			// RemoveIngredientButton
 			// 
 			this.RemoveIngredientButton.Location = new System.Drawing.Point(3, 123);
 			this.RemoveIngredientButton.Name = "RemoveIngredientButton";
 			this.RemoveIngredientButton.Size = new System.Drawing.Size(110, 25);
-			this.RemoveIngredientButton.TabIndex = 2;
+			this.RemoveIngredientButton.TabIndex = 0;
 			this.RemoveIngredientButton.Text = "Remove Ingredient";
 			this.RemoveIngredientButton.UseVisualStyleBackColor = true;
 			this.RemoveIngredientButton.Click += new System.EventHandler(this.RemoveIngredientButton_Click);
@@ -195,7 +195,7 @@
 			this.AddIngredientButton.Location = new System.Drawing.Point(3, 154);
 			this.AddIngredientButton.Name = "AddIngredientButton";
 			this.AddIngredientButton.Size = new System.Drawing.Size(110, 25);
-			this.AddIngredientButton.TabIndex = 1;
+			this.AddIngredientButton.TabIndex = 0;
 			this.AddIngredientButton.Text = "Add Ingredient";
 			this.AddIngredientButton.UseVisualStyleBackColor = true;
 			this.AddIngredientButton.Click += new System.EventHandler(this.AddIngredientButton_Click);
@@ -215,7 +215,7 @@
 			this.YesButton.Location = new System.Drawing.Point(3, 3);
 			this.YesButton.Name = "YesButton";
 			this.YesButton.Size = new System.Drawing.Size(75, 23);
-			this.YesButton.TabIndex = 5;
+			this.YesButton.TabIndex = 3;
 			this.YesButton.Text = "Add";
 			this.YesButton.UseVisualStyleBackColor = true;
 			this.YesButton.Click += new System.EventHandler(this.YesButton_Click);
@@ -235,7 +235,7 @@
             0});
 			this.CraftTimeNumeric.Name = "CraftTimeNumeric";
 			this.CraftTimeNumeric.Size = new System.Drawing.Size(55, 20);
-			this.CraftTimeNumeric.TabIndex = 6;
+			this.CraftTimeNumeric.TabIndex = 2;
 			this.CraftTimeNumeric.Value = new decimal(new int[] {
             1,
             0,
@@ -248,7 +248,7 @@
 			this.CraftTimeLabel.Location = new System.Drawing.Point(3, 0);
 			this.CraftTimeLabel.Name = "CraftTimeLabel";
 			this.CraftTimeLabel.Size = new System.Drawing.Size(111, 13);
-			this.CraftTimeLabel.TabIndex = 7;
+			this.CraftTimeLabel.TabIndex = 0;
 			this.CraftTimeLabel.Text = "Craft Time in Seconds";
 			// 
 			// MachineNameCombo
@@ -257,7 +257,7 @@
 			this.MachineNameCombo.Location = new System.Drawing.Point(3, 16);
 			this.MachineNameCombo.Name = "MachineNameCombo";
 			this.MachineNameCombo.Size = new System.Drawing.Size(176, 21);
-			this.MachineNameCombo.TabIndex = 8;
+			this.MachineNameCombo.TabIndex = 1;
 			// 
 			// MachineNameLabel
 			// 
@@ -265,7 +265,7 @@
 			this.MachineNameLabel.Location = new System.Drawing.Point(3, 0);
 			this.MachineNameLabel.Name = "MachineNameLabel";
 			this.MachineNameLabel.Size = new System.Drawing.Size(79, 13);
-			this.MachineNameLabel.TabIndex = 9;
+			this.MachineNameLabel.TabIndex = 0;
 			this.MachineNameLabel.Text = "Machine Name";
 			// 
 			// flowLayoutPanel1
@@ -279,8 +279,8 @@
 			this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(635, 455);
-			this.flowLayoutPanel1.TabIndex = 10;
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(322, 286);
+			this.flowLayoutPanel1.TabIndex = 0;
 			// 
 			// flowLayoutPanel4
 			// 
@@ -291,7 +291,7 @@
 			this.flowLayoutPanel4.Location = new System.Drawing.Point(3, 197);
 			this.flowLayoutPanel4.Name = "flowLayoutPanel4";
 			this.flowLayoutPanel4.Size = new System.Drawing.Size(311, 46);
-			this.flowLayoutPanel4.TabIndex = 6;
+			this.flowLayoutPanel4.TabIndex = 0;
 			// 
 			// CraftTimePanel
 			// 
@@ -303,7 +303,7 @@
 			this.CraftTimePanel.Location = new System.Drawing.Point(3, 3);
 			this.CraftTimePanel.Name = "CraftTimePanel";
 			this.CraftTimePanel.Size = new System.Drawing.Size(117, 39);
-			this.CraftTimePanel.TabIndex = 3;
+			this.CraftTimePanel.TabIndex = 0;
 			// 
 			// MachineNamePanel
 			// 
@@ -315,7 +315,7 @@
 			this.MachineNamePanel.Location = new System.Drawing.Point(126, 3);
 			this.MachineNamePanel.Name = "MachineNamePanel";
 			this.MachineNamePanel.Size = new System.Drawing.Size(182, 40);
-			this.MachineNamePanel.TabIndex = 4;
+			this.MachineNamePanel.TabIndex = 0;
 			// 
 			// ButtonPanel
 			// 
@@ -326,16 +326,19 @@
 			this.ButtonPanel.Location = new System.Drawing.Point(3, 249);
 			this.ButtonPanel.Name = "ButtonPanel";
 			this.ButtonPanel.Size = new System.Drawing.Size(162, 29);
-			this.ButtonPanel.TabIndex = 5;
+			this.ButtonPanel.TabIndex = 0;
 			// 
 			// RecipeForm
 			// 
+			this.AcceptButton = this.YesButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;
-			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ClientSize = new System.Drawing.Size(635, 455);
+			this.CancelButton = this.NoButton;
+			this.ClientSize = new System.Drawing.Size(322, 286);
 			this.Controls.Add(this.flowLayoutPanel1);
+			this.MaximizeBox = false;
+			this.MinimizeBox = false;
 			this.Name = "RecipeForm";
 			this.Text = "Recipe Prompt";
 			this.ItemsPanel.ResumeLayout(false);

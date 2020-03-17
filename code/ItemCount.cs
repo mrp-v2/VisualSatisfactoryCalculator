@@ -29,5 +29,28 @@ namespace VisualSatisfactoryCalculator.code
 		{
 			return new ItemCount(str.Substring(str.IndexOf(' ') + 1), int.Parse(str.Substring(0, str.IndexOf(' '))));
 		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode() * count;
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (!base.Equals(obj))
+			{
+				return false;
+			}
+			if (!(obj is ItemCount))
+			{
+				return false;
+			}
+			return count == (obj as ItemCount).count;
+		}
+
+		public ItemCount Inverse()
+		{
+			return new ItemCount(item, -count);
+		}
 	}
 }
