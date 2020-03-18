@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace VisualSatisfactoryCalculator.code
 {
+	[Serializable]
 	public class Recipe
 	{
 		protected List<ItemCount> itemCounts;
 		protected int craftTime;
 		protected string machineName;
-		
+
 		public Recipe(List<ItemCount> itemCounts, int craftTime, string machineName)
 		{
 			this.itemCounts = itemCounts;
@@ -19,19 +20,34 @@ namespace VisualSatisfactoryCalculator.code
 			this.machineName = machineName;
 		}
 
+		public Recipe(Recipe recipe) : this(recipe.itemCounts, recipe.craftTime, recipe.machineName)
+		{
+
+		}
+
 		public override string ToString()
 		{
 			string str = "";
-			foreach (ItemCount ic in itemCounts.GetIngredients().Inverse())
+			List<ItemCount> ingredients = itemCounts.GetIngredients().Inverse();
+			for (int i = 0; i < ingredients.Count; i++)
 			{
-				str += ic.ToString() + ", ";
+				if (i > 0)
+				{
+					str += ", ";
+				}
+				str += ingredients[i].ToString();
 			}
-			str += "-> ";
-			foreach (ItemCount ic in itemCounts.GetProducts())
+			str += " -> ";
+			List<ItemCount> products = itemCounts.GetProducts();
+			for (int i = 0; i < products.Count; i++)
 			{
-				str += ic.ToString() + ", ";
+				if (i > 0)
+				{
+					str += ", ";
+				}
+				str += products[i].ToString();
 			}
-			str += "in " + craftTime + " seconds using a " + machineName;
+			str += " in " + craftTime + " seconds using a " + machineName;
 			return str;
 		}
 
@@ -64,6 +80,21 @@ namespace VisualSatisfactoryCalculator.code
 				return false;
 			}
 			return (obj as Recipe).itemCounts.EqualContents(itemCounts);
+		}
+
+		public List<ItemCount> GetItemCounts()
+		{
+			return itemCounts;
+		}
+
+		public List<string> GetIngredientItems()
+		{
+			return itemCounts.GetIngredients().GetItems();
+		}
+
+		public List<string> GetProductItems()
+		{
+			return itemCounts.GetProducts().GetItems();
 		}
 	}
 }

@@ -31,12 +31,18 @@ namespace VisualSatisfactoryCalculator.code
 
 		public void AddItem(string item)
 		{
-			items.Add(item);
+			if (!items.Contains(item))
+			{
+				items.Add(item);
+			}
 		}
 
 		public void AddMachine(string machine)
 		{
-			machines.Add(machine);
+			if (!machines.Contains(machine))
+			{
+				machines.Add(machine);
+			}
 		}
 	}
 }

@@ -13,8 +13,8 @@ namespace VisualSatisfactoryCalculator.forms
 {
 	public partial class ItemAndCountForm : Form
 	{
-		protected IReceivesItemCount parentForm;
-		protected string purpose;
+		private readonly IReceivesItemCount parentForm;
+		private readonly string purpose;
 
 		public ItemAndCountForm(IReceivesItemCount parentForm, string purpose = null)
 		{

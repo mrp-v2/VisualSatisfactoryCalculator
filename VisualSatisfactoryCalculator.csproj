@@ -46,14 +46,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="code\GenericExtensions.cs" />
     <Compile Include="code\IReceivesItemCount.cs" />
     <Compile Include="code\IReceivesRecipe.cs" />
+    <Compile Include="code\IReceivesRecipeList.cs" />
     <Compile Include="code\ItemCountExtensions.cs" />
+    <Compile Include="code\ProductionPlan.cs" />
+    <Compile Include="code\ProductionStep.cs" />
+    <Compile Include="code\ProductionStepPair.cs" />
     <Compile Include="code\Recipe.cs" />
     <Compile Include="code\Item.cs" />
-    <Compile Include="code\ItemRate.cs" />
     <Compile Include="code\ItemCount.cs" />
     <Compile Include="code\RecipeExtensions.cs" />
+    <Compile Include="code\SaveLoad.cs" />
     <Compile Include="code\SuggestionsController.cs" />
     <Compile Include="forms\MainForm.cs">
       <SubType>Form</SubType>
@@ -73,6 +78,12 @@
     <Compile Include="forms\RecipeForm.Designer.cs">
       <DependentUpon>RecipeForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="forms\RecipeListForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="forms\RecipeListForm.Designer.cs">
+      <DependentUpon>RecipeListForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="forms\ItemAndCountForm.resx">
       <DependentUpon>ItemAndCountForm.cs</DependentUpon>
@@ -82,6 +93,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="forms\RecipeForm.resx">
       <DependentUpon>RecipeForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="forms\RecipeListForm.resx">
+      <DependentUpon>RecipeListForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

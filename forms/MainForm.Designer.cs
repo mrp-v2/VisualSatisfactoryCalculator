@@ -30,11 +30,8 @@
 		{
 			this.MainPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.ButtonPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this.AddRecipeButton = new System.Windows.Forms.Button();
-			this.CurrentChart = new System.Windows.Forms.PictureBox();
+			this.ViewEditGlobalRecipesButton = new System.Windows.Forms.Button();
 			this.MainPanel.SuspendLayout();
-			this.ButtonPanel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.CurrentChart)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// MainPanel
@@ -42,7 +39,7 @@
 			this.MainPanel.AutoSize = true;
 			this.MainPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.MainPanel.Controls.Add(this.ButtonPanel);
-			this.MainPanel.Controls.Add(this.CurrentChart);
+			this.MainPanel.Controls.Add(this.ViewEditGlobalRecipesButton);
 			this.MainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainPanel.Name = "MainPanel";
@@ -53,30 +50,22 @@
 			// 
 			this.ButtonPanel.AutoSize = true;
 			this.ButtonPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ButtonPanel.Controls.Add(this.AddRecipeButton);
 			this.ButtonPanel.Location = new System.Drawing.Point(3, 3);
 			this.ButtonPanel.Name = "ButtonPanel";
-			this.ButtonPanel.Size = new System.Drawing.Size(81, 29);
+			this.ButtonPanel.Size = new System.Drawing.Size(0, 0);
 			this.ButtonPanel.TabIndex = 0;
 			// 
-			// AddRecipeButton
+			// ViewEditGlobalRecipesButton
 			// 
-			this.AddRecipeButton.Location = new System.Drawing.Point(3, 3);
-			this.AddRecipeButton.Name = "AddRecipeButton";
-			this.AddRecipeButton.Size = new System.Drawing.Size(75, 23);
-			this.AddRecipeButton.TabIndex = 0;
-			this.AddRecipeButton.Text = "Add Recipe";
-			this.AddRecipeButton.UseVisualStyleBackColor = true;
-			this.AddRecipeButton.Click += new System.EventHandler(this.AddRecipeButton_Click);
-			// 
-			// CurrentChart
-			// 
-			this.CurrentChart.Image = global::VisualSatisfactoryCalculator.Properties.Resources.DefaultImage;
-			this.CurrentChart.Location = new System.Drawing.Point(90, 3);
-			this.CurrentChart.Name = "CurrentChart";
-			this.CurrentChart.Size = new System.Drawing.Size(1082, 621);
-			this.CurrentChart.TabIndex = 1;
-			this.CurrentChart.TabStop = false;
+			this.ViewEditGlobalRecipesButton.AutoSize = true;
+			this.ViewEditGlobalRecipesButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.ViewEditGlobalRecipesButton.Location = new System.Drawing.Point(9, 3);
+			this.ViewEditGlobalRecipesButton.Name = "ViewEditGlobalRecipesButton";
+			this.ViewEditGlobalRecipesButton.Size = new System.Drawing.Size(119, 23);
+			this.ViewEditGlobalRecipesButton.TabIndex = 1;
+			this.ViewEditGlobalRecipesButton.Text = "View/Edit All Recipes";
+			this.ViewEditGlobalRecipesButton.UseVisualStyleBackColor = true;
+			this.ViewEditGlobalRecipesButton.Click += new System.EventHandler(this.ViewEditGlobalRecipesButton_Click);
 			// 
 			// MainForm
 			// 
@@ -88,8 +77,6 @@
 			this.Text = "Visual Satisfactory Calculator";
 			this.MainPanel.ResumeLayout(false);
 			this.MainPanel.PerformLayout();
-			this.ButtonPanel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.CurrentChart)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -99,7 +86,6 @@
 
 		private System.Windows.Forms.FlowLayoutPanel MainPanel;
 		private System.Windows.Forms.FlowLayoutPanel ButtonPanel;
-		private System.Windows.Forms.PictureBox CurrentChart;
-		private System.Windows.Forms.Button AddRecipeButton;
+		private System.Windows.Forms.Button ViewEditGlobalRecipesButton;
 	}
 }

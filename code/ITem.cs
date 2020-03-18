@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace VisualSatisfactoryCalculator.code
 {
+	[Serializable]
 	public class Item
 	{
 		protected string item;

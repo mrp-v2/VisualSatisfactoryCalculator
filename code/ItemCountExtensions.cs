@@ -106,5 +106,15 @@ namespace VisualSatisfactoryCalculator.code
 			}
 			return true;
 		}
+
+		public static List<string> GetItems(this List<ItemCount> me)
+		{
+			List<string> items = new List<string>();
+			foreach (ItemCount ic in me)
+			{
+				items.Add(ic.GetItem());
+			}
+			return items;
+		}
 	}
 }

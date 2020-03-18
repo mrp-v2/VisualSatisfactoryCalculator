@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace VisualSatisfactoryCalculator.code
 {
+	[Serializable]
 	public class ItemCount : Item
 	{
 		protected int count;

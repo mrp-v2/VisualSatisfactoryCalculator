@@ -11,7 +11,7 @@ using VisualSatisfactoryCalculator.code;
 
 namespace VisualSatisfactoryCalculator.forms
 {
-	public partial class MainForm : Form, IReceivesRecipe
+	public partial class MainForm : Form, IReceivesRecipeList
 	{
 		[STAThread]
 		public static void Main()
@@ -21,33 +21,33 @@ namespace VisualSatisfactoryCalculator.forms
 			Application.Run(new MainForm());
 		}
 
-		protected List<Recipe> currentRecipes;
+		private const string recipeListFileName = "recipes.list";
+		private List<Recipe> AllRecipes;
 
 		public MainForm()
 		{
 			InitializeComponent();
-			currentRecipes = new List<Recipe>();
-		}
-
-		private void AddRecipeButton_Click(object sender, EventArgs e)
-		{
-			new RecipeForm(this).ShowDialog();
-		}
-
-		public void AddRecipe(Recipe recipe, string purpose = null)
-		{
-			currentRecipes.Add(recipe);
-			UpdateGraphic();
-		}
-
-		protected void UpdateGraphic()
-		{
-			Bitmap map = new Bitmap(750, 750);
-			using (Graphics g = Graphics.FromImage(map))
+			AllRecipes = SaveLoad.Load<List<Recipe>>(recipeListFileName);
+			if (AllRecipes == null)
 			{
-				g.DrawString(currentRecipes.ToStringC(), SystemFonts.DefaultFont, Brushes.Black, new Point(10, 10));
+				AllRecipes = new List<Recipe>();
 			}
-			CurrentChart.Image = map;
+		}
+
+		private void ViewEditGlobalRecipesButton_Click(object sender, EventArgs e)
+		{
+			new RecipeListForm(this, AllRecipes).ShowDialog();
+		}
+
+		public void SendRecipeList(List<Recipe> recipes, string purpose = null)
+		{
+			AllRecipes = recipes;
+			SaveAllRecipesList();
+		}
+
+		private void SaveAllRecipesList()
+		{
+			SaveLoad.Save(recipeListFileName, AllRecipes);
 		}
 	}
 }

@@ -6,18 +6,15 @@ using System.Threading.Tasks;
 
 namespace VisualSatisfactoryCalculator.code
 {
-	public class ItemRate : Item
+	class ProductionStepPair
 	{
-		protected double rate;
+		private ProductionStep a;
+		private ProductionStep b;
 
-		public ItemRate(string item, double rate) : base(item)
+		public ProductionStepPair(ProductionStep a, ProductionStep b)
 		{
-			this.rate = rate;
-		}
-
-		public double GetRate()
-		{
-			return rate;
+			this.a = a;
+			this.b = b;
 		}
 	}
 }

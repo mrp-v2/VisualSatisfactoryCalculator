@@ -13,13 +13,13 @@ namespace VisualSatisfactoryCalculator.forms
 {
 	public partial class RecipeForm : Form, IReceivesItemCount
 	{
-		protected IReceivesRecipe parentForm;
-		protected List<ItemCount> products;
-		protected List<ItemCount> ingredients;
-		protected string purpose;
+		private readonly IReceivesRecipe parentForm;
+		private readonly List<ItemCount> products;
+		private readonly List<ItemCount> ingredients;
+		private readonly string purpose;
 
-		protected const string ingredientPurpose = "ingredient";
-		protected const string productPurpose = "product";
+		private const string ingredientPurpose = "ingredient";
+		private const string productPurpose = "product";
 
 		public RecipeForm(IReceivesRecipe parentForm, string purpose = null)
 		{
@@ -88,7 +88,7 @@ namespace VisualSatisfactoryCalculator.forms
 			Recipe rec = GetRecipe();
 			if (rec != null)
 			{
-				parentForm.AddRecipe(rec);
+				parentForm.AddRecipe(rec, purpose);
 				SuggestionsController.SC.AddMachine(MachineNameCombo.Text);
 				Close();
 			}
