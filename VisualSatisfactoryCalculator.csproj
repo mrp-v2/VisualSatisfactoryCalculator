@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>VisualSatisfactoryCalculatorIcon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -50,52 +53,78 @@
     <Compile Include="code\IReceivesItemCount.cs" />
     <Compile Include="code\IReceivesRecipe.cs" />
     <Compile Include="code\IReceivesRecipeList.cs" />
+    <Compile Include="code\Item.cs" />
     <Compile Include="code\ItemCountExtensions.cs" />
     <Compile Include="code\ProductionPlan.cs" />
     <Compile Include="code\ProductionStep.cs" />
-    <Compile Include="code\ProductionStepPair.cs" />
     <Compile Include="code\Recipe.cs" />
-    <Compile Include="code\Item.cs" />
     <Compile Include="code\ItemCount.cs" />
     <Compile Include="code\RecipeExtensions.cs" />
     <Compile Include="code\SaveLoad.cs" />
     <Compile Include="code\SuggestionsController.cs" />
+    <Compile Include="controls\user\ItemRateControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="controls\user\ItemRateControl.Designer.cs">
+      <DependentUpon>ItemRateControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="forms\ItemAndCountForm.cs">
+    <Compile Include="forms\CreateItemAndCountPrompt.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="forms\ItemAndCountForm.Designer.cs">
-      <DependentUpon>ItemAndCountForm.cs</DependentUpon>
+    <Compile Include="forms\CreateItemAndCountPrompt.Designer.cs">
+      <DependentUpon>CreateItemAndCountPrompt.cs</DependentUpon>
     </Compile>
-    <Compile Include="forms\RecipeForm.cs">
+    <Compile Include="controls\user\ProductionStepControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="controls\user\ProductionStepControl.Designer.cs">
+      <DependentUpon>ProductionStepControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="forms\CreateRecipePrompt.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="forms\RecipeForm.Designer.cs">
-      <DependentUpon>RecipeForm.cs</DependentUpon>
+    <Compile Include="forms\CreateRecipePrompt.Designer.cs">
+      <DependentUpon>CreateRecipePrompt.cs</DependentUpon>
     </Compile>
-    <Compile Include="forms\RecipeListForm.cs">
+    <Compile Include="forms\EditRecipeListPrompt.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="forms\RecipeListForm.Designer.cs">
-      <DependentUpon>RecipeListForm.cs</DependentUpon>
+    <Compile Include="forms\EditRecipeListPrompt.Designer.cs">
+      <DependentUpon>EditRecipeListPrompt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="forms\SelectRecipePrompt.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="forms\SelectRecipePrompt.Designer.cs">
+      <DependentUpon>SelectRecipePrompt.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="forms\ItemAndCountForm.resx">
-      <DependentUpon>ItemAndCountForm.cs</DependentUpon>
+    <EmbeddedResource Include="controls\user\ItemRateControl.resx">
+      <DependentUpon>ItemRateControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="forms\CreateItemAndCountPrompt.resx">
+      <DependentUpon>CreateItemAndCountPrompt.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="forms\RecipeForm.resx">
-      <DependentUpon>RecipeForm.cs</DependentUpon>
+    <EmbeddedResource Include="controls\user\ProductionStepControl.resx">
+      <DependentUpon>ProductionStepControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="forms\RecipeListForm.resx">
-      <DependentUpon>RecipeListForm.cs</DependentUpon>
+    <EmbeddedResource Include="forms\CreateRecipePrompt.resx">
+      <DependentUpon>CreateRecipePrompt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="forms\EditRecipeListPrompt.resx">
+      <DependentUpon>EditRecipeListPrompt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="forms\SelectRecipePrompt.resx">
+      <DependentUpon>SelectRecipePrompt.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -121,7 +150,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Images\DefaultImage.bmp" />
+    <Content Include="images\DefaultImage.bmp" />
+    <Content Include="images\VisualSatisfactoryCalculatorIcon.ico" />
+    <Content Include="VisualSatisfactoryCalculatorIcon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

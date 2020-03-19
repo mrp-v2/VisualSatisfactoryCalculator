@@ -1,6 +1,6 @@
 ﻿namespace VisualSatisfactoryCalculator.forms
 {
-	partial class RecipeForm
+	partial class CreateRecipePrompt
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CreateRecipePrompt));
 			this.RemoveProductButton = new System.Windows.Forms.Button();
 			this.ItemsPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.ProductsPanel = new System.Windows.Forms.FlowLayoutPanel();
@@ -202,6 +203,7 @@
 			// 
 			// NoButton
 			// 
+			this.NoButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this.NoButton.Location = new System.Drawing.Point(84, 3);
 			this.NoButton.Name = "NoButton";
 			this.NoButton.Size = new System.Drawing.Size(75, 23);
@@ -328,7 +330,7 @@
 			this.ButtonPanel.Size = new System.Drawing.Size(162, 29);
 			this.ButtonPanel.TabIndex = 0;
 			// 
-			// RecipeForm
+			// CreateRecipePrompt
 			// 
 			this.AcceptButton = this.YesButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -337,9 +339,11 @@
 			this.CancelButton = this.NoButton;
 			this.ClientSize = new System.Drawing.Size(322, 286);
 			this.Controls.Add(this.flowLayoutPanel1);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
-			this.Name = "RecipeForm";
+			this.Name = "CreateRecipePrompt";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Recipe Prompt";
 			this.ItemsPanel.ResumeLayout(false);
 			this.ItemsPanel.PerformLayout();

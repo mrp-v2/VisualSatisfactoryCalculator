@@ -11,7 +11,7 @@ using VisualSatisfactoryCalculator.code;
 
 namespace VisualSatisfactoryCalculator.forms
 {
-	public partial class RecipeForm : Form, IReceivesItemCount
+	public partial class CreateRecipePrompt : Form, IReceivesItemCount
 	{
 		private readonly IReceivesRecipe parentForm;
 		private readonly List<ItemCount> products;
@@ -21,7 +21,7 @@ namespace VisualSatisfactoryCalculator.forms
 		private const string ingredientPurpose = "ingredient";
 		private const string productPurpose = "product";
 
-		public RecipeForm(IReceivesRecipe parentForm, string purpose = null)
+		public CreateRecipePrompt(IReceivesRecipe parentForm, string purpose = null)
 		{
 			InitializeComponent();
 			this.parentForm = parentForm;
@@ -38,21 +38,21 @@ namespace VisualSatisfactoryCalculator.forms
 
 		private void AddIngredientButton_Click(object sender, EventArgs e)
 		{
-			new ItemAndCountForm(this, ingredientPurpose).ShowDialog();
+			new CreateItemAndCountPrompt(this, ingredientPurpose).ShowDialog();
 		}
 
 		private void AddProductButton_Click(object sender, EventArgs e)
 		{
-			new ItemAndCountForm(this, productPurpose).ShowDialog();
+			new CreateItemAndCountPrompt(this, productPurpose).ShowDialog();
 		}
 
 		private void RemoveProductButton_Click(object sender, EventArgs e)
 		{
 			try
 			{
-				if (ProductsList.SelectedItem is string)
+				if (ProductsList.SelectedItem is ItemCount)
 				{
-					products.Remove(ItemCount.FromString(ProductsList.SelectedItem as string));
+					products.Remove(ProductsList.SelectedItem as ItemCount);
 					UpdateProductsListVisual();
 				}
 			}
@@ -66,9 +66,9 @@ namespace VisualSatisfactoryCalculator.forms
 		{
 			try
 			{
-				if (IngredientsList.SelectedItem is string)
+				if (IngredientsList.SelectedItem is ItemCount)
 				{
-					ingredients.Remove(ItemCount.FromString(IngredientsList.SelectedItem as string));
+					ingredients.Remove(IngredientsList.SelectedItem as ItemCount);
 					UpdateIngredientsListVisual();
 				}
 			}
@@ -89,7 +89,6 @@ namespace VisualSatisfactoryCalculator.forms
 			if (rec != null)
 			{
 				parentForm.AddRecipe(rec, purpose);
-				SuggestionsController.SC.AddMachine(MachineNameCombo.Text);
 				Close();
 			}
 		}
@@ -125,7 +124,7 @@ namespace VisualSatisfactoryCalculator.forms
 			ProductsList.Items.Clear();
 			foreach (ItemCount ic in products)
 			{
-				ProductsList.Items.Add(ic.ToString());
+				ProductsList.Items.Add(ic);
 			}
 			ProductsList.EndUpdate();
 		}
@@ -136,7 +135,7 @@ namespace VisualSatisfactoryCalculator.forms
 			IngredientsList.Items.Clear();
 			foreach (ItemCount ic in ingredients)
 			{
-				IngredientsList.Items.Add(ic.ToString());
+				IngredientsList.Items.Add(ic);
 			}
 			IngredientsList.EndUpdate();
 		}

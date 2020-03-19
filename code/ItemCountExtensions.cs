@@ -81,7 +81,8 @@ namespace VisualSatisfactoryCalculator.code
 				if (meCounts.ContainsKey(ic))
 				{
 					meCounts[ic]++;
-				} else
+				}
+				else
 				{
 					meCounts.Add(ic, 1);
 				}
@@ -92,7 +93,8 @@ namespace VisualSatisfactoryCalculator.code
 				if (otherCounts.ContainsKey(ic))
 				{
 					otherCounts[ic]++;
-				} else
+				}
+				else
 				{
 					otherCounts.Add(ic, 1);
 				}
@@ -107,14 +109,27 @@ namespace VisualSatisfactoryCalculator.code
 			return true;
 		}
 
-		public static List<string> GetItems(this List<ItemCount> me)
+		public static List<Item> GetItems(this List<ItemCount> me)
 		{
-			List<string> items = new List<string>();
+			List<Item> items = new List<Item>();
 			foreach (ItemCount ic in me)
 			{
-				items.Add(ic.GetItem());
+				items.Add(ic);
 			}
 			return items;
+		}
+
+		public static List<ItemCount> CastToItemCountList(this List<object> me)
+		{
+			List<ItemCount> list = new List<ItemCount>();
+			foreach (object obj in me)
+			{
+				if (obj is ItemCount)
+				{
+					list.Add(obj as ItemCount);
+				}
+			}
+			return list;
 		}
 	}
 }

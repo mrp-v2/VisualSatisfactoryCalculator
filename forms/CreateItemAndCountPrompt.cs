@@ -11,12 +11,12 @@ using VisualSatisfactoryCalculator.code;
 
 namespace VisualSatisfactoryCalculator.forms
 {
-	public partial class ItemAndCountForm : Form
+	public partial class CreateItemAndCountPrompt : Form
 	{
 		private readonly IReceivesItemCount parentForm;
 		private readonly string purpose;
 
-		public ItemAndCountForm(IReceivesItemCount parentForm, string purpose = null)
+		public CreateItemAndCountPrompt(IReceivesItemCount parentForm, string purpose = null)
 		{
 			InitializeComponent();
 			this.parentForm = parentForm;
@@ -32,7 +32,6 @@ namespace VisualSatisfactoryCalculator.forms
 		private void OkButton_Click(object sender, EventArgs e)
 		{
 			parentForm.AddItemCount(GetItemCount(), purpose);
-			SuggestionsController.SC.AddItem(ItemNameCombo.Text);
 			Close();
 		}
 

@@ -6,25 +6,18 @@ using System.Threading.Tasks;
 
 namespace VisualSatisfactoryCalculator.code
 {
-	class ProductionPlan
+	public class ProductionPlan
 	{
-		List<ProductionStep> steps;
-		List<ProductionStepPair> pairs;
+		private readonly List<ProductionStep> steps;
 
 		public ProductionPlan()
 		{
 			steps = new List<ProductionStep>();
-			pairs = new List<ProductionStepPair>();
 		}
 
 		public void AddStep(ProductionStep step)
 		{
 			steps.Add(step);
-		}
-
-		public void AddStepPair(ProductionStepPair pair)
-		{
-			pairs.Add(pair);
 		}
 	}
 }

@@ -13,10 +13,18 @@ namespace VisualSatisfactoryCalculator.code
 		protected List<string> items;
 		protected List<string> machines;
 
-		public SuggestionsController()
+		public SuggestionsController(List<Recipe> allRecipes)
 		{
 			items = new List<string>();
 			machines = new List<string>();
+			foreach (Recipe rec in allRecipes)
+			{
+				AddMachine(rec.GetMachine());
+				foreach (ItemCount ic in rec.GetItemCounts())
+				{
+					AddItem((ic as Item).ToString());
+				}
+			}
 		}
 
 		public List<string> GetItems()
@@ -29,7 +37,7 @@ namespace VisualSatisfactoryCalculator.code
 			return machines;
 		}
 
-		public void AddItem(string item)
+		private void AddItem(string item)
 		{
 			if (!items.Contains(item))
 			{
@@ -37,11 +45,20 @@ namespace VisualSatisfactoryCalculator.code
 			}
 		}
 
-		public void AddMachine(string machine)
+		private void AddMachine(string machine)
 		{
 			if (!machines.Contains(machine))
 			{
 				machines.Add(machine);
+			}
+		}
+
+		public void AddRecipe(Recipe recipe)
+		{
+			AddMachine(recipe.GetMachine());
+			foreach (ItemCount ic in recipe.GetItemCounts())
+			{
+				AddItem((ic as Item).ToString());
 			}
 		}
 	}

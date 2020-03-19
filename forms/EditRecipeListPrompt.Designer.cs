@@ -1,6 +1,6 @@
 ﻿namespace VisualSatisfactoryCalculator.forms
 {
-	partial class RecipeListForm
+	partial class EditRecipeListPrompt
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditRecipeListPrompt));
 			this.RecipeList = new System.Windows.Forms.ListBox();
 			this.AddRecipeButton = new System.Windows.Forms.Button();
 			this.RemoveRecipeButton = new System.Windows.Forms.Button();
@@ -35,18 +36,22 @@
 			this.CancelOperationButton = new System.Windows.Forms.Button();
 			this.RecipeInteractionPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.ControlPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this.MainPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.MainContainer = new System.Windows.Forms.SplitContainer();
 			this.RecipeInteractionPanel.SuspendLayout();
 			this.ControlPanel.SuspendLayout();
-			this.MainPanel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.MainContainer)).BeginInit();
+			this.MainContainer.Panel1.SuspendLayout();
+			this.MainContainer.Panel2.SuspendLayout();
+			this.MainContainer.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// RecipeList
 			// 
+			this.RecipeList.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.RecipeList.FormattingEnabled = true;
-			this.RecipeList.Location = new System.Drawing.Point(3, 38);
+			this.RecipeList.Location = new System.Drawing.Point(0, 0);
 			this.RecipeList.Name = "RecipeList";
-			this.RecipeList.Size = new System.Drawing.Size(948, 563);
+			this.RecipeList.Size = new System.Drawing.Size(498, 207);
 			this.RecipeList.TabIndex = 0;
 			// 
 			// AddRecipeButton
@@ -111,44 +116,61 @@
 			// 
 			// ControlPanel
 			// 
+			this.ControlPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.ControlPanel.AutoSize = true;
 			this.ControlPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ControlPanel.Controls.Add(this.FinishButton);
 			this.ControlPanel.Controls.Add(this.CancelOperationButton);
-			this.ControlPanel.Location = new System.Drawing.Point(3, 607);
+			this.ControlPanel.Location = new System.Drawing.Point(389, 3);
 			this.ControlPanel.Name = "ControlPanel";
 			this.ControlPanel.Size = new System.Drawing.Size(106, 29);
 			this.ControlPanel.TabIndex = 6;
 			// 
-			// MainPanel
+			// MainContainer
 			// 
-			this.MainPanel.Controls.Add(this.RecipeInteractionPanel);
-			this.MainPanel.Controls.Add(this.RecipeList);
-			this.MainPanel.Controls.Add(this.ControlPanel);
-			this.MainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.MainPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-			this.MainPanel.Location = new System.Drawing.Point(0, 0);
-			this.MainPanel.Name = "MainPanel";
-			this.MainPanel.Size = new System.Drawing.Size(963, 641);
-			this.MainPanel.TabIndex = 7;
+			this.MainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.MainContainer.IsSplitterFixed = true;
+			this.MainContainer.Location = new System.Drawing.Point(0, 0);
+			this.MainContainer.Name = "MainContainer";
+			this.MainContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
-			// RecipeListForm
+			// MainContainer.Panel1
+			// 
+			this.MainContainer.Panel1.Controls.Add(this.RecipeInteractionPanel);
+			this.MainContainer.Panel1.Controls.Add(this.ControlPanel);
+			this.MainContainer.Panel1MinSize = 35;
+			// 
+			// MainContainer.Panel2
+			// 
+			this.MainContainer.Panel2.Controls.Add(this.RecipeList);
+			this.MainContainer.Size = new System.Drawing.Size(498, 246);
+			this.MainContainer.SplitterDistance = 35;
+			this.MainContainer.TabIndex = 7;
+			// 
+			// EditRecipeListPrompt
 			// 
 			this.AcceptButton = this.FinishButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;
 			this.CancelButton = this.CancelOperationButton;
-			this.ClientSize = new System.Drawing.Size(963, 641);
-			this.Controls.Add(this.MainPanel);
-			this.Name = "RecipeListForm";
+			this.ClientSize = new System.Drawing.Size(498, 246);
+			this.Controls.Add(this.MainContainer);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.MinimizeBox = false;
+			this.MinimumSize = new System.Drawing.Size(340, 105);
+			this.Name = "EditRecipeListPrompt";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "RecipeListForm";
 			this.RecipeInteractionPanel.ResumeLayout(false);
 			this.RecipeInteractionPanel.PerformLayout();
 			this.ControlPanel.ResumeLayout(false);
 			this.ControlPanel.PerformLayout();
-			this.MainPanel.ResumeLayout(false);
-			this.MainPanel.PerformLayout();
+			this.MainContainer.Panel1.ResumeLayout(false);
+			this.MainContainer.Panel1.PerformLayout();
+			this.MainContainer.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.MainContainer)).EndInit();
+			this.MainContainer.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -162,6 +184,6 @@
 		private System.Windows.Forms.Button CancelOperationButton;
 		private System.Windows.Forms.FlowLayoutPanel RecipeInteractionPanel;
 		private System.Windows.Forms.FlowLayoutPanel ControlPanel;
-		private System.Windows.Forms.FlowLayoutPanel MainPanel;
+		private System.Windows.Forms.SplitContainer MainContainer;
 	}
 }

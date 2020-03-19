@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 namespace VisualSatisfactoryCalculator.code
 {
 	[Serializable]
-	public class ItemCount : Item
+	public class ItemCount : Item, ICloneable
 	{
 		protected int count;
 
-		public ItemCount(string item, int count) : base(item)
+		public ItemCount(string item, int count)
 		{
+			this.item = item;
 			this.count = count;
 		}
 
@@ -26,7 +27,7 @@ namespace VisualSatisfactoryCalculator.code
 			return count + " " + base.ToString();
 		}
 
-		new public static ItemCount FromString(string str)
+		public static ItemCount FromString(string str)
 		{
 			return new ItemCount(str.Substring(str.IndexOf(' ') + 1), int.Parse(str.Substring(0, str.IndexOf(' '))));
 		}
@@ -38,7 +39,11 @@ namespace VisualSatisfactoryCalculator.code
 
 		public override bool Equals(object obj)
 		{
-			if (!base.Equals(obj))
+			if (!(obj is Item))
+			{
+				return false;
+			}
+			if (!base.Equals(obj as Item))
 			{
 				return false;
 			}
@@ -52,6 +57,11 @@ namespace VisualSatisfactoryCalculator.code
 		public ItemCount Inverse()
 		{
 			return new ItemCount(item, -count);
+		}
+
+		public object Clone()
+		{
+			return new ItemCount(item, count);
 		}
 	}
 }

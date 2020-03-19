@@ -19,14 +19,27 @@ namespace VisualSatisfactoryCalculator.code
 			return str;
 		}
 
-		public static List<string> GetAllProductItems(this List<Recipe> me)
+		public static List<Item> GetAllProductItems(this List<Recipe> me)
 		{
-			List<string> products = new List<string>();
+			List<Item> products = new List<Item>();
 			foreach (Recipe rec in me)
 			{
 				products.AddRange(rec.GetProductItems());
 			}
 			return products;
+		}
+
+		public static List<Recipe> CastToRecipeList(this List<object> me)
+		{
+			List<Recipe> list = new List<Recipe>();
+			foreach (object obj in me)
+			{
+				if (obj is Recipe)
+				{
+					list.Add(obj as Recipe);
+				}
+			}
+			return list;
 		}
 	}
 }

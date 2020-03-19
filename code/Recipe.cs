@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace VisualSatisfactoryCalculator.code
 {
 	[Serializable]
-	public class Recipe
+	public class Recipe : ICloneable
 	{
 		protected List<ItemCount> itemCounts;
 		protected int craftTime;
@@ -87,14 +87,41 @@ namespace VisualSatisfactoryCalculator.code
 			return itemCounts;
 		}
 
-		public List<string> GetIngredientItems()
+		public List<Item> GetIngredientItems()
 		{
 			return itemCounts.GetIngredients().GetItems();
 		}
 
-		public List<string> GetProductItems()
+		public List<Item> GetProductItems()
 		{
 			return itemCounts.GetProducts().GetItems();
+		}
+
+		public ItemCount GetItemCount(Item item)
+		{
+			foreach (ItemCount ic in itemCounts)
+			{
+				if (ic.SameItem(item))
+				{
+					return ic;
+				}
+			}
+			return default;
+		}
+
+		public int GetCraftTime()
+		{
+			return craftTime;
+		}
+
+		public string GetMachine()
+		{
+			return machineName;
+		}
+
+		public object Clone()
+		{
+			return new Recipe(itemCounts.Clone().CastToItemCountList(), craftTime, machineName);
 		}
 	}
 }
