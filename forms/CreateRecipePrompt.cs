@@ -11,9 +11,9 @@ using VisualSatisfactoryCalculator.code;
 
 namespace VisualSatisfactoryCalculator.forms
 {
-	public partial class CreateRecipePrompt : Form, IReceivesItemCount
+	public partial class CreateRecipePrompt : Form, IReceives<ItemCount>
 	{
-		private readonly IReceivesRecipe parentForm;
+		private readonly IReceives<Recipe> parentForm;
 		private readonly List<ItemCount> products;
 		private readonly List<ItemCount> ingredients;
 		private readonly string purpose;
@@ -21,7 +21,7 @@ namespace VisualSatisfactoryCalculator.forms
 		private const string ingredientPurpose = "ingredient";
 		private const string productPurpose = "product";
 
-		public CreateRecipePrompt(IReceivesRecipe parentForm, string purpose = null)
+		public CreateRecipePrompt(IReceives<Recipe> parentForm, string purpose = null)
 		{
 			InitializeComponent();
 			this.parentForm = parentForm;
@@ -88,12 +88,12 @@ namespace VisualSatisfactoryCalculator.forms
 			Recipe rec = GetRecipe();
 			if (rec != null)
 			{
-				parentForm.AddRecipe(rec, purpose);
+				parentForm.SendObject(rec, purpose);
 				Close();
 			}
 		}
 
-		public void AddItemCount(ItemCount itemCount, string purpose)
+		public void SendObject(ItemCount itemCount, string purpose)
 		{
 			switch (purpose)
 			{

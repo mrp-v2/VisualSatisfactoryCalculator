@@ -12,7 +12,7 @@ using VisualSatisfactoryCalculator.controls.user;
 
 namespace VisualSatisfactoryCalculator.forms
 {
-	public partial class MainForm : Form, IReceivesRecipeList, IReceivesRecipe
+	public partial class MainForm : Form, IReceives<List<Recipe>>, IReceives<Recipe>
 	{
 		[STAThread]
 		public static void Main()
@@ -42,7 +42,7 @@ namespace VisualSatisfactoryCalculator.forms
 			new EditRecipeListPrompt(this, AllRecipes.Clone().CastToRecipeList()).ShowDialog();
 		}
 
-		public void SendRecipeList(List<Recipe> recipes, string purpose = null)
+		public void SendObject(List<Recipe> recipes, string purpose = null)
 		{
 			AllRecipes = recipes;
 			SuggestionsController.SC = new SuggestionsController(AllRecipes);
@@ -59,7 +59,7 @@ namespace VisualSatisfactoryCalculator.forms
 			new SelectRecipePrompt(AllRecipes, this, firstRecipePurpose).ShowDialog();
 		}
 
-		public void AddRecipe(Recipe recipe, string purpose)
+		public void SendObject(Recipe recipe, string purpose)
 		{
 			switch (purpose)
 			{

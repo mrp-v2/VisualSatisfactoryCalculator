@@ -13,10 +13,10 @@ namespace VisualSatisfactoryCalculator.forms
 {
 	public partial class CreateItemAndCountPrompt : Form
 	{
-		private readonly IReceivesItemCount parentForm;
+		private readonly IReceives<ItemCount> parentForm;
 		private readonly string purpose;
 
-		public CreateItemAndCountPrompt(IReceivesItemCount parentForm, string purpose = null)
+		public CreateItemAndCountPrompt(IReceives<ItemCount> parentForm, string purpose = null)
 		{
 			InitializeComponent();
 			this.parentForm = parentForm;
@@ -31,7 +31,7 @@ namespace VisualSatisfactoryCalculator.forms
 
 		private void OkButton_Click(object sender, EventArgs e)
 		{
-			parentForm.AddItemCount(GetItemCount(), purpose);
+			parentForm.SendObject(GetItemCount(), purpose);
 			Close();
 		}
 

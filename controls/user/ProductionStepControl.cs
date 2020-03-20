@@ -15,7 +15,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 	{
 		private readonly ProductionStep parentStep;
 
-		public ProductionStepControl() : this(null)
+		public ProductionStepControl()
 		{
 
 		}

@@ -13,10 +13,10 @@ namespace VisualSatisfactoryCalculator.forms
 {
 	public partial class SelectRecipePrompt : Form
 	{
-		private readonly IReceivesRecipe parent;
+		private readonly IReceives<Recipe> parent;
 		private readonly string purpose;
 
-		public SelectRecipePrompt(List<Recipe> options, IReceivesRecipe parent, string purpose = null)
+		public SelectRecipePrompt(List<Recipe> options, IReceives<Recipe> parent, string purpose = null)
 		{
 			InitializeComponent();
 			this.parent = parent;
@@ -31,7 +31,7 @@ namespace VisualSatisfactoryCalculator.forms
 		{
 			if (RecipesList.SelectedItem is Recipe)
 			{
-				parent.AddRecipe(RecipesList.SelectedItem as Recipe, purpose);
+				parent.SendObject(RecipesList.SelectedItem as Recipe, purpose);
 				Close();
 			}
 		}

@@ -11,13 +11,13 @@ using VisualSatisfactoryCalculator.code;
 
 namespace VisualSatisfactoryCalculator.forms
 {
-	public partial class EditRecipeListPrompt : Form, IReceivesRecipe
+	public partial class EditRecipeListPrompt : Form, IReceives<Recipe>
 	{
 		private readonly List<Recipe> recipes;
-		private readonly IReceivesRecipeList parentForm;
+		private readonly IReceives<List<Recipe>> parentForm;
 		private readonly string purpose;
 
-		public EditRecipeListPrompt(IReceivesRecipeList parentForm, List<Recipe> recipes, string purpose = null)
+		public EditRecipeListPrompt(IReceives<List<Recipe>> parentForm, List<Recipe> recipes, string purpose = null)
 		{
 			InitializeComponent();
 			this.parentForm = parentForm;
@@ -37,7 +37,7 @@ namespace VisualSatisfactoryCalculator.forms
 			RecipeList.EndUpdate();
 		}
 
-		public void AddRecipe(Recipe recipe, string purpose = null)
+		public void SendObject(Recipe recipe, string purpose = null)
 		{
 			recipes.Add(recipe);
 			UpdateListVisual();
@@ -66,7 +66,7 @@ namespace VisualSatisfactoryCalculator.forms
 
 		private void FinishButton_Click(object sender, EventArgs e)
 		{
-			parentForm.SendRecipeList(recipes, purpose);
+			parentForm.SendObject(recipes, purpose);
 			Close();
 		}
 

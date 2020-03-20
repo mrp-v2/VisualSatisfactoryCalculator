@@ -46,8 +46,9 @@
             0,
             0});
 			this.RateNumeric.Name = "RateNumeric";
-			this.RateNumeric.Size = new System.Drawing.Size(59, 20);
+			this.RateNumeric.Size = new System.Drawing.Size(77, 20);
 			this.RateNumeric.TabIndex = 1;
+			this.RateNumeric.ThousandsSeparator = true;
 			this.RateNumeric.ValueChanged += new System.EventHandler(this.RateNumeric_ValueChanged);
 			// 
 			// MainPanel
@@ -58,7 +59,7 @@
 			this.MainPanel.Controls.Add(this.ItemButton);
 			this.MainPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainPanel.Name = "MainPanel";
-			this.MainPanel.Size = new System.Drawing.Size(148, 29);
+			this.MainPanel.Size = new System.Drawing.Size(166, 29);
 			this.MainPanel.TabIndex = 0;
 			// 
 			// ItemButton
@@ -66,7 +67,7 @@
 			this.ItemButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ItemButton.AutoSize = true;
 			this.ItemButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ItemButton.Location = new System.Drawing.Point(68, 3);
+			this.ItemButton.Location = new System.Drawing.Point(86, 3);
 			this.ItemButton.Name = "ItemButton";
 			this.ItemButton.Size = new System.Drawing.Size(77, 23);
 			this.ItemButton.TabIndex = 2;
@@ -82,7 +83,7 @@
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.Controls.Add(this.MainPanel);
 			this.Name = "ItemRateControl";
-			this.Size = new System.Drawing.Size(151, 32);
+			this.Size = new System.Drawing.Size(169, 32);
 			((System.ComponentModel.ISupportInitialize)(this.RateNumeric)).EndInit();
 			this.MainPanel.ResumeLayout(false);
 			this.MainPanel.PerformLayout();

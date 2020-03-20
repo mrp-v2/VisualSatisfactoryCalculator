@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace VisualSatisfactoryCalculator.code
 {
-	public interface IReceivesItemCount
+	public interface IReceives<T>
 	{
-		void AddItemCount(ItemCount itemCount, string purpose = null);
+		void SendObject(T obj, string purpose = null);
 	}
 }

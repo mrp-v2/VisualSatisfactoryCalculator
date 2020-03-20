@@ -38,6 +38,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,9 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="code\GenericExtensions.cs" />
-    <Compile Include="code\IReceivesItemCount.cs" />
-    <Compile Include="code\IReceivesRecipe.cs" />
-    <Compile Include="code\IReceivesRecipeList.cs" />
+    <Compile Include="code\IReceives.cs" />
     <Compile Include="code\Item.cs" />
     <Compile Include="code\ItemCountExtensions.cs" />
     <Compile Include="code\ProductionPlan.cs" />
@@ -104,6 +103,12 @@
     <Compile Include="forms\SelectRecipePrompt.Designer.cs">
       <DependentUpon>SelectRecipePrompt.cs</DependentUpon>
     </Compile>
+    <Compile Include="forms\TestForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="forms\TestForm.Designer.cs">
+      <DependentUpon>TestForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="controls\user\ItemRateControl.resx">
       <DependentUpon>ItemRateControl.cs</DependentUpon>
@@ -125,6 +130,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="forms\SelectRecipePrompt.resx">
       <DependentUpon>SelectRecipePrompt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="forms\TestForm.resx">
+      <DependentUpon>TestForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

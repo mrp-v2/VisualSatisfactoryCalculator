@@ -31,16 +31,16 @@
 			this.ProductsPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.IngredientsPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.InfoPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.MultiplierPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.MultiplierLable = new System.Windows.Forms.Label();
+			this.MultiplierNumeric = new System.Windows.Forms.NumericUpDown();
 			this.RecipeLabel = new System.Windows.Forms.Label();
 			this.MachineCountLabel = new System.Windows.Forms.Label();
 			this.MainPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this.MultiplierPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this.MultiplierNumeric = new System.Windows.Forms.NumericUpDown();
 			this.InfoPanel.SuspendLayout();
-			this.MainPanel.SuspendLayout();
 			this.MultiplierPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MultiplierNumeric)).BeginInit();
+			this.MainPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// ProductsPanel
@@ -74,6 +74,17 @@
 			this.InfoPanel.Size = new System.Drawing.Size(340, 58);
 			this.InfoPanel.TabIndex = 1;
 			// 
+			// MultiplierPanel
+			// 
+			this.MultiplierPanel.AutoSize = true;
+			this.MultiplierPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.MultiplierPanel.Controls.Add(this.MultiplierLable);
+			this.MultiplierPanel.Controls.Add(this.MultiplierNumeric);
+			this.MultiplierPanel.Location = new System.Drawing.Point(3, 3);
+			this.MultiplierPanel.Name = "MultiplierPanel";
+			this.MultiplierPanel.Size = new System.Drawing.Size(122, 26);
+			this.MultiplierPanel.TabIndex = 3;
+			// 
 			// MultiplierLable
 			// 
 			this.MultiplierLable.Anchor = System.Windows.Forms.AnchorStyles.Left;
@@ -83,6 +94,21 @@
 			this.MultiplierLable.Size = new System.Drawing.Size(51, 13);
 			this.MultiplierLable.TabIndex = 0;
 			this.MultiplierLable.Text = "Multiplier:";
+			// 
+			// MultiplierNumeric
+			// 
+			this.MultiplierNumeric.AutoSize = true;
+			this.MultiplierNumeric.Location = new System.Drawing.Point(60, 3);
+			this.MultiplierNumeric.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+			this.MultiplierNumeric.Name = "MultiplierNumeric";
+			this.MultiplierNumeric.Size = new System.Drawing.Size(59, 20);
+			this.MultiplierNumeric.TabIndex = 1;
+			this.MultiplierNumeric.ThousandsSeparator = true;
+			this.MultiplierNumeric.ValueChanged += new System.EventHandler(this.MultiplierNumeric_ValueChanged);
 			// 
 			// RecipeLabel
 			// 
@@ -116,31 +142,6 @@
 			this.MainPanel.Size = new System.Drawing.Size(346, 76);
 			this.MainPanel.TabIndex = 2;
 			// 
-			// MultiplierPanel
-			// 
-			this.MultiplierPanel.AutoSize = true;
-			this.MultiplierPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.MultiplierPanel.Controls.Add(this.MultiplierLable);
-			this.MultiplierPanel.Controls.Add(this.MultiplierNumeric);
-			this.MultiplierPanel.Location = new System.Drawing.Point(3, 3);
-			this.MultiplierPanel.Name = "MultiplierPanel";
-			this.MultiplierPanel.Size = new System.Drawing.Size(122, 26);
-			this.MultiplierPanel.TabIndex = 3;
-			// 
-			// MultiplierNumeric
-			// 
-			this.MultiplierNumeric.AutoSize = true;
-			this.MultiplierNumeric.Location = new System.Drawing.Point(60, 3);
-			this.MultiplierNumeric.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.MultiplierNumeric.Name = "MultiplierNumeric";
-			this.MultiplierNumeric.Size = new System.Drawing.Size(59, 20);
-			this.MultiplierNumeric.TabIndex = 1;
-			this.MultiplierNumeric.ValueChanged += new System.EventHandler(this.MultiplierNumeric_ValueChanged);
-			// 
 			// ProductionStepControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -153,11 +154,11 @@
 			this.Size = new System.Drawing.Size(346, 76);
 			this.InfoPanel.ResumeLayout(false);
 			this.InfoPanel.PerformLayout();
-			this.MainPanel.ResumeLayout(false);
-			this.MainPanel.PerformLayout();
 			this.MultiplierPanel.ResumeLayout(false);
 			this.MultiplierPanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MultiplierNumeric)).EndInit();
+			this.MainPanel.ResumeLayout(false);
+			this.MainPanel.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
