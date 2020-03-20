@@ -28,5 +28,42 @@ namespace VisualSatisfactoryCalculator.code
 		{
 			return steps;
 		}
+
+		public Dictionary<Item, decimal> NetRates()
+		{
+			Dictionary<Item, decimal> netRates = new Dictionary<Item, decimal>();
+			foreach (ProductionStep step in steps)
+			{
+				foreach (ItemCount ic in step.GetItemCounts())
+				{
+					if (netRates.ContainsKey(ic.ToItem()))
+					{
+						netRates[ic.ToItem()] += step.GetItemRate(ic.ToItem());
+					}
+					else
+					{
+						netRates.Add(ic.ToItem(), step.GetItemRate(ic.ToItem()));
+					}
+				}
+			}
+			return netRates;
+		}
+
+		public Dictionary<string, int> TotalMachineCount()
+		{
+			Dictionary<string, int> totalMachines = new Dictionary<string, int>();
+			foreach (ProductionStep step in steps)
+			{
+				if (totalMachines.ContainsKey(step.GetMachine()))
+				{
+					totalMachines.Add(step.GetMachine(), step.CalculateMachineCount());
+				}
+				else
+				{
+					totalMachines[step.GetMachine()] += step.CalculateMachineCount();
+				}
+			}
+			return totalMachines;
+		}
 	}
 }
