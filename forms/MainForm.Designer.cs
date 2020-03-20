@@ -33,6 +33,7 @@
 			this.ButtonPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.ViewEditGlobalRecipesButton = new System.Windows.Forms.Button();
 			this.SelectFirstRecipeButton = new System.Windows.Forms.Button();
+			this.ProductionPlanPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.MainPanel.SuspendLayout();
 			this.ButtonPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -42,6 +43,7 @@
 			this.MainPanel.AutoSize = true;
 			this.MainPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.MainPanel.Controls.Add(this.ButtonPanel);
+			this.MainPanel.Controls.Add(this.ProductionPlanPanel);
 			this.MainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainPanel.Name = "MainPanel";
@@ -84,6 +86,16 @@
 			this.SelectFirstRecipeButton.UseVisualStyleBackColor = true;
 			this.SelectFirstRecipeButton.Click += new System.EventHandler(this.SelectFirstRecipeButton_Click);
 			// 
+			// ProductionPlanPanel
+			// 
+			this.ProductionPlanPanel.AutoSize = true;
+			this.ProductionPlanPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.ProductionPlanPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+			this.ProductionPlanPanel.Location = new System.Drawing.Point(134, 3);
+			this.ProductionPlanPanel.Name = "ProductionPlanPanel";
+			this.ProductionPlanPanel.Size = new System.Drawing.Size(0, 0);
+			this.ProductionPlanPanel.TabIndex = 1;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -108,5 +120,6 @@
 		private System.Windows.Forms.FlowLayoutPanel ButtonPanel;
 		private System.Windows.Forms.Button ViewEditGlobalRecipesButton;
 		private System.Windows.Forms.Button SelectFirstRecipeButton;
+		private System.Windows.Forms.FlowLayoutPanel ProductionPlanPanel;
 	}
 }

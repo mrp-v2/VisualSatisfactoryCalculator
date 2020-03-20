@@ -101,7 +101,7 @@ namespace VisualSatisfactoryCalculator.code
 		{
 			foreach (ItemCount ic in itemCounts)
 			{
-				if (ic.SameItem(item))
+				if (ic.ToItem().Equals(item))
 				{
 					return ic;
 				}

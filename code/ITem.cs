@@ -9,7 +9,12 @@ namespace VisualSatisfactoryCalculator.code
 	[Serializable]
 	public class Item
 	{
-		protected string item;
+		protected readonly string item;
+
+		public Item(string item)
+		{
+			this.item = item;
+		}
 
 		public override int GetHashCode()
 		{
@@ -18,17 +23,20 @@ namespace VisualSatisfactoryCalculator.code
 
 		public override bool Equals(object obj)
 		{
-			return item.Equals(obj);
+			if (obj == null)
+			{
+				return false;
+			}
+			if (!(obj is Item))
+			{
+				return false;
+			}
+			return item.Equals((obj as Item).item);
 		}
 
 		public override string ToString()
 		{
 			return item;
-		}
-
-		public bool SameItem(Item other)
-		{
-			return item.Equals(other.item);
 		}
 
 		public string ToItemString()

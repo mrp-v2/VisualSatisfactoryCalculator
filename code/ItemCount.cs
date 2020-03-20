@@ -9,11 +9,10 @@ namespace VisualSatisfactoryCalculator.code
 	[Serializable]
 	public class ItemCount : Item, ICloneable
 	{
-		protected int count;
+		protected readonly int count;
 
-		public ItemCount(string item, int count)
+		public ItemCount(string item, int count) : base(item)
 		{
-			this.item = item;
 			this.count = count;
 		}
 
@@ -62,6 +61,11 @@ namespace VisualSatisfactoryCalculator.code
 		public object Clone()
 		{
 			return new ItemCount(item, count);
+		}
+
+		public Item ToItem()
+		{
+			return new Item(item);
 		}
 	}
 }

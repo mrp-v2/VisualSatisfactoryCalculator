@@ -16,17 +16,18 @@ namespace VisualSatisfactoryCalculator.controls.user
 		private readonly ProductionStepControl parentControl;
 		private readonly Item item;
 
-		public ItemRateControl() : this(default, default)
+		public ItemRateControl() : this(default, default, default)
 		{
 
 		}
 
-		public ItemRateControl(ProductionStepControl parentControl, Item item)
+		public ItemRateControl(ProductionStepControl parentControl, Item item, double rate)
 		{
 			InitializeComponent();
 			this.parentControl = parentControl;
 			this.item = item;
 			ItemButton.Text = item.ToItemString();
+			RateNumeric.Value = Math.Abs((decimal)rate);
 		}
 
 		private void RateNumeric_ValueChanged(object sender, EventArgs e)

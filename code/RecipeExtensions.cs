@@ -41,5 +41,42 @@ namespace VisualSatisfactoryCalculator.code
 			}
 			return list;
 		}
+
+		public static List<Recipe> GetRecipesThatProduce(this List<Recipe> me, Item product)
+		{
+			List<Recipe> recs = new List<Recipe>();
+			foreach (Recipe rec in me)
+			{
+				if (rec.GetProductItems().Contains(product))
+				{
+					recs.Add(rec);
+				}
+			}
+			return recs;
+		}
+
+		public static List<Recipe> GetRecipesThatConsume(this List<Recipe> me, Item ingredient)
+		{
+			List<Recipe> recs = new List<Recipe>();
+			foreach (Recipe rec in me)
+			{
+				if (rec.GetIngredientItems().Contains(ingredient))
+				{
+					recs.Add(rec);
+				}
+			}
+			return recs;
+		}
+
+		public static List<Recipe> ShallowClone(this List<Recipe> me)
+		{
+			List<Recipe> list = new List<Recipe>();
+			foreach (Recipe rec in me)
+			{
+				list.Add(rec);
+			}
+			return list;
+		}
+
 	}
 }

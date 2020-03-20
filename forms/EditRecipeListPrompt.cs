@@ -37,7 +37,7 @@ namespace VisualSatisfactoryCalculator.forms
 			RecipeList.EndUpdate();
 		}
 
-		public void SendObject(Recipe recipe, string purpose = null)
+		public void SendObject(Recipe recipe, string purpose)
 		{
 			recipes.Add(recipe);
 			UpdateListVisual();
@@ -45,7 +45,7 @@ namespace VisualSatisfactoryCalculator.forms
 
 		private void AddRecipeButton_Click(object sender, EventArgs e)
 		{
-			new CreateRecipePrompt(this).ShowDialog();
+			new CreateRecipePrompt(this, null).ShowDialog();
 		}
 
 		private void RemoveRecipeButton_Click(object sender, EventArgs e)

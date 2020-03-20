@@ -101,10 +101,18 @@ namespace VisualSatisfactoryCalculator.code
 			}
 			foreach (ItemCount ic in meCounts.Keys)
 			{
-				if (meCounts[ic] != otherCounts[ic])
+				try
+				{
+					if (meCounts[ic] != otherCounts[ic])
+					{
+						return false;
+					}
+				}
+				catch (KeyNotFoundException e)
 				{
 					return false;
 				}
+				
 			}
 			return true;
 		}
@@ -114,7 +122,7 @@ namespace VisualSatisfactoryCalculator.code
 			List<Item> items = new List<Item>();
 			foreach (ItemCount ic in me)
 			{
-				items.Add(ic);
+				items.Add(ic.ToItem());
 			}
 			return items;
 		}

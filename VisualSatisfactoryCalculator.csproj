@@ -56,6 +56,7 @@
     <Compile Include="code\ItemCountExtensions.cs" />
     <Compile Include="code\ProductionPlan.cs" />
     <Compile Include="code\ProductionStep.cs" />
+    <Compile Include="code\ProductionStepExtensions.cs" />
     <Compile Include="code\Recipe.cs" />
     <Compile Include="code\ItemCount.cs" />
     <Compile Include="code\RecipeExtensions.cs" />
@@ -103,12 +104,6 @@
     <Compile Include="forms\SelectRecipePrompt.Designer.cs">
       <DependentUpon>SelectRecipePrompt.cs</DependentUpon>
     </Compile>
-    <Compile Include="forms\TestForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="forms\TestForm.Designer.cs">
-      <DependentUpon>TestForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="controls\user\ItemRateControl.resx">
       <DependentUpon>ItemRateControl.cs</DependentUpon>
@@ -130,9 +125,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="forms\SelectRecipePrompt.resx">
       <DependentUpon>SelectRecipePrompt.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="forms\TestForm.resx">
-      <DependentUpon>TestForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

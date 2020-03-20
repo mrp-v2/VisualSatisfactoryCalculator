@@ -8,33 +8,36 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using VisualSatisfactoryCalculator.code;
+using VisualSatisfactoryCalculator.forms;
 
 namespace VisualSatisfactoryCalculator.controls.user
 {
-	public partial class ProductionStepControl : UserControl
+	public partial class ProductionStepControl : UserControl, IReceives<Recipe>
 	{
 		private readonly ProductionStep parentStep;
+		private readonly MainForm mainForm;
 
 		public ProductionStepControl()
 		{
 
 		}
 
-		public ProductionStepControl(ProductionStep parentStep)
+		public ProductionStepControl(ProductionStep parentStep, MainForm mainForm)
 		{
 			InitializeComponent();
 			this.parentStep = parentStep;
+			this.mainForm = mainForm;
 			parentStep.SetControl(this);
-			foreach (ItemCount ic in parentStep.GetProductItems())
+			foreach (ItemCount ic in parentStep.GetItemCounts().GetProducts())
 			{
-				ProductsPanel.Controls.Add(new ItemRateControl(this, ic));
+				ProductsPanel.Controls.Add(new ItemRateControl(this, ic.ToItem(), parentStep.GetItemRate(ic)));
 			}
-			foreach (ItemCount ic in parentStep.GetIngredientItems())
+			foreach (ItemCount ic in parentStep.GetItemCounts().GetIngredients())
 			{
-				IngredientsPanel.Controls.Add(new ItemRateControl(this, ic));
+				IngredientsPanel.Controls.Add(new ItemRateControl(this, ic.ToItem(), parentStep.GetItemRate(ic)));
 			}
 			RecipeLabel.Text = parentStep.ToString();
-			MachineCountLabel.Text = parentStep.GetMachine() + ": " + parentStep.CalculateMachineCount();
+			MultiplierChanged();
 		}
 
 		public void MultiplierChanged()
@@ -44,6 +47,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 				irc.UpdateRateValue(parentStep.GetItemRate(irc.GetItem()));
 			}
 			MultiplierNumeric.Value = (decimal)parentStep.GetMultiplier();
+			MachineCountLabel.Text = parentStep.GetMachine() + ": " + parentStep.CalculateMachineCount();
 			UpdateMultiplierNumericSettings();
 		}
 
@@ -63,7 +67,13 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 			else
 			{
-
+				if (parentStep.GetProductItems().Contains(item))
+				{
+					new SelectRecipePrompt(mainForm.GetAllRecipes().GetRecipesThatConsume(item), this, null).ShowDialog();
+				} else if (parentStep.GetIngredientItems().Contains(item))
+				{
+					new SelectRecipePrompt(mainForm.GetAllRecipes().GetRecipesThatProduce(item), this, null).ShowDialog();
+				}
 			}
 		}
 
@@ -105,6 +115,13 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				MultiplierNumeric.DecimalPlaces = 0;
 			}
+		}
+
+		public void SendObject(Recipe recipe, string purpose)
+		{
+			ProductionStep ps = new ProductionStep(recipe, parentStep);
+			parentStep.AddRelatedStep(ps);
+			mainForm.AddProductionStep(ps);
 		}
 	}
 }

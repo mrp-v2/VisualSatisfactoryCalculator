@@ -64,12 +64,44 @@ namespace VisualSatisfactoryCalculator.forms
 			switch (purpose)
 			{
 				case firstRecipePurpose:
-					plan = new ProductionPlan();
+					plan = new ProductionPlan(this);
 					ProductionStep ps = new ProductionStep(recipe, 1);
 					plan.AddStep(ps);
-					MainPanel.Controls.Add(new ProductionStepControl(ps));
 					break;
 			}
+		}
+
+		public void PlanUpdated()
+		{
+			Dictionary<int, List<ProductionStep>> tiers = plan.GetAllSteps().ToTierList();
+			foreach (Control c in ProductionPlanPanel.Controls)
+			{
+				c.Dispose();
+			}
+			ProductionPlanPanel.Controls.Clear();
+			for (int i = tiers.Keys.Count - 1; i >= 0; i--)
+			{
+				FlowLayoutPanel flp = new FlowLayoutPanel
+				{
+					AutoSizeMode = AutoSizeMode.GrowAndShrink,
+					AutoSize = true
+				};
+				ProductionPlanPanel.Controls.Add(flp);
+				foreach (ProductionStep step in tiers[i])
+				{
+					flp.Controls.Add(new ProductionStepControl(step, this));
+				}
+			}
+		}
+
+		public List<Recipe> GetAllRecipes()
+		{
+			return AllRecipes.ShallowClone();
+		}
+
+		public void AddProductionStep(ProductionStep step)
+		{
+			plan.AddStep(step);
 		}
 	}
 }

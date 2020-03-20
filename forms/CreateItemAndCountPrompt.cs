@@ -16,7 +16,7 @@ namespace VisualSatisfactoryCalculator.forms
 		private readonly IReceives<ItemCount> parentForm;
 		private readonly string purpose;
 
-		public CreateItemAndCountPrompt(IReceives<ItemCount> parentForm, string purpose = null)
+		public CreateItemAndCountPrompt(IReceives<ItemCount> parentForm, string purpose)
 		{
 			InitializeComponent();
 			this.parentForm = parentForm;

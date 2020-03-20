@@ -21,7 +21,7 @@ namespace VisualSatisfactoryCalculator.forms
 		private const string ingredientPurpose = "ingredient";
 		private const string productPurpose = "product";
 
-		public CreateRecipePrompt(IReceives<Recipe> parentForm, string purpose = null)
+		public CreateRecipePrompt(IReceives<Recipe> parentForm, string purpose)
 		{
 			InitializeComponent();
 			this.parentForm = parentForm;

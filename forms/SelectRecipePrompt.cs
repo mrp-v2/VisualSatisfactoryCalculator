@@ -16,7 +16,7 @@ namespace VisualSatisfactoryCalculator.forms
 		private readonly IReceives<Recipe> parent;
 		private readonly string purpose;
 
-		public SelectRecipePrompt(List<Recipe> options, IReceives<Recipe> parent, string purpose = null)
+		public SelectRecipePrompt(List<Recipe> options, IReceives<Recipe> parent, string purpose)
 		{
 			InitializeComponent();
 			this.parent = parent;

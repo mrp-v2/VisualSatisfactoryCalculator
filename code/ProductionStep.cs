@@ -13,6 +13,17 @@ namespace VisualSatisfactoryCalculator.code
 		private readonly List<ProductionStep> relatedSteps;
 		private ProductionStepControl control;
 
+		public ProductionStep(Recipe recipe) : this(recipe, 0)
+		{
+
+		}
+
+		public ProductionStep(Recipe recipe, ProductionStep related) : this(recipe)
+		{
+			relatedSteps.Add(related);
+			UpdateMultiplierRelativeTo(related);
+		}
+
 		public ProductionStep(Recipe recipe, double multiplier) : base(recipe)
 		{
 			this.multiplier = multiplier;
@@ -44,26 +55,26 @@ namespace VisualSatisfactoryCalculator.code
 			SetMultiplier(multiplier);
 			foreach (ProductionStep step in relatedSteps)
 			{
-				step.UpdateMultiplierAndRelated(this, this.multiplier);
+				step.UpdateMultiplierAndRelated(this);
 			}
 		}
 
-		private void UpdateMultiplierAndRelated(ProductionStep caller, double callerMultiplier)
+		private void UpdateMultiplierAndRelated(ProductionStep caller)
 		{
-			UpdateMultiplierRelativeTo(caller, callerMultiplier);
+			UpdateMultiplierRelativeTo(caller);
 			foreach (ProductionStep step in relatedSteps)
 			{
 				if (!step.Equals(caller))
 				{
-					step.UpdateMultiplierAndRelated(this, multiplier);
+					step.UpdateMultiplierAndRelated(this);
 				}
 			}
 		}
 
-		private void UpdateMultiplierRelativeTo(ProductionStep origin, double originMultiplier)
+		private void UpdateMultiplierRelativeTo(ProductionStep origin)
 		{
-			Item match = itemCounts.FindMatch<Item>(origin.itemCounts);
-			SetMultiplier(CalculateMultiplierForRate(match, origin.CalculateDefaultItemRate(match) * originMultiplier));
+			Item match = itemCounts.GetItems().FindMatch(origin.itemCounts.GetItems());
+			SetMultiplier(CalculateMultiplierForRate(match, origin.CalculateDefaultItemRate(match) * origin.multiplier));
 		}
 
 		private double CalculateDefaultItemRate(Item item)
