@@ -16,6 +16,7 @@ namespace VisualSatisfactoryCalculator.forms
 		private readonly List<Recipe> recipes;
 		private readonly IReceives<List<Recipe>> parentForm;
 		private readonly string purpose;
+		SuggestionsController TEMPSC;
 
 		public EditRecipeListPrompt(IReceives<List<Recipe>> parentForm, List<Recipe> recipes, string purpose = null)
 		{
@@ -24,6 +25,7 @@ namespace VisualSatisfactoryCalculator.forms
 			this.recipes = recipes;
 			this.purpose = purpose;
 			UpdateListVisual();
+			TEMPSC = SuggestionsController.SC;
 		}
 
 		private void UpdateListVisual()
@@ -40,6 +42,7 @@ namespace VisualSatisfactoryCalculator.forms
 		public void SendObject(Recipe recipe, string purpose)
 		{
 			recipes.Add(recipe);
+			SuggestionsController.SC = new SuggestionsController(recipes);
 			UpdateListVisual();
 		}
 
@@ -72,6 +75,7 @@ namespace VisualSatisfactoryCalculator.forms
 
 		private void CancelButton_Click(object sender, EventArgs e)
 		{
+			SuggestionsController.SC = TEMPSC;
 			Close();
 		}
 	}
