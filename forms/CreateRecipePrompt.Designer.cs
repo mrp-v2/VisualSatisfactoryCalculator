@@ -84,7 +84,7 @@
 			this.ItemsPanel.Controls.Add(this.IngredientsPanel);
 			this.ItemsPanel.Location = new System.Drawing.Point(3, 3);
 			this.ItemsPanel.Name = "ItemsPanel";
-			this.ItemsPanel.Size = new System.Drawing.Size(264, 188);
+			this.ItemsPanel.Size = new System.Drawing.Size(424, 188);
 			this.ItemsPanel.TabIndex = 0;
 			// 
 			// ProductsPanel
@@ -98,7 +98,7 @@
 			this.ProductsPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.ProductsPanel.Location = new System.Drawing.Point(3, 3);
 			this.ProductsPanel.Name = "ProductsPanel";
-			this.ProductsPanel.Size = new System.Drawing.Size(126, 182);
+			this.ProductsPanel.Size = new System.Drawing.Size(206, 182);
 			this.ProductsPanel.TabIndex = 0;
 			// 
 			// flowLayoutPanel2
@@ -126,7 +126,7 @@
 			this.ProductsList.FormattingEnabled = true;
 			this.ProductsList.Location = new System.Drawing.Point(3, 22);
 			this.ProductsList.Name = "ProductsList";
-			this.ProductsList.Size = new System.Drawing.Size(120, 95);
+			this.ProductsList.Size = new System.Drawing.Size(200, 95);
 			this.ProductsList.TabIndex = 0;
 			// 
 			// AddProductButton
@@ -148,9 +148,9 @@
 			this.IngredientsPanel.Controls.Add(this.RemoveIngredientButton);
 			this.IngredientsPanel.Controls.Add(this.AddIngredientButton);
 			this.IngredientsPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-			this.IngredientsPanel.Location = new System.Drawing.Point(135, 3);
+			this.IngredientsPanel.Location = new System.Drawing.Point(215, 3);
 			this.IngredientsPanel.Name = "IngredientsPanel";
-			this.IngredientsPanel.Size = new System.Drawing.Size(126, 182);
+			this.IngredientsPanel.Size = new System.Drawing.Size(206, 182);
 			this.IngredientsPanel.TabIndex = 0;
 			// 
 			// flowLayoutPanel3
@@ -178,7 +178,7 @@
 			this.IngredientsList.FormattingEnabled = true;
 			this.IngredientsList.Location = new System.Drawing.Point(3, 22);
 			this.IngredientsList.Name = "IngredientsList";
-			this.IngredientsList.Size = new System.Drawing.Size(120, 95);
+			this.IngredientsList.Size = new System.Drawing.Size(200, 95);
 			this.IngredientsList.TabIndex = 0;
 			// 
 			// RemoveIngredientButton
@@ -281,7 +281,7 @@
 			this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(322, 286);
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(435, 282);
 			this.flowLayoutPanel1.TabIndex = 0;
 			// 
 			// flowLayoutPanel4
@@ -337,7 +337,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;
 			this.CancelButton = this.NoButton;
-			this.ClientSize = new System.Drawing.Size(322, 286);
+			this.ClientSize = new System.Drawing.Size(435, 282);
 			this.Controls.Add(this.flowLayoutPanel1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
