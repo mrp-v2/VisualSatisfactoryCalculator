@@ -22,7 +22,7 @@ namespace VisualSatisfactoryCalculator.code
 				AddMachine(rec.GetMachine());
 				foreach (ItemCount ic in rec.GetItemCounts())
 				{
-					AddItem((ic as Item).ToString());
+					AddItem(ic.ToItemString());
 				}
 			}
 		}
