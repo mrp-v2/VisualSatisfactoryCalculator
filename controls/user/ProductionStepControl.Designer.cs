@@ -56,7 +56,7 @@
 			// 
 			this.IngredientsPanel.AutoSize = true;
 			this.IngredientsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.IngredientsPanel.Location = new System.Drawing.Point(3, 73);
+			this.IngredientsPanel.Location = new System.Drawing.Point(3, 67);
 			this.IngredientsPanel.Name = "IngredientsPanel";
 			this.IngredientsPanel.Size = new System.Drawing.Size(0, 0);
 			this.IngredientsPanel.TabIndex = 0;
@@ -71,7 +71,7 @@
 			this.InfoPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.InfoPanel.Location = new System.Drawing.Point(3, 9);
 			this.InfoPanel.Name = "InfoPanel";
-			this.InfoPanel.Size = new System.Drawing.Size(340, 58);
+			this.InfoPanel.Size = new System.Drawing.Size(340, 52);
 			this.InfoPanel.TabIndex = 1;
 			// 
 			// MultiplierPanel
@@ -80,9 +80,10 @@
 			this.MultiplierPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.MultiplierPanel.Controls.Add(this.MultiplierLable);
 			this.MultiplierPanel.Controls.Add(this.MultiplierNumeric);
-			this.MultiplierPanel.Location = new System.Drawing.Point(3, 3);
+			this.MultiplierPanel.Location = new System.Drawing.Point(0, 0);
+			this.MultiplierPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.MultiplierPanel.Name = "MultiplierPanel";
-			this.MultiplierPanel.Size = new System.Drawing.Size(122, 26);
+			this.MultiplierPanel.Size = new System.Drawing.Size(158, 26);
 			this.MultiplierPanel.TabIndex = 3;
 			// 
 			// MultiplierLable
@@ -98,6 +99,7 @@
 			// MultiplierNumeric
 			// 
 			this.MultiplierNumeric.AutoSize = true;
+			this.MultiplierNumeric.DecimalPlaces = 5;
 			this.MultiplierNumeric.Location = new System.Drawing.Point(60, 3);
 			this.MultiplierNumeric.Maximum = new decimal(new int[] {
             1000000,
@@ -105,7 +107,7 @@
             0,
             0});
 			this.MultiplierNumeric.Name = "MultiplierNumeric";
-			this.MultiplierNumeric.Size = new System.Drawing.Size(59, 20);
+			this.MultiplierNumeric.Size = new System.Drawing.Size(95, 20);
 			this.MultiplierNumeric.TabIndex = 1;
 			this.MultiplierNumeric.ThousandsSeparator = true;
 			this.MultiplierNumeric.ValueChanged += new System.EventHandler(this.MultiplierNumeric_ValueChanged);
@@ -113,7 +115,7 @@
 			// RecipeLabel
 			// 
 			this.RecipeLabel.AutoSize = true;
-			this.RecipeLabel.Location = new System.Drawing.Point(3, 32);
+			this.RecipeLabel.Location = new System.Drawing.Point(3, 26);
 			this.RecipeLabel.Name = "RecipeLabel";
 			this.RecipeLabel.Size = new System.Drawing.Size(334, 13);
 			this.RecipeLabel.TabIndex = 1;
@@ -122,7 +124,7 @@
 			// MachineCountLabel
 			// 
 			this.MachineCountLabel.AutoSize = true;
-			this.MachineCountLabel.Location = new System.Drawing.Point(3, 45);
+			this.MachineCountLabel.Location = new System.Drawing.Point(3, 39);
 			this.MachineCountLabel.Name = "MachineCountLabel";
 			this.MachineCountLabel.Size = new System.Drawing.Size(179, 13);
 			this.MachineCountLabel.TabIndex = 2;
@@ -138,8 +140,9 @@
 			this.MainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.MainPanel.Location = new System.Drawing.Point(0, 0);
+			this.MainPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.MainPanel.Name = "MainPanel";
-			this.MainPanel.Size = new System.Drawing.Size(346, 76);
+			this.MainPanel.Size = new System.Drawing.Size(346, 70);
 			this.MainPanel.TabIndex = 2;
 			// 
 			// ProductionStepControl
@@ -151,7 +154,7 @@
 			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.Controls.Add(this.MainPanel);
 			this.Name = "ProductionStepControl";
-			this.Size = new System.Drawing.Size(346, 76);
+			this.Size = new System.Drawing.Size(346, 70);
 			this.InfoPanel.ResumeLayout(false);
 			this.InfoPanel.PerformLayout();
 			this.MultiplierPanel.ResumeLayout(false);

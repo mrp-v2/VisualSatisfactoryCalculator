@@ -91,7 +91,8 @@
 			this.ProductionPlanPanel.AutoSize = true;
 			this.ProductionPlanPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ProductionPlanPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-			this.ProductionPlanPanel.Location = new System.Drawing.Point(134, 3);
+			this.ProductionPlanPanel.Location = new System.Drawing.Point(131, 0);
+			this.ProductionPlanPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.ProductionPlanPanel.Name = "ProductionPlanPanel";
 			this.ProductionPlanPanel.Size = new System.Drawing.Size(0, 0);
 			this.ProductionPlanPanel.TabIndex = 1;

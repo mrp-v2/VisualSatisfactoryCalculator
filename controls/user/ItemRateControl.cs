@@ -21,31 +21,22 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		}
 
-		public ItemRateControl(ProductionStepControl parentControl, Item item, double rate)
+		public ItemRateControl(ProductionStepControl parentControl, Item item, decimal rate)
 		{
 			InitializeComponent();
 			this.parentControl = parentControl;
 			this.item = item;
 			ItemButton.Text = item.ToItemString();
-			RateNumeric.Value = Math.Abs((decimal)rate);
+			RateNumeric.Value = rate.Abs();
+			if (parentControl.ItemHasRelatedRecipe(item))
+			{
+				ItemButton.Enabled = false;
+			}
 		}
 
 		private void RateNumeric_ValueChanged(object sender, EventArgs e)
 		{
-			UpdateNumericSettings();
-			parentControl.RateChanged(item, (double)RateNumeric.Value);
-		}
-
-		public void UpdateNumericSettings()
-		{
-			if ((int)RateNumeric.Value != RateNumeric.Value)
-			{
-				RateNumeric.DecimalPlaces = RateNumeric.Value.ToString().Substring(RateNumeric.Value.ToString().IndexOf('.') + 1).Length;
-			}
-			else
-			{
-				RateNumeric.DecimalPlaces = 0;
-			}
+			parentControl.RateChanged(item, RateNumeric.Value);
 		}
 
 		private void ItemButton_Click(object sender, EventArgs e)
@@ -53,10 +44,12 @@ namespace VisualSatisfactoryCalculator.controls.user
 			parentControl.ItemClicked(item);
 		}
 
-		public void UpdateRateValue(double newRate)
+		public void UpdateRateValue(decimal newRate)
 		{
-			RateNumeric.Value = Math.Abs((decimal)newRate);
-			UpdateNumericSettings();
+			if (newRate != RateNumeric.Value)
+			{
+				RateNumeric.Value = newRate.Abs();
+			}
 		}
 
 		public Item GetItem()

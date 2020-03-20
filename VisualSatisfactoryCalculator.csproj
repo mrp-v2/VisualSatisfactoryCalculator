@@ -60,6 +60,7 @@
     <Compile Include="code\Recipe.cs" />
     <Compile Include="code\ItemCount.cs" />
     <Compile Include="code\RecipeExtensions.cs" />
+    <Compile Include="code\NumberExtensions.cs" />
     <Compile Include="code\SaveLoad.cs" />
     <Compile Include="code\SuggestionsController.cs" />
     <Compile Include="controls\user\ItemRateControl.cs">

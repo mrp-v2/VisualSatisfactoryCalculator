@@ -46,14 +46,16 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				irc.UpdateRateValue(parentStep.GetItemRate(irc.GetItem()));
 			}
-			MultiplierNumeric.Value = (decimal)parentStep.GetMultiplier();
+			if (MultiplierNumeric.Value != parentStep.GetMultiplier())
+			{
+				MultiplierNumeric.Value = parentStep.GetMultiplier();
+			}
 			MachineCountLabel.Text = parentStep.GetMachine() + ": " + parentStep.CalculateMachineCount();
-			UpdateMultiplierNumericSettings();
 		}
 
-		public void RateChanged(Item item, double newRate)
+		public void RateChanged(Item item, decimal newRate)
 		{
-			if (parentStep.GetItemRate(item) != newRate)
+			if (Math.Abs(parentStep.GetItemRate(item)) != newRate)
 			{
 				parentStep.SetMultiplierAndRelatedRelative(item, newRate);
 			}
@@ -99,22 +101,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		private void MultiplierNumeric_ValueChanged(object sender, EventArgs e)
 		{
-			if (parentStep.GetMultiplier() != (double)MultiplierNumeric.Value)
-			{
-				parentStep.SetMultiplier((double)MultiplierNumeric.Value);
-			}
-		}
-
-		public void UpdateMultiplierNumericSettings()
-		{
-			if ((int)MultiplierNumeric.Value != MultiplierNumeric.Value)
-			{
-				MultiplierNumeric.DecimalPlaces = MultiplierNumeric.Value.ToString().Substring(MultiplierNumeric.Value.ToString().IndexOf('.') + 1).Length;
-			}
-			else
-			{
-				MultiplierNumeric.DecimalPlaces = 0;
-			}
+			parentStep.SetMultiplierAndRelated(MultiplierNumeric.Value);
 		}
 
 		public void SendObject(Recipe recipe, string purpose)
@@ -122,6 +109,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 			ProductionStep ps = new ProductionStep(recipe, parentStep);
 			parentStep.AddRelatedStep(ps);
 			mainForm.AddProductionStep(ps);
+		}
+
+		public bool ItemHasRelatedRecipe(Item item)
+		{
+			return parentStep.GetItemsWithRelatedStep().Contains(item);
 		}
 	}
 }

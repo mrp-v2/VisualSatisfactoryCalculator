@@ -65,7 +65,7 @@ namespace VisualSatisfactoryCalculator.forms
 			{
 				case firstRecipePurpose:
 					plan = new ProductionPlan(this);
-					ProductionStep ps = new ProductionStep(recipe, 1);
+					ProductionStep ps = new ProductionStep(recipe, 1m);
 					plan.AddStep(ps);
 					break;
 			}
@@ -84,7 +84,8 @@ namespace VisualSatisfactoryCalculator.forms
 				FlowLayoutPanel flp = new FlowLayoutPanel
 				{
 					AutoSizeMode = AutoSizeMode.GrowAndShrink,
-					AutoSize = true
+					AutoSize = true,
+					Margin = new Padding(0)					
 				};
 				ProductionPlanPanel.Controls.Add(flp);
 				foreach (ProductionStep step in tiers[i])

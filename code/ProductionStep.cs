@@ -9,22 +9,17 @@ namespace VisualSatisfactoryCalculator.code
 {
 	public class ProductionStep : Recipe
 	{
-		private double multiplier;
+		private decimal multiplier;
 		private readonly List<ProductionStep> relatedSteps;
 		private ProductionStepControl control;
 
-		public ProductionStep(Recipe recipe) : this(recipe, 0)
-		{
-
-		}
-
-		public ProductionStep(Recipe recipe, ProductionStep related) : this(recipe)
+		public ProductionStep(Recipe recipe, ProductionStep related) : this(recipe, 1m)
 		{
 			relatedSteps.Add(related);
 			UpdateMultiplierRelativeTo(related);
 		}
 
-		public ProductionStep(Recipe recipe, double multiplier) : base(recipe)
+		public ProductionStep(Recipe recipe, decimal multiplier) : base(recipe)
 		{
 			this.multiplier = multiplier;
 			relatedSteps = new List<ProductionStep>();
@@ -41,7 +36,7 @@ namespace VisualSatisfactoryCalculator.code
 			relatedSteps.Add(step);
 		}
 
-		public void SetMultiplier(double multiplier)
+		private void SetMultiplier(decimal multiplier)
 		{
 			this.multiplier = multiplier;
 			if (control != default(ProductionStepControl))
@@ -50,7 +45,7 @@ namespace VisualSatisfactoryCalculator.code
 			}
 		}
 
-		private void SetMultiplierAndRelated(double multiplier)
+		public void SetMultiplierAndRelated(decimal multiplier)
 		{
 			SetMultiplier(multiplier);
 			foreach (ProductionStep step in relatedSteps)
@@ -77,22 +72,22 @@ namespace VisualSatisfactoryCalculator.code
 			SetMultiplier(CalculateMultiplierForRate(match, origin.CalculateDefaultItemRate(match) * origin.multiplier));
 		}
 
-		private double CalculateDefaultItemRate(Item item)
+		private decimal CalculateDefaultItemRate(Item item)
 		{
-			return 60.0 / GetCraftTime() * GetItemCount(item).GetCount();
+			return 60m / GetCraftTime() * GetItemCount(item).GetCount();
 		}
 
-		public void SetMultiplierAndRelatedRelative(Item item, double rate)
+		public void SetMultiplierAndRelatedRelative(Item item, decimal rate)
 		{
 			SetMultiplierAndRelated(CalculateMultiplierForRate(item, rate));
 		}
 
-		private double CalculateMultiplierForRate(Item item, double rate)
+		private decimal CalculateMultiplierForRate(Item item, decimal rate)
 		{
 			return Math.Abs(rate / CalculateDefaultItemRate(item));
 		}
 
-		public double GetItemRate(Item item)
+		public decimal GetItemRate(Item item)
 		{
 			return CalculateDefaultItemRate(item) * multiplier;
 		}
@@ -113,7 +108,7 @@ namespace VisualSatisfactoryCalculator.code
 			return items;
 		}
 
-		public double GetMultiplier()
+		public decimal GetMultiplier()
 		{
 			return multiplier;
 		}

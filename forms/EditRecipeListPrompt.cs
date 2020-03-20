@@ -16,7 +16,7 @@ namespace VisualSatisfactoryCalculator.forms
 		private readonly List<Recipe> recipes;
 		private readonly IReceives<List<Recipe>> parentForm;
 		private readonly string purpose;
-		SuggestionsController TEMPSC;
+		private readonly SuggestionsController TEMPSC;
 
 		public EditRecipeListPrompt(IReceives<List<Recipe>> parentForm, List<Recipe> recipes, string purpose = null)
 		{
