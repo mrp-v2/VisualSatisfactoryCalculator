@@ -58,7 +58,7 @@ namespace VisualSatisfactoryCalculator.code
 			AddMachine(recipe.GetMachine());
 			foreach (ItemCount ic in recipe.GetItemCounts())
 			{
-				AddItem((ic as Item).ToString());
+				AddItem(ic.ToItemString());
 			}
 		}
 	}
