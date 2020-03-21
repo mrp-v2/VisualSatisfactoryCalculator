@@ -16,6 +16,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 	{
 		private readonly ProductionStep parentStep;
 		private readonly MainForm mainForm;
+		private bool initialized;
 
 		public ProductionStepControl()
 		{
@@ -24,6 +25,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		public ProductionStepControl(ProductionStep parentStep, MainForm mainForm)
 		{
+			initialized = false;
 			InitializeComponent();
 			this.parentStep = parentStep;
 			this.mainForm = mainForm;
@@ -38,6 +40,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 			RecipeLabel.Text = parentStep.ToString();
 			MultiplierChanged();
+			foreach (ItemRateControl irc in GetItemRateControls())
+			{
+				irc.FinishInitialization();
+			}
+			FinishInitialization();
 		}
 
 		public void MultiplierChanged()
@@ -101,7 +108,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		private void MultiplierNumeric_ValueChanged(object sender, EventArgs e)
 		{
-			parentStep.SetMultiplierAndRelated(MultiplierNumeric.Value);
+			if (Enabled && initialized)
+			{
+				Console.WriteLine(e.ToString());
+				parentStep.SetMultiplierAndRelated(MultiplierNumeric.Value);
+			}
 		}
 
 		public void SendObject(Recipe recipe, string purpose)
@@ -114,6 +125,20 @@ namespace VisualSatisfactoryCalculator.controls.user
 		public bool ItemHasRelatedRecipe(Item item)
 		{
 			return parentStep.GetItemsWithRelatedStep().Contains(item);
+		}
+
+		public void ToggleInput(bool on)
+		{
+			foreach (ItemRateControl irc in GetItemRateControls())
+			{
+				irc.ToggleInput(on);
+			}
+			Enabled = on;
+		}
+
+		public void FinishInitialization()
+		{
+			initialized = true;
 		}
 	}
 }

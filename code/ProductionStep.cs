@@ -41,7 +41,9 @@ namespace VisualSatisfactoryCalculator.code
 			this.multiplier = multiplier;
 			if (control != default(ProductionStepControl))
 			{
+				control.ToggleInput(false);
 				control.MultiplierChanged();
+				control.ToggleInput(true);
 			}
 		}
 
@@ -68,7 +70,11 @@ namespace VisualSatisfactoryCalculator.code
 
 		private void UpdateMultiplierRelativeTo(ProductionStep origin)
 		{
-			Item match = itemCounts.GetItems().FindMatch(origin.itemCounts.GetItems());
+			Item match = itemCounts.GetProducts().GetItems().FindMatch(origin.itemCounts.GetIngredients().GetItems());
+			if (match == null)
+			{
+				match = itemCounts.GetIngredients().GetItems().FindMatch(origin.itemCounts.GetProducts().GetItems());
+			}
 			SetMultiplier(CalculateMultiplierForRate(match, origin.CalculateDefaultItemRate(match) * origin.multiplier));
 		}
 

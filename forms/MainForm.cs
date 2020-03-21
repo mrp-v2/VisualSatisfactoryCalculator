@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -103,6 +104,26 @@ namespace VisualSatisfactoryCalculator.forms
 		public void AddProductionStep(ProductionStep step)
 		{
 			plan.AddStep(step);
+		}
+
+		private void SaveChartButton_Click(object sender, EventArgs e)
+		{
+			SaveFileDialog dialog = new SaveFileDialog();
+			dialog.Title = "Save Chart";
+			dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			dialog.Filter = "png images (*.png)|*.png";
+			dialog.DefaultExt = ".png";
+			if (dialog.ShowDialog() == DialogResult.OK)
+			{
+				Stream file;
+				if ((file = dialog.OpenFile()) != null)
+				{
+					Bitmap map = new Bitmap(ProductionPlanPanel.PreferredSize.Width, ProductionPlanPanel.PreferredSize.Height);
+					ProductionPlanPanel.DrawToBitmap(map, new Rectangle(0, 0, map.Width, map.Height));
+					map.Save(file, System.Drawing.Imaging.ImageFormat.Png);
+					file.Close();
+				}
+			}
 		}
 	}
 }

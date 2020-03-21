@@ -34,6 +34,7 @@
 			this.ViewEditGlobalRecipesButton = new System.Windows.Forms.Button();
 			this.SelectFirstRecipeButton = new System.Windows.Forms.Button();
 			this.ProductionPlanPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.SaveChartButton = new System.Windows.Forms.Button();
 			this.MainPanel.SuspendLayout();
 			this.ButtonPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -45,6 +46,7 @@
 			this.MainPanel.Controls.Add(this.ButtonPanel);
 			this.MainPanel.Controls.Add(this.ProductionPlanPanel);
 			this.MainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.MainPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.MainPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainPanel.Name = "MainPanel";
 			this.MainPanel.Size = new System.Drawing.Size(1184, 636);
@@ -56,10 +58,10 @@
 			this.ButtonPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ButtonPanel.Controls.Add(this.ViewEditGlobalRecipesButton);
 			this.ButtonPanel.Controls.Add(this.SelectFirstRecipeButton);
-			this.ButtonPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+			this.ButtonPanel.Controls.Add(this.SaveChartButton);
 			this.ButtonPanel.Location = new System.Drawing.Point(3, 3);
 			this.ButtonPanel.Name = "ButtonPanel";
-			this.ButtonPanel.Size = new System.Drawing.Size(125, 58);
+			this.ButtonPanel.Size = new System.Drawing.Size(318, 29);
 			this.ButtonPanel.TabIndex = 0;
 			// 
 			// ViewEditGlobalRecipesButton
@@ -78,7 +80,7 @@
 			// 
 			this.SelectFirstRecipeButton.AutoSize = true;
 			this.SelectFirstRecipeButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.SelectFirstRecipeButton.Location = new System.Drawing.Point(3, 32);
+			this.SelectFirstRecipeButton.Location = new System.Drawing.Point(128, 3);
 			this.SelectFirstRecipeButton.Name = "SelectFirstRecipeButton";
 			this.SelectFirstRecipeButton.Size = new System.Drawing.Size(106, 23);
 			this.SelectFirstRecipeButton.TabIndex = 2;
@@ -91,11 +93,21 @@
 			this.ProductionPlanPanel.AutoSize = true;
 			this.ProductionPlanPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ProductionPlanPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-			this.ProductionPlanPanel.Location = new System.Drawing.Point(131, 0);
+			this.ProductionPlanPanel.Location = new System.Drawing.Point(0, 35);
 			this.ProductionPlanPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.ProductionPlanPanel.Name = "ProductionPlanPanel";
 			this.ProductionPlanPanel.Size = new System.Drawing.Size(0, 0);
 			this.ProductionPlanPanel.TabIndex = 1;
+			// 
+			// SaveChartButton
+			// 
+			this.SaveChartButton.Location = new System.Drawing.Point(240, 3);
+			this.SaveChartButton.Name = "SaveChartButton";
+			this.SaveChartButton.Size = new System.Drawing.Size(75, 23);
+			this.SaveChartButton.TabIndex = 3;
+			this.SaveChartButton.Text = "Save Chart";
+			this.SaveChartButton.UseVisualStyleBackColor = true;
+			this.SaveChartButton.Click += new System.EventHandler(this.SaveChartButton_Click);
 			// 
 			// MainForm
 			// 
@@ -122,5 +134,6 @@
 		private System.Windows.Forms.Button ViewEditGlobalRecipesButton;
 		private System.Windows.Forms.Button SelectFirstRecipeButton;
 		private System.Windows.Forms.FlowLayoutPanel ProductionPlanPanel;
+		private System.Windows.Forms.Button SaveChartButton;
 	}
 }

@@ -15,6 +15,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 	{
 		private readonly ProductionStepControl parentControl;
 		private readonly Item item;
+		private bool initialized;
 
 		public ItemRateControl() : this(default, default, default)
 		{
@@ -23,6 +24,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		public ItemRateControl(ProductionStepControl parentControl, Item item, decimal rate)
 		{
+			initialized = false;
 			InitializeComponent();
 			this.parentControl = parentControl;
 			this.item = item;
@@ -36,7 +38,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		private void RateNumeric_ValueChanged(object sender, EventArgs e)
 		{
-			parentControl.RateChanged(item, RateNumeric.Value);
+			if (Enabled && initialized)
+			{
+				Console.WriteLine(e.ToString());
+				parentControl.RateChanged(item, RateNumeric.Value);
+			}
 		}
 
 		private void ItemButton_Click(object sender, EventArgs e)
@@ -55,6 +61,16 @@ namespace VisualSatisfactoryCalculator.controls.user
 		public Item GetItem()
 		{
 			return item;
+		}
+
+		public void ToggleInput(bool on)
+		{
+			Enabled = on;
+		}
+
+		public void FinishInitialization()
+		{
+			initialized = true;
 		}
 	}
 }
