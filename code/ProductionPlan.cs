@@ -54,7 +54,7 @@ namespace VisualSatisfactoryCalculator.code
 			Dictionary<string, int> totalMachines = new Dictionary<string, int>();
 			foreach (ProductionStep step in steps)
 			{
-				if (totalMachines.ContainsKey(step.GetMachine()))
+				if (!totalMachines.ContainsKey(step.GetMachine()))
 				{
 					totalMachines.Add(step.GetMachine(), step.CalculateMachineCount());
 				}
@@ -64,6 +64,45 @@ namespace VisualSatisfactoryCalculator.code
 				}
 			}
 			return totalMachines;
+		}
+
+		public string GetTotalMachineString()
+		{
+			string total = "";
+			Dictionary<string, int> machines = TotalMachineCount();
+			foreach (string str in machines.Keys)
+			{
+				total += machines[str] + " " + str + "\n";
+			}
+			return total;
+		}
+
+		public string GetNetProductsString()
+		{
+			string str = "Products: ";
+			Dictionary<Item, decimal> netRates = NetRates();
+			foreach (Item i in netRates.Keys)
+			{
+				if (netRates[i] > 0 && Math.Round(netRates[i], 5) != 0)
+				{
+					str += Math.Round(netRates[i], 5) + " " + i.ToItemString() + ", ";
+				}
+			}
+			return str;
+		}
+
+		public string GetNetIngredientsString()
+		{
+			string str = "Ingredients: ";
+			Dictionary<Item, decimal> netRates = NetRates();
+			foreach (Item i in netRates.Keys)
+			{
+				if (netRates[i] < 0 && Math.Round(netRates[i], 5) != 0)
+				{
+					str += Math.Round(-netRates[i], 5) + " " + i.ToItemString() + ", ";
+				}
+			}
+			return str;
 		}
 	}
 }

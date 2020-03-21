@@ -80,13 +80,19 @@ namespace VisualSatisfactoryCalculator.forms
 				c.Dispose();
 			}
 			ProductionPlanPanel.Controls.Clear();
-			for (int i = tiers.Keys.Count - 1; i >= 0; i--)
+			ProductionPlanTotalViewControl netView = new ProductionPlanTotalViewControl();
+			netView.NetProductsLabel.Text = plan.GetNetProductsString();
+			netView.MachinesLabel.Text = plan.GetTotalMachineString();
+			netView.NetIngredientsLabel.Text = plan.GetNetIngredientsString();
+			ProductionPlanPanel.Controls.Add(netView);
+			for (int i = 0; i < tiers.Count; i++)
 			{
 				FlowLayoutPanel flp = new FlowLayoutPanel
 				{
 					AutoSizeMode = AutoSizeMode.GrowAndShrink,
 					AutoSize = true,
-					Margin = new Padding(0)					
+					Margin = new Padding(3),
+					WrapContents = false,
 				};
 				ProductionPlanPanel.Controls.Add(flp);
 				foreach (ProductionStep step in tiers[i])
@@ -110,7 +116,7 @@ namespace VisualSatisfactoryCalculator.forms
 		{
 			SaveFileDialog dialog = new SaveFileDialog();
 			dialog.Title = "Save Chart";
-			dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+			dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
 			dialog.Filter = "png images (*.png)|*.png";
 			dialog.DefaultExt = ".png";
 			if (dialog.ShowDialog() == DialogResult.OK)

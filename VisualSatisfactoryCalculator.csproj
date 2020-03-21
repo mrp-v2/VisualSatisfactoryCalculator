@@ -69,6 +69,12 @@
     <Compile Include="controls\user\ItemRateControl.Designer.cs">
       <DependentUpon>ItemRateControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="controls\user\ProductionPlanTotalViewControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="controls\user\ProductionPlanTotalViewControl.Designer.cs">
+      <DependentUpon>ProductionPlanTotalViewControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -108,6 +114,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="controls\user\ItemRateControl.resx">
       <DependentUpon>ItemRateControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="controls\user\ProductionPlanTotalViewControl.resx">
+      <DependentUpon>ProductionPlanTotalViewControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="forms\CreateItemAndCountPrompt.resx">
       <DependentUpon>CreateItemAndCountPrompt.cs</DependentUpon>

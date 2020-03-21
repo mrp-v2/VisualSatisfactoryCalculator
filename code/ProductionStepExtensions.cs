@@ -35,10 +35,10 @@ namespace VisualSatisfactoryCalculator.code
 			for (int i = 0; i < me.Count; i++)
 			{
 				List<ProductionStep> currentTier = new List<ProductionStep>();
-				List<Item> AllRemainingProducts = cloned.CastToRecipeList().GetAllProductItems();
+				List<Item> AllRemainingIngredients = cloned.CastToRecipeList().GetAllIngredientItems();
 				foreach (ProductionStep recipe in cloned)
 				{
-					if (!recipe.GetIngredientItems().ContainsAny(AllRemainingProducts))
+					if (!recipe.GetProductItems().ContainsAny(AllRemainingIngredients))
 					{
 						currentTier.Add(recipe);
 					}
@@ -53,6 +53,7 @@ namespace VisualSatisfactoryCalculator.code
 					return tiers;
 				}
 			}
+			Console.WriteLine("There are more tiers than recipes? This should not happen!");
 			return tiers;
 		}
 	}

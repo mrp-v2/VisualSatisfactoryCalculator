@@ -41,7 +41,7 @@
 			// 
 			// MainPanel
 			// 
-			this.MainPanel.AutoSize = true;
+			this.MainPanel.AutoScroll = true;
 			this.MainPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.MainPanel.Controls.Add(this.ButtonPanel);
 			this.MainPanel.Controls.Add(this.ProductionPlanPanel);
@@ -51,6 +51,7 @@
 			this.MainPanel.Name = "MainPanel";
 			this.MainPanel.Size = new System.Drawing.Size(1184, 636);
 			this.MainPanel.TabIndex = 0;
+			this.MainPanel.WrapContents = false;
 			// 
 			// ButtonPanel
 			// 
@@ -123,7 +124,6 @@
 			this.ButtonPanel.ResumeLayout(false);
 			this.ButtonPanel.PerformLayout();
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
 		}
 

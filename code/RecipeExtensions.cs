@@ -19,6 +19,16 @@ namespace VisualSatisfactoryCalculator.code
 			return str;
 		}
 
+		public static List<Item> GetAllIngredientItems(this List<Recipe> me)
+		{
+			List<Item> ingredients = new List<Item>();
+			foreach (Recipe rec in me)
+			{
+				ingredients.AddRange(rec.GetIngredientItems());
+			}
+			return ingredients;
+		}
+
 		public static List<Item> GetAllProductItems(this List<Recipe> me)
 		{
 			List<Item> products = new List<Item>();
