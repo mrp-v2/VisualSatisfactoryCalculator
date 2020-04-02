@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using VisualSatisfactoryCalculator.code;
 
@@ -77,6 +71,23 @@ namespace VisualSatisfactoryCalculator.forms
 		{
 			SuggestionsController.SC = TEMPSC;
 			Close();
+		}
+
+		private void SyncWithSaveButton_Click(object sender, EventArgs e)
+		{
+			OpenFileDialog dialog = new OpenFileDialog()
+			{
+				Title = "Select a save file",
+				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\FactoryGame\\Saved\\SaveGames\\",
+				DefaultExt = ".sav",
+				Filter = "save files (*.sav)|*.sav"
+			};
+			if (dialog.ShowDialog() == DialogResult.OK)
+			{
+				recipes.Clear();
+				recipes.AddRange(SaveFileInteractor.GetRecipesFromSave(dialog.FileName));
+				UpdateListVisual();
+			}
 		}
 	}
 }

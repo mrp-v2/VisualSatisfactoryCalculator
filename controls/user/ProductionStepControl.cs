@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using VisualSatisfactoryCalculator.code;
 using VisualSatisfactoryCalculator.forms;
@@ -15,7 +9,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 	public partial class ProductionStepControl : UserControl, IReceives<Recipe>
 	{
 		private readonly ProductionStep parentStep;
-		private readonly MainForm mainForm;
+		public readonly MainForm mainForm;
 		private bool initialized;
 
 		public ProductionStepControl()
@@ -79,7 +73,8 @@ namespace VisualSatisfactoryCalculator.controls.user
 				if (parentStep.GetProductItems().Contains(item))
 				{
 					new SelectRecipePrompt(mainForm.GetAllRecipes().GetRecipesThatConsume(item), this, null).ShowDialog();
-				} else if (parentStep.GetIngredientItems().Contains(item))
+				}
+				else if (parentStep.GetIngredientItems().Contains(item))
 				{
 					new SelectRecipePrompt(mainForm.GetAllRecipes().GetRecipesThatProduce(item), this, null).ShowDialog();
 				}
@@ -112,6 +107,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				Console.WriteLine(e.ToString());
 				parentStep.SetMultiplierAndRelated(MultiplierNumeric.Value);
+				mainForm.UpdateTotalView();
 			}
 		}
 

@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using VisualSatisfactoryCalculator.code;
 
@@ -42,6 +35,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				Console.WriteLine(e.ToString());
 				parentControl.RateChanged(item, RateNumeric.Value);
+				parentControl.mainForm.UpdateTotalView();
 			}
 		}
 

@@ -37,6 +37,7 @@
 			this.RecipeInteractionPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.ControlPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.MainContainer = new System.Windows.Forms.SplitContainer();
+			this.SyncWithSaveButton = new System.Windows.Forms.Button();
 			this.RecipeInteractionPanel.SuspendLayout();
 			this.ControlPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MainContainer)).BeginInit();
@@ -109,9 +110,10 @@
 			this.RecipeInteractionPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.RecipeInteractionPanel.Controls.Add(this.AddRecipeButton);
 			this.RecipeInteractionPanel.Controls.Add(this.RemoveRecipeButton);
+			this.RecipeInteractionPanel.Controls.Add(this.SyncWithSaveButton);
 			this.RecipeInteractionPanel.Location = new System.Drawing.Point(3, 3);
 			this.RecipeInteractionPanel.Name = "RecipeInteractionPanel";
-			this.RecipeInteractionPanel.Size = new System.Drawing.Size(179, 29);
+			this.RecipeInteractionPanel.Size = new System.Drawing.Size(298, 29);
 			this.RecipeInteractionPanel.TabIndex = 5;
 			// 
 			// ControlPanel
@@ -146,6 +148,18 @@
 			this.MainContainer.Size = new System.Drawing.Size(498, 246);
 			this.MainContainer.SplitterDistance = 35;
 			this.MainContainer.TabIndex = 7;
+			// 
+			// SyncWithSaveButton
+			// 
+			this.SyncWithSaveButton.AutoSize = true;
+			this.SyncWithSaveButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.SyncWithSaveButton.Location = new System.Drawing.Point(182, 3);
+			this.SyncWithSaveButton.Name = "SyncWithSaveButton";
+			this.SyncWithSaveButton.Size = new System.Drawing.Size(113, 23);
+			this.SyncWithSaveButton.TabIndex = 3;
+			this.SyncWithSaveButton.Text = "Sync With Save File";
+			this.SyncWithSaveButton.UseVisualStyleBackColor = true;
+			this.SyncWithSaveButton.Click += new System.EventHandler(this.SyncWithSaveButton_Click);
 			// 
 			// EditRecipeListPrompt
 			// 
@@ -185,5 +199,6 @@
 		private System.Windows.Forms.FlowLayoutPanel RecipeInteractionPanel;
 		private System.Windows.Forms.FlowLayoutPanel ControlPanel;
 		private System.Windows.Forms.SplitContainer MainContainer;
+		private System.Windows.Forms.Button SyncWithSaveButton;
 	}
 }

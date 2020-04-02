@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using VisualSatisfactoryCalculator.code;
 using VisualSatisfactoryCalculator.controls.user;
@@ -26,6 +21,7 @@ namespace VisualSatisfactoryCalculator.forms
 		private const string firstRecipePurpose = "first recipe";
 		private List<Recipe> AllRecipes;
 		private ProductionPlan plan;
+		private ProductionPlanTotalViewControl PPTVC;
 
 		public MainForm()
 		{
@@ -80,11 +76,9 @@ namespace VisualSatisfactoryCalculator.forms
 				c.Dispose();
 			}
 			ProductionPlanPanel.Controls.Clear();
-			ProductionPlanTotalViewControl netView = new ProductionPlanTotalViewControl();
-			netView.NetProductsLabel.Text = plan.GetNetProductsString();
-			netView.MachinesLabel.Text = plan.GetTotalMachineString();
-			netView.NetIngredientsLabel.Text = plan.GetNetIngredientsString();
-			ProductionPlanPanel.Controls.Add(netView);
+			PPTVC = new ProductionPlanTotalViewControl();
+			UpdateTotalView();
+			ProductionPlanPanel.Controls.Add(PPTVC);
 			for (int i = 0; i < tiers.Count; i++)
 			{
 				FlowLayoutPanel flp = new FlowLayoutPanel
@@ -114,11 +108,13 @@ namespace VisualSatisfactoryCalculator.forms
 
 		private void SaveChartButton_Click(object sender, EventArgs e)
 		{
-			SaveFileDialog dialog = new SaveFileDialog();
-			dialog.Title = "Save Chart";
-			dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-			dialog.Filter = "png images (*.png)|*.png";
-			dialog.DefaultExt = ".png";
+			SaveFileDialog dialog = new SaveFileDialog
+			{
+				Title = "Save Chart",
+				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+				Filter = "png images (*.png)|*.png",
+				DefaultExt = ".png"
+			};
 			if (dialog.ShowDialog() == DialogResult.OK)
 			{
 				Stream file;
@@ -130,6 +126,13 @@ namespace VisualSatisfactoryCalculator.forms
 					file.Close();
 				}
 			}
+		}
+
+		public void UpdateTotalView()
+		{
+			PPTVC.NetProductsLabel.Text = plan.GetNetProductsString();
+			PPTVC.MachinesLabel.Text = plan.GetTotalMachineString();
+			PPTVC.NetIngredientsLabel.Text = plan.GetNetIngredientsString();
 		}
 	}
 }

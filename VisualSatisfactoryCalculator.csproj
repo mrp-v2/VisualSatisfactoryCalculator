@@ -36,6 +36,22 @@
     <ApplicationIcon>VisualSatisfactoryCalculatorIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DotNetZip">
+      <HintPath>packages\DotNetZip.1.13.4\lib\net40\DotNetZip.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight">
+      <HintPath>packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Extras">
+      <HintPath>packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Extras.dll</HintPath>
+    </Reference>
+    <Reference Include="GalaSoft.MvvmLight.Platform">
+      <HintPath>packages\MvvmLightLibs.5.4.1.1\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
@@ -50,19 +66,92 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="code\GenericExtensions.cs" />
-    <Compile Include="code\IReceives.cs" />
-    <Compile Include="code\Item.cs" />
-    <Compile Include="code\ItemCountExtensions.cs" />
-    <Compile Include="code\ProductionPlan.cs" />
-    <Compile Include="code\ProductionStep.cs" />
-    <Compile Include="code\ProductionStepExtensions.cs" />
-    <Compile Include="code\Recipe.cs" />
-    <Compile Include="code\ItemCount.cs" />
-    <Compile Include="code\RecipeExtensions.cs" />
-    <Compile Include="code\NumberExtensions.cs" />
-    <Compile Include="code\SaveLoad.cs" />
-    <Compile Include="code\SuggestionsController.cs" />
+    <Compile Include="code\MyCode\GenericExtensions.cs" />
+    <Compile Include="code\MyCode\JSONItem.cs" />
+    <Compile Include="code\MyCode\JSONItemListExtensions.cs" />
+    <Compile Include="code\MyCode\JSONRecipe.cs" />
+    <Compile Include="code\MyCode\ResearchToRecipeMapping.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\AddViewModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\ArrayPropertyViewModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\BoolPropertyViewModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\BytePropertyViewModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\DynamicStructDataViewModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\EditorTreeNode.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\EnumPropertyViewModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\FloatPropertyViewModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\Int64PropertyViewModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\InterfacePropertyViewModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\IntPropertyViewModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\MapPropertyViewModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\NamePropertyViewModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\ObjectPropertyViewModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\PropertyViewModelMapper.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\Research.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\SaveComponentModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\SaveEntityModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\SaveObjectModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\ArrayProperty.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\BoolProperty.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\Box.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\ByteProperty.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\Color.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\DynamicStructData.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\EnumProperty.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\FloatProperty.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\FluidBox.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\Guid.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\Int64Property.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\InterfaceProperty.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\IntProperty.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\InventoryItem.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\IObjectReference.cs" />
+    <Compile Include="code\MyCode\IReceives.cs" />
+    <Compile Include="code\MyCode\Item.cs" />
+    <Compile Include="code\MyCode\ItemCountExtensions.cs" />
+    <Compile Include="code\MyCode\ProductionPlan.cs" />
+    <Compile Include="code\MyCode\ProductionStep.cs" />
+    <Compile Include="code\MyCode\ProductionStepExtensions.cs" />
+    <Compile Include="code\MyCode\Recipe.cs" />
+    <Compile Include="code\MyCode\ItemCount.cs" />
+    <Compile Include="code\MyCode\RecipeExtensions.cs" />
+    <Compile Include="code\MyCode\NumberExtensions.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\BinaryIOExtensions.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\ChunkInfo.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\ESessionVisibility.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\FSaveCustomVersion.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\FSaveHeader.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\IStructData.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\LinearColor.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\MapProperty.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\NameProperty.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\ObjectProperty.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\ObjectReference.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\Quat.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\RailroadTrackPosition.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\Rotator.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\SatisfactorySave.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\SaveHeaderVersion.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\SaveObject.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\SaveRootModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\SerializedFields.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\SerializedProperty.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\SerializedPropertyViewModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\SetProperty.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\SetPropertyViewModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\StrProperty.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\StrPropertyViewModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\StructProperty.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\StructPropertyViewModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\TextProperty.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\TextPropertyViewModel.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\Vector.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\Vector3.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\Vector4.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\SaveComponent.cs" />
+    <Compile Include="code\SatisfactorySaveEditorCode\SaveEntity.cs" />
+    <Compile Include="code\MyCode\SaveFileInteractor.cs" />
+    <Compile Include="code\MyCode\SaveLoad.cs" />
+    <Compile Include="code\MyCode\SuggestionsController.cs" />
     <Compile Include="controls\user\ItemRateControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -146,6 +235,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="code\SatisfactorySaveEditorCode\Research.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
