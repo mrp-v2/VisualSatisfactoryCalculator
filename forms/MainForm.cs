@@ -53,16 +53,15 @@ namespace VisualSatisfactoryCalculator.forms
 			switch (purpose)
 			{
 				case firstRecipePurpose:
-					plan = new ProductionPlan(this);
-					ProductionStep ps = new ProductionStep(recipe, 1m);
-					plan.AddStep(ps);
+					plan = new ProductionPlan(recipe);
+					PlanUpdated();
 					break;
 			}
 		}
 
 		public void PlanUpdated()
 		{
-			Dictionary<int, List<ProductionStep>> tiers = plan.GetAllSteps().ToTierList();
+			Dictionary<sbyte, List<ProductionStep>> tiers = plan.GetTierList();
 			foreach (Control c in ProductionPlanPanel.Controls)
 			{
 				c.Dispose();
@@ -71,7 +70,7 @@ namespace VisualSatisfactoryCalculator.forms
 			PPTVC = new ProductionPlanTotalViewControl();
 			UpdateTotalView();
 			ProductionPlanPanel.Controls.Add(PPTVC);
-			for (int i = 0; i < tiers.Count; i++)
+			for (sbyte i = 0; i < tiers.Count; i++)
 			{
 				FlowLayoutPanel flp = new FlowLayoutPanel
 				{
@@ -91,11 +90,6 @@ namespace VisualSatisfactoryCalculator.forms
 		public List<JSONRecipe> GetAllRecipes()
 		{
 			return AllRecipes.ShallowClone();
-		}
-
-		public void AddProductionStep(ProductionStep step)
-		{
-			plan.AddStep(step);
 		}
 
 		private void SaveChartButton_Click(object sender, EventArgs e)

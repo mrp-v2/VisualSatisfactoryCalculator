@@ -115,5 +115,56 @@ namespace VisualSatisfactoryCalculator.code
 		{
 			return multiplier;
 		}
+
+		protected Dictionary<sbyte, List<ProductionStep>> GetRelativeTiersRecursively(ProductionStep relativeTo, sbyte origin)
+		{
+			Dictionary<sbyte, List<ProductionStep>> tiers = new Dictionary<sbyte, List<ProductionStep>>();
+			sbyte above = origin, below = origin;
+			above -= 1;
+			below += 1;
+			foreach (ProductionStep step in relatedSteps)
+			{
+				if (!step.Equals(relativeTo))
+				{
+					if (step.itemCounts.GetIngredients().ContainsAny(itemCounts.GetProducts(), JSONItem.blank))
+					{
+						if (!tiers.ContainsKey(above))
+						{
+							tiers.Add(above, new List<ProductionStep>());
+						}
+						tiers[above].Add(step);
+						tiers.AddRange(step.GetRelativeTiersRecursively(this, above));
+					}
+					else if (step.itemCounts.GetProducts().ContainsAny(itemCounts.GetIngredients(), JSONItem.blank))
+					{
+						if (!tiers.ContainsKey(below))
+						{
+							tiers.Add(below, new List<ProductionStep>());
+						}
+						tiers[below].Add(step);
+						tiers.AddRange(step.GetRelativeTiersRecursively(this, below));
+					}
+					else
+					{
+						throw new ArgumentException("Unable to find a product/ingredient relationship between this and the given step.");
+					}
+				}
+			}
+			return tiers;
+		}
+
+		protected List<ProductionStep> GetAllStepsRecursively(ProductionStep origin)
+		{
+			List<ProductionStep> list = new List<ProductionStep>();
+			foreach (ProductionStep step in relatedSteps)
+			{
+				if (!step.Equals(origin))
+				{
+					list.Add(step);
+					list.AddRange(step.GetAllStepsRecursively(this));
+				}
+			}
+			return list;
+		}
 	}
 }

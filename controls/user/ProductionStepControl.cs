@@ -120,7 +120,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			ProductionStep ps = new ProductionStep(recipe, parentStep);
 			parentStep.AddRelatedStep(ps);
-			mainForm.AddProductionStep(ps);
+			mainForm.PlanUpdated();
 		}
 
 		public bool ItemHasRelatedRecipe(JSONItem item)

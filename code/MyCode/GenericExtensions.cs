@@ -148,5 +148,17 @@ namespace VisualSatisfactoryCalculator.code
 			merged.AddRange(other);
 			return merged;
 		}
+
+		public static void AddRange<T, Y>(this Dictionary<T, List<Y>> me, Dictionary<T, List<Y>> other)
+		{
+			foreach (T key in other.Keys)
+			{
+				if (!me.ContainsKey(key))
+				{
+					me.Add(key, new List<Y>());
+				}
+				me[key].AddRange(other[key]);
+			}
+		}
 	}
 }
