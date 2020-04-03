@@ -122,8 +122,8 @@ namespace VisualSatisfactoryCalculator.code
 
 		public override string ToString()
 		{
-			string str = "";
-			List<ItemCount> ingredients = itemCounts.Inverse();
+			string str = mDisplayName + ": ";
+			List<ItemCount> ingredients = itemCounts.GetIngredients().Inverse();
 			for (int i = 0; i < ingredients.Count; i++)
 			{
 				if (i > 0)
