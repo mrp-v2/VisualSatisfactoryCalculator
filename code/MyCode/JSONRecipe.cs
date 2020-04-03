@@ -32,7 +32,12 @@ namespace VisualSatisfactoryCalculator.code
 			this.mProducedIn = mProducedIn;
 		}
 
-		public JSONRecipe(JSONRecipe recipe) : this(recipe.ClassName, recipe.mDisplayName, recipe.mIngredients, recipe.mProduct, recipe.mManufactoringDuration, recipe.mProducedIn) { }
+		public JSONRecipe(JSONRecipe recipe) : this(recipe.ClassName, recipe.mDisplayName, recipe.mIngredients, recipe.mProduct, recipe.mManufactoringDuration, recipe.mProducedIn) 
+		{
+			itemCounts = recipe.itemCounts;
+			machineName = recipe.machineName;
+			craftTime = recipe.craftTime;
+		}
 
 		public void Initialize(List<JSONItem> items)
 		{

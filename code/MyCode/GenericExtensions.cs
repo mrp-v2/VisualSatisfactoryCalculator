@@ -6,11 +6,11 @@ namespace VisualSatisfactoryCalculator.code
 {
 	static class GenericExtensions
 	{
-		public static bool ContainsAny<T>(this IEnumerable<T> me, IEnumerable<T> other)
+		public static bool ContainsAny<T>(this IEnumerable<T> me, IEnumerable<T> other, IEqualityComparer<T> comparer)
 		{
 			foreach (T item in other)
 			{
-				if (me.Contains(item))
+				if (me.Contains(item, comparer))
 				{
 					return true;
 				}

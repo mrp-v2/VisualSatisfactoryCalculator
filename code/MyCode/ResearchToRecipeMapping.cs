@@ -44,7 +44,7 @@ namespace VisualSatisfactoryCalculator.code
 			{"Schematic_4-1_C", new string[] { "Recipe_EncasedIndustrialBeam_C", "Recipe_Stator_C", "Recipe_Motor_C", "Recipe_SpaceElevatorPart_3_C", "Recipe_ModularFrameHeavy_C" } },
 			{"Schematic_4-2_C", new string[] { } },
 			{"Schematic_4-4_C", new string[] { } },
-			{"Schematic_5-1_C", new string[] { "Recipe_Plastic_C", "Recipe_Rubber_C", "Recipe_LiquidFuel_C", "Recipe_PetroleumCoke_C", "Recipe_CircuitBoard_C" } },
+			{"Schematic_5-1_C", new string[] { "Recipe_Plastic_C", "Recipe_Rubber_C", "Recipe_LiquidFuel_C", "Recipe_PetroleumCoke_C", "Recipe_CircuitBoard_C", "Recipe_ResidualFuel_C", "Recipe_ResidualPlastic_C", "Recipe_ResidualRubber_C" } },
 			{"Schematic_5-1-1_C", new string[] {} },
 			{"Schematic_5-2_C", new string[] { "Recipe_Computer_C", "Recipe_SpaceElevatorPart_4_C", "Recipe_SpaceElevatorPart_5_C" } },
 			{"Schematic_5-3_C", new string[] { "Recipe_UnpackageBioFuel_C", "Recipe_UnpackageFuel_C", "Recipe_UnpackageOil_C", "Recipe_UnpackageOilResidue_C", "Recipe_UnpackageWater_C", "Recipe_FluidCanister_C", "Recipe_Fuel_C", "Recipe_LiquidBiofuel_C", "Recipe_PackagedBiofuel_C", "Recipe_PackagedCrudeOil_C", "Recipe_PackagedOilResidue_C", "Recipe_PackagedWater_C" } },

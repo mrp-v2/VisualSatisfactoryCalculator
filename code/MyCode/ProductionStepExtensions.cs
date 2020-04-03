@@ -35,7 +35,7 @@ namespace VisualSatisfactoryCalculator.code
 				List<JSONItem> AllRemainingIngredients = cloned.CastToRecipeList().GetAllIngredientItems();
 				foreach (ProductionStep recipe in cloned)
 				{
-					if (!recipe.GetItemCounts().GetProducts().ContainsAny(AllRemainingIngredients))
+					if (!recipe.GetItemCounts().GetProducts().ContainsAny(AllRemainingIngredients, JSONItem.blank))
 					{
 						currentTier.Add(recipe);
 					}

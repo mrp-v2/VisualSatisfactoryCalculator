@@ -49,7 +49,7 @@ namespace VisualSatisfactoryCalculator.code
 		{
 			foreach (ItemCount count in me)
 			{
-				if (item.Equals(count))
+				if (JSONItem.blank.Equals(count, item))
 				{
 					return true;
 				}
@@ -61,7 +61,7 @@ namespace VisualSatisfactoryCalculator.code
 		{
 			foreach (ItemCount count in me)
 			{
-				if (item.Equals(count))
+				if (JSONItem.blank.Equals(count, item))
 				{
 					return count;
 				}

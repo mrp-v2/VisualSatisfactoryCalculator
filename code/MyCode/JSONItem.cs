@@ -25,14 +25,14 @@ namespace VisualSatisfactoryCalculator.code
 
 		public override int GetHashCode()
 		{
-			return ClassName.GetHashCode();
+			return GetHashCode(this);
 		}
 
 		public override bool Equals(object obj)
 		{
 			if (obj == null) return false;
 			if (!(obj is JSONItem)) return false;
-			return ClassName.Equals((obj as JSONItem).ClassName);
+			return Equals(this, obj as JSONItem);
 		}
 
 		public bool EqualID(string id)
@@ -52,12 +52,12 @@ namespace VisualSatisfactoryCalculator.code
 
 		public bool Equals(JSONItem x, JSONItem y)
 		{
-			return x.Equals(y);
+			return x.ClassName.Equals(y.ClassName);
 		}
 
 		public int GetHashCode(JSONItem obj)
 		{
-			return obj.GetHashCode();
+			return obj.ClassName.GetHashCode();
 		}
 
 		public static readonly JSONItem blank = new JSONItem(null, null, null);

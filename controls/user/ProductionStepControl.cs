@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using VisualSatisfactoryCalculator.code;
 using VisualSatisfactoryCalculator.forms;
@@ -64,7 +65,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		public void ItemClicked(JSONItem item)
 		{
-			if (parentStep.GetItemsWithRelatedStep().Contains(item))
+			if (parentStep.GetItemsWithRelatedStep().Contains(item, JSONItem.blank))
 			{
 
 			}
@@ -77,6 +78,10 @@ namespace VisualSatisfactoryCalculator.controls.user
 				else if (parentStep.GetItemCounts().GetIngredients().ContainsItem(item))
 				{
 					new SelectRecipePrompt(mainForm.GetAllRecipes().GetRecipesThatProduce(item), this, null).ShowDialog();
+				}
+				else
+				{
+					throw new ArgumentException();
 				}
 			}
 		}
@@ -120,7 +125,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		public bool ItemHasRelatedRecipe(JSONItem item)
 		{
-			return parentStep.GetItemsWithRelatedStep().Contains(item);
+			return parentStep.GetItemsWithRelatedStep().Contains(item, JSONItem.blank);
 		}
 
 		public void ToggleInput(bool on)
