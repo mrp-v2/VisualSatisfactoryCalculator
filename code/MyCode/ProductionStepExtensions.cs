@@ -15,9 +15,9 @@ namespace VisualSatisfactoryCalculator.code
 			return list;
 		}
 
-		public static List<Recipe> CastToRecipeList(this List<ProductionStep> me)
+		public static List<JSONRecipe> CastToRecipeList(this List<ProductionStep> me)
 		{
-			List<Recipe> list = new List<Recipe>();
+			List<JSONRecipe> list = new List<JSONRecipe>();
 			foreach (ProductionStep ps in me)
 			{
 				list.Add(ps);
@@ -32,10 +32,10 @@ namespace VisualSatisfactoryCalculator.code
 			for (int i = 0; i < me.Count; i++)
 			{
 				List<ProductionStep> currentTier = new List<ProductionStep>();
-				List<Item> AllRemainingIngredients = cloned.CastToRecipeList().GetAllIngredientItems();
+				List<JSONItem> AllRemainingIngredients = cloned.CastToRecipeList().GetAllIngredientItems();
 				foreach (ProductionStep recipe in cloned)
 				{
-					if (!recipe.GetProductItems().ContainsAny(AllRemainingIngredients))
+					if (!recipe.GetItemCounts().GetProducts().ContainsAny(AllRemainingIngredients))
 					{
 						currentTier.Add(recipe);
 					}

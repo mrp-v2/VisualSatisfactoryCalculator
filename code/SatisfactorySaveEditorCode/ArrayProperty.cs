@@ -49,7 +49,7 @@ namespace SatisfactorySaveParser.PropertyTypes
 			return $"array of {Type}";
 		}
 
-		public static ArrayProperty Parse(string propertyName, int index, BinaryReader reader, int size, out int overhead)
+		public static ArrayProperty Parse(string propertyName, int index, BinaryReader reader, out int overhead)
 		{
 			var result = new ArrayProperty(propertyName, index)
 			{

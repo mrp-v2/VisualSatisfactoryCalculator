@@ -5,20 +5,6 @@ namespace VisualSatisfactoryCalculator.code
 	public static class ItemCountExtensions
 	{
 		/// <summary>
-		/// Returns a new list that is a combination of this list and another list
-		/// </summary>
-		/// <param name="me"></param>
-		/// <param name="other"></param>
-		/// <returns></returns>
-		public static List<ItemCount> Merge(this List<ItemCount> me, List<ItemCount> other)
-		{
-			List<ItemCount> merged = new List<ItemCount>();
-			merged.AddRange(me);
-			merged.AddRange(other);
-			return merged;
-		}
-
-		/// <summary>
 		/// Returns a clone of this list in which the count for each ItemCount has been multiplied by -1
 		/// </summary>
 		/// <param name="me"></param>
@@ -59,83 +45,28 @@ namespace VisualSatisfactoryCalculator.code
 			return ingredients;
 		}
 
-		/// <summary>
-		/// Checks for equality based on equal contents, regardless of order
-		/// </summary>
-		/// <param name="me"></param>
-		/// <param name="other"></param>
-		/// <returns></returns>
-		public static bool EqualContents(this List<ItemCount> me, List<ItemCount> other)
+		public static bool ContainsItem(this List<ItemCount> me, JSONItem item)
 		{
-			if (me.Count != other.Count)
+			foreach (ItemCount count in me)
 			{
-				return false;
-			}
-			Dictionary<ItemCount, int> meCounts = new Dictionary<ItemCount, int>();
-			foreach (ItemCount ic in me)
-			{
-				if (meCounts.ContainsKey(ic))
+				if (item.Equals(count))
 				{
-					meCounts[ic]++;
-				}
-				else
-				{
-					meCounts.Add(ic, 1);
+					return true;
 				}
 			}
-			Dictionary<ItemCount, int> otherCounts = new Dictionary<ItemCount, int>();
-			foreach (ItemCount ic in other)
-			{
-				if (otherCounts.ContainsKey(ic))
-				{
-					otherCounts[ic]++;
-				}
-				else
-				{
-					otherCounts.Add(ic, 1);
-				}
-			}
-			foreach (ItemCount ic in meCounts.Keys)
-			{
-				try
-				{
-					if (meCounts[ic] != otherCounts[ic])
-					{
-						return false;
-					}
-				}
-#pragma warning disable CS0168 // Variable is declared but never used
-				catch (KeyNotFoundException e)
-#pragma warning restore CS0168 // Variable is declared but never used
-				{
-					return false;
-				}
-
-			}
-			return true;
+			return false;
 		}
 
-		public static List<Item> GetItems(this List<ItemCount> me)
+		public static ItemCount GetCountFor(this List<ItemCount> me, JSONItem item)
 		{
-			List<Item> items = new List<Item>();
-			foreach (ItemCount ic in me)
+			foreach (ItemCount count in me)
 			{
-				items.Add(ic.ToItem());
-			}
-			return items;
-		}
-
-		public static List<ItemCount> CastToItemCountList(this List<object> me)
-		{
-			List<ItemCount> list = new List<ItemCount>();
-			foreach (object obj in me)
-			{
-				if (obj is ItemCount)
+				if (item.Equals(count))
 				{
-					list.Add(obj as ItemCount);
+					return count;
 				}
 			}
-			return list;
+			return default;
 		}
 	}
 }

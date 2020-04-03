@@ -9,13 +9,10 @@ namespace SatisfactorySaveEditor.ViewModel.Struct
 {
 	public class DynamicStructDataViewModel : ViewModelBase
 	{
-		private readonly DynamicStructData model;
 		public ObservableCollection<SerializedPropertyViewModel> Fields { get; }
 
 		public DynamicStructDataViewModel(DynamicStructData dynamicStruct)
 		{
-			model = dynamicStruct;
-
 			Fields = new ObservableCollection<SerializedPropertyViewModel>(dynamicStruct.Fields.Select(PropertyViewModelMapper.Convert));
 		}
 	}

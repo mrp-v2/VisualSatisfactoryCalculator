@@ -31,10 +31,9 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.MainPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.ButtonPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this.ViewEditGlobalRecipesButton = new System.Windows.Forms.Button();
 			this.SelectFirstRecipeButton = new System.Windows.Forms.Button();
-			this.ProductionPlanPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.SaveChartButton = new System.Windows.Forms.Button();
+			this.ProductionPlanPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.MainPanel.SuspendLayout();
 			this.ButtonPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -57,37 +56,34 @@
 			// 
 			this.ButtonPanel.AutoSize = true;
 			this.ButtonPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ButtonPanel.Controls.Add(this.ViewEditGlobalRecipesButton);
 			this.ButtonPanel.Controls.Add(this.SelectFirstRecipeButton);
 			this.ButtonPanel.Controls.Add(this.SaveChartButton);
 			this.ButtonPanel.Location = new System.Drawing.Point(3, 3);
 			this.ButtonPanel.Name = "ButtonPanel";
-			this.ButtonPanel.Size = new System.Drawing.Size(318, 29);
+			this.ButtonPanel.Size = new System.Drawing.Size(193, 29);
 			this.ButtonPanel.TabIndex = 0;
-			// 
-			// ViewEditGlobalRecipesButton
-			// 
-			this.ViewEditGlobalRecipesButton.AutoSize = true;
-			this.ViewEditGlobalRecipesButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ViewEditGlobalRecipesButton.Location = new System.Drawing.Point(3, 3);
-			this.ViewEditGlobalRecipesButton.Name = "ViewEditGlobalRecipesButton";
-			this.ViewEditGlobalRecipesButton.Size = new System.Drawing.Size(119, 23);
-			this.ViewEditGlobalRecipesButton.TabIndex = 1;
-			this.ViewEditGlobalRecipesButton.Text = "View/Edit All Recipes";
-			this.ViewEditGlobalRecipesButton.UseVisualStyleBackColor = true;
-			this.ViewEditGlobalRecipesButton.Click += new System.EventHandler(this.ViewEditGlobalRecipesButton_Click);
 			// 
 			// SelectFirstRecipeButton
 			// 
 			this.SelectFirstRecipeButton.AutoSize = true;
 			this.SelectFirstRecipeButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.SelectFirstRecipeButton.Location = new System.Drawing.Point(128, 3);
+			this.SelectFirstRecipeButton.Location = new System.Drawing.Point(3, 3);
 			this.SelectFirstRecipeButton.Name = "SelectFirstRecipeButton";
 			this.SelectFirstRecipeButton.Size = new System.Drawing.Size(106, 23);
 			this.SelectFirstRecipeButton.TabIndex = 2;
 			this.SelectFirstRecipeButton.Text = "Select First Recipe";
 			this.SelectFirstRecipeButton.UseVisualStyleBackColor = true;
 			this.SelectFirstRecipeButton.Click += new System.EventHandler(this.SelectFirstRecipeButton_Click);
+			// 
+			// SaveChartButton
+			// 
+			this.SaveChartButton.Location = new System.Drawing.Point(115, 3);
+			this.SaveChartButton.Name = "SaveChartButton";
+			this.SaveChartButton.Size = new System.Drawing.Size(75, 23);
+			this.SaveChartButton.TabIndex = 3;
+			this.SaveChartButton.Text = "Save Chart";
+			this.SaveChartButton.UseVisualStyleBackColor = true;
+			this.SaveChartButton.Click += new System.EventHandler(this.SaveChartButton_Click);
 			// 
 			// ProductionPlanPanel
 			// 
@@ -99,16 +95,6 @@
 			this.ProductionPlanPanel.Name = "ProductionPlanPanel";
 			this.ProductionPlanPanel.Size = new System.Drawing.Size(0, 0);
 			this.ProductionPlanPanel.TabIndex = 1;
-			// 
-			// SaveChartButton
-			// 
-			this.SaveChartButton.Location = new System.Drawing.Point(240, 3);
-			this.SaveChartButton.Name = "SaveChartButton";
-			this.SaveChartButton.Size = new System.Drawing.Size(75, 23);
-			this.SaveChartButton.TabIndex = 3;
-			this.SaveChartButton.Text = "Save Chart";
-			this.SaveChartButton.UseVisualStyleBackColor = true;
-			this.SaveChartButton.Click += new System.EventHandler(this.SaveChartButton_Click);
 			// 
 			// MainForm
 			// 
@@ -131,7 +117,6 @@
 
 		private System.Windows.Forms.FlowLayoutPanel MainPanel;
 		private System.Windows.Forms.FlowLayoutPanel ButtonPanel;
-		private System.Windows.Forms.Button ViewEditGlobalRecipesButton;
 		private System.Windows.Forms.Button SelectFirstRecipeButton;
 		private System.Windows.Forms.FlowLayoutPanel ProductionPlanPanel;
 		private System.Windows.Forms.Button SaveChartButton;

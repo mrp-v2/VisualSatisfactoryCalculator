@@ -8,7 +8,7 @@ using VisualSatisfactoryCalculator.controls.user;
 
 namespace VisualSatisfactoryCalculator.forms
 {
-	public partial class MainForm : Form, IReceives<List<Recipe>>, IReceives<Recipe>
+	public partial class MainForm : Form, IReceives<JSONRecipe>
 	{
 		[STAThread]
 		public static void Main()
@@ -17,38 +17,30 @@ namespace VisualSatisfactoryCalculator.forms
 			Application.Run(new MainForm());
 		}
 
-		private const string recipeListFileName = "recipes.list";
 		private const string firstRecipePurpose = "first recipe";
-		private List<Recipe> AllRecipes;
+		private readonly List<JSONRecipe> AllRecipes;
 		private ProductionPlan plan;
 		private ProductionPlanTotalViewControl PPTVC;
 
 		public MainForm()
 		{
 			InitializeComponent();
-			AllRecipes = SaveLoad.Load<List<Recipe>>(recipeListFileName);
-			SuggestionsController.SC = new SuggestionsController(AllRecipes);
-			if (AllRecipes == null)
+			OpenFileDialog dialog = new OpenFileDialog()
 			{
-				AllRecipes = new List<Recipe>();
+				Title = "Select a save file",
+				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\FactoryGame\\Saved\\SaveGames\\",
+				DefaultExt = ".sav",
+				Filter = "save files (*.sav)|*.sav"
+			};
+			if (dialog.ShowDialog() == DialogResult.OK)
+			{
+				AllRecipes = new List<JSONRecipe>();
+				AllRecipes.AddRange(SaveFileInteractor.GetRecipesFromSave(dialog.FileName));
+			} else
+			{
+				Close();
 			}
-		}
-
-		private void ViewEditGlobalRecipesButton_Click(object sender, EventArgs e)
-		{
-			new EditRecipeListPrompt(this, AllRecipes.Clone().CastToRecipeList()).ShowDialog();
-		}
-
-		public void SendObject(List<Recipe> recipes, string purpose = null)
-		{
-			AllRecipes = recipes;
 			SuggestionsController.SC = new SuggestionsController(AllRecipes);
-			SaveAllRecipesList();
-		}
-
-		private void SaveAllRecipesList()
-		{
-			SaveLoad.Save(recipeListFileName, AllRecipes);
 		}
 
 		private void SelectFirstRecipeButton_Click(object sender, EventArgs e)
@@ -56,7 +48,7 @@ namespace VisualSatisfactoryCalculator.forms
 			new SelectRecipePrompt(AllRecipes, this, firstRecipePurpose).ShowDialog();
 		}
 
-		public void SendObject(Recipe recipe, string purpose)
+		public void SendObject(JSONRecipe recipe, string purpose)
 		{
 			switch (purpose)
 			{
@@ -96,7 +88,7 @@ namespace VisualSatisfactoryCalculator.forms
 			}
 		}
 
-		public List<Recipe> GetAllRecipes()
+		public List<JSONRecipe> GetAllRecipes()
 		{
 			return AllRecipes.ShallowClone();
 		}

@@ -7,7 +7,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 	public partial class ItemRateControl : UserControl
 	{
 		private readonly ProductionStepControl parentControl;
-		private readonly Item item;
+		private readonly JSONItem item;
 		private bool initialized;
 
 		public ItemRateControl() : this(default, default, default)
@@ -15,13 +15,13 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		}
 
-		public ItemRateControl(ProductionStepControl parentControl, Item item, decimal rate)
+		public ItemRateControl(ProductionStepControl parentControl, JSONItem item, decimal rate)
 		{
 			initialized = false;
 			InitializeComponent();
 			this.parentControl = parentControl;
 			this.item = item;
-			ItemButton.Text = item.ToItemString();
+			ItemButton.Text = item.ToString();
 			RateNumeric.Value = rate.Abs();
 			if (parentControl.ItemHasRelatedRecipe(item))
 			{
@@ -52,7 +52,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 		}
 
-		public Item GetItem()
+		public JSONItem GetItem()
 		{
 			return item;
 		}

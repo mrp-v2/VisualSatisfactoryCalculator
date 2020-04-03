@@ -39,7 +39,7 @@ namespace SatisfactorySaveParser.PropertyTypes
 			switch (fieldType)
 			{
 				case ArrayProperty.TypeName:
-					result = ArrayProperty.Parse(propertyName, index, reader, size, out overhead);
+					result = ArrayProperty.Parse(propertyName, index, reader, out overhead);
 					break;
 				case FloatProperty.TypeName:
 					overhead = 1;
@@ -82,7 +82,7 @@ namespace SatisfactorySaveParser.PropertyTypes
 					result = TextProperty.Parse(propertyName, index, reader);
 					break;
 				case SetProperty.TypeName:
-					result = SetProperty.Parse(propertyName, index, reader, size, out overhead);
+					result = SetProperty.Parse(propertyName, index, reader, out overhead);
 					break;
 				case Int64Property.TypeName:
 					overhead = 1;

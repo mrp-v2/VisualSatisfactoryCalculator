@@ -7,15 +7,15 @@ namespace VisualSatisfactoryCalculator.forms
 {
 	public partial class SelectRecipePrompt : Form
 	{
-		private readonly IReceives<Recipe> parent;
+		private readonly IReceives<JSONRecipe> parent;
 		private readonly string purpose;
 
-		public SelectRecipePrompt(List<Recipe> options, IReceives<Recipe> parent, string purpose)
+		public SelectRecipePrompt(List<JSONRecipe> options, IReceives<JSONRecipe> parent, string purpose)
 		{
 			InitializeComponent();
 			this.parent = parent;
 			this.purpose = purpose;
-			foreach (Recipe rec in options)
+			foreach (JSONRecipe rec in options)
 			{
 				RecipesList.Items.Add(rec);
 			}
@@ -23,9 +23,9 @@ namespace VisualSatisfactoryCalculator.forms
 
 		private void YesButton_Click(object sender, EventArgs e)
 		{
-			if (RecipesList.SelectedItem is Recipe)
+			if (RecipesList.SelectedItem is JSONRecipe)
 			{
-				parent.SendObject(RecipesList.SelectedItem as Recipe, purpose);
+				parent.SendObject(RecipesList.SelectedItem as JSONRecipe, purpose);
 				Close();
 			}
 		}

@@ -23,7 +23,7 @@ namespace SatisfactorySaveParser.PropertyTypes
 			return $"set: ";
 		}
 
-		public static SetProperty Parse(string propertyName, int index, BinaryReader reader, int size, out int overhead)
+		public static SetProperty Parse(string propertyName, int index, BinaryReader reader, out int overhead)
 		{
 			var result = new SetProperty(propertyName, index)
 			{

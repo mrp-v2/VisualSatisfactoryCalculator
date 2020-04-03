@@ -18,11 +18,11 @@ namespace VisualSatisfactoryCalculator.code
 			return false;
 		}
 
-		public static T FindMatch<T>(this IEnumerable<T> me, IEnumerable<T> other)
+		public static T FindMatch<T>(this IEnumerable<T> me, IEnumerable<T> other, IEqualityComparer<T> comparer)
 		{
 			foreach (T item in me)
 			{
-				if (other.Contains(item))
+				if (other.Contains(item, comparer))
 				{
 					return item;
 				}
@@ -30,14 +30,14 @@ namespace VisualSatisfactoryCalculator.code
 			return default;
 		}
 
-		public static List<T> FindMatches<T>(this List<T> me, List<T> other)
+		public static List<T> FindMatches<T>(this IEnumerable<T> me, IEnumerable<T> other, IEqualityComparer<T> comparer)
 		{
 			List<T> matches = new List<T>();
 			foreach (T item in me)
 			{
-				if (other.Contains(item))
+				if (other.Contains(item, comparer))
 				{
-					matches.AddIfNew(item);
+					matches.Add(item);
 				}
 			}
 			return matches;
@@ -59,14 +59,94 @@ namespace VisualSatisfactoryCalculator.code
 			}
 		}
 
-		public static List<object> Clone<T>(this List<T> me) where T : ICloneable
+		public static List<T> Clone<T>(this List<T> me) where T : IMyCloneable<T>
 		{
-			List<object> cloned = new List<object>();
+			List<T> cloned = new List<T>();
 			foreach (T item in me)
 			{
 				cloned.Add(item.Clone());
 			}
 			return cloned;
+		}
+
+		public static List<T> ShallowClone<T>(this List<T> me)
+		{
+			List<T> list = new List<T>();
+			foreach (T rec in me)
+			{
+				list.Add(rec);
+			}
+			return list;
+		}
+
+		/// <summary>
+		/// Checks for equality based on equal contents, regardless of order
+		/// </summary>
+		/// <param name="me"></param>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public static bool EqualContents<T>(this List<T> me, List<T> other)
+		{
+			if (me.Count != other.Count)
+			{
+				return false;
+			}
+			Dictionary<T, int> meCounts = new Dictionary<T, int>();
+			foreach (T item in me)
+			{
+				if (meCounts.ContainsKey(item))
+				{
+					meCounts[item]++;
+				}
+				else
+				{
+					meCounts.Add(item, 1);
+				}
+			}
+			Dictionary<T, int> otherCounts = new Dictionary<T, int>();
+			foreach (T item in other)
+			{
+				if (otherCounts.ContainsKey(item))
+				{
+					otherCounts[item]++;
+				}
+				else
+				{
+					otherCounts.Add(item, 1);
+				}
+			}
+			foreach (T ic in meCounts.Keys)
+			{
+				try
+				{
+					if (meCounts[ic] != otherCounts[ic])
+					{
+						return false;
+					}
+				}
+#pragma warning disable CS0168 // Variable is declared but never used
+				catch (KeyNotFoundException e)
+#pragma warning restore CS0168 // Variable is declared but never used
+				{
+					return false;
+				}
+
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Returns a new list that is a combination of this list and another list
+		/// </summary>
+		/// <param name="me"></param>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public static List<T> Merge<T>(this List<T> me, List<T> other)
+		{
+			List<T> merged = new List<T>();
+			merged.AddRange(me);
+			merged.AddRange(other);
+			return merged;
 		}
 	}
 }

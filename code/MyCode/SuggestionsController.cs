@@ -9,16 +9,16 @@ namespace VisualSatisfactoryCalculator.code
 		protected List<string> items;
 		protected List<string> machines;
 
-		public SuggestionsController(List<Recipe> allRecipes)
+		public SuggestionsController(List<JSONRecipe> allRecipes)
 		{
 			items = new List<string>();
 			machines = new List<string>();
-			foreach (Recipe rec in allRecipes)
+			foreach (JSONRecipe rec in allRecipes)
 			{
 				AddMachine(rec.GetMachine());
 				foreach (ItemCount ic in rec.GetItemCounts())
 				{
-					AddItem(ic.ToItemString());
+					AddItem(ic.ItemToString());
 				}
 			}
 		}
@@ -49,12 +49,12 @@ namespace VisualSatisfactoryCalculator.code
 			}
 		}
 
-		public void AddRecipe(Recipe recipe)
+		public void AddRecipe(JSONRecipe recipe)
 		{
 			AddMachine(recipe.GetMachine());
 			foreach (ItemCount ic in recipe.GetItemCounts())
 			{
-				AddItem(ic.ToItemString());
+				AddItem(ic.ItemToString());
 			}
 		}
 	}

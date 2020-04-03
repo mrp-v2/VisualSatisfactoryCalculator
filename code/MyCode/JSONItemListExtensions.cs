@@ -8,37 +8,25 @@ namespace VisualSatisfactoryCalculator.code
 {
 	public static class JSONItemListExtensions
 	{
-		public static string GetDisplayNameFor(this List<JSONItem> me, string uniqueID)
+		public static JSONItem GetJSONItemFor(this List<JSONItem> me, string uniqueID)
 		{
 			foreach (JSONItem item in me)
 			{
-				if (item.ClassName == uniqueID)
+				if (item.EqualID(uniqueID))
 				{
-					return item.mDisplayName;
+					return item;
 				}
 			}
-			return "Unknown Item";
+			return default;
 		}
 
-		public static bool IsLiquid(this List<JSONItem> me , string uniqueID)
-		{
-			foreach (JSONItem item in me)
-			{
-				if (item.ClassName == uniqueID)
-				{
-					return item.mForm == "RF_LIQUID";
-				}
-			}
-			return false;
-		}
-
-		public static Recipe GetRecipeFor(this List<JSONRecipe> me, List<JSONItem> descriptors, string id)
+		public static JSONRecipe GetRecipeFor(this List<JSONRecipe> me, string id)
 		{
 			foreach (JSONRecipe recipe in me)
 			{
-				if (recipe.ClassName == id)
+				if (recipe.EqualID(id))
 				{
-					return recipe.ToRecipe(descriptors);
+					return recipe;
 				}
 			}
 			return null;

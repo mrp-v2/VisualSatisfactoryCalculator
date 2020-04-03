@@ -3,11 +3,11 @@
 namespace VisualSatisfactoryCalculator.code
 {
 	[Serializable]
-	public class ItemCount : Item, ICloneable
+	public class ItemCount : JSONItem, IMyCloneable<ItemCount>, ICastAndCopy<JSONItem>
 	{
 		protected readonly int count;
 
-		public ItemCount(string item, int count) : base(item)
+		public ItemCount(JSONItem item, int count) : base(item)
 		{
 			this.count = count;
 		}
@@ -22,9 +22,9 @@ namespace VisualSatisfactoryCalculator.code
 			return count + " " + base.ToString();
 		}
 
-		public static ItemCount FromString(string str)
+		public string ItemToString()
 		{
-			return new ItemCount(str.Substring(str.IndexOf(' ') + 1), int.Parse(str.Substring(0, str.IndexOf(' '))));
+			return base.ToString();
 		}
 
 		public override int GetHashCode()
@@ -34,11 +34,11 @@ namespace VisualSatisfactoryCalculator.code
 
 		public override bool Equals(object obj)
 		{
-			if (!(obj is Item))
+			if (!(obj is JSONItem))
 			{
 				return false;
 			}
-			if (!base.Equals(obj as Item))
+			if (!base.Equals(obj as JSONItem))
 			{
 				return false;
 			}
@@ -51,17 +51,17 @@ namespace VisualSatisfactoryCalculator.code
 
 		public ItemCount Inverse()
 		{
-			return new ItemCount(item, -count);
+			return new ItemCount(this, -count);
 		}
 
-		public object Clone()
+		public ItemCount Clone()
 		{
-			return new ItemCount(item, count);
+			return new ItemCount(this, count);
 		}
 
-		public Item ToItem()
+		public JSONItem CastAndCopy()
 		{
-			return new Item(item);
+			return new JSONItem(this);
 		}
 	}
 }

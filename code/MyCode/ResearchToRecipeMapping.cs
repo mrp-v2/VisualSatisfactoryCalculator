@@ -132,30 +132,30 @@ namespace VisualSatisfactoryCalculator.code
 			{"Schematic_Alternate_TurboFuel_C", new string[] { "Recipe_Alternate_Turbofuel_C" } },
 		};
 
-		public static List<Recipe> GetRecipesForResearch(string research, List<JSONRecipe> recipes, List<JSONItem> descriptors)
+		public static List<JSONRecipe> GetRecipesForResearch(string research, List<JSONRecipe> recipes)
 		{
 			if (mapping.ContainsKey(research))
 			{
-				List<Recipe> unlockedRecipes = new List<Recipe>();
+				List<JSONRecipe> unlockedRecipes = new List<JSONRecipe>();
 				foreach (string str in mapping[research])
 				{
-					unlockedRecipes.Add(recipes.GetRecipeFor(descriptors, str));
+					unlockedRecipes.Add(recipes.GetRecipeFor(str));
 				}
 				return unlockedRecipes;
 			}
 			if (research.Contains("ResourceSink") || research.Contains("HardDrive") || research.Contains("Inventory"))
 			{
-				return new List<Recipe>();
+				return new List<JSONRecipe>();
 			}
 			if (research.StartsWith("Schematic_Alternate"))
 			{
 				string temp = research.Remove(0, "Schematic".Length);
 				temp = temp.Insert(0, "Recipe");
 				temp = SeperateNumbers(temp);
-				return new List<Recipe>() { recipes.GetRecipeFor(descriptors, temp) };
+				return new List<JSONRecipe>() { recipes.GetRecipeFor(temp) };
 			}
 			Console.WriteLine("Research " + research + " does not have a mapping!");
-			return new List<Recipe>();
+			return new List<JSONRecipe>();
 		}
 
 		private static readonly char[] numbers = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };

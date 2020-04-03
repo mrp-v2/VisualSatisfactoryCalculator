@@ -4,19 +4,19 @@ using VisualSatisfactoryCalculator.controls.user;
 
 namespace VisualSatisfactoryCalculator.code
 {
-	public class ProductionStep : Recipe
+	public class ProductionStep : JSONRecipe
 	{
 		private decimal multiplier;
 		private readonly List<ProductionStep> relatedSteps;
 		private ProductionStepControl control;
 
-		public ProductionStep(Recipe recipe, ProductionStep related) : this(recipe, 1m)
+		public ProductionStep(JSONRecipe recipe, ProductionStep related) : this(recipe, 1m)
 		{
 			relatedSteps.Add(related);
 			UpdateMultiplierRelativeTo(related);
 		}
 
-		public ProductionStep(Recipe recipe, decimal multiplier) : base(recipe)
+		public ProductionStep(JSONRecipe recipe, decimal multiplier) : base(recipe)
 		{
 			this.multiplier = multiplier;
 			relatedSteps = new List<ProductionStep>();
@@ -67,30 +67,30 @@ namespace VisualSatisfactoryCalculator.code
 
 		private void UpdateMultiplierRelativeTo(ProductionStep origin)
 		{
-			Item match = itemCounts.GetProducts().GetItems().FindMatch(origin.itemCounts.GetIngredients().GetItems());
+			JSONItem match = itemCounts.GetProducts().FindMatch(origin.itemCounts.GetIngredients(), JSONItem.blank);
 			if (match == null)
 			{
-				match = itemCounts.GetIngredients().GetItems().FindMatch(origin.itemCounts.GetProducts().GetItems());
+				match = itemCounts.GetIngredients().FindMatch(origin.itemCounts.GetProducts(), JSONItem.blank);
 			}
 			SetMultiplier(CalculateMultiplierForRate(match, origin.CalculateDefaultItemRate(match) * origin.multiplier));
 		}
 
-		private decimal CalculateDefaultItemRate(Item item)
+		private decimal CalculateDefaultItemRate(JSONItem item)
 		{
-			return 60m / GetCraftTime() * GetItemCount(item).GetCount();
+			return 60m / craftTime * itemCounts.GetCountFor(item).GetCount();
 		}
 
-		public void SetMultiplierAndRelatedRelative(Item item, decimal rate)
+		public void SetMultiplierAndRelatedRelative(JSONItem item, decimal rate)
 		{
 			SetMultiplierAndRelated(CalculateMultiplierForRate(item, rate));
 		}
 
-		private decimal CalculateMultiplierForRate(Item item, decimal rate)
+		private decimal CalculateMultiplierForRate(JSONItem item, decimal rate)
 		{
 			return Math.Abs(rate / CalculateDefaultItemRate(item));
 		}
 
-		public decimal GetItemRate(Item item)
+		public decimal GetItemRate(JSONItem item)
 		{
 			return CalculateDefaultItemRate(item) * multiplier;
 		}
@@ -100,13 +100,13 @@ namespace VisualSatisfactoryCalculator.code
 			this.control = control;
 		}
 
-		public List<Item> GetItemsWithRelatedStep()
+		public List<JSONItem> GetItemsWithRelatedStep()
 		{
-			List<Item> items = new List<Item>();
+			List<JSONItem> items = new List<JSONItem>();
 			foreach (ProductionStep step in relatedSteps)
 			{
-				items.AddRangeIfNew(step.GetIngredientItems().FindMatches(GetProductItems()));
-				items.AddRangeIfNew(step.GetProductItems().FindMatches(GetIngredientItems()));
+				items.AddRangeIfNew(step.itemCounts.GetIngredients().FindMatches(itemCounts.GetProducts(), JSONItem.blank));
+				items.AddRangeIfNew(step.itemCounts.GetProducts().FindMatches(itemCounts.GetIngredients(), JSONItem.blank));
 			}
 			return items;
 		}

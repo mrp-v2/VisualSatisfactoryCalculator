@@ -12,7 +12,7 @@ namespace VisualSatisfactoryCalculator.code
 {
 	public class SaveFileInteractor
 	{
-		public static List<Recipe> GetRecipesFromSave(string saveFile)
+		public static List<JSONRecipe> GetRecipesFromSave(string saveFile)
 		{
 			//get information on unlocked recipes
 			SatisfactorySave save = new SatisfactorySave(saveFile);
@@ -31,10 +31,14 @@ namespace VisualSatisfactoryCalculator.code
 			SaveObjectModel schematics = root.FindChild("Persistent_Level:PersistentLevel.schematicManager", false);
 			//get information on items
 			string jsonFile = File.ReadAllText("C:\\Program Files\\Epic Games\\SatisfactoryEarlyAccess\\CommunityResources\\Docs\\Docs.json");
-			List<JToken> results = GetSection(jsonFile, "FactoryGame.FGItemDescriptor", "FactoryGame.FGRecipe");
+			List<JToken> results = new List<JToken>();
+			results.AddRange(GetSection(jsonFile, "FactoryGame.FGPoleDescriptor", "FactoryGame.FGItemDescriptor"));
+			results.AddRange(GetSection(jsonFile, "FactoryGame.FGItemDescriptor", "FactoryGame.FGRecipe"));
+			results.AddRange(GetSection(jsonFile, "FactoryGame.FGBuildingDescriptor", "FactoryGame.FGBuildableWire"));
 			results.AddRange(GetSection(jsonFile, "FactoryGame.FGItemDescriptorBiomass", "FactoryGame.FGChainsaw"));
-			results.AddRange(GetSection(jsonFile, "FactoryGame.FGResourceDescriptor", "FactoryGame.FGGolfCartDispenser"));
 			results.AddRange(GetSection(jsonFile, "FactoryGame.FGEquipmentDescriptor", "FactoryGame.FGBuildableGeneratorFuel"));
+			results.AddRange(GetSection(jsonFile, "FactoryGame.FGResourceDescriptor", "FactoryGame.FGGolfCartDispenser"));
+			results.AddRange(GetSection(jsonFile, "FactoryGame.FGVehicleDescriptor", "FactoryGame.FGConsumableDescriptor"));
 			results.AddRange(GetSection(jsonFile, "FactoryGame.FGConsumableDescriptor", "FactoryGame.FGBuildablePipelineSupport"));
 			results.AddRange(GetSection(jsonFile, "FactoryGame.FGItemDescriptorNuclearFuel", "FactoryGame.FGBuildableFoundation"));
 			List<JSONItem> itemResults = new List<JSONItem>();
@@ -49,8 +53,12 @@ namespace VisualSatisfactoryCalculator.code
 			{
 				recipeResults.Add(token.ToObject<JSONRecipe>());
 			}
+			foreach (JSONRecipe recipe in recipeResults)
+			{
+				recipe.Initialize(itemResults);
+			}
 			//use the information
-			List<Recipe> unlockedRecipes = new List<Recipe>();
+			List<JSONRecipe> unlockedRecipes = new List<JSONRecipe>();
 			foreach (SerializedPropertyViewModel field in schematics.Fields)
 			{
 				if (field.PropertyName == "mPurchasedSchematics")
@@ -64,7 +72,7 @@ namespace VisualSatisfactoryCalculator.code
 						if (element is ObjectPropertyViewModel opvm)
 						{
 							string id = opvm.Str2.Substring(opvm.Str2.IndexOf(".") + 1);
-							unlockedRecipes.AddRange(ResearchToRecipeMapping.GetRecipesForResearch(id, recipeResults, itemResults));
+							unlockedRecipes.AddRange(ResearchToRecipeMapping.GetRecipesForResearch(id, recipeResults));
 						}
 					}
 				}

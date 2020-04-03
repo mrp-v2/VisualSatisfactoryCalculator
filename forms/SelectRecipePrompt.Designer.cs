@@ -78,7 +78,7 @@
 			this.ButtonPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ButtonPanel.Controls.Add(this.YesButton);
 			this.ButtonPanel.Controls.Add(this.NoButton);
-			this.ButtonPanel.Location = new System.Drawing.Point(3, 294);
+			this.ButtonPanel.Location = new System.Drawing.Point(3, 286);
 			this.ButtonPanel.Name = "ButtonPanel";
 			this.ButtonPanel.Size = new System.Drawing.Size(113, 29);
 			this.ButtonPanel.TabIndex = 3;

@@ -26,20 +26,21 @@ namespace VisualSatisfactoryCalculator.code
 			return steps;
 		}
 
-		public Dictionary<Item, decimal> NetRates()
+		public Dictionary<JSONItem, decimal> NetRates()
 		{
-			Dictionary<Item, decimal> netRates = new Dictionary<Item, decimal>();
+			Dictionary<JSONItem, decimal> netRates = new Dictionary<JSONItem, decimal>();
 			foreach (ProductionStep step in steps)
 			{
 				foreach (ItemCount ic in step.GetItemCounts())
 				{
-					if (netRates.ContainsKey(ic.ToItem()))
+					JSONItem castNCopy = ic.CastAndCopy();
+					if (netRates.ContainsKey(castNCopy))
 					{
-						netRates[ic.ToItem()] += step.GetItemRate(ic.ToItem());
+						netRates[castNCopy] += step.GetItemRate(castNCopy);
 					}
 					else
 					{
-						netRates.Add(ic.ToItem(), step.GetItemRate(ic.ToItem()));
+						netRates.Add(castNCopy, step.GetItemRate(castNCopy));
 					}
 				}
 			}
@@ -77,12 +78,12 @@ namespace VisualSatisfactoryCalculator.code
 		public string GetNetProductsString()
 		{
 			string str = "Products: ";
-			Dictionary<Item, decimal> netRates = NetRates();
-			foreach (Item i in netRates.Keys)
+			Dictionary<JSONItem, decimal> netRates = NetRates();
+			foreach (JSONItem i in netRates.Keys)
 			{
 				if (netRates[i] > 0 && Math.Round(netRates[i], 5) != 0)
 				{
-					str += Math.Round(netRates[i], 5) + " " + i.ToItemString() + ", ";
+					str += Math.Round(netRates[i], 5) + " " + i.ToString() + ", ";
 				}
 			}
 			return str;
@@ -91,12 +92,12 @@ namespace VisualSatisfactoryCalculator.code
 		public string GetNetIngredientsString()
 		{
 			string str = "Ingredients: ";
-			Dictionary<Item, decimal> netRates = NetRates();
-			foreach (Item i in netRates.Keys)
+			Dictionary<JSONItem, decimal> netRates = NetRates();
+			foreach (JSONItem i in netRates.Keys)
 			{
 				if (netRates[i] < 0 && Math.Round(netRates[i], 5) != 0)
 				{
-					str += Math.Round(-netRates[i], 5) + " " + i.ToItemString() + ", ";
+					str += Math.Round(-netRates[i], 5) + " " + i.ToString() + ", ";
 				}
 			}
 			return str;

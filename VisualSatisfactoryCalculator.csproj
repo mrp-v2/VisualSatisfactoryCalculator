@@ -67,9 +67,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="code\MyCode\GenericExtensions.cs" />
+    <Compile Include="code\MyCode\ICastAndCopy.cs" />
     <Compile Include="code\MyCode\JSONItem.cs" />
     <Compile Include="code\MyCode\JSONItemListExtensions.cs" />
     <Compile Include="code\MyCode\JSONRecipe.cs" />
+    <Compile Include="code\MyCode\IMyCloneable.cs" />
     <Compile Include="code\MyCode\ResearchToRecipeMapping.cs" />
     <Compile Include="code\SatisfactorySaveEditorCode\AddViewModel.cs" />
     <Compile Include="code\SatisfactorySaveEditorCode\ArrayPropertyViewModel.cs" />
@@ -106,14 +108,12 @@
     <Compile Include="code\SatisfactorySaveEditorCode\InventoryItem.cs" />
     <Compile Include="code\SatisfactorySaveEditorCode\IObjectReference.cs" />
     <Compile Include="code\MyCode\IReceives.cs" />
-    <Compile Include="code\MyCode\Item.cs" />
     <Compile Include="code\MyCode\ItemCountExtensions.cs" />
     <Compile Include="code\MyCode\ProductionPlan.cs" />
     <Compile Include="code\MyCode\ProductionStep.cs" />
     <Compile Include="code\MyCode\ProductionStepExtensions.cs" />
-    <Compile Include="code\MyCode\Recipe.cs" />
     <Compile Include="code\MyCode\ItemCount.cs" />
-    <Compile Include="code\MyCode\RecipeExtensions.cs" />
+    <Compile Include="code\MyCode\JSONRecipeExtensions.cs" />
     <Compile Include="code\MyCode\NumberExtensions.cs" />
     <Compile Include="code\SatisfactorySaveEditorCode\BinaryIOExtensions.cs" />
     <Compile Include="code\SatisfactorySaveEditorCode\ChunkInfo.cs" />
@@ -170,29 +170,11 @@
     <Compile Include="forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="forms\CreateItemAndCountPrompt.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="forms\CreateItemAndCountPrompt.Designer.cs">
-      <DependentUpon>CreateItemAndCountPrompt.cs</DependentUpon>
-    </Compile>
     <Compile Include="controls\user\ProductionStepControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="controls\user\ProductionStepControl.Designer.cs">
       <DependentUpon>ProductionStepControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="forms\CreateRecipePrompt.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="forms\CreateRecipePrompt.Designer.cs">
-      <DependentUpon>CreateRecipePrompt.cs</DependentUpon>
-    </Compile>
-    <Compile Include="forms\EditRecipeListPrompt.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="forms\EditRecipeListPrompt.Designer.cs">
-      <DependentUpon>EditRecipeListPrompt.cs</DependentUpon>
     </Compile>
     <Compile Include="forms\SelectRecipePrompt.cs">
       <SubType>Form</SubType>
@@ -207,20 +189,11 @@
     <EmbeddedResource Include="controls\user\ProductionPlanTotalViewControl.resx">
       <DependentUpon>ProductionPlanTotalViewControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="forms\CreateItemAndCountPrompt.resx">
-      <DependentUpon>CreateItemAndCountPrompt.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="controls\user\ProductionStepControl.resx">
       <DependentUpon>ProductionStepControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="forms\CreateRecipePrompt.resx">
-      <DependentUpon>CreateRecipePrompt.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="forms\EditRecipeListPrompt.resx">
-      <DependentUpon>EditRecipeListPrompt.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="forms\SelectRecipePrompt.resx">
       <DependentUpon>SelectRecipePrompt.cs</DependentUpon>
