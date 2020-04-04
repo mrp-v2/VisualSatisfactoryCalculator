@@ -114,7 +114,7 @@ namespace VisualSatisfactoryCalculator.code
 			{"Research_Quartz_4_C", new string[] { } },
 			{"Research_Quartz_4_1_C", new string[] { } },
 			{"Research_Sulfur_0_C", new string[] { } },
-			{"Research_Sulfur_1_C", new string[] { "Recipe_Gunpowder_C" } },
+			{"Research_Sulfur_1_C", new string[] { "Recipe_Gunpowder_C", "Recipe_Nobelisk_C", "Recipe_Cartridge_C" } },
 			{"Research_Sulfur_2_C", new string[] { } },
 			{"Research_Sulfur_3_C", new string[] { } },
 			{"Research_Sulfur_3_1_C", new string[] { } },
