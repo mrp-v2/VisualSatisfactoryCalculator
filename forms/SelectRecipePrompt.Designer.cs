@@ -28,21 +28,25 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SelectRecipePrompt));
 			this.RecipesList = new System.Windows.Forms.ListBox();
 			this.YesButton = new System.Windows.Forms.Button();
 			this.NoButton = new System.Windows.Forms.Button();
 			this.ButtonPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.MainPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.FilterBox = new System.Windows.Forms.TextBox();
 			this.ButtonPanel.SuspendLayout();
 			this.MainPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// RecipesList
 			// 
+			this.RecipesList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.RecipesList.FormattingEnabled = true;
-			this.RecipesList.Location = new System.Drawing.Point(3, 3);
+			this.RecipesList.ItemHeight = 16;
+			this.RecipesList.Location = new System.Drawing.Point(3, 29);
 			this.RecipesList.Name = "RecipesList";
-			this.RecipesList.Size = new System.Drawing.Size(808, 277);
+			this.RecipesList.Size = new System.Drawing.Size(1176, 372);
 			this.RecipesList.TabIndex = 0;
 			// 
 			// YesButton
@@ -78,7 +82,7 @@
 			this.ButtonPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ButtonPanel.Controls.Add(this.YesButton);
 			this.ButtonPanel.Controls.Add(this.NoButton);
-			this.ButtonPanel.Location = new System.Drawing.Point(3, 286);
+			this.ButtonPanel.Location = new System.Drawing.Point(3, 407);
 			this.ButtonPanel.Name = "ButtonPanel";
 			this.ButtonPanel.Size = new System.Drawing.Size(113, 29);
 			this.ButtonPanel.TabIndex = 3;
@@ -87,14 +91,25 @@
 			// 
 			this.MainPanel.AutoSize = true;
 			this.MainPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.MainPanel.Controls.Add(this.FilterBox);
 			this.MainPanel.Controls.Add(this.RecipesList);
 			this.MainPanel.Controls.Add(this.ButtonPanel);
 			this.MainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.MainPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainPanel.Name = "MainPanel";
-			this.MainPanel.Size = new System.Drawing.Size(823, 328);
+			this.MainPanel.Size = new System.Drawing.Size(1184, 439);
 			this.MainPanel.TabIndex = 4;
+			// 
+			// FilterBox
+			// 
+			this.FilterBox.Location = new System.Drawing.Point(3, 3);
+			this.FilterBox.MaxLength = 200;
+			this.FilterBox.Name = "FilterBox";
+			this.FilterBox.Size = new System.Drawing.Size(1176, 20);
+			this.FilterBox.TabIndex = 4;
+			this.FilterBox.WordWrap = false;
+			this.FilterBox.TextChanged += new System.EventHandler(this.FilterBox_TextChanged);
 			// 
 			// SelectRecipePrompt
 			// 
@@ -104,11 +119,12 @@
 			this.AutoSize = true;
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.CancelButton = this.NoButton;
-			this.ClientSize = new System.Drawing.Size(823, 328);
+			this.ClientSize = new System.Drawing.Size(1184, 439);
 			this.Controls.Add(this.MainPanel);
-			this.MaximizeBox = false;
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MinimizeBox = false;
 			this.Name = "SelectRecipePrompt";
+			this.ShowIcon = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Select Recipe";
 			this.ButtonPanel.ResumeLayout(false);
@@ -127,5 +143,6 @@
 		private System.Windows.Forms.Button NoButton;
 		private System.Windows.Forms.FlowLayoutPanel ButtonPanel;
 		private System.Windows.Forms.FlowLayoutPanel MainPanel;
+		private System.Windows.Forms.TextBox FilterBox;
 	}
 }

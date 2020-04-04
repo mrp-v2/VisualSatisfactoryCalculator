@@ -104,6 +104,7 @@
 			this.Controls.Add(this.MainPanel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "MainForm";
+			this.ShowIcon = false;
 			this.Text = "Visual Satisfactory Calculator";
 			this.MainPanel.ResumeLayout(false);
 			this.MainPanel.PerformLayout();
