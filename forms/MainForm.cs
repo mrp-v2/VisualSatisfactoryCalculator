@@ -14,7 +14,15 @@ namespace VisualSatisfactoryCalculator.forms
 		public static void Main()
 		{
 			Application.EnableVisualStyles();
-			Application.Run(new MainForm());
+			MainForm safe;
+			if (MainForm.SafeNewMainForm(out safe))
+			{
+				Application.Run(safe);
+			}
+			else
+			{
+				Application.Exit();
+			}
 		}
 
 		private const string firstRecipePurpose = "first recipe";
@@ -22,9 +30,15 @@ namespace VisualSatisfactoryCalculator.forms
 		private ProductionPlan plan;
 		private ProductionPlanTotalViewControl PPTVC;
 
-		public MainForm()
+		private MainForm()
 		{
 			InitializeComponent();
+			AllRecipes = new List<JSONRecipe>();
+		}
+
+		private static bool SafeNewMainForm(out MainForm form)
+		{
+			form = new MainForm();
 			OpenFileDialog dialog = new OpenFileDialog()
 			{
 				Title = "Select a save file",
@@ -34,13 +48,11 @@ namespace VisualSatisfactoryCalculator.forms
 			};
 			if (dialog.ShowDialog() == DialogResult.OK)
 			{
-				AllRecipes = new List<JSONRecipe>();
-				AllRecipes.AddRange(SaveFileInteractor.GetRecipesFromSave(dialog.FileName));
-			} else
-			{
-				Close();
+				form.AllRecipes.AddRange(SaveFileInteractor.GetRecipesFromSave(dialog.FileName));
+				SuggestionsController.SC = new SuggestionsController(form.AllRecipes);
+				return true;
 			}
-			SuggestionsController.SC = new SuggestionsController(AllRecipes);
+			return false;
 		}
 
 		private void SelectFirstRecipeButton_Click(object sender, EventArgs e)

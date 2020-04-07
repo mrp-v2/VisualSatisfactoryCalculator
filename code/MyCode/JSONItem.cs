@@ -10,18 +10,20 @@ namespace VisualSatisfactoryCalculator.code
 	public class JSONItem : IEqualityComparer<JSONItem>
 	{
 		protected string ClassName;
-		protected string mDisplayName;
-		protected string mForm;
+		protected string DisplayName;
+		protected string Form;
+		protected string EnergyValue;
 
 		[JsonConstructor]
-		public JSONItem(string ClassName, string mDisplayName, string mForm)
+		public JSONItem(string ClassName, string mDisplayName, string mForm, string mEnergyValue)
 		{
 			this.ClassName = ClassName;
-			this.mDisplayName = mDisplayName;
-			this.mForm = mForm;
+			DisplayName = mDisplayName;
+			Form = mForm;
+			EnergyValue = mEnergyValue;
 		}
 
-		public JSONItem(JSONItem item) : this(item.ClassName, item.mDisplayName, item.mForm) { }
+		public JSONItem(JSONItem item) : this(item.ClassName, item.DisplayName, item.Form, item.EnergyValue) { }
 
 		public override int GetHashCode()
 		{
@@ -42,12 +44,12 @@ namespace VisualSatisfactoryCalculator.code
 
 		public override string ToString()
 		{
-			return mDisplayName;
+			return DisplayName;
 		}
 
 		public bool IsLiquid()
 		{
-			return mForm == "RF_LIQUID";
+			return Form == "RF_LIQUID";
 		}
 
 		public bool Equals(JSONItem x, JSONItem y)
@@ -60,6 +62,6 @@ namespace VisualSatisfactoryCalculator.code
 			return obj.ClassName.GetHashCode();
 		}
 
-		public static readonly JSONItem blank = new JSONItem(null, null, null);
+		public static readonly JSONItem blank = new JSONItem(null, null, null, null);
 	}
 }
