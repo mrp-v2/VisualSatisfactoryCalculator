@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using VisualSatisfactoryCalculator.code.DataStorage;
+using VisualSatisfactoryCalculator.code.JSONClasses;
 
-namespace VisualSatisfactoryCalculator.code
+namespace VisualSatisfactoryCalculator.code.Utility
 {
 	public class SuggestionsController
 	{

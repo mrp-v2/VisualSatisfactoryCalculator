@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
-using VisualSatisfactoryCalculator.code;
+using VisualSatisfactoryCalculator.code.Extensions;
+using VisualSatisfactoryCalculator.code.JSONClasses;
 
 namespace VisualSatisfactoryCalculator.controls.user
 {

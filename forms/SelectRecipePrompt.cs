@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using VisualSatisfactoryCalculator.code;
+using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.JSONClasses;
 
 namespace VisualSatisfactoryCalculator.forms
 {

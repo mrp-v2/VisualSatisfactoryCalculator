@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using VisualSatisfactoryCalculator.code.JSONClasses;
 
-namespace VisualSatisfactoryCalculator.code
+namespace VisualSatisfactoryCalculator.code.Extensions
 {
 	public static class JSONRecipeExtensions
 	{

@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using VisualSatisfactoryCalculator.code.DataStorage;
 
-namespace VisualSatisfactoryCalculator.code
+namespace VisualSatisfactoryCalculator.code.Extensions
 {
 	public static class ProductionStepExtensions
 	{

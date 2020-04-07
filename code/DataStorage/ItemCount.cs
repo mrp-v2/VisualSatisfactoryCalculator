@@ -1,6 +1,8 @@
 ﻿using System;
+using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.JSONClasses;
 
-namespace VisualSatisfactoryCalculator.code
+namespace VisualSatisfactoryCalculator.code.DataStorage
 {
 	[Serializable]
 	public class ItemCount : JSONItem, IMyCloneable<ItemCount>, ICastAndCopy<JSONItem>

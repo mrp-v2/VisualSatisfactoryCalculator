@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using VisualSatisfactoryCalculator.code;
+using VisualSatisfactoryCalculator.code.DataStorage;
+using VisualSatisfactoryCalculator.code.Extensions;
+using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.JSONClasses;
 using VisualSatisfactoryCalculator.forms;
 
 namespace VisualSatisfactoryCalculator.controls.user
@@ -65,7 +68,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		public void ItemClicked(JSONItem item)
 		{
-			if (parentStep.GetItemsWithRelatedStep().Contains(item, JSONItem.blank))
+			if (parentStep.GetItemsWithRelatedStep().Contains(item, JSONItem.comparer))
 			{
 
 			}
@@ -125,7 +128,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		public bool ItemHasRelatedRecipe(JSONItem item)
 		{
-			return parentStep.GetItemsWithRelatedStep().Contains(item, JSONItem.blank);
+			return parentStep.GetItemsWithRelatedStep().Contains(item, JSONItem.comparer);
 		}
 
 		public void ToggleInput(bool on)

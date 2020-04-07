@@ -1,12 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+using VisualSatisfactoryCalculator.code.DataStorage;
+using VisualSatisfactoryCalculator.code.Extensions;
+using VisualSatisfactoryCalculator.code.Interfaces;
 
-namespace VisualSatisfactoryCalculator.code
+namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
 	public class JSONRecipe : IMyCloneable<JSONRecipe>
 	{
@@ -20,7 +19,7 @@ namespace VisualSatisfactoryCalculator.code
 		protected List<ItemCount> itemCounts;
 		protected string machineName;
 		protected int craftTime;
-		
+
 		[JsonConstructor]
 		public JSONRecipe(string ClassName, string mDisplayName, string mIngredients, string mProduct, string mManufactoringDuration, string mProducedIn)
 		{
@@ -32,7 +31,7 @@ namespace VisualSatisfactoryCalculator.code
 			this.mProducedIn = mProducedIn;
 		}
 
-		public JSONRecipe(JSONRecipe recipe) : this(recipe.ClassName, recipe.mDisplayName, recipe.mIngredients, recipe.mProduct, recipe.mManufactoringDuration, recipe.mProducedIn) 
+		public JSONRecipe(JSONRecipe recipe) : this(recipe.ClassName, recipe.mDisplayName, recipe.mIngredients, recipe.mProduct, recipe.mManufactoringDuration, recipe.mProducedIn)
 		{
 			itemCounts = recipe.itemCounts;
 			machineName = recipe.machineName;

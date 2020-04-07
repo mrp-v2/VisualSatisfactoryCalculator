@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using VisualSatisfactoryCalculator.code.Extensions;
+using VisualSatisfactoryCalculator.code.JSONClasses;
 
-namespace VisualSatisfactoryCalculator.code
+namespace VisualSatisfactoryCalculator.code.Utility
 {
 	public class ResearchToRecipeMapping
 	{

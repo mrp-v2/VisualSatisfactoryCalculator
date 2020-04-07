@@ -1,14 +1,15 @@
-﻿using SatisfactorySaveEditor.Model;
+﻿using Newtonsoft.Json.Linq;
+using SatisfactorySaveEditor.Model;
 using SatisfactorySaveEditor.Util;
 using SatisfactorySaveEditor.ViewModel.Property;
 using SatisfactorySaveParser;
-using System.IO;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Newtonsoft.Json.Linq;
+using System.IO;
 using System.Linq;
+using VisualSatisfactoryCalculator.code.JSONClasses;
 
-namespace VisualSatisfactoryCalculator.code
+namespace VisualSatisfactoryCalculator.code.Utility
 {
 	public class SaveFileInteractor
 	{

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using VisualSatisfactoryCalculator.forms;
+using VisualSatisfactoryCalculator.code.JSONClasses;
 
-namespace VisualSatisfactoryCalculator.code
+namespace VisualSatisfactoryCalculator.code.DataStorage
 {
 	public class ProductionPlan : ProductionStep
 	{
@@ -30,7 +30,7 @@ namespace VisualSatisfactoryCalculator.code
 			{
 				if (additive > 0)
 				{
-					for (sbyte i = tiers.Keys.Max(); i >= tiers.Keys.Min(); i--) 
+					for (sbyte i = tiers.Keys.Max(); i >= tiers.Keys.Min(); i--)
 					{
 						sbyte newKey = i;
 						newKey += additive;

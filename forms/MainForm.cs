@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using VisualSatisfactoryCalculator.code;
+using VisualSatisfactoryCalculator.code.DataStorage;
+using VisualSatisfactoryCalculator.code.Extensions;
+using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.JSONClasses;
+using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.controls.user;
 
 namespace VisualSatisfactoryCalculator.forms

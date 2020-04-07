@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VisualSatisfactoryCalculator.code
+namespace VisualSatisfactoryCalculator.code.Extensions
 {
 	public static class NumberExtensions
 	{

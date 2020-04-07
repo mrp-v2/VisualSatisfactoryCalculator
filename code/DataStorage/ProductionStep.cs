@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using VisualSatisfactoryCalculator.code.Extensions;
+using VisualSatisfactoryCalculator.code.JSONClasses;
 using VisualSatisfactoryCalculator.controls.user;
 
-namespace VisualSatisfactoryCalculator.code
+namespace VisualSatisfactoryCalculator.code.DataStorage
 {
 	public class ProductionStep : JSONRecipe
 	{
@@ -67,10 +69,10 @@ namespace VisualSatisfactoryCalculator.code
 
 		private void UpdateMultiplierRelativeTo(ProductionStep origin)
 		{
-			JSONItem match = itemCounts.GetProducts().FindMatch(origin.itemCounts.GetIngredients(), JSONItem.blank);
+			JSONItem match = itemCounts.GetProducts().FindMatch(origin.itemCounts.GetIngredients(), JSONItem.comparer);
 			if (match == null)
 			{
-				match = itemCounts.GetIngredients().FindMatch(origin.itemCounts.GetProducts(), JSONItem.blank);
+				match = itemCounts.GetIngredients().FindMatch(origin.itemCounts.GetProducts(), JSONItem.comparer);
 			}
 			SetMultiplier(CalculateMultiplierForRate(match, origin.CalculateDefaultItemRate(match) * origin.multiplier));
 		}
@@ -105,8 +107,8 @@ namespace VisualSatisfactoryCalculator.code
 			List<JSONItem> items = new List<JSONItem>();
 			foreach (ProductionStep step in relatedSteps)
 			{
-				items.AddRangeIfNew(step.itemCounts.GetIngredients().FindMatches(itemCounts.GetProducts(), JSONItem.blank));
-				items.AddRangeIfNew(step.itemCounts.GetProducts().FindMatches(itemCounts.GetIngredients(), JSONItem.blank));
+				items.AddRangeIfNew(step.itemCounts.GetIngredients().FindMatches(itemCounts.GetProducts(), JSONItem.comparer));
+				items.AddRangeIfNew(step.itemCounts.GetProducts().FindMatches(itemCounts.GetIngredients(), JSONItem.comparer));
 			}
 			return items;
 		}
@@ -126,7 +128,7 @@ namespace VisualSatisfactoryCalculator.code
 			{
 				if (!step.Equals(relativeTo))
 				{
-					if (step.itemCounts.GetIngredients().ContainsAny(itemCounts.GetProducts(), JSONItem.blank))
+					if (step.itemCounts.GetIngredients().ContainsAny(itemCounts.GetProducts(), JSONItem.comparer))
 					{
 						if (!tiers.ContainsKey(above))
 						{
@@ -135,7 +137,7 @@ namespace VisualSatisfactoryCalculator.code
 						tiers[above].Add(step);
 						tiers.AddRange(step.GetRelativeTiersRecursively(this, above));
 					}
-					else if (step.itemCounts.GetProducts().ContainsAny(itemCounts.GetIngredients(), JSONItem.blank))
+					else if (step.itemCounts.GetProducts().ContainsAny(itemCounts.GetIngredients(), JSONItem.comparer))
 					{
 						if (!tiers.ContainsKey(below))
 						{

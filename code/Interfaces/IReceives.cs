@@ -1,4 +1,4 @@
-﻿namespace VisualSatisfactoryCalculator.code
+﻿namespace VisualSatisfactoryCalculator.code.Interfaces
 {
 	public interface IReceives<T>
 	{

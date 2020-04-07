@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using VisualSatisfactoryCalculator.code.DataStorage;
+using VisualSatisfactoryCalculator.code.JSONClasses;
 
-namespace VisualSatisfactoryCalculator.code
+namespace VisualSatisfactoryCalculator.code.Extensions
 {
 	public static class ItemCountExtensions
 	{
@@ -49,7 +51,7 @@ namespace VisualSatisfactoryCalculator.code
 		{
 			foreach (ItemCount count in me)
 			{
-				if (JSONItem.blank.Equals(count, item))
+				if (JSONItem.comparer.Equals(count, item))
 				{
 					return true;
 				}
@@ -61,7 +63,7 @@ namespace VisualSatisfactoryCalculator.code
 		{
 			foreach (ItemCount count in me)
 			{
-				if (JSONItem.blank.Equals(count, item))
+				if (JSONItem.comparer.Equals(count, item))
 				{
 					return count;
 				}

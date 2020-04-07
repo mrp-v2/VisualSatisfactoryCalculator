@@ -1,11 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 
-namespace VisualSatisfactoryCalculator.code
+namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
 	public class JSONItem : IEqualityComparer<JSONItem>
 	{
@@ -62,6 +58,6 @@ namespace VisualSatisfactoryCalculator.code
 			return obj.ClassName.GetHashCode();
 		}
 
-		public static readonly JSONItem blank = new JSONItem(null, null, null, null);
+		public static readonly JSONItem comparer = new JSONItem(null, null, null, null);
 	}
 }
