@@ -44,7 +44,7 @@ namespace VisualSatisfactoryCalculator.forms
 			RecipesList.Items.Clear();
 			foreach (JSONRecipe recipe in originalList)
 			{
-				if (recipe.ToString().Contains(FilterBox.Text))
+				if (recipe.ToString().ToLower().Contains(FilterBox.Text.ToLower()))
 				{
 					RecipesList.Items.Add(recipe);
 				}
