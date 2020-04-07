@@ -14,8 +14,7 @@ namespace VisualSatisfactoryCalculator.forms
 		public static void Main()
 		{
 			Application.EnableVisualStyles();
-			MainForm safe;
-			if (MainForm.SafeNewMainForm(out safe))
+			if (SafeNewMainForm(out MainForm safe))
 			{
 				Application.Run(safe);
 			}
