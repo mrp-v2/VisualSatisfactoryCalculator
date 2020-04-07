@@ -7,31 +7,31 @@ using VisualSatisfactoryCalculator.code.Interfaces;
 
 namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
-	public class JSONRecipe : IMyCloneable<JSONRecipe>
+	public class JSONRecipe : IRecipe
 	{
-		private readonly string ClassName;
-		private readonly string mDisplayName;
-		private readonly string mIngredients;
-		private readonly string mProduct;
-		private readonly string mManufactoringDuration;
-		private readonly string mProducedIn;
+		private readonly string uniqueID;
+		private readonly string displayName;
+		private readonly string ingredients;
+		private readonly string product;
+		private readonly string manufactoringDuration;
+		private readonly string producedIn;
 
-		protected List<ItemCount> itemCounts;
-		protected string machineName;
-		protected int craftTime;
+		private List<ItemCount> itemCounts;
+		private string machineName;
+		private decimal craftTime;
 
 		[JsonConstructor]
 		public JSONRecipe(string ClassName, string mDisplayName, string mIngredients, string mProduct, string mManufactoringDuration, string mProducedIn)
 		{
-			this.ClassName = ClassName;
-			this.mDisplayName = mDisplayName;
-			this.mIngredients = mIngredients;
-			this.mProduct = mProduct;
-			this.mManufactoringDuration = mManufactoringDuration;
-			this.mProducedIn = mProducedIn;
+			uniqueID = ClassName;
+			displayName = mDisplayName;
+			ingredients = mIngredients;
+			product = mProduct;
+			manufactoringDuration = mManufactoringDuration;
+			producedIn = mProducedIn;
 		}
 
-		public JSONRecipe(JSONRecipe recipe) : this(recipe.ClassName, recipe.mDisplayName, recipe.mIngredients, recipe.mProduct, recipe.mManufactoringDuration, recipe.mProducedIn)
+		public JSONRecipe(JSONRecipe recipe) : this(recipe.uniqueID, recipe.displayName, recipe.ingredients, recipe.product, recipe.manufactoringDuration, recipe.producedIn)
 		{
 			itemCounts = recipe.itemCounts;
 			machineName = recipe.machineName;
@@ -43,21 +43,21 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			//set item Counts
 			itemCounts = new List<ItemCount>();
 			//ingredients
-			string[] ingredients = mIngredients.Split(',');
+			string[] ingredients = this.ingredients.Split(',');
 			Trace.Assert(ingredients.Length % 2 == 0);
 			for (int i = 0; i < ingredients.Length; i += 2)
 			{
 				itemCounts.Add(ParseItemCount(items, ingredients[i], ingredients[i + 1], false));
 			}
 			//products
-			string[] products = mProduct.Split(',');
+			string[] products = product.Split(',');
 			Trace.Assert(products.Length % 2 == 0);
 			for (int i = 0; i < products.Length; i += 2)
 			{
 				itemCounts.Add(ParseItemCount(items, products[i], products[i + 1], true));
 			}
 			machineName = GetMachineName();
-			craftTime = (int)double.Parse(mManufactoringDuration);
+			craftTime = decimal.Parse(manufactoringDuration);
 		}
 
 		/// <summary>
@@ -93,7 +93,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		/// <returns></returns>
 		private string GetMachineName()
 		{
-			string[] machines = mProducedIn.Split(',');
+			string[] machines = producedIn.Split(',');
 			foreach (string str in machines)
 			{
 				if (str.Contains("Buildable/Factory"))
@@ -126,7 +126,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 
 		public override string ToString()
 		{
-			string str = mDisplayName + ": ";
+			string str = displayName + ": ";
 			List<ItemCount> ingredients = itemCounts.GetIngredients().Inverse();
 			for (int i = 0; i < ingredients.Count; i++)
 			{
@@ -155,7 +155,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			return base.GetHashCode();
 		}
 
-		public override bool Equals(object obj)
+		public bool Equals(IRecipe obj)
 		{
 			if (obj == null)
 			{
@@ -165,12 +165,12 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			{
 				return false;
 			}
-			return ClassName.Equals((obj as JSONRecipe).ClassName);
+			return uniqueID.Equals((obj as JSONRecipe).uniqueID);
 		}
 
 		public bool EqualID(string id)
 		{
-			return ClassName.Equals(id);
+			return uniqueID.Equals(id);
 		}
 
 		public string GetMachine()
@@ -183,7 +183,12 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			return itemCounts;
 		}
 
-		public JSONRecipe Clone()
+		public decimal GetCraftTime()
+		{
+			return craftTime;
+		}
+
+		public IRecipe Clone()
 		{
 			JSONRecipe clone = new JSONRecipe(this)
 			{

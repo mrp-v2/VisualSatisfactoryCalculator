@@ -1,6 +1,6 @@
 ﻿namespace VisualSatisfactoryCalculator.code.Interfaces
 {
-	interface IMyCloneable<T>
+	public interface IMyCloneable<T>
 	{
 		T Clone();
 	}

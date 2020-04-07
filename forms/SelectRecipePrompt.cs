@@ -8,12 +8,12 @@ namespace VisualSatisfactoryCalculator.forms
 {
 	public partial class SelectRecipePrompt : Form
 	{
-		private readonly IReceives<JSONRecipe> parent;
+		private readonly IReceives<IRecipe> parent;
 		private readonly string purpose;
 
-		private readonly List<JSONRecipe> originalList;
+		private readonly List<IRecipe> originalList;
 
-		public SelectRecipePrompt(List<JSONRecipe> options, IReceives<JSONRecipe> parent, string purpose)
+		public SelectRecipePrompt(List<IRecipe> options, IReceives<IRecipe> parent, string purpose)
 		{
 			InitializeComponent();
 			this.parent = parent;

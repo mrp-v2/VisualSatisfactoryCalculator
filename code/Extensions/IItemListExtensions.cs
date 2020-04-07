@@ -3,7 +3,7 @@ using VisualSatisfactoryCalculator.code.JSONClasses;
 
 namespace VisualSatisfactoryCalculator.code.Extensions
 {
-	public static class JSONItemListExtensions
+	public static class IItemListExtensions
 	{
 		public static JSONItem GetJSONItemFor(this List<JSONItem> me, string uniqueID)
 		{

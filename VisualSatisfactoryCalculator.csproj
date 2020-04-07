@@ -66,12 +66,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="code\DataStorage\SimpleCustomItem.cs" />
+    <Compile Include="code\DataStorage\SimpleCustomRecipe.cs" />
     <Compile Include="code\Extensions\GenericExtensions.cs" />
-    <Compile Include="code\Interfaces\ICastAndCopy.cs" />
+    <Compile Include="code\Interfaces\IHasUniqueID.cs" />
+    <Compile Include="code\Interfaces\IItem.cs" />
+    <Compile Include="code\Interfaces\IRecipe.cs" />
+    <Compile Include="code\JSONClasses\JSONGenerator.cs" />
     <Compile Include="code\JSONClasses\JSONItem.cs" />
-    <Compile Include="code\Extensions\JSONItemListExtensions.cs" />
+    <Compile Include="code\Extensions\IItemListExtensions.cs" />
     <Compile Include="code\JSONClasses\JSONRecipe.cs" />
     <Compile Include="code\Interfaces\IMyCloneable.cs" />
+    <Compile Include="code\Utility\Constants.cs" />
     <Compile Include="code\Utility\ResearchToRecipeMapping.cs" />
     <Compile Include="SatisfactorySaveEditorCode\AddViewModel.cs" />
     <Compile Include="SatisfactorySaveEditorCode\ArrayPropertyViewModel.cs" />
@@ -111,9 +117,8 @@
     <Compile Include="code\Extensions\ItemCountExtensions.cs" />
     <Compile Include="code\DataStorage\ProductionPlan.cs" />
     <Compile Include="code\DataStorage\ProductionStep.cs" />
-    <Compile Include="code\Extensions\ProductionStepExtensions.cs" />
     <Compile Include="code\DataStorage\ItemCount.cs" />
-    <Compile Include="code\Extensions\JSONRecipeExtensions.cs" />
+    <Compile Include="code\Extensions\IRecipeExtensions.cs" />
     <Compile Include="code\Extensions\NumberExtensions.cs" />
     <Compile Include="SatisfactorySaveEditorCode\BinaryIOExtensions.cs" />
     <Compile Include="SatisfactorySaveEditorCode\ChunkInfo.cs" />

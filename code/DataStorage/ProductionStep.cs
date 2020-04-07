@@ -1,28 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using VisualSatisfactoryCalculator.code.Extensions;
+using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.JSONClasses;
 using VisualSatisfactoryCalculator.controls.user;
 
 namespace VisualSatisfactoryCalculator.code.DataStorage
 {
-	public class ProductionStep : JSONRecipe
+	public class ProductionStep
 	{
 		private decimal multiplier;
 		private readonly List<ProductionStep> relatedSteps;
 		private ProductionStepControl control;
 
-		public ProductionStep(JSONRecipe recipe, ProductionStep related) : this(recipe, 1m)
+		private readonly IRecipe recipe;
+
+		public ProductionStep(IRecipe recipe, ProductionStep related) : this(recipe, 1m)
 		{
 			relatedSteps.Add(related);
 			UpdateMultiplierRelativeTo(related);
 		}
 
-		public ProductionStep(JSONRecipe recipe, decimal multiplier) : base(recipe)
+		public ProductionStep(IRecipe recipe, decimal multiplier)
 		{
+			this.recipe = recipe;
 			this.multiplier = multiplier;
 			relatedSteps = new List<ProductionStep>();
 			control = default;
+		}
+
+		public IRecipe GetRecipe()
+		{
+			return recipe;
 		}
 
 		public int CalculateMachineCount()
@@ -69,30 +78,30 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		private void UpdateMultiplierRelativeTo(ProductionStep origin)
 		{
-			JSONItem match = itemCounts.GetProducts().FindMatch(origin.itemCounts.GetIngredients(), JSONItem.comparer);
+			IItem match = recipe.GetItemCounts().GetProducts().ToItems().FindMatch(origin.recipe.GetItemCounts().GetIngredients().ToItems());
 			if (match == null)
 			{
-				match = itemCounts.GetIngredients().FindMatch(origin.itemCounts.GetProducts(), JSONItem.comparer);
+				match = recipe.GetItemCounts().GetIngredients().ToItems().FindMatch(origin.recipe.GetItemCounts().GetProducts().ToItems());
 			}
 			SetMultiplier(CalculateMultiplierForRate(match, origin.CalculateDefaultItemRate(match) * origin.multiplier));
 		}
 
-		private decimal CalculateDefaultItemRate(JSONItem item)
+		private decimal CalculateDefaultItemRate(IItem item)
 		{
-			return 60m / craftTime * itemCounts.GetCountFor(item).GetCount();
+			return 60m / recipe.GetCraftTime() * recipe.GetItemCounts().GetCountFor(item).GetCount();
 		}
 
-		public void SetMultiplierAndRelatedRelative(JSONItem item, decimal rate)
+		public void SetMultiplierAndRelatedRelative(IItem item, decimal rate)
 		{
 			SetMultiplierAndRelated(CalculateMultiplierForRate(item, rate));
 		}
 
-		private decimal CalculateMultiplierForRate(JSONItem item, decimal rate)
+		private decimal CalculateMultiplierForRate(IItem item, decimal rate)
 		{
 			return Math.Abs(rate / CalculateDefaultItemRate(item));
 		}
 
-		public decimal GetItemRate(JSONItem item)
+		public decimal GetItemRate(IItem item)
 		{
 			return CalculateDefaultItemRate(item) * multiplier;
 		}
@@ -102,13 +111,13 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			this.control = control;
 		}
 
-		public List<JSONItem> GetItemsWithRelatedStep()
+		public List<IItem> GetItemsWithRelatedStep()
 		{
-			List<JSONItem> items = new List<JSONItem>();
+			List<IItem> items = new List<IItem>();
 			foreach (ProductionStep step in relatedSteps)
 			{
-				items.AddRangeIfNew(step.itemCounts.GetIngredients().FindMatches(itemCounts.GetProducts(), JSONItem.comparer));
-				items.AddRangeIfNew(step.itemCounts.GetProducts().FindMatches(itemCounts.GetIngredients(), JSONItem.comparer));
+				items.AddRangeIfNew(step.recipe.GetItemCounts().GetIngredients().ToItems().FindMatches(recipe.GetItemCounts().GetProducts().ToItems()));
+				items.AddRangeIfNew(step.recipe.GetItemCounts().GetProducts().ToItems().FindMatches(recipe.GetItemCounts().GetIngredients().ToItems()));
 			}
 			return items;
 		}
@@ -128,7 +137,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			{
 				if (!step.Equals(relativeTo))
 				{
-					if (step.itemCounts.GetIngredients().ContainsAny(itemCounts.GetProducts(), JSONItem.comparer))
+					if (step.recipe.GetItemCounts().GetIngredients().ToItems().ContainsAny(recipe.GetItemCounts().GetProducts().ToItems()))
 					{
 						if (!tiers.ContainsKey(above))
 						{
@@ -137,7 +146,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 						tiers[above].Add(step);
 						tiers.AddRange(step.GetRelativeTiersRecursively(this, above));
 					}
-					else if (step.itemCounts.GetProducts().ContainsAny(itemCounts.GetIngredients(), JSONItem.comparer))
+					else if (step.recipe.GetItemCounts().GetProducts().ToItems().ContainsAny(recipe.GetItemCounts().GetIngredients().ToItems()))
 					{
 						if (!tiers.ContainsKey(below))
 						{

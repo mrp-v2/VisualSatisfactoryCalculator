@@ -5,12 +5,14 @@ using VisualSatisfactoryCalculator.code.JSONClasses;
 namespace VisualSatisfactoryCalculator.code.DataStorage
 {
 	[Serializable]
-	public class ItemCount : JSONItem, IMyCloneable<ItemCount>, ICastAndCopy<JSONItem>
+	public class ItemCount : IMyCloneable<ItemCount>
 	{
-		protected readonly int count;
+		private readonly int count;
+		private readonly IItem item;
 
-		public ItemCount(JSONItem item, int count) : base(item)
+		public ItemCount(IItem item, int count)
 		{
+			this.item = item;
 			this.count = count;
 		}
 
@@ -21,12 +23,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public override string ToString()
 		{
-			return count + " " + base.ToString();
-		}
-
-		public string ItemToString()
-		{
-			return base.ToString();
+			return count + " " + item.ToString();
 		}
 
 		public override int GetHashCode()
@@ -36,34 +33,24 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public override bool Equals(object obj)
 		{
-			if (!(obj is JSONItem))
-			{
-				return false;
-			}
-			if (!base.Equals(obj as JSONItem))
-			{
-				return false;
-			}
-			if (!(obj is ItemCount))
-			{
-				return false;
-			}
-			return count == (obj as ItemCount).count;
+			if (obj == null) return false;
+			if (!(obj is ItemCount)) return false;
+			return item.Equals((obj as ItemCount).item) && count == (obj as ItemCount).count;
 		}
 
 		public ItemCount Inverse()
 		{
-			return new ItemCount(this, -count);
+			return new ItemCount(item, -count);
 		}
 
 		public ItemCount Clone()
 		{
-			return new ItemCount(this, count);
+			return new ItemCount(item, count);
 		}
 
-		public JSONItem CastAndCopy()
+		public IItem GetItem()
 		{
-			return new JSONItem(this);
+			return item;
 		}
 	}
 }

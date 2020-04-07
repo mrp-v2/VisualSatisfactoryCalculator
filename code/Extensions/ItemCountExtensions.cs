@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using VisualSatisfactoryCalculator.code.DataStorage;
+using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.JSONClasses;
 
 namespace VisualSatisfactoryCalculator.code.Extensions
@@ -47,11 +48,11 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			return ingredients;
 		}
 
-		public static bool ContainsItem(this List<ItemCount> me, JSONItem item)
+		public static bool ContainsItem(this List<ItemCount> me, IItem item)
 		{
 			foreach (ItemCount count in me)
 			{
-				if (JSONItem.comparer.Equals(count, item))
+				if (count.GetItem().Equals(item))
 				{
 					return true;
 				}
@@ -59,16 +60,26 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			return false;
 		}
 
-		public static ItemCount GetCountFor(this List<ItemCount> me, JSONItem item)
+		public static ItemCount GetCountFor(this List<ItemCount> me, IItem item)
 		{
 			foreach (ItemCount count in me)
 			{
-				if (JSONItem.comparer.Equals(count, item))
+				if (count.GetItem().Equals(item))
 				{
 					return count;
 				}
 			}
 			return default;
+		}
+
+		public static List<IItem> ToItems(this List<ItemCount> me)
+		{
+			List<IItem> items = new List<IItem>();
+			foreach (ItemCount item in me)
+			{
+				items.Add(item.GetItem());
+			}
+			return items;
 		}
 	}
 }

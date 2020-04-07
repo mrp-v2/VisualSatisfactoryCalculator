@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using VisualSatisfactoryCalculator.code.Extensions;
+using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.JSONClasses;
 
 namespace VisualSatisfactoryCalculator.controls.user
@@ -8,7 +9,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 	public partial class ItemRateControl : UserControl
 	{
 		private readonly ProductionStepControl parentControl;
-		private readonly JSONItem item;
+		private readonly IItem item;
 		private bool initialized;
 
 		public ItemRateControl() : this(default, default, default)
@@ -16,7 +17,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		}
 
-		public ItemRateControl(ProductionStepControl parentControl, JSONItem item, decimal rate)
+		public ItemRateControl(ProductionStepControl parentControl, IItem item, decimal rate)
 		{
 			initialized = false;
 			InitializeComponent();
@@ -53,7 +54,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 		}
 
-		public JSONItem GetItem()
+		public IItem GetItem()
 		{
 			return item;
 		}

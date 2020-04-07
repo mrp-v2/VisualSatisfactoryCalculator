@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.JSONClasses;
 
 namespace VisualSatisfactoryCalculator.code.DataStorage
 {
 	public class ProductionPlan : ProductionStep
 	{
-		public ProductionPlan(JSONRecipe recipe) : base(recipe, 1) { }
+		public ProductionPlan(IRecipe recipe) : base(recipe, 1) { }
 
 		public List<ProductionStep> GetAllSteps()
 		{
@@ -52,21 +53,21 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return tiers;
 		}
 
-		public Dictionary<JSONItem, decimal> GetNetRates()
+		public Dictionary<IItem, decimal> GetNetRates()
 		{
-			Dictionary<JSONItem, decimal> netRates = new Dictionary<JSONItem, decimal>();
+			Dictionary<IItem, decimal> netRates = new Dictionary<IItem, decimal>();
 			foreach (ProductionStep step in GetAllSteps())
 			{
-				foreach (ItemCount ic in step.GetItemCounts())
+				foreach (ItemCount itemCount in step.GetRecipe().GetItemCounts())
 				{
-					JSONItem castNCopy = ic.CastAndCopy();
-					if (netRates.ContainsKey(castNCopy))
+					IItem item = itemCount.GetItem();
+					if (netRates.ContainsKey(item))
 					{
-						netRates[castNCopy] += step.GetItemRate(castNCopy);
+						netRates[item] += step.GetItemRate(item);
 					}
 					else
 					{
-						netRates.Add(castNCopy, step.GetItemRate(castNCopy));
+						netRates.Add(item, step.GetItemRate(item));
 					}
 				}
 			}
@@ -78,13 +79,13 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			Dictionary<string, int> totalMachines = new Dictionary<string, int>();
 			foreach (ProductionStep step in GetAllSteps())
 			{
-				if (!totalMachines.ContainsKey(step.GetMachine()))
+				if (!totalMachines.ContainsKey(step.GetRecipe().GetMachine()))
 				{
-					totalMachines.Add(step.GetMachine(), step.CalculateMachineCount());
+					totalMachines.Add(step.GetRecipe().GetMachine(), step.CalculateMachineCount());
 				}
 				else
 				{
-					totalMachines[step.GetMachine()] += step.CalculateMachineCount();
+					totalMachines[step.GetRecipe().GetMachine()] += step.CalculateMachineCount();
 				}
 			}
 			return totalMachines;
@@ -104,12 +105,12 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		public string GetNetProductsString()
 		{
 			string str = "Products: ";
-			Dictionary<JSONItem, decimal> netRates = GetNetRates();
-			foreach (JSONItem i in netRates.Keys)
+			Dictionary<IItem, decimal> netRates = GetNetRates();
+			foreach (IItem item in netRates.Keys)
 			{
-				if (netRates[i] > 0 && Math.Round(netRates[i], 5) != 0)
+				if (netRates[item] > 0 && Math.Round(netRates[item], 5) != 0)
 				{
-					str += Math.Round(netRates[i], 5) + " " + i.ToString() + ", ";
+					str += Math.Round(netRates[item], 5) + " " + item.ToString() + ", ";
 				}
 			}
 			return str;
@@ -118,8 +119,8 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		public string GetNetIngredientsString()
 		{
 			string str = "Ingredients: ";
-			Dictionary<JSONItem, decimal> netRates = GetNetRates();
-			foreach (JSONItem i in netRates.Keys)
+			Dictionary<IItem, decimal> netRates = GetNetRates();
+			foreach (IItem i in netRates.Keys)
 			{
 				if (netRates[i] < 0 && Math.Round(netRates[i], 5) != 0)
 				{

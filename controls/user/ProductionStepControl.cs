@@ -10,7 +10,7 @@ using VisualSatisfactoryCalculator.forms;
 
 namespace VisualSatisfactoryCalculator.controls.user
 {
-	public partial class ProductionStepControl : UserControl, IReceives<JSONRecipe>
+	public partial class ProductionStepControl : UserControl, IReceives<IRecipe>
 	{
 		private readonly ProductionStep parentStep;
 		public readonly MainForm mainForm;
@@ -28,13 +28,13 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.parentStep = parentStep;
 			this.mainForm = mainForm;
 			parentStep.SetControl(this);
-			foreach (ItemCount ic in parentStep.GetItemCounts().GetProducts())
+			foreach (ItemCount ic in parentStep.GetRecipe().GetItemCounts().GetProducts())
 			{
-				ProductsPanel.Controls.Add(new ItemRateControl(this, ic.CastAndCopy(), parentStep.GetItemRate(ic)));
+				ProductsPanel.Controls.Add(new ItemRateControl(this, ic.GetItem(), parentStep.GetItemRate(ic.GetItem())));
 			}
-			foreach (ItemCount ic in parentStep.GetItemCounts().GetIngredients())
+			foreach (ItemCount ic in parentStep.GetRecipe().GetItemCounts().GetIngredients())
 			{
-				IngredientsPanel.Controls.Add(new ItemRateControl(this, ic.CastAndCopy(), parentStep.GetItemRate(ic)));
+				IngredientsPanel.Controls.Add(new ItemRateControl(this, ic.GetItem(), parentStep.GetItemRate(ic.GetItem())));
 			}
 			RecipeLabel.Text = parentStep.ToString();
 			MultiplierChanged();
@@ -55,10 +55,10 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				MultiplierNumeric.Value = parentStep.GetMultiplier();
 			}
-			MachineCountLabel.Text = parentStep.GetMachine() + ": " + parentStep.CalculateMachineCount();
+			MachineCountLabel.Text = parentStep.GetRecipe().GetMachine() + ": " + parentStep.CalculateMachineCount();
 		}
 
-		public void RateChanged(JSONItem item, decimal newRate)
+		public void RateChanged(IItem item, decimal newRate)
 		{
 			if (Math.Abs(parentStep.GetItemRate(item)) != newRate)
 			{
@@ -66,19 +66,19 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 		}
 
-		public void ItemClicked(JSONItem item)
+		public void ItemClicked(IItem item)
 		{
-			if (parentStep.GetItemsWithRelatedStep().Contains(item, JSONItem.comparer))
+			if (parentStep.GetItemsWithRelatedStep().Contains(item))
 			{
 
 			}
 			else
 			{
-				if (parentStep.GetItemCounts().GetProducts().ContainsItem(item))
+				if (parentStep.GetRecipe().GetItemCounts().GetProducts().ContainsItem(item))
 				{
 					new SelectRecipePrompt(mainForm.GetAllRecipes().GetRecipesThatConsume(item), this, null).ShowDialog();
 				}
-				else if (parentStep.GetItemCounts().GetIngredients().ContainsItem(item))
+				else if (parentStep.GetRecipe().GetItemCounts().GetIngredients().ContainsItem(item))
 				{
 					new SelectRecipePrompt(mainForm.GetAllRecipes().GetRecipesThatProduce(item), this, null).ShowDialog();
 				}
@@ -119,16 +119,16 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 		}
 
-		public void SendObject(JSONRecipe recipe, string purpose)
+		public void SendObject(IRecipe recipe, string purpose)
 		{
 			ProductionStep ps = new ProductionStep(recipe, parentStep);
 			parentStep.AddRelatedStep(ps);
 			mainForm.PlanUpdated();
 		}
 
-		public bool ItemHasRelatedRecipe(JSONItem item)
+		public bool ItemHasRelatedRecipe(IItem item)
 		{
-			return parentStep.GetItemsWithRelatedStep().Contains(item, JSONItem.comparer);
+			return parentStep.GetItemsWithRelatedStep().Contains(item);
 		}
 
 		public void ToggleInput(bool on)

@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using VisualSatisfactoryCalculator.code.Interfaces;
 
 namespace VisualSatisfactoryCalculator.code.Extensions
 {
 	static class GenericExtensions
 	{
-		public static bool ContainsAny<T>(this IEnumerable<T> me, IEnumerable<T> other, IEqualityComparer<T> comparer)
+		public static bool ContainsAny<T>(this IEnumerable<T> me, IEnumerable<T> other)
 		{
 			foreach (T item in other)
 			{
-				if (me.Contains(item, comparer))
+				if (me.Contains(item))
 				{
 					return true;
 				}
@@ -17,11 +18,11 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			return false;
 		}
 
-		public static T FindMatch<T>(this IEnumerable<T> me, IEnumerable<T> other, IEqualityComparer<T> comparer)
+		public static T FindMatch<T>(this IEnumerable<T> me, IEnumerable<T> other)
 		{
 			foreach (T item in me)
 			{
-				if (other.Contains(item, comparer))
+				if (other.Contains(item))
 				{
 					return item;
 				}
@@ -29,12 +30,12 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			return default;
 		}
 
-		public static List<T> FindMatches<T>(this IEnumerable<T> me, IEnumerable<T> other, IEqualityComparer<T> comparer)
+		public static List<T> FindMatches<T>(this IEnumerable<T> me, IEnumerable<T> other)
 		{
 			List<T> matches = new List<T>();
 			foreach (T item in me)
 			{
-				if (other.Contains(item, comparer))
+				if (other.Contains(item))
 				{
 					matches.Add(item);
 				}

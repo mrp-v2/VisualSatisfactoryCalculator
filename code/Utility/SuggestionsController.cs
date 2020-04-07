@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using VisualSatisfactoryCalculator.code.DataStorage;
+using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.JSONClasses;
 
 namespace VisualSatisfactoryCalculator.code.Utility
@@ -11,16 +12,16 @@ namespace VisualSatisfactoryCalculator.code.Utility
 		protected List<string> items;
 		protected List<string> machines;
 
-		public SuggestionsController(List<JSONRecipe> allRecipes)
+		public SuggestionsController(List<IRecipe> allRecipes)
 		{
 			items = new List<string>();
 			machines = new List<string>();
-			foreach (JSONRecipe rec in allRecipes)
+			foreach (IRecipe rec in allRecipes)
 			{
 				AddMachine(rec.GetMachine());
 				foreach (ItemCount ic in rec.GetItemCounts())
 				{
-					AddItem(ic.ItemToString());
+					AddItem(ic.GetItem().ToString());
 				}
 			}
 		}
@@ -56,7 +57,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			AddMachine(recipe.GetMachine());
 			foreach (ItemCount ic in recipe.GetItemCounts())
 			{
-				AddItem(ic.ItemToString());
+				AddItem(ic.GetItem().ToString());
 			}
 		}
 	}

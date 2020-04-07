@@ -12,7 +12,7 @@ using VisualSatisfactoryCalculator.controls.user;
 
 namespace VisualSatisfactoryCalculator.forms
 {
-	public partial class MainForm : Form, IReceives<JSONRecipe>
+	public partial class MainForm : Form, IReceives<IRecipe>
 	{
 		[STAThread]
 		public static void Main()
@@ -29,14 +29,14 @@ namespace VisualSatisfactoryCalculator.forms
 		}
 
 		private const string firstRecipePurpose = "first recipe";
-		private readonly List<JSONRecipe> AllRecipes;
+		private readonly List<IRecipe> AllRecipes;
 		private ProductionPlan plan;
 		private ProductionPlanTotalViewControl PPTVC;
 
 		private MainForm()
 		{
 			InitializeComponent();
-			AllRecipes = new List<JSONRecipe>();
+			AllRecipes = new List<IRecipe>();
 		}
 
 		private static bool SafeNewMainForm(out MainForm form)
@@ -63,7 +63,7 @@ namespace VisualSatisfactoryCalculator.forms
 			new SelectRecipePrompt(AllRecipes, this, firstRecipePurpose).ShowDialog();
 		}
 
-		public void SendObject(JSONRecipe recipe, string purpose)
+		public void SendObject(IRecipe recipe, string purpose)
 		{
 			switch (purpose)
 			{
@@ -102,7 +102,7 @@ namespace VisualSatisfactoryCalculator.forms
 			}
 		}
 
-		public List<JSONRecipe> GetAllRecipes()
+		public List<IRecipe> GetAllRecipes()
 		{
 			return AllRecipes.ShallowClone();
 		}
