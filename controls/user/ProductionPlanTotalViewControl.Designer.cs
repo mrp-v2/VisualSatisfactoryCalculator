@@ -45,16 +45,17 @@
 			this.MainPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.MainPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainPanel.Name = "MainPanel";
-			this.MainPanel.Size = new System.Drawing.Size(64, 39);
+			this.MainPanel.Size = new System.Drawing.Size(84, 51);
 			this.MainPanel.TabIndex = 0;
 			// 
 			// NetProductsLabel
 			// 
 			this.NetProductsLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.NetProductsLabel.AutoSize = true;
+			this.NetProductsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.NetProductsLabel.Location = new System.Drawing.Point(3, 0);
 			this.NetProductsLabel.Name = "NetProductsLabel";
-			this.NetProductsLabel.Size = new System.Drawing.Size(48, 13);
+			this.NetProductsLabel.Size = new System.Drawing.Size(63, 17);
 			this.NetProductsLabel.TabIndex = 0;
 			this.NetProductsLabel.Text = "products";
 			// 
@@ -62,9 +63,10 @@
 			// 
 			this.MachinesLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.MachinesLabel.AutoSize = true;
-			this.MachinesLabel.Location = new System.Drawing.Point(3, 13);
+			this.MachinesLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.MachinesLabel.Location = new System.Drawing.Point(3, 17);
 			this.MachinesLabel.Name = "MachinesLabel";
-			this.MachinesLabel.Size = new System.Drawing.Size(52, 13);
+			this.MachinesLabel.Size = new System.Drawing.Size(68, 17);
 			this.MachinesLabel.TabIndex = 1;
 			this.MachinesLabel.Text = "machines";
 			// 
@@ -72,9 +74,10 @@
 			// 
 			this.NetIngredientsLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.NetIngredientsLabel.AutoSize = true;
-			this.NetIngredientsLabel.Location = new System.Drawing.Point(3, 26);
+			this.NetIngredientsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.NetIngredientsLabel.Location = new System.Drawing.Point(3, 34);
 			this.NetIngredientsLabel.Name = "NetIngredientsLabel";
-			this.NetIngredientsLabel.Size = new System.Drawing.Size(58, 13);
+			this.NetIngredientsLabel.Size = new System.Drawing.Size(78, 17);
 			this.NetIngredientsLabel.TabIndex = 2;
 			this.NetIngredientsLabel.Text = "ingredients";
 			// 
@@ -86,7 +89,7 @@
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.Controls.Add(this.MainPanel);
 			this.Name = "ProductionPlanTotalViewControl";
-			this.Size = new System.Drawing.Size(67, 42);
+			this.Size = new System.Drawing.Size(87, 54);
 			this.MainPanel.ResumeLayout(false);
 			this.MainPanel.PerformLayout();
 			this.ResumeLayout(false);

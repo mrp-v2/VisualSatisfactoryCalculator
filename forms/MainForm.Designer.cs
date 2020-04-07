@@ -60,16 +60,17 @@
 			this.ButtonPanel.Controls.Add(this.SaveChartButton);
 			this.ButtonPanel.Location = new System.Drawing.Point(3, 3);
 			this.ButtonPanel.Name = "ButtonPanel";
-			this.ButtonPanel.Size = new System.Drawing.Size(193, 29);
+			this.ButtonPanel.Size = new System.Drawing.Size(236, 33);
 			this.ButtonPanel.TabIndex = 0;
 			// 
 			// SelectFirstRecipeButton
 			// 
 			this.SelectFirstRecipeButton.AutoSize = true;
 			this.SelectFirstRecipeButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.SelectFirstRecipeButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.SelectFirstRecipeButton.Location = new System.Drawing.Point(3, 3);
 			this.SelectFirstRecipeButton.Name = "SelectFirstRecipeButton";
-			this.SelectFirstRecipeButton.Size = new System.Drawing.Size(106, 23);
+			this.SelectFirstRecipeButton.Size = new System.Drawing.Size(136, 27);
 			this.SelectFirstRecipeButton.TabIndex = 2;
 			this.SelectFirstRecipeButton.Text = "Select First Recipe";
 			this.SelectFirstRecipeButton.UseVisualStyleBackColor = true;
@@ -77,9 +78,12 @@
 			// 
 			// SaveChartButton
 			// 
-			this.SaveChartButton.Location = new System.Drawing.Point(115, 3);
+			this.SaveChartButton.AutoSize = true;
+			this.SaveChartButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.SaveChartButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.SaveChartButton.Location = new System.Drawing.Point(145, 3);
 			this.SaveChartButton.Name = "SaveChartButton";
-			this.SaveChartButton.Size = new System.Drawing.Size(75, 23);
+			this.SaveChartButton.Size = new System.Drawing.Size(88, 27);
 			this.SaveChartButton.TabIndex = 3;
 			this.SaveChartButton.Text = "Save Chart";
 			this.SaveChartButton.UseVisualStyleBackColor = true;
@@ -90,7 +94,7 @@
 			this.ProductionPlanPanel.AutoSize = true;
 			this.ProductionPlanPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ProductionPlanPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-			this.ProductionPlanPanel.Location = new System.Drawing.Point(0, 35);
+			this.ProductionPlanPanel.Location = new System.Drawing.Point(0, 39);
 			this.ProductionPlanPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.ProductionPlanPanel.Name = "ProductionPlanPanel";
 			this.ProductionPlanPanel.Size = new System.Drawing.Size(0, 0);

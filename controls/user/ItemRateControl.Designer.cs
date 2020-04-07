@@ -39,7 +39,8 @@
 			// 
 			this.RateNumeric.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.RateNumeric.AutoSize = true;
-			this.RateNumeric.DecimalPlaces = 5;
+			this.RateNumeric.DecimalPlaces = 3;
+			this.RateNumeric.Font = new System.Drawing.Font("Microsoft Tai Le", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.RateNumeric.Location = new System.Drawing.Point(3, 4);
 			this.RateNumeric.Maximum = new decimal(new int[] {
             1000000000,
@@ -47,7 +48,7 @@
             0,
             0});
 			this.RateNumeric.Name = "RateNumeric";
-			this.RateNumeric.Size = new System.Drawing.Size(116, 20);
+			this.RateNumeric.Size = new System.Drawing.Size(145, 24);
 			this.RateNumeric.TabIndex = 1;
 			this.RateNumeric.ThousandsSeparator = true;
 			this.RateNumeric.ValueChanged += new System.EventHandler(this.RateNumeric_ValueChanged);
@@ -61,7 +62,7 @@
 			this.MainPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.MainPanel.Name = "MainPanel";
-			this.MainPanel.Size = new System.Drawing.Size(205, 29);
+			this.MainPanel.Size = new System.Drawing.Size(256, 33);
 			this.MainPanel.TabIndex = 0;
 			// 
 			// ItemButton
@@ -69,9 +70,10 @@
 			this.ItemButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ItemButton.AutoSize = true;
 			this.ItemButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ItemButton.Location = new System.Drawing.Point(125, 3);
+			this.ItemButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.ItemButton.Location = new System.Drawing.Point(154, 3);
 			this.ItemButton.Name = "ItemButton";
-			this.ItemButton.Size = new System.Drawing.Size(77, 23);
+			this.ItemButton.Size = new System.Drawing.Size(99, 27);
 			this.ItemButton.TabIndex = 2;
 			this.ItemButton.Text = "<item name>";
 			this.ItemButton.UseVisualStyleBackColor = true;
@@ -85,7 +87,7 @@
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.Controls.Add(this.MainPanel);
 			this.Name = "ItemRateControl";
-			this.Size = new System.Drawing.Size(205, 29);
+			this.Size = new System.Drawing.Size(256, 33);
 			((System.ComponentModel.ISupportInitialize)(this.RateNumeric)).EndInit();
 			this.MainPanel.ResumeLayout(false);
 			this.MainPanel.PerformLayout();

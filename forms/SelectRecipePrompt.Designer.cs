@@ -44,7 +44,7 @@
 			this.RecipesList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.RecipesList.FormattingEnabled = true;
 			this.RecipesList.ItemHeight = 16;
-			this.RecipesList.Location = new System.Drawing.Point(3, 29);
+			this.RecipesList.Location = new System.Drawing.Point(3, 32);
 			this.RecipesList.Name = "RecipesList";
 			this.RecipesList.Size = new System.Drawing.Size(1176, 372);
 			this.RecipesList.TabIndex = 0;
@@ -54,9 +54,10 @@
 			this.YesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.YesButton.AutoSize = true;
 			this.YesButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.YesButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.YesButton.Location = new System.Drawing.Point(3, 3);
 			this.YesButton.Name = "YesButton";
-			this.YesButton.Size = new System.Drawing.Size(51, 23);
+			this.YesButton.Size = new System.Drawing.Size(61, 27);
 			this.YesButton.TabIndex = 1;
 			this.YesButton.Text = "Accept";
 			this.YesButton.UseVisualStyleBackColor = true;
@@ -68,9 +69,10 @@
 			this.NoButton.AutoSize = true;
 			this.NoButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.NoButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.NoButton.Location = new System.Drawing.Point(60, 3);
+			this.NoButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.NoButton.Location = new System.Drawing.Point(70, 3);
 			this.NoButton.Name = "NoButton";
-			this.NoButton.Size = new System.Drawing.Size(50, 23);
+			this.NoButton.Size = new System.Drawing.Size(61, 27);
 			this.NoButton.TabIndex = 2;
 			this.NoButton.Text = "Cancel";
 			this.NoButton.UseVisualStyleBackColor = true;
@@ -82,9 +84,9 @@
 			this.ButtonPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ButtonPanel.Controls.Add(this.YesButton);
 			this.ButtonPanel.Controls.Add(this.NoButton);
-			this.ButtonPanel.Location = new System.Drawing.Point(3, 407);
+			this.ButtonPanel.Location = new System.Drawing.Point(3, 410);
 			this.ButtonPanel.Name = "ButtonPanel";
-			this.ButtonPanel.Size = new System.Drawing.Size(113, 29);
+			this.ButtonPanel.Size = new System.Drawing.Size(134, 33);
 			this.ButtonPanel.TabIndex = 3;
 			// 
 			// MainPanel
@@ -94,19 +96,19 @@
 			this.MainPanel.Controls.Add(this.FilterBox);
 			this.MainPanel.Controls.Add(this.RecipesList);
 			this.MainPanel.Controls.Add(this.ButtonPanel);
-			this.MainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.MainPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainPanel.Name = "MainPanel";
-			this.MainPanel.Size = new System.Drawing.Size(1184, 439);
+			this.MainPanel.Size = new System.Drawing.Size(1182, 446);
 			this.MainPanel.TabIndex = 4;
 			// 
 			// FilterBox
 			// 
+			this.FilterBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.FilterBox.Location = new System.Drawing.Point(3, 3);
 			this.FilterBox.MaxLength = 200;
 			this.FilterBox.Name = "FilterBox";
-			this.FilterBox.Size = new System.Drawing.Size(1176, 20);
+			this.FilterBox.Size = new System.Drawing.Size(1176, 23);
 			this.FilterBox.TabIndex = 4;
 			this.FilterBox.WordWrap = false;
 			this.FilterBox.TextChanged += new System.EventHandler(this.FilterBox_TextChanged);
@@ -119,7 +121,7 @@
 			this.AutoSize = true;
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.CancelButton = this.NoButton;
-			this.ClientSize = new System.Drawing.Size(1184, 439);
+			this.ClientSize = new System.Drawing.Size(1184, 446);
 			this.Controls.Add(this.MainPanel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MinimizeBox = false;
