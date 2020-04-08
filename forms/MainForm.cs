@@ -123,6 +123,8 @@ namespace VisualSatisfactoryCalculator.forms
 				{
 					Bitmap map = new Bitmap(ProductionPlanPanel.PreferredSize.Width, ProductionPlanPanel.PreferredSize.Height);
 					ProductionPlanPanel.DrawToBitmap(map, new Rectangle(0, 0, map.Width, map.Height));
+					byte[] bytes = new CondensedProductionPlan(plan).ToBytes();
+					new BitmapWriter(map).WriteBytes(bytes);
 					map.Save(file, System.Drawing.Imaging.ImageFormat.Png);
 					file.Close();
 				}

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 
 namespace VisualSatisfactoryCalculator.code.Extensions
 {

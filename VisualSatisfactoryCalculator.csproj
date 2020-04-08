@@ -78,6 +78,7 @@
     <Compile Include="code\JSONClasses\JSONItem.cs" />
     <Compile Include="code\JSONClasses\JSONRecipe.cs" />
     <Compile Include="code\Interfaces\IMyCloneable.cs" />
+    <Compile Include="code\Utility\BitmapWriter.cs" />
     <Compile Include="code\Utility\Constants.cs" />
     <Compile Include="code\Utility\ResearchToRecipeMapping.cs" />
     <Compile Include="SatisfactorySaveEditorCode\AddViewModel.cs" />
