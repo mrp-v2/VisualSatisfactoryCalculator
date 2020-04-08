@@ -40,13 +40,20 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 					itemID = itemID.Substring(0, itemID.IndexOf(")"));
 				}
 				JSONItem jItem = items.MatchID(itemID);
-				decimal divisor = 1;
-				if (fuelForm.Equals("RF_LIQUID")) divisor = Constants.LiquidGeneratorDivisor;
-				List<ItemCount> counts = new List<ItemCount>
+				List<ItemCount> counts = new List<ItemCount>();
+				if (fuelForm.Equals("RF_LIQUID"))
 				{
-					new ItemCount(jItem, -1 * (decimal.Parse(powerProduction) / jItem.GetEnergyValue() / divisor)),
-					new ItemCount(Constants.MWItem, decimal.Parse(powerProduction))
-				};
+					counts.Add(new ItemCount(jItem, -1 * (decimal.Parse(powerProduction) / jItem.GetEnergyValue() / Constants.GeneratorEnergyDivisor)));
+				}
+				else if (fuelForm.Equals("RF_SOLID"))
+				{
+					counts.Add(new ItemCount(jItem, -1 * (decimal.Parse(powerProduction) / (jItem.GetEnergyValue() / 1000m) / Constants.GeneratorEnergyDivisor)));
+				}
+				else
+				{
+					throw new ArgumentOutOfRangeException("Form " + fuelForm + " is unrecognized!");
+				}
+				counts.Add(new ItemCount(Constants.MWItem, decimal.Parse(powerProduction)));
 				IRecipe recipe = new SimpleCustomRecipe(uniqueID + itemID, 60, displayName, counts, jItem.ToString() + " to Power");
 				recipes.Add(recipe);
 			}
