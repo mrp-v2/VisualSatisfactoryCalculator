@@ -7,13 +7,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.JSONClasses;
 
 namespace VisualSatisfactoryCalculator.code.Utility
 {
 	public class SaveFileInteractor
 	{
-		public static List<JSONRecipe> GetRecipesFromSave(string saveFile)
+		public static List<IRecipe> GetRecipesFromSave(string saveFile)
 		{
 			//get information on unlocked recipes
 			SatisfactorySave save = new SatisfactorySave(saveFile);
@@ -49,7 +50,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			}
 			//get information on recipes
 			results = GetSection(jsonFile, "FactoryGame.FGRecipe", "FactoryGame.FGBuildableConveyorBelt");
-			List<JSONRecipe> recipeResults = new List<JSONRecipe>();
+			List<IRecipe> recipeResults = new List<IRecipe>();
 			foreach (JToken token in results)
 			{
 				recipeResults.Add(token.ToObject<JSONRecipe>());
@@ -58,8 +59,21 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			{
 				recipe.Initialize(itemResults);
 			}
+			//get information on generators
+			results = GetSection(jsonFile, "FactoryGame.FGBuildableGeneratorFuel", "FactoryGame.FGBuildableTradingPost");
+			results.AddRange(GetSection(jsonFile, "FactoryGame.FGBuildableGeneratorNuclear", "FactoryGame.FGItemDescriptorNuclearFuel"));
+			List<JSONGenerator> generatorResults = new List<JSONGenerator>();
+			foreach (JToken token in results)
+			{
+				generatorResults.Add(token.ToObject<JSONGenerator>());
+			}
+			foreach (JSONGenerator generator in generatorResults)
+			{
+				if (generator.ToString().Equals("Biomass Burner")) continue;
+				recipeResults.AddRange(generator.GetRecipes(itemResults));
+			}
 			//use the information
-			List<JSONRecipe> unlockedRecipes = new List<JSONRecipe>();
+			List<IRecipe> unlockedRecipes = new List<IRecipe>();
 			foreach (SerializedPropertyViewModel field in schematics.Fields)
 			{
 				if (field.PropertyName == "mPurchasedSchematics")

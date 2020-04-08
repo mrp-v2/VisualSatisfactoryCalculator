@@ -7,16 +7,16 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 	[Serializable]
 	public class ItemCount : IMyCloneable<ItemCount>
 	{
-		private readonly int count;
+		private readonly decimal count;
 		private readonly IItem item;
 
-		public ItemCount(IItem item, int count)
+		public ItemCount(IItem item, decimal count)
 		{
 			this.item = item;
 			this.count = count;
 		}
 
-		public int GetCount()
+		public decimal GetCount()
 		{
 			return count;
 		}
@@ -28,7 +28,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public override int GetHashCode()
 		{
-			return base.GetHashCode() * count;
+			return item.GetHashCode() * count.GetHashCode();
 		}
 
 		public override bool Equals(object obj)

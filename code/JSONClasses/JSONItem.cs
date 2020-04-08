@@ -48,11 +48,6 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			return decimal.Parse(energyValue);
 		}
 
-		public string GetUniqueID()
-		{
-			return uniqueID;
-		}
-
 		public string GetDisplayName()
 		{
 			return displayName;
@@ -69,7 +64,5 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			if (!(other is JSONItem)) return false;
 			return uniqueID.Equals((other as JSONItem).uniqueID);
 		}
-
-		public static readonly JSONItem comparer = new JSONItem(null, null, null, null);
 	}
 }

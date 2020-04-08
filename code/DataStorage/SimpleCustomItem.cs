@@ -30,17 +30,13 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public bool EqualID(string id)
 		{
-			throw new NotImplementedException();
+			return uniqueID.Equals(id);
 		}
 
 		public bool Equals(IItem other)
 		{
-			throw new NotImplementedException();
-		}
-
-		public string GetUniqueID()
-		{
-			throw new NotImplementedException();
+			if (!(other is SimpleCustomItem)) return false;
+			return uniqueID.Equals((other as SimpleCustomItem).uniqueID);
 		}
 	}
 }

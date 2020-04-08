@@ -8,6 +8,6 @@ namespace VisualSatisfactoryCalculator.code.Interfaces
 {
 	public interface IItem : IEquatable<IItem>, IHasUniqueID
 	{
-		string GetUniqueID();
+		
 	}
 }

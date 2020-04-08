@@ -74,7 +74,6 @@
     <Compile Include="code\Interfaces\IRecipe.cs" />
     <Compile Include="code\JSONClasses\JSONGenerator.cs" />
     <Compile Include="code\JSONClasses\JSONItem.cs" />
-    <Compile Include="code\Extensions\IItemListExtensions.cs" />
     <Compile Include="code\JSONClasses\JSONRecipe.cs" />
     <Compile Include="code\Interfaces\IMyCloneable.cs" />
     <Compile Include="code\Utility\Constants.cs" />

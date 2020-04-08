@@ -160,5 +160,17 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 				me[key].AddRange(other[key]);
 			}
 		}
+
+		public static T MatchID<T>(this IEnumerable<T> me, string id) where T : IHasUniqueID
+		{
+			foreach (T item in me)
+			{
+				if (item.EqualID(id))
+				{
+					return item;
+				}
+			}
+			return default;
+		}
 	}
 }

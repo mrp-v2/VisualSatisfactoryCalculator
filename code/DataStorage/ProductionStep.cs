@@ -177,5 +177,10 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			}
 			return list;
 		}
+
+		public override string ToString()
+		{
+			return recipe.ToString();
+		}
 	}
 }

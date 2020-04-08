@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
@@ -14,7 +15,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 	{
 		private readonly string uniqueID;
 		private readonly string[] defaultFuelClasses;
-		private readonly string fuelResourceForm;
+		private readonly string fuelForm;
 		private readonly string powerProduction;
 		private readonly string displayName;
 
@@ -23,28 +24,38 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		{
 			uniqueID = ClassName;
 			defaultFuelClasses = mDefaultFuelClasses.Split(',');
-			fuelResourceForm = mFuelResourceForm;
+			fuelForm = mFuelResourceForm;
 			powerProduction = mPowerProduction;
 			displayName = mDisplayName;
 		}
 
-		public List<IRecipe> GenerateRecipes(List<JSONItem> items)
+		public List<IRecipe> GetRecipes(List<JSONItem> items)
 		{
 			List<IRecipe> recipes = new List<IRecipe>();
 			foreach (string item in defaultFuelClasses)
 			{
 				string itemID = item.Substring(item.IndexOf('.') + 1);
-				JSONItem jItem = items.GetJSONItemFor(itemID);
+				if (itemID.IndexOf(")") >= 0)
+				{
+					itemID = itemID.Substring(0, itemID.IndexOf(")"));
+				}
+				JSONItem jItem = items.MatchID(itemID);
+				decimal divisor = 1;
+				if (fuelForm.Equals("RF_LIQUID")) divisor = Constants.LiquidGeneratorDivisor;
 				List<ItemCount> counts = new List<ItemCount>
 				{
-					new ItemCount(jItem, (int)(decimal.Parse(powerProduction) / jItem.GetEnergyValue() / (16m + 2m/3m))),
-					new ItemCount(new SimpleCustomItem("MegaWatt", "MW"), (int)double.Parse(powerProduction))
+					new ItemCount(jItem, -1 * (decimal.Parse(powerProduction) / jItem.GetEnergyValue() / divisor)),
+					new ItemCount(Constants.MWItem, decimal.Parse(powerProduction))
 				};
-				//
-				IRecipe recipe = new SimpleCustomRecipe(uniqueID + item, 60, displayName, counts);
+				IRecipe recipe = new SimpleCustomRecipe(uniqueID + itemID, 60, displayName, counts, jItem.ToString() + " to Power");
 				recipes.Add(recipe);
 			}
 			return recipes;
+		}
+
+		public override string ToString()
+		{
+			return displayName;
 		}
 	}
 }

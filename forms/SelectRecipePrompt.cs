@@ -19,7 +19,7 @@ namespace VisualSatisfactoryCalculator.forms
 			this.parent = parent;
 			this.purpose = purpose;
 			originalList = options;
-			foreach (JSONRecipe rec in options)
+			foreach (IRecipe rec in options)
 			{
 				RecipesList.Items.Add(rec);
 			}
@@ -27,9 +27,9 @@ namespace VisualSatisfactoryCalculator.forms
 
 		private void YesButton_Click(object sender, EventArgs e)
 		{
-			if (RecipesList.SelectedItem is JSONRecipe)
+			if (RecipesList.SelectedItem is IRecipe)
 			{
-				parent.SendObject(RecipesList.SelectedItem as JSONRecipe, purpose);
+				parent.SendObject(RecipesList.SelectedItem as IRecipe, purpose);
 				Close();
 			}
 		}
@@ -43,7 +43,7 @@ namespace VisualSatisfactoryCalculator.forms
 		{
 			RecipesList.BeginUpdate();
 			RecipesList.Items.Clear();
-			foreach (JSONRecipe recipe in originalList)
+			foreach (IRecipe recipe in originalList)
 			{
 				if (recipe.ToString().ToLower().Contains(FilterBox.Text.ToLower()))
 				{

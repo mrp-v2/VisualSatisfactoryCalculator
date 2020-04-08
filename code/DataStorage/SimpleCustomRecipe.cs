@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.JSONClasses;
 
@@ -14,18 +15,20 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		private readonly decimal craftTime;
 		private readonly string machine;
 		private readonly List<ItemCount> itemCounts;
+		private readonly string displayName;
 
-		public SimpleCustomRecipe(string uniqueID, decimal craftTime, string machine, List<ItemCount> itemCounts)
+		public SimpleCustomRecipe(string uniqueID, decimal craftTime, string machine, List<ItemCount> itemCounts, string displayName)
 		{
 			this.uniqueID = uniqueID;
 			this.craftTime = craftTime;
 			this.machine = machine;
 			this.itemCounts = itemCounts;
+			this.displayName = displayName;
 		}
 
 		public IRecipe Clone()
 		{
-			return new SimpleCustomRecipe(uniqueID, craftTime, machine, itemCounts);
+			return new SimpleCustomRecipe(uniqueID, craftTime, machine, itemCounts, displayName);
 		}
 
 		public bool EqualID(string id)
@@ -54,5 +57,37 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			if (!(other is SimpleCustomRecipe)) return false;
 			return uniqueID.Equals((other as SimpleCustomRecipe).uniqueID);
 		}
+
+		public override int GetHashCode()
+		{
+			return uniqueID.GetHashCode();
+		}
+
+		public override string ToString()
+		{
+			string str = displayName + ": ";
+			List<ItemCount> ingredients = itemCounts.GetIngredients().Inverse();
+			for (int i = 0; i < ingredients.Count; i++)
+			{
+				if (i > 0)
+				{
+					str += ", ";
+				}
+				str += ingredients[i].ToString();
+			}
+			str += " -> ";
+			List<ItemCount> products = itemCounts.GetProducts();
+			for (int i = 0; i < products.Count; i++)
+			{
+				if (i > 0)
+				{
+					str += ", ";
+				}
+				str += products[i].ToString();
+			}
+			str += " in " + craftTime + " seconds using a " + machine;
+			return str;
+		}
+
 	}
 }

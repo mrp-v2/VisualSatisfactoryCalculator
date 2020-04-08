@@ -75,7 +75,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			countString = countString.Replace(")", "");
 			countString = countString.Remove(0, "Amount=".Length);
 			int itemCount = int.Parse(countString);
-			JSONItem item = items.GetJSONItemFor(itemString);
+			JSONItem item = items.MatchID(itemString);
 			if (item.IsLiquid())
 			{
 				itemCount /= 1000;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using VisualSatisfactoryCalculator.code.Extensions;
+using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.JSONClasses;
 
 namespace VisualSatisfactoryCalculator.code.Utility
@@ -37,7 +38,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			{"Schematic_2-2_C", new string[] { "Recipe_Biofuel_C" } },
 			{"Schematic_2-3_C", new string[] { } },
 			{"Schematic_2-5_C", new string[] { } },
-			{"Schematic_3-1_C", new string[] { } },
+			{"Schematic_3-1_C", new string[] { "Build_GeneratorCoal_CDesc_Coal_C", "Build_GeneratorCoal_CDesc_CompactedCoal_C", "Build_GeneratorCoal_CDesc_PetroleumCoke_C" } },
 			{"Schematic_3-2_C", new string[] { } },
 			{"Schematic_3-3_C", new string[] { "Recipe_IngotSteel_C", "Recipe_SteelBeam_C", "Recipe_SteelPipe_C", "Recipe_SpaceElevatorPart_2_C" } },
 			{"Schematic_3-4_C", new string[] { } },
@@ -50,14 +51,14 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			{"Schematic_5-3_C", new string[] { "Recipe_UnpackageBioFuel_C", "Recipe_UnpackageFuel_C", "Recipe_UnpackageOil_C", "Recipe_UnpackageOilResidue_C", "Recipe_UnpackageWater_C", "Recipe_FluidCanister_C", "Recipe_Fuel_C", "Recipe_LiquidBiofuel_C", "Recipe_PackagedBiofuel_C", "Recipe_PackagedCrudeOil_C", "Recipe_PackagedOilResidue_C", "Recipe_PackagedWater_C" } },
 			{"Schematic_5-4_C", new string[] { "Recipe_FilterGasMask_C" } },
 			{"Schematic_5-4-1_C", new string[] { } },
-			{"Schematic_6-1_C", new string[] { } },
+			{"Schematic_6-1_C", new string[] { "Build_GeneratorFuel_CDesc_LiquidFuel_C", "Build_GeneratorFuel_CDesc_LiquidTurboFuel_C", "Build_GeneratorFuel_CDesc_LiquidBiofuel_C" } },
 			{"Schematic_6-2_C", new string[] { } },
 			{"Schematic_6-3_C", new string[] { } },
 			{"Schematic_6-4_C", new string[] { } },
 			{"Schematic_7-1_C", new string[] { "Recipe_AluminumSheet_C", "Recipe_IngotAluminum_C", "Recipe_AluminumScrap_C", "Recipe_AluminaSolution_C" } },
 			{"Schematic_7-2_C", new string[] { "Recipe_HeatSink_C", "Recipe_MotorTurbo_C", "Recipe_Battery_C" } },
 			{"Schematic_7-3_C", new string[] { "Recipe_FilterHazmat_C" } },
-			{"Schematic_7-4_C", new string[] { "Recipe_NuclearFuelRod_C", "Recipe_ElectromagneticControlRod_C", "Recipe_UraniumCell_C", "Recipe_UraniumPellet_C", "Recipe_SulfuricAcid_C" } },
+			{"Schematic_7-4_C", new string[] { "Recipe_NuclearFuelRod_C", "Recipe_ElectromagneticControlRod_C", "Recipe_UraniumCell_C", "Recipe_UraniumPellet_C", "Recipe_SulfuricAcid_C", "Build_GeneratorNuclear_CDesc_NuclearFuelRod_C" } },
 			//MAM recipes
 			{"Research_ACarapace_0_C", new string[] { } },
 			{"Research_ACarapace_1_C", new string[] { "Recipe_Biomass_AlienCarapace_C" } },
@@ -132,30 +133,30 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			{"Schematic_Alternate_TurboFuel_C", new string[] { "Recipe_Alternate_Turbofuel_C" } },
 		};
 
-		public static List<JSONRecipe> GetRecipesForResearch(string research, List<JSONRecipe> recipes)
+		public static List<IRecipe> GetRecipesForResearch(string research, List<IRecipe> recipes)
 		{
 			if (mapping.ContainsKey(research))
 			{
-				List<JSONRecipe> unlockedRecipes = new List<JSONRecipe>();
+				List<IRecipe> unlockedRecipes = new List<IRecipe>();
 				foreach (string str in mapping[research])
 				{
-					unlockedRecipes.Add(recipes.GetRecipeFor(str));
+					unlockedRecipes.Add(recipes.MatchID(str));
 				}
 				return unlockedRecipes;
 			}
 			if (research.Contains("ResourceSink") || research.Contains("HardDrive") || research.Contains("Inventory"))
 			{
-				return new List<JSONRecipe>();
+				return new List<IRecipe>();
 			}
 			if (research.StartsWith("Schematic_Alternate"))
 			{
 				string temp = research.Remove(0, "Schematic".Length);
 				temp = temp.Insert(0, "Recipe");
 				temp = SeperateNumbers(temp);
-				return new List<JSONRecipe>() { recipes.GetRecipeFor(temp) };
+				return new List<IRecipe>() { recipes.MatchID(temp) };
 			}
 			Console.WriteLine("Research " + research + " does not have a mapping!");
-			return new List<JSONRecipe>();
+			return new List<IRecipe>();
 		}
 
 		private static readonly char[] numbers = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
