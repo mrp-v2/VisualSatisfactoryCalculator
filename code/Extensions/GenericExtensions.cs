@@ -161,7 +161,7 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			}
 		}
 
-		public static T MatchID<T>(this IEnumerable<T> me, string id) where T : IHasUniqueID
+		public static T MatchID<T>(this IEnumerable<T> me, string id) where T : IHasUID
 		{
 			foreach (T item in me)
 			{

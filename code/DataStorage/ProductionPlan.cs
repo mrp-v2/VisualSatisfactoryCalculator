@@ -9,6 +9,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 	public class ProductionPlan : ProductionStep
 	{
 		public ProductionPlan(IRecipe recipe) : base(recipe, 1) { }
+		public ProductionPlan(IRecipe recipe, decimal multiplier) : base(recipe, multiplier) { }
 
 		public List<ProductionStep> GetAllSteps()
 		{

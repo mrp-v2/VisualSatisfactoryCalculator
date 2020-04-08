@@ -6,7 +6,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
 	public class JSONItem : IItem
 	{
-		private readonly string uniqueID;
+		private readonly string UID;
 		private readonly string displayName;
 		private readonly string form;
 		private readonly string energyValue;
@@ -15,22 +15,22 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		[JsonConstructor]
 		public JSONItem(string ClassName, string mDisplayName, string mForm, string mEnergyValue)
 		{
-			uniqueID = ClassName;
+			UID = ClassName;
 			displayName = mDisplayName;
 			form = mForm;
 			energyValue = mEnergyValue;
 		}
 
-		public JSONItem(JSONItem item) : this(item.uniqueID, item.displayName, item.form, item.energyValue) { }
+		public JSONItem(JSONItem item) : this(item.UID, item.displayName, item.form, item.energyValue) { }
 
 		public override int GetHashCode()
 		{
-			return uniqueID.GetHashCode();
+			return UID.GetHashCode();
 		}
 
 		public bool EqualID(string id)
 		{
-			return uniqueID.Equals(id);
+			return UID.Equals(id);
 		}
 
 		public override string ToString()
@@ -62,7 +62,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		{
 			if (other == null) return false;
 			if (!(other is JSONItem)) return false;
-			return uniqueID.Equals((other as JSONItem).uniqueID);
+			return UID.Equals((other as JSONItem).UID);
 		}
 	}
 }

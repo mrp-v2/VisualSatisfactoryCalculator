@@ -9,12 +9,12 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 {
 	public class SimpleCustomItem : IItem
 	{
-		private readonly string uniqueID;
+		private readonly string UID;
 		private readonly string displayName;
 
-		public SimpleCustomItem(string uniqueID, string displayName)
+		public SimpleCustomItem(string UID, string displayName)
 		{
-			this.uniqueID = uniqueID;
+			this.UID = UID;
 			this.displayName = displayName;
 		}
 
@@ -25,18 +25,18 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public override int GetHashCode()
 		{
-			return uniqueID.GetHashCode();
+			return UID.GetHashCode();
 		}
 
 		public bool EqualID(string id)
 		{
-			return uniqueID.Equals(id);
+			return UID.Equals(id);
 		}
 
 		public bool Equals(IItem other)
 		{
 			if (!(other is SimpleCustomItem)) return false;
-			return uniqueID.Equals((other as SimpleCustomItem).uniqueID);
+			return UID.Equals((other as SimpleCustomItem).UID);
 		}
 	}
 }

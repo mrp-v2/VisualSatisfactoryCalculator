@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.JSONClasses;
 
 namespace VisualSatisfactoryCalculator.code.Extensions
 {
-	public static class IRecipeExtensions
+	public static class RecipeExtensions
 	{
 		public static string ToStringC(this List<IRecipe> me)
 		{
@@ -60,6 +61,18 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 				}
 			}
 			return recs;
+		}
+
+		public static decimal GetRateOf(this IRecipe me, IItem item)
+		{
+			foreach (ItemCount count in me.GetItemCounts())
+			{
+				if (count.GetItem().Equals(item))
+				{
+					return count.GetCount() * (60m / me.GetCraftTime());
+				}
+			}
+			return default;
 		}
 	}
 }

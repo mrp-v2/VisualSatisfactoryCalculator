@@ -13,7 +13,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
 	class JSONGenerator
 	{
-		private readonly string uniqueID;
+		private readonly string UID;
 		private readonly string[] defaultFuelClasses;
 		private readonly string fuelForm;
 		private readonly string powerProduction;
@@ -22,7 +22,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		[JsonConstructor]
 		public JSONGenerator(string ClassName, string mDefaultFuelClasses, string mFuelResourceForm, string mPowerProduction, string mDisplayName)
 		{
-			uniqueID = ClassName;
+			UID = ClassName;
 			defaultFuelClasses = mDefaultFuelClasses.Split(',');
 			fuelForm = mFuelResourceForm;
 			powerProduction = mPowerProduction;
@@ -54,7 +54,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 					throw new ArgumentOutOfRangeException("Form " + fuelForm + " is unrecognized!");
 				}
 				counts.Add(new ItemCount(Constants.MWItem, decimal.Parse(powerProduction)));
-				IRecipe recipe = new SimpleCustomRecipe(uniqueID + itemID, 60, displayName, counts, jItem.ToString() + " to Power");
+				IRecipe recipe = new SimpleCustomRecipe(UID + itemID, 60, displayName, counts, jItem.ToString() + " to Power");
 				recipes.Add(recipe);
 			}
 			return recipes;

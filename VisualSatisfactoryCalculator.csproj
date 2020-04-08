@@ -66,8 +66,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="code\DataStorage\CondensedProductionStep.cs" />
     <Compile Include="code\DataStorage\SimpleCustomItem.cs" />
     <Compile Include="code\DataStorage\SimpleCustomRecipe.cs" />
+    <Compile Include="code\DataStorage\CondensedProductionPlan.cs" />
     <Compile Include="code\Extensions\GenericExtensions.cs" />
     <Compile Include="code\Interfaces\IHasUniqueID.cs" />
     <Compile Include="code\Interfaces\IItem.cs" />
@@ -117,7 +119,7 @@
     <Compile Include="code\DataStorage\ProductionPlan.cs" />
     <Compile Include="code\DataStorage\ProductionStep.cs" />
     <Compile Include="code\DataStorage\ItemCount.cs" />
-    <Compile Include="code\Extensions\IRecipeExtensions.cs" />
+    <Compile Include="code\Extensions\RecipeExtensions.cs" />
     <Compile Include="code\Extensions\NumberExtensions.cs" />
     <Compile Include="SatisfactorySaveEditorCode\BinaryIOExtensions.cs" />
     <Compile Include="SatisfactorySaveEditorCode\ChunkInfo.cs" />

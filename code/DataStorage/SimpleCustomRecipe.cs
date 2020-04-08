@@ -11,15 +11,15 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 {
 	class SimpleCustomRecipe : IRecipe
 	{
-		private readonly string uniqueID;
+		private readonly string UID;
 		private readonly decimal craftTime;
 		private readonly string machine;
 		private readonly List<ItemCount> itemCounts;
 		private readonly string displayName;
 
-		public SimpleCustomRecipe(string uniqueID, decimal craftTime, string machine, List<ItemCount> itemCounts, string displayName)
+		public SimpleCustomRecipe(string UID, decimal craftTime, string machine, List<ItemCount> itemCounts, string displayName)
 		{
-			this.uniqueID = uniqueID;
+			this.UID = UID;
 			this.craftTime = craftTime;
 			this.machine = machine;
 			this.itemCounts = itemCounts;
@@ -28,12 +28,12 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public IRecipe Clone()
 		{
-			return new SimpleCustomRecipe(uniqueID, craftTime, machine, itemCounts, displayName);
+			return new SimpleCustomRecipe(UID, craftTime, machine, itemCounts, displayName);
 		}
 
 		public bool EqualID(string id)
 		{
-			return uniqueID.Equals(id);
+			return UID.Equals(id);
 		}
 
 		public decimal GetCraftTime()
@@ -55,12 +55,12 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		{
 			if (other == null) return false;
 			if (!(other is SimpleCustomRecipe)) return false;
-			return uniqueID.Equals((other as SimpleCustomRecipe).uniqueID);
+			return UID.Equals((other as SimpleCustomRecipe).UID);
 		}
 
 		public override int GetHashCode()
 		{
-			return uniqueID.GetHashCode();
+			return UID.GetHashCode();
 		}
 
 		public override string ToString()
@@ -89,5 +89,9 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return str;
 		}
 
+		public string GetUID()
+		{
+			return UID;
+		}
 	}
 }

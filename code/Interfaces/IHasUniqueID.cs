@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VisualSatisfactoryCalculator.code.Interfaces
 {
-	public interface IHasUniqueID
+	public interface IHasUID
 	{
 		bool EqualID(string id);
 	}

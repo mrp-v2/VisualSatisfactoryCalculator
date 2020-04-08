@@ -9,7 +9,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
 	public class JSONRecipe : IRecipe
 	{
-		private readonly string uniqueID;
+		private readonly string UID;
 		private readonly string displayName;
 		private readonly string ingredients;
 		private readonly string product;
@@ -23,7 +23,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		[JsonConstructor]
 		public JSONRecipe(string ClassName, string mDisplayName, string mIngredients, string mProduct, string mManufactoringDuration, string mProducedIn)
 		{
-			uniqueID = ClassName;
+			UID = ClassName;
 			displayName = mDisplayName;
 			ingredients = mIngredients;
 			product = mProduct;
@@ -31,7 +31,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			producedIn = mProducedIn;
 		}
 
-		public JSONRecipe(JSONRecipe recipe) : this(recipe.uniqueID, recipe.displayName, recipe.ingredients, recipe.product, recipe.manufactoringDuration, recipe.producedIn)
+		public JSONRecipe(JSONRecipe recipe) : this(recipe.UID, recipe.displayName, recipe.ingredients, recipe.product, recipe.manufactoringDuration, recipe.producedIn)
 		{
 			itemCounts = recipe.itemCounts;
 			machineName = recipe.machineName;
@@ -165,12 +165,12 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			{
 				return false;
 			}
-			return uniqueID.Equals((obj as JSONRecipe).uniqueID);
+			return UID.Equals((obj as JSONRecipe).UID);
 		}
 
 		public bool EqualID(string id)
 		{
-			return uniqueID.Equals(id);
+			return UID.Equals(id);
 		}
 
 		public string GetMachine()
@@ -197,6 +197,11 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 				craftTime = craftTime
 			};
 			return clone;
+		}
+
+		public string GetUID()
+		{
+			return UID;
 		}
 	}
 }

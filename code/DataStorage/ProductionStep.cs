@@ -182,5 +182,10 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		{
 			return recipe.ToString();
 		}
+
+		public List<ProductionStep> GetRelatedSteps()
+		{
+			return relatedSteps;
+		}
 	}
 }
