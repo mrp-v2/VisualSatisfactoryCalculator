@@ -1,9 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;

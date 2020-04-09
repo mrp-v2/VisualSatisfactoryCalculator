@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using VisualSatisfactoryCalculator.code.Interfaces;
 
@@ -170,7 +171,39 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 					return item;
 				}
 			}
-			return default;
+			throw new ArgumentException("The given ID did not match any items in the list.");
+		}
+
+		public static T[] SubArray<T>(this T[] me, int startIndex, int length)
+		{
+			if (startIndex + length > me.Length)
+			{
+				throw new ArgumentException("The given length exceeds the size of the array!");
+			}
+			T[] subArray = new T[length];
+			for (int i = 0; i < length; i++)
+			{
+				subArray[i] = me[startIndex + i];
+			}
+			return subArray;
+		}
+
+		public static T[] AddElement<T>(this T[] me, T element)
+		{
+			T[] newMe = new T[me.Length + 1];
+			me.CopyTo(newMe, 0);
+			newMe[me.Length] = element;
+			return newMe;
+		}
+
+		public static bool AlternateEquals<T>(this T[] me, T[] other)
+		{
+			if (me.Length != other.Length) return false;
+			for (int i = 0; i < me.Length; i++)
+			{
+				if (!me[i].Equals(other[i])) return false;
+			}
+			return true;
 		}
 	}
 }

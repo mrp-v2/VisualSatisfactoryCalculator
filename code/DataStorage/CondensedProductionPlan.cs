@@ -15,16 +15,18 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		public ProductionPlan ToProductionPlan(List<IRecipe> recipes)
 		{
 			IRecipe myRecipe = GetRecipe(recipes);
-			ProductionPlan plan = new ProductionPlan(myRecipe, multiplier);
+			ProductionPlan plan = new ProductionPlan(myRecipe, 1);
 			if (children != null && children.Count > 0)
 			{
 				foreach (CondensedProductionStep child in children)
 				{
-					IItem shared = myRecipe.GetItemCounts().ToItems().FindMatch(child.GetRecipe(recipes).GetItemCounts().ToItems());
-					decimal rate = myRecipe.GetRateOf(shared) * -1;
-					plan.AddRelatedStep(child.ToProductionStep(recipes, rate, shared));
+					ProductionStep childStep = child.ToProductionStep(recipes);
+					childStep.AddRelatedStep(plan);
+					plan.AddRelatedStep(childStep);
+
 				}
 			}
+			plan.SetMultiplierAndRelated(multiplier);
 			return plan;
 		}
 
@@ -54,7 +56,9 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return finalBytes;
 		}
 
+		[NonSerialized]
 		public static readonly int BYTES_OF_LENGTH = 3;
+		[NonSerialized]
 		public static readonly byte byteMask = 0xFF;
 
 		public static CondensedProductionPlan FromBytes(byte[] bytes)
@@ -64,15 +68,14 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			{
 				originalLength |= bytes[i] << (8 * (BYTES_OF_LENGTH - i - 1));
 			}
-			byte[] relevantBytes = new byte[originalLength];
-			for (int i = 0; i < originalLength; i++)
+			if (bytes.Length != originalLength + BYTES_OF_LENGTH)
 			{
-				relevantBytes[i] = bytes[i + BYTES_OF_LENGTH];
+				throw new ArgumentException("byte array is not the expected length!");
 			}
+			byte[] relevantBytes = bytes.SubArray(BYTES_OF_LENGTH, originalLength);
 			BinaryFormatter bf = new BinaryFormatter();
-			using (MemoryStream ms = new MemoryStream())
+			using (MemoryStream ms = new MemoryStream(relevantBytes))
 			{
-				ms.Write(relevantBytes, 0, relevantBytes.Length);
 				try
 				{
 					return (CondensedProductionPlan)bf.Deserialize(ms);
@@ -83,6 +86,16 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 					return default;
 				}
 			}
+		}
+
+		public static int BytesToInt(byte[] bytes)
+		{
+			int number = 0;
+			for (int i = 0; i < bytes.Length; i++)
+			{
+				number |= bytes[i] << (8 * (bytes.Length - i - 1));
+			}
+			return number;
 		}
 	}
 }

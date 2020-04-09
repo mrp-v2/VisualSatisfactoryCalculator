@@ -34,6 +34,7 @@
 			this.SelectFirstRecipeButton = new System.Windows.Forms.Button();
 			this.SaveChartButton = new System.Windows.Forms.Button();
 			this.ProductionPlanPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.LoadChartButton = new System.Windows.Forms.Button();
 			this.MainPanel.SuspendLayout();
 			this.ButtonPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -58,9 +59,10 @@
 			this.ButtonPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ButtonPanel.Controls.Add(this.SelectFirstRecipeButton);
 			this.ButtonPanel.Controls.Add(this.SaveChartButton);
+			this.ButtonPanel.Controls.Add(this.LoadChartButton);
 			this.ButtonPanel.Location = new System.Drawing.Point(3, 3);
 			this.ButtonPanel.Name = "ButtonPanel";
-			this.ButtonPanel.Size = new System.Drawing.Size(236, 33);
+			this.ButtonPanel.Size = new System.Drawing.Size(330, 33);
 			this.ButtonPanel.TabIndex = 0;
 			// 
 			// SelectFirstRecipeButton
@@ -100,6 +102,19 @@
 			this.ProductionPlanPanel.Size = new System.Drawing.Size(0, 0);
 			this.ProductionPlanPanel.TabIndex = 1;
 			// 
+			// LoadChartButton
+			// 
+			this.LoadChartButton.AutoSize = true;
+			this.LoadChartButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.LoadChartButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.LoadChartButton.Location = new System.Drawing.Point(239, 3);
+			this.LoadChartButton.Name = "LoadChartButton";
+			this.LoadChartButton.Size = new System.Drawing.Size(88, 27);
+			this.LoadChartButton.TabIndex = 4;
+			this.LoadChartButton.Text = "Load Chart";
+			this.LoadChartButton.UseVisualStyleBackColor = true;
+			this.LoadChartButton.Click += new System.EventHandler(this.LoadChartButton_Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -125,5 +140,6 @@
 		private System.Windows.Forms.Button SelectFirstRecipeButton;
 		private System.Windows.Forms.FlowLayoutPanel ProductionPlanPanel;
 		private System.Windows.Forms.Button SaveChartButton;
+		private System.Windows.Forms.Button LoadChartButton;
 	}
 }

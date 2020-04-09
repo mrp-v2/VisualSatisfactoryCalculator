@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
-using VisualSatisfactoryCalculator.code.JSONClasses;
 using VisualSatisfactoryCalculator.forms;
 
 namespace VisualSatisfactoryCalculator.controls.user

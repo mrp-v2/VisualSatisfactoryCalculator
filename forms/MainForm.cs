@@ -6,7 +6,6 @@ using System.Windows.Forms;
 using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
-using VisualSatisfactoryCalculator.code.JSONClasses;
 using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.controls.user;
 
@@ -118,15 +117,17 @@ namespace VisualSatisfactoryCalculator.forms
 			};
 			if (dialog.ShowDialog() == DialogResult.OK)
 			{
-				Stream file;
-				if ((file = dialog.OpenFile()) != null)
+				Stream stream;
+				if ((stream = dialog.OpenFile()) != null)
 				{
-					Bitmap map = new Bitmap(ProductionPlanPanel.PreferredSize.Width, ProductionPlanPanel.PreferredSize.Height);
-					ProductionPlanPanel.DrawToBitmap(map, new Rectangle(0, 0, map.Width, map.Height));
-					byte[] bytes = new CondensedProductionPlan(plan).ToBytes();
-					new BitmapWriter(map).WriteBytes(bytes);
-					map.Save(file, System.Drawing.Imaging.ImageFormat.Png);
-					file.Close();
+					using (Bitmap map = new Bitmap(ProductionPlanPanel.PreferredSize.Width, ProductionPlanPanel.PreferredSize.Height))
+					{
+						ProductionPlanPanel.DrawToBitmap(map, new Rectangle(0, 0, map.Width, map.Height));
+						byte[] bytes = new CondensedProductionPlan(plan).ToBytes();
+						new BitmapSerializer(map).WriteBytes(bytes);
+						map.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+					}
+					stream.Close();
 				}
 			}
 		}
@@ -136,6 +137,31 @@ namespace VisualSatisfactoryCalculator.forms
 			PPTVC.NetProductsLabel.Text = plan.GetNetProductsString();
 			PPTVC.MachinesLabel.Text = plan.GetTotalMachineString();
 			PPTVC.NetIngredientsLabel.Text = plan.GetNetIngredientsString();
+		}
+
+		private void LoadChartButton_Click(object sender, EventArgs e)
+		{
+			OpenFileDialog dialog = new OpenFileDialog()
+			{
+				Title = "Select a previously made chart",
+				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+				DefaultExt = ".png",
+				Filter = "png images (*.png)|*.png"
+			};
+			if (dialog.ShowDialog() == DialogResult.OK)
+			{
+				Stream stream;
+				if ((stream = dialog.OpenFile()) != null)
+				{
+					using (Bitmap map = new Bitmap(stream))
+					{
+						int length = CondensedProductionPlan.BytesToInt(new BitmapSerializer(map).ReadBytes(CondensedProductionPlan.BYTES_OF_LENGTH));
+						plan = CondensedProductionPlan.FromBytes(new BitmapSerializer(map).ReadBytes(CondensedProductionPlan.BYTES_OF_LENGTH + length)).ToProductionPlan(AllRecipes);
+					}
+					PlanUpdated();
+					stream.Close();
+				}
+			}
 		}
 	}
 }

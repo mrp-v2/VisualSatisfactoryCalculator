@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Interfaces;
-using VisualSatisfactoryCalculator.code.JSONClasses;
 
 namespace VisualSatisfactoryCalculator.code.Extensions
 {

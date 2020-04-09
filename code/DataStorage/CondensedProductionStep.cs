@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
 
@@ -19,22 +16,18 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return recipes.MatchID(recipeUID);
 		}
 
-		protected decimal CalculateMultiplier(decimal sharedItemRate, IItem sharedItem, IRecipe myRecipe)
-		{
-			return sharedItemRate / myRecipe.GetRateOf(sharedItem);
-		}
-
-		public ProductionStep ToProductionStep(List<IRecipe> recipes, decimal sharedItemRate, IItem sharedItem)
+		public ProductionStep ToProductionStep(List<IRecipe> recipes)
 		{
 			IRecipe myRecipe = GetRecipe(recipes);
-			ProductionStep step = new ProductionStep(myRecipe, CalculateMultiplier(sharedItemRate, sharedItem, myRecipe));
+			ProductionStep step = new ProductionStep(myRecipe, 1);
 			if (children != null && children.Count > 0)
 			{
 				foreach (CondensedProductionStep child in children)
 				{
 					IItem shared = myRecipe.GetItemCounts().ToItems().FindMatch(child.GetRecipe(recipes).GetItemCounts().ToItems());
-					decimal rate = myRecipe.GetRateOf(shared) * -1;
-					step.AddRelatedStep(child.ToProductionStep(recipes, rate, shared));
+					ProductionStep childStep = child.ToProductionStep(recipes);
+					childStep.AddRelatedStep(step);
+					step.AddRelatedStep(childStep);
 				}
 			}
 			return step;

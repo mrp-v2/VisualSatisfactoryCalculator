@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
 using VisualSatisfactoryCalculator.code.Interfaces;
 
 namespace VisualSatisfactoryCalculator.code.JSONClasses
