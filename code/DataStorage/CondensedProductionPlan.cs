@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
@@ -81,6 +82,10 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 					return (CondensedProductionPlan)bf.Deserialize(ms);
 				}
 				catch (InvalidCastException e)
+				{
+					Console.Error.WriteLine(e.ToString());
+					return default;
+				} catch (SerializationException e)
 				{
 					Console.Error.WriteLine(e.ToString());
 					return default;

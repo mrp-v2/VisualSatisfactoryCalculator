@@ -153,12 +153,17 @@ namespace VisualSatisfactoryCalculator.forms
 				Stream stream;
 				if ((stream = dialog.OpenFile()) != null)
 				{
+					CondensedProductionPlan loadedPlan;
 					using (Bitmap map = new Bitmap(stream))
 					{
 						int length = CondensedProductionPlan.BytesToInt(new BitmapSerializer(map).ReadBytes(CondensedProductionPlan.BYTES_OF_LENGTH));
-						plan = CondensedProductionPlan.FromBytes(new BitmapSerializer(map).ReadBytes(CondensedProductionPlan.BYTES_OF_LENGTH + length)).ToProductionPlan(AllRecipes);
+						loadedPlan = CondensedProductionPlan.FromBytes(new BitmapSerializer(map).ReadBytes(CondensedProductionPlan.BYTES_OF_LENGTH + length));
 					}
-					PlanUpdated();
+					if (loadedPlan != null)
+					{
+						plan = loadedPlan.ToProductionPlan(AllRecipes);
+						PlanUpdated();
+					}
 					stream.Close();
 				}
 			}
