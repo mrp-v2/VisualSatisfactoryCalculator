@@ -83,7 +83,8 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 				{
 					Console.Error.WriteLine(e.ToString());
 					return default;
-				} catch (SerializationException e)
+				}
+				catch (SerializationException e)
 				{
 					Console.Error.WriteLine(e.ToString());
 					return default;
