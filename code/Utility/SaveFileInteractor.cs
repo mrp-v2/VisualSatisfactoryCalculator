@@ -109,6 +109,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				totalResults.Add(generator);
 			}
 			//finished
+			Constants.LastResortEncoderList.AddRange(totalResults);
 			return totalResults;
 		}
 

@@ -9,7 +9,6 @@ namespace VisualSatisfactoryCalculator.forms
 	{
 		private readonly IReceives<IRecipe> parent;
 		private readonly string purpose;
-
 		private readonly List<IRecipe> originalList;
 
 		public SelectRecipePrompt(List<IRecipe> options, IReceives<IRecipe> parent, string purpose)

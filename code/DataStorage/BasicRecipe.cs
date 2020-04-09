@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.DataStorage
 {
@@ -87,6 +88,11 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		public string GetDisplayName()
 		{
 			return displayName;
+		}
+
+		public override string ToString()
+		{
+			return ToString(Constants.LastResortEncoderList);
 		}
 	}
 }

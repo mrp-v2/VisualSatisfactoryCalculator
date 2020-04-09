@@ -9,5 +9,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 		public static readonly IItem MWItem = new SimpleCustomItem("FillerEnergyItemMW", "MW");
 
 		public static readonly List<IEncoder> AllConstantEncoders = new List<IEncoder>() { MWItem };
+
+		public static List<IEncoder> LastResortEncoderList = new List<IEncoder>();
 	}
 }
