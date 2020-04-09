@@ -1,29 +1,20 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using VisualSatisfactoryCalculator.code.DataStorage;
-using VisualSatisfactoryCalculator.code.Extensions;
-using VisualSatisfactoryCalculator.code.Interfaces;
 
 namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
-	public class JSONRecipe : IRecipe
+	public class JSONRecipe : BasicRecipe
 	{
-		private readonly string UID;
-		private readonly string displayName;
-		private readonly List<ItemCount> itemCounts;
-		private readonly string machineUID;
-		private readonly decimal craftTime;
-
 		[JsonConstructor]
 		public JSONRecipe(string ClassName, string mDisplayName, string mIngredients, string mProduct, string mManufactoringDuration, string mProducedIn)
+			: base(ClassName, decimal.Parse(mManufactoringDuration), GetMachineUID(mProducedIn), GetItemCounts(mIngredients, mProduct), mDisplayName) { }
+
+		private static string GetMachineUID(string mProducedIn)
 		{
-			UID = ClassName;
-			displayName = mDisplayName;
-			craftTime = decimal.Parse(mManufactoringDuration);
-			//machine
 			string[] machines = mProducedIn.Split(',');
+			string machineUID = default;
 			foreach (string str in machines)
 			{
 				if (str.Contains("Buildable/Factory"))
@@ -32,8 +23,13 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 					if (machineUID.Contains(")")) machineUID = machineUID.Substring(0, machineUID.IndexOf(")"));
 				}
 			}
+			return machineUID;
+		}
+
+		private static List<ItemCount> GetItemCounts(string mIngredients, string mProduct)
+		{
+			List<ItemCount> itemCounts = new List<ItemCount>();
 			//ingredients
-			itemCounts = new List<ItemCount>();
 			string[] ingredientsList = mIngredients.Split(',');
 			Trace.Assert(ingredientsList.Length % 2 == 0);
 			for (int i = 0; i < ingredientsList.Length; i += 2) itemCounts.Add(ParseItemCount(ingredientsList[i], ingredientsList[i + 1], false));
@@ -41,17 +37,10 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			string[] productsList = mProduct.Split(',');
 			Trace.Assert(productsList.Length % 2 == 0);
 			for (int i = 0; i < productsList.Length; i += 2) itemCounts.Add(ParseItemCount(productsList[i], productsList[i + 1], true));
+			return itemCounts;
 		}
 
-		/// <summary>
-		/// Should only be used in Initialize()
-		/// </summary>
-		/// <param name="items"></param>
-		/// <param name="itemString"></param>
-		/// <param name="countString"></param>
-		/// <param name="positive"></param>
-		/// <returns></returns>
-		private ItemCount ParseItemCount(string itemString, string countString, bool positive)
+		private static ItemCount ParseItemCount(string itemString, string countString, bool positive)
 		{
 			itemString = itemString.Substring(itemString.IndexOf(".") + 1);
 			itemString = itemString.Substring(0, itemString.LastIndexOf("\""));
@@ -60,73 +49,6 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			int itemCount = int.Parse(countString);
 			if (positive) return new ItemCount(itemString, itemCount);
 			else return new ItemCount(itemString, -itemCount);
-		}
-
-		public string ToString(List<IEncoder> encodings)
-		{
-			string str = displayName + ": ";
-			List<ItemCount> ingredients = itemCounts.GetIngredients().Inverse();
-			for (int i = 0; i < ingredients.Count; i++)
-			{
-				if (i > 0) str += ", ";
-				str += ingredients[i].ToString(encodings);
-			}
-			str += " -> ";
-			List<ItemCount> products = itemCounts.GetProducts();
-			for (int i = 0; i < products.Count; i++)
-			{
-				if (i > 0) str += ", ";
-				str += products[i].ToString(encodings);
-			}
-			str += " in " + Math.Round(craftTime, 3) + " seconds using a " + encodings.GetDisplayNameFor(machineUID);
-			return str;
-		}
-
-		public override int GetHashCode() 
-		{ 
-			return base.GetHashCode();
-		}
-
-		public bool Equals(IRecipe obj)
-		{
-			if (obj == null) return false;
-			if (!(obj is JSONRecipe)) return false;
-			return EqualID(obj);
-		}
-
-		public bool EqualID(string id)
-		{
-			return UID.Equals(id);
-		}
-
-		public bool EqualID(IHasUID obj)
-		{
-			return obj.EqualID(UID);
-		}
-
-		public string GetMachineUID()
-		{
-			return machineUID;
-		}
-
-		public List<ItemCount> GetItemCounts()
-		{
-			return itemCounts;
-		}
-
-		public decimal GetCraftTime()
-		{
-			return craftTime;
-		}
-
-		public string GetUID()
-		{
-			return UID;
-		}
-
-		public string GetDisplayName()
-		{
-			return displayName;
 		}
 	}
 }

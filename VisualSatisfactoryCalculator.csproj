@@ -68,7 +68,7 @@
   <ItemGroup>
     <Compile Include="code\DataStorage\CondensedProductionStep.cs" />
     <Compile Include="code\DataStorage\SimpleCustomItem.cs" />
-    <Compile Include="code\DataStorage\SimpleCustomRecipe.cs" />
+    <Compile Include="code\DataStorage\BasicRecipe.cs" />
     <Compile Include="code\DataStorage\CondensedProductionPlan.cs" />
     <Compile Include="code\Extensions\GenericExtensions.cs" />
     <Compile Include="code\Interfaces\IBuilding.cs" />

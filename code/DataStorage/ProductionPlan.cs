@@ -93,7 +93,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			{
 				if (netRates[itemUID] < 0 && Math.Round(netRates[itemUID], 5) != 0)
 				{
-					if((encodings.FindByID(itemUID) as IItem).IsLiquid()) str += Math.Round(-netRates[itemUID] / 1000, 5) + " " + encodings.GetDisplayNameFor(itemUID) + ", ";
+					if ((encodings.FindByID(itemUID) as IItem).IsLiquid()) str += Math.Round(-netRates[itemUID] / 1000, 5) + " " + encodings.GetDisplayNameFor(itemUID) + ", ";
 					else str += Math.Round(-netRates[itemUID], 5) + " " + encodings.GetDisplayNameFor(itemUID) + ", ";
 				}
 			}

@@ -56,7 +56,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 					throw new ArgumentOutOfRangeException("Form " + fuelForm + " is unrecognized!");
 				}
 				counts.Add(new ItemCount(Constants.MWItem.GetUID(), decimal.Parse(powerProduction)));
-				IRecipe recipe = new SimpleCustomRecipe(UID + itemID, 60, UID, counts, jItem.GetDisplayName() + " to Power");
+				IRecipe recipe = new BasicRecipe(UID + itemID, 60, UID, counts, jItem.GetDisplayName() + " to Power");
 				recipes.Add(recipe);
 			}
 			return recipes;

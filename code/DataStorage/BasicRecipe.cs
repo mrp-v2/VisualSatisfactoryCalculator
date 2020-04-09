@@ -5,7 +5,7 @@ using VisualSatisfactoryCalculator.code.Interfaces;
 
 namespace VisualSatisfactoryCalculator.code.DataStorage
 {
-	class SimpleCustomRecipe : IRecipe
+	public class BasicRecipe : IRecipe
 	{
 		private readonly string UID;
 		private readonly decimal craftTime;
@@ -13,7 +13,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		private readonly List<ItemCount> itemCounts;
 		private readonly string displayName;
 
-		public SimpleCustomRecipe(string UID, decimal craftTime, string machineUID, List<ItemCount> itemCounts, string displayName)
+		public BasicRecipe(string UID, decimal craftTime, string machineUID, List<ItemCount> itemCounts, string displayName)
 		{
 			this.UID = UID;
 			this.craftTime = craftTime;
@@ -45,8 +45,8 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		public bool Equals(IRecipe other)
 		{
 			if (other == null) return false;
-			if (!(other is SimpleCustomRecipe)) return false;
-			return UID.Equals((other as SimpleCustomRecipe).UID);
+			if (!(other is BasicRecipe)) return false;
+			return EqualID(other);
 		}
 
 		public override int GetHashCode()
