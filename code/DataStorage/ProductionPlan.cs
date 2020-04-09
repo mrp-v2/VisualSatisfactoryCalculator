@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.DataStorage
 {
@@ -16,21 +18,24 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return allSteps;
 		}
 
-		public Dictionary<IItem, decimal> GetNetRates()
+		public Dictionary<string, decimal> GetNetRates(List<IEncoder> encodings)
 		{
-			Dictionary<IItem, decimal> netRates = new Dictionary<IItem, decimal>();
+			Dictionary<string, decimal> netRates = new Dictionary<string, decimal>
+			{
+				{ Constants.MWItem.GetUID(), -GetRecursivePowerDraw(encodings) }
+			};
 			foreach (ProductionStep step in GetAllSteps())
 			{
 				foreach (ItemCount itemCount in step.GetRecipe().GetItemCounts())
 				{
-					IItem item = itemCount.GetItem();
-					if (netRates.ContainsKey(item))
+					string itemUID = itemCount.GetItemUID();
+					if (netRates.ContainsKey(itemUID))
 					{
-						netRates[item] += step.GetItemRate(item);
+						netRates[itemUID] += step.GetItemRate(itemUID);
 					}
 					else
 					{
-						netRates.Add(item, step.GetItemRate(item));
+						netRates.Add(itemUID, step.GetItemRate(itemUID));
 					}
 				}
 			}
@@ -42,52 +47,54 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			Dictionary<string, int> totalMachines = new Dictionary<string, int>();
 			foreach (ProductionStep step in GetAllSteps())
 			{
-				if (!totalMachines.ContainsKey(step.GetRecipe().GetMachine()))
+				if (!totalMachines.ContainsKey(step.GetRecipe().GetMachineUID()))
 				{
-					totalMachines.Add(step.GetRecipe().GetMachine(), step.CalculateMachineCount());
+					totalMachines.Add(step.GetRecipe().GetMachineUID(), step.CalculateMachineCount());
 				}
 				else
 				{
-					totalMachines[step.GetRecipe().GetMachine()] += step.CalculateMachineCount();
+					totalMachines[step.GetRecipe().GetMachineUID()] += step.CalculateMachineCount();
 				}
 			}
 			return totalMachines;
 		}
 
-		public string GetTotalMachineString()
+		public string GetTotalMachineString(List<IEncoder> encodings)
 		{
 			string total = "";
 			Dictionary<string, int> machines = TotalMachineCount();
-			foreach (string str in machines.Keys)
+			foreach (string machineUID in machines.Keys)
 			{
-				total += machines[str] + " " + str + "\n";
+				total += machines[machineUID] + " " + encodings.GetDisplayNameFor(machineUID) + "\n";
 			}
 			return total;
 		}
 
-		public string GetNetProductsString()
+		public string GetNetProductsString(List<IEncoder> encodings)
 		{
 			string str = "Products: ";
-			Dictionary<IItem, decimal> netRates = GetNetRates();
-			foreach (IItem item in netRates.Keys)
+			Dictionary<string, decimal> netRates = GetNetRates(encodings);
+			foreach (string itemUID in netRates.Keys)
 			{
-				if (netRates[item] > 0 && Math.Round(netRates[item], 5) != 0)
+				if (netRates[itemUID] > 0 && Math.Round(netRates[itemUID], 5) != 0)
 				{
-					str += Math.Round(netRates[item], 5) + " " + item.ToString() + ", ";
+					if ((encodings.FindByID(itemUID) as IItem).IsLiquid()) str += Math.Round(netRates[itemUID] / 1000, 5) + " " + encodings.GetDisplayNameFor(itemUID) + ", ";
+					else str += Math.Round(netRates[itemUID], 5) + " " + encodings.GetDisplayNameFor(itemUID) + ", ";
 				}
 			}
 			return str;
 		}
 
-		public string GetNetIngredientsString()
+		public string GetNetIngredientsString(List<IEncoder> encodings)
 		{
 			string str = "Ingredients: ";
-			Dictionary<IItem, decimal> netRates = GetNetRates();
-			foreach (IItem i in netRates.Keys)
+			Dictionary<string, decimal> netRates = GetNetRates(encodings);
+			foreach (string itemUID in netRates.Keys)
 			{
-				if (netRates[i] < 0 && Math.Round(netRates[i], 5) != 0)
+				if (netRates[itemUID] < 0 && Math.Round(netRates[itemUID], 5) != 0)
 				{
-					str += Math.Round(-netRates[i], 5) + " " + i.ToString() + ", ";
+					if((encodings.FindByID(itemUID) as IItem).IsLiquid()) str += Math.Round(-netRates[itemUID] / 1000, 5) + " " + encodings.GetDisplayNameFor(itemUID) + ", ";
+					else str += Math.Round(-netRates[itemUID], 5) + " " + encodings.GetDisplayNameFor(itemUID) + ", ";
 				}
 			}
 			return str;

@@ -139,7 +139,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				List<IRecipe> unlockedRecipes = new List<IRecipe>();
 				foreach (string str in mapping[research])
 				{
-					unlockedRecipes.Add(recipes.MatchID(str));
+					unlockedRecipes.Add(recipes.FindByID(str));
 				}
 				return unlockedRecipes;
 			}
@@ -152,7 +152,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				string temp = research.Remove(0, "Schematic".Length);
 				temp = temp.Insert(0, "Recipe");
 				temp = SeperateNumbers(temp);
-				return new List<IRecipe>() { recipes.MatchID(temp) };
+				return new List<IRecipe>() { recipes.FindByID(temp) };
 			}
 			Console.WriteLine("Research " + research + " does not have a mapping!");
 			return new List<IRecipe>();

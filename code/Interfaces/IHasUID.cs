@@ -3,5 +3,7 @@
 	public interface IHasUID
 	{
 		bool EqualID(string id);
+		bool EqualID(IHasUID obj);
+		string GetUID();
 	}
 }

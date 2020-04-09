@@ -14,9 +14,10 @@ namespace VisualSatisfactoryCalculator.code.Utility
 {
 	public class SaveFileInteractor
 	{
-		public static List<IRecipe> GetRecipesFromSave(string saveFile)
+		public static readonly string jsonFile = File.ReadAllText("C:\\Program Files\\Epic Games\\SatisfactoryEarlyAccess\\CommunityResources\\Docs\\Docs.json");
+
+		public static List<IRecipe> GetUnlockedRecipesFromSave(string saveFile, List<IEncoder> encoders)
 		{
-			//get information on unlocked recipes
 			SatisfactorySave save = new SatisfactorySave(saveFile);
 			SaveObjectModel root = new SaveRootModel(save.Header);
 			EditorTreeNode tree = new EditorTreeNode("Root");
@@ -31,48 +32,11 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				obj.IsExpanded = true;
 			}
 			SaveObjectModel schematics = root.FindChild("Persistent_Level:PersistentLevel.schematicManager", false);
-			//get information on items
-			string jsonFile = File.ReadAllText("C:\\Program Files\\Epic Games\\SatisfactoryEarlyAccess\\CommunityResources\\Docs\\Docs.json");
-			List<JToken> results = new List<JToken>();
-			results.AddRange(GetSection(jsonFile, "FactoryGame.FGPoleDescriptor", "FactoryGame.FGItemDescriptor"));
-			results.AddRange(GetSection(jsonFile, "FactoryGame.FGItemDescriptor", "FactoryGame.FGRecipe"));
-			results.AddRange(GetSection(jsonFile, "FactoryGame.FGBuildingDescriptor", "FactoryGame.FGBuildableWire"));
-			results.AddRange(GetSection(jsonFile, "FactoryGame.FGItemDescriptorBiomass", "FactoryGame.FGChainsaw"));
-			results.AddRange(GetSection(jsonFile, "FactoryGame.FGEquipmentDescriptor", "FactoryGame.FGBuildableGeneratorFuel"));
-			results.AddRange(GetSection(jsonFile, "FactoryGame.FGResourceDescriptor", "FactoryGame.FGGolfCartDispenser"));
-			results.AddRange(GetSection(jsonFile, "FactoryGame.FGVehicleDescriptor", "FactoryGame.FGConsumableDescriptor"));
-			results.AddRange(GetSection(jsonFile, "FactoryGame.FGConsumableDescriptor", "FactoryGame.FGBuildablePipelineSupport"));
-			results.AddRange(GetSection(jsonFile, "FactoryGame.FGItemDescriptorNuclearFuel", "FactoryGame.FGBuildableFoundation"));
-			List<JSONItem> itemResults = new List<JSONItem>();
-			foreach (JToken token in results)
+			List<IRecipe> allRecipes = new List<IRecipe>();
+			foreach (IEncoder encoder in encoders)
 			{
-				itemResults.Add(token.ToObject<JSONItem>());
+				if (encoder is IRecipe) allRecipes.Add(encoder as IRecipe);
 			}
-			//get information on recipes
-			results = GetSection(jsonFile, "FactoryGame.FGRecipe", "FactoryGame.FGBuildableConveyorBelt");
-			List<IRecipe> recipeResults = new List<IRecipe>();
-			foreach (JToken token in results)
-			{
-				recipeResults.Add(token.ToObject<JSONRecipe>());
-			}
-			foreach (JSONRecipe recipe in recipeResults)
-			{
-				recipe.Initialize(itemResults);
-			}
-			//get information on generators
-			results = GetSection(jsonFile, "FactoryGame.FGBuildableGeneratorFuel", "FactoryGame.FGBuildableTradingPost");
-			results.AddRange(GetSection(jsonFile, "FactoryGame.FGBuildableGeneratorNuclear", "FactoryGame.FGItemDescriptorNuclearFuel"));
-			List<JSONGenerator> generatorResults = new List<JSONGenerator>();
-			foreach (JToken token in results)
-			{
-				generatorResults.Add(token.ToObject<JSONGenerator>());
-			}
-			foreach (JSONGenerator generator in generatorResults)
-			{
-				if (generator.ToString().Equals("Biomass Burner")) continue;
-				recipeResults.AddRange(generator.GetRecipes(itemResults));
-			}
-			//use the information
 			List<IRecipe> unlockedRecipes = new List<IRecipe>();
 			foreach (SerializedPropertyViewModel field in schematics.Fields)
 			{
@@ -87,7 +51,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 						if (element is ObjectPropertyViewModel opvm)
 						{
 							string id = opvm.Str2.Substring(opvm.Str2.IndexOf(".") + 1);
-							unlockedRecipes.AddRange(ResearchToRecipeMapping.GetRecipesForResearch(id, recipeResults));
+							unlockedRecipes.AddRange(ResearchToRecipeMapping.GetRecipesForResearch(id, allRecipes));
 						}
 					}
 				}
@@ -95,13 +59,66 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			return unlockedRecipes;
 		}
 
-		private static List<JToken> GetSection(string file, string sectionLabel, string nextSectionLabel)
+		public static List<IEncoder> GetEncoders()
 		{
-			int startIndex = file.IndexOf(sectionLabel);
-			startIndex = file.LastIndexOf("{", startIndex);
-			int endIndex = file.IndexOf(nextSectionLabel);
-			endIndex = file.LastIndexOf("}", endIndex);
-			JObject search = JObject.Parse(file.Substring(startIndex, endIndex - startIndex + 1));
+			//JSONItems
+			List<JToken> results = new List<JToken>();
+			results.AddRange(GetSection("FactoryGame.FGPoleDescriptor", "FactoryGame.FGItemDescriptor"));
+			results.AddRange(GetSection("FactoryGame.FGItemDescriptor", "FactoryGame.FGRecipe"));
+			results.AddRange(GetSection("FactoryGame.FGBuildingDescriptor", "FactoryGame.FGBuildableWire"));
+			results.AddRange(GetSection("FactoryGame.FGItemDescriptorBiomass", "FactoryGame.FGChainsaw"));
+			results.AddRange(GetSection("FactoryGame.FGEquipmentDescriptor", "FactoryGame.FGBuildableGeneratorFuel"));
+			results.AddRange(GetSection("FactoryGame.FGResourceDescriptor", "FactoryGame.FGGolfCartDispenser"));
+			results.AddRange(GetSection("FactoryGame.FGVehicleDescriptor", "FactoryGame.FGConsumableDescriptor"));
+			results.AddRange(GetSection("FactoryGame.FGConsumableDescriptor", "FactoryGame.FGBuildablePipelineSupport"));
+			results.AddRange(GetSection("FactoryGame.FGItemDescriptorNuclearFuel", "FactoryGame.FGBuildableFoundation"));
+			List<IEncoder> totalResults = new List<IEncoder>();
+			foreach (JToken token in results)
+			{
+				totalResults.Add(token.ToObject<JSONItem>());
+			}
+			//JSONBuildings
+			results.Clear();
+			results.AddRange(GetSection("FactoryGame.FGBuildableManufacturer", "FactoryGame.FGPortableMinerDispenser"));
+			foreach (JToken token in results)
+			{
+				totalResults.Add(token.ToObject<JSONBuilding>());
+			}
+			//Constants
+			totalResults.AddRange(Constants.AllConstantEncoders);
+			//JSONRecipes
+			results.Clear();
+			results.AddRange(GetSection("FactoryGame.FGRecipe", "FactoryGame.FGBuildableConveyorBelt"));
+			foreach (JToken token in results)
+			{
+				totalResults.Add(token.ToObject<JSONRecipe>());
+			}
+			//JSONGenerators -- must go near end, uses encodings to get energy value of fuel
+			results.Clear();
+			results.AddRange(GetSection("FactoryGame.FGBuildableGeneratorFuel", "FactoryGame.FGBuildableTradingPost"));
+			results.AddRange(GetSection("FactoryGame.FGBuildableGeneratorNuclear", "FactoryGame.FGItemDescriptorNuclearFuel"));
+			List<JSONGenerator> generatorResults = new List<JSONGenerator>();
+			foreach (JToken token in results)
+			{
+				generatorResults.Add(token.ToObject<JSONGenerator>());
+			}
+			foreach (JSONGenerator generator in generatorResults)
+			{
+				if (generator.GetDisplayName().Equals("Biomass Burner")) continue;
+				totalResults.AddRange(generator.GetRecipes(totalResults));
+				totalResults.Add(generator);
+			}
+			//finished
+			return totalResults;
+		}
+
+		private static List<JToken> GetSection(string sectionLabel, string nextSectionLabel)
+		{
+			int startIndex = jsonFile.IndexOf(sectionLabel);
+			startIndex = jsonFile.LastIndexOf("{", startIndex);
+			int endIndex = jsonFile.IndexOf(nextSectionLabel);
+			endIndex = jsonFile.LastIndexOf("}", endIndex);
+			JObject search = JObject.Parse(jsonFile.Substring(startIndex, endIndex - startIndex + 1));
 			return search["Classes"].Children().ToList();
 		}
 

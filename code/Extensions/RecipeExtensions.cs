@@ -16,32 +16,32 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			return str;
 		}
 
-		public static List<IItem> GetAllIngredientItems(this List<IRecipe> me)
+		public static List<string> GetAllIngredientItemUIDs(this List<IRecipe> me)
 		{
-			List<IItem> ingredients = new List<IItem>();
+			List<string> ingredients = new List<string>();
 			foreach (IRecipe rec in me)
 			{
-				ingredients.AddRange(rec.GetItemCounts().GetIngredients().ToItems());
+				ingredients.AddRange(rec.GetItemCounts().GetIngredients().ToItemUIDs());
 			}
 			return ingredients;
 		}
 
-		public static List<IItem> GetAllProductItems(this List<IRecipe> me)
+		public static List<string> GetAllProductItemUIDs(this List<IRecipe> me)
 		{
-			List<IItem> products = new List<IItem>();
+			List<string> products = new List<string>();
 			foreach (IRecipe rec in me)
 			{
-				products.AddRange(rec.GetItemCounts().GetProducts().ToItems());
+				products.AddRange(rec.GetItemCounts().GetProducts().ToItemUIDs());
 			}
 			return products;
 		}
 
-		public static List<IRecipe> GetRecipesThatProduce(this List<IRecipe> me, IItem product)
+		public static List<IRecipe> GetRecipesThatProduce(this List<IRecipe> me, string productUID)
 		{
 			List<IRecipe> recs = new List<IRecipe>();
 			foreach (IRecipe rec in me)
 			{
-				if (rec.GetItemCounts().GetProducts().ContainsItem(product))
+				if (rec.GetItemCounts().GetProducts().ToItemUIDs().Contains(productUID))
 				{
 					recs.Add(rec);
 				}
@@ -49,12 +49,12 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			return recs;
 		}
 
-		public static List<IRecipe> GetRecipesThatConsume(this List<IRecipe> me, IItem ingredient)
+		public static List<IRecipe> GetRecipesThatConsume(this List<IRecipe> me, string ingredientUID)
 		{
 			List<IRecipe> recs = new List<IRecipe>();
 			foreach (IRecipe rec in me)
 			{
-				if (rec.GetItemCounts().GetIngredients().ContainsItem(ingredient))
+				if (rec.GetItemCounts().GetIngredients().ToItemUIDs().Contains(ingredientUID))
 				{
 					recs.Add(rec);
 				}
@@ -66,7 +66,7 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 		{
 			foreach (ItemCount count in me.GetItemCounts())
 			{
-				if (count.GetItem().Equals(item))
+				if (count.GetItemUID().Equals(item))
 				{
 					return count.GetCount() * (60m / me.GetCraftTime());
 				}

@@ -13,6 +13,11 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			this.displayName = displayName;
 		}
 
+		public bool IsLiquid()
+		{
+			return false;
+		}
+
 		public override string ToString()
 		{
 			return displayName;
@@ -32,6 +37,21 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		{
 			if (!(other is SimpleCustomItem)) return false;
 			return UID.Equals((other as SimpleCustomItem).UID);
+		}
+
+		public bool EqualID(IHasUID obj)
+		{
+			return obj.EqualID(UID);
+		}
+
+		public string GetDisplayName()
+		{
+			return displayName;
+		}
+
+		public string GetUID()
+		{
+			return UID;
 		}
 	}
 }

@@ -18,10 +18,10 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			machines = new List<string>();
 			foreach (IRecipe rec in allRecipes)
 			{
-				AddMachine(rec.GetMachine());
+				AddMachine(rec.GetMachineUID());
 				foreach (ItemCount ic in rec.GetItemCounts())
 				{
-					AddItem(ic.GetItem().ToString());
+					AddItem(ic.GetItemUID().ToString());
 				}
 			}
 		}
@@ -54,10 +54,10 @@ namespace VisualSatisfactoryCalculator.code.Utility
 
 		public void AddRecipe(JSONRecipe recipe)
 		{
-			AddMachine(recipe.GetMachine());
+			AddMachine(recipe.GetMachineUID());
 			foreach (ItemCount ic in recipe.GetItemCounts())
 			{
-				AddItem(ic.GetItem().ToString());
+				AddItem(ic.GetItemUID().ToString());
 			}
 		}
 	}

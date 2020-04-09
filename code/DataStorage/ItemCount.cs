@@ -1,17 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
 
 namespace VisualSatisfactoryCalculator.code.DataStorage
 {
-	[Serializable]
-	public class ItemCount : IMyCloneable<ItemCount>
+	public class ItemCount
 	{
 		private readonly decimal count;
-		private readonly IItem item;
+		private readonly string itemUID;
 
-		public ItemCount(IItem item, decimal count)
+		public ItemCount(string itemUID, decimal count)
 		{
-			this.item = item;
+			this.itemUID = itemUID;
 			this.count = count;
 		}
 
@@ -20,36 +21,32 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return count;
 		}
 
-		public override string ToString()
+		public string ToString(List<IEncoder> encodings)
 		{
-			return count + " " + item.ToString();
+			if ((encodings.FindByID(itemUID) as IItem).IsLiquid()) return Math.Round(count / 1000, 3) + " " + encodings.GetDisplayNameFor(itemUID);
+			return Math.Round(count, 3) + " " + encodings.GetDisplayNameFor(itemUID);
 		}
 
 		public override int GetHashCode()
 		{
-			return item.GetHashCode() * count.GetHashCode();
+			return itemUID.GetHashCode() * count.GetHashCode();
 		}
 
 		public override bool Equals(object obj)
 		{
 			if (obj == null) return false;
 			if (!(obj is ItemCount)) return false;
-			return item.Equals((obj as ItemCount).item) && count == (obj as ItemCount).count;
+			return itemUID.Equals((obj as ItemCount).itemUID) && count == (obj as ItemCount).count;
 		}
 
 		public ItemCount Inverse()
 		{
-			return new ItemCount(item, -count);
+			return new ItemCount(itemUID, -count);
 		}
 
-		public ItemCount Clone()
+		public string GetItemUID()
 		{
-			return new ItemCount(item, count);
-		}
-
-		public IItem GetItem()
-		{
-			return item;
+			return itemUID;
 		}
 	}
 }

@@ -9,74 +9,37 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 	{
 		public static bool ContainsAny<T>(this IEnumerable<T> me, IEnumerable<T> other)
 		{
-			foreach (T item in other)
-			{
-				if (me.Contains(item))
-				{
-					return true;
-				}
-			}
+			foreach (T item in other) if (me.Contains(item)) return true;
 			return false;
 		}
 
 		public static T FindMatch<T>(this IEnumerable<T> me, IEnumerable<T> other)
 		{
-			foreach (T item in me)
-			{
-				if (other.Contains(item))
-				{
-					return item;
-				}
-			}
+			foreach (T item in me) if (other.Contains(item)) return item;
 			return default;
 		}
 
 		public static List<T> FindMatches<T>(this IEnumerable<T> me, IEnumerable<T> other)
 		{
 			List<T> matches = new List<T>();
-			foreach (T item in me)
-			{
-				if (other.Contains(item))
-				{
-					matches.Add(item);
-				}
-			}
+			foreach (T item in me) if (other.Contains(item)) matches.Add(item);
 			return matches;
 		}
 
 		public static void AddIfNew<T>(this List<T> me, T other)
 		{
-			if (!me.Contains(other))
-			{
-				me.Add(other);
-			}
+			if (!me.Contains(other)) me.Add(other);
 		}
 
 		public static void AddRangeIfNew<T>(this List<T> me, IEnumerable<T> other)
 		{
-			foreach (T item in other)
-			{
-				me.AddIfNew(item);
-			}
-		}
-
-		public static List<T> Clone<T>(this List<T> me) where T : IMyCloneable<T>
-		{
-			List<T> cloned = new List<T>();
-			foreach (T item in me)
-			{
-				cloned.Add(item.Clone());
-			}
-			return cloned;
+			foreach (T item in other) me.AddIfNew(item);
 		}
 
 		public static List<T> ShallowClone<T>(this List<T> me)
 		{
 			List<T> list = new List<T>();
-			foreach (T rec in me)
-			{
-				list.Add(rec);
-			}
+			foreach (T rec in me) list.Add(rec);
 			return list;
 		}
 
@@ -88,51 +51,22 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 		/// <returns></returns>
 		public static bool EqualContents<T>(this List<T> me, List<T> other)
 		{
-			if (me.Count != other.Count)
-			{
-				return false;
-			}
+			if (me.Count != other.Count) return false;
 			Dictionary<T, int> meCounts = new Dictionary<T, int>();
 			foreach (T item in me)
 			{
-				if (meCounts.ContainsKey(item))
-				{
-					meCounts[item]++;
-				}
-				else
-				{
-					meCounts.Add(item, 1);
-				}
+				if (!other.Contains(item)) return false;
+				if (meCounts.ContainsKey(item)) meCounts[item]++;
+				else meCounts.Add(item, 1);
 			}
 			Dictionary<T, int> otherCounts = new Dictionary<T, int>();
 			foreach (T item in other)
 			{
-				if (otherCounts.ContainsKey(item))
-				{
-					otherCounts[item]++;
-				}
-				else
-				{
-					otherCounts.Add(item, 1);
-				}
+				if (!me.Contains(item)) return false;
+				if (otherCounts.ContainsKey(item)) otherCounts[item]++;
+				else otherCounts.Add(item, 1);
 			}
-			foreach (T ic in meCounts.Keys)
-			{
-				try
-				{
-					if (meCounts[ic] != otherCounts[ic])
-					{
-						return false;
-					}
-				}
-#pragma warning disable CS0168 // Variable is declared but never used
-				catch (KeyNotFoundException e)
-#pragma warning restore CS0168 // Variable is declared but never used
-				{
-					return false;
-				}
-
-			}
+			foreach (T key in meCounts.Keys) if (meCounts[key] != otherCounts[key]) return false;
 			return true;
 		}
 
@@ -154,37 +88,22 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 		{
 			foreach (T key in other.Keys)
 			{
-				if (!me.ContainsKey(key))
-				{
-					me.Add(key, new List<Y>());
-				}
+				if (!me.ContainsKey(key)) me.Add(key, new List<Y>());
 				me[key].AddRange(other[key]);
 			}
 		}
 
-		public static T MatchID<T>(this IEnumerable<T> me, string id) where T : IHasUID
+		public static T FindByID<T>(this IEnumerable<T> me, string id) where T : IHasUID
 		{
-			foreach (T item in me)
-			{
-				if (item.EqualID(id))
-				{
-					return item;
-				}
-			}
+			foreach (T item in me) if (item.EqualID(id)) return item;
 			throw new ArgumentException("The given ID did not match any items in the list.");
 		}
 
 		public static T[] SubArray<T>(this T[] me, int startIndex, int length)
 		{
-			if (startIndex + length > me.Length)
-			{
-				throw new ArgumentException("The given length exceeds the size of the array!");
-			}
+			if (startIndex + length > me.Length) throw new ArgumentException("The given length exceeds the size of the array!");
 			T[] subArray = new T[length];
-			for (int i = 0; i < length; i++)
-			{
-				subArray[i] = me[startIndex + i];
-			}
+			for (int i = 0; i < length; i++) subArray[i] = me[startIndex + i];
 			return subArray;
 		}
 
@@ -196,14 +115,10 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			return newMe;
 		}
 
-		public static bool AlternateEquals<T>(this T[] me, T[] other)
+		public static string GetDisplayNameFor(this IEnumerable<IEncoder> me, string UID)
 		{
-			if (me.Length != other.Length) return false;
-			for (int i = 0; i < me.Length; i++)
-			{
-				if (!me[i].Equals(other[i])) return false;
-			}
-			return true;
+			foreach (IEncoder UIDEncoder in me) if (UIDEncoder.EqualID(UID)) return UIDEncoder.GetDisplayName();
+			return UID;
 		}
 	}
 }

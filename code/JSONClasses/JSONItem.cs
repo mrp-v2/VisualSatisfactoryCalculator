@@ -32,24 +32,19 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			return UID.Equals(id);
 		}
 
-		public override string ToString()
+		public string GetDisplayName()
 		{
 			return displayName;
 		}
 
 		public bool IsLiquid()
 		{
-			return form == "RF_LIQUID";
+			return form.Equals("RF_LIQUID");
 		}
 
 		public decimal GetEnergyValue()
 		{
 			return decimal.Parse(energyValue);
-		}
-
-		public string GetDisplayName()
-		{
-			return displayName;
 		}
 
 		public string GetForm()
@@ -61,7 +56,17 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		{
 			if (other == null) return false;
 			if (!(other is JSONItem)) return false;
-			return UID.Equals((other as JSONItem).UID);
+			return EqualID(other);
+		}
+
+		public bool EqualID(IHasUID obj)
+		{
+			return obj.EqualID(UID);
+		}
+
+		public string GetUID()
+		{
+			return UID;
 		}
 	}
 }

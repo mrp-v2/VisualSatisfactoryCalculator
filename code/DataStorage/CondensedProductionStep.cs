@@ -13,7 +13,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public IRecipe GetRecipe(List<IRecipe> recipes)
 		{
-			return recipes.MatchID(recipeUID);
+			return recipes.FindByID(recipeUID);
 		}
 
 		public ProductionStep ToProductionStep(List<IRecipe> recipes, ProductionStep parent)

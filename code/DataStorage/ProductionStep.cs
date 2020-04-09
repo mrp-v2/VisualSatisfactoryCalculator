@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.JSONClasses;
 using VisualSatisfactoryCalculator.controls.user;
 
 namespace VisualSatisfactoryCalculator.code.DataStorage
@@ -90,33 +91,33 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		private void UpdateMultiplierRelativeTo(ProductionStep step)
 		{
-			IItem match = recipe.GetItemCounts().GetProducts().ToItems().FindMatch(step.recipe.GetItemCounts().GetIngredients().ToItems());
-			if (match == null)
+			string matchUID = recipe.GetItemCounts().GetProducts().ToItemUIDs().FindMatch(step.recipe.GetItemCounts().GetIngredients().ToItemUIDs());
+			if (matchUID == default)
 			{
-				match = recipe.GetItemCounts().GetIngredients().ToItems().FindMatch(step.recipe.GetItemCounts().GetProducts().ToItems());
+				matchUID = recipe.GetItemCounts().GetIngredients().ToItemUIDs().FindMatch(step.recipe.GetItemCounts().GetProducts().ToItemUIDs());
 			}
-			if (match == null) throw new ArgumentException("Could not find a similarity between the given step an this.");
-			SetMultiplier(CalculateMultiplierForRate(match, step.CalculateDefaultItemRate(match) * step.multiplier));
+			if (matchUID == null) throw new ArgumentException("Could not find a similarity between the given step an this.");
+			SetMultiplier(CalculateMultiplierForRate(matchUID, step.CalculateDefaultItemRate(matchUID) * step.multiplier));
 		}
 
-		private decimal CalculateDefaultItemRate(IItem item)
+		private decimal CalculateDefaultItemRate(string itemUID)
 		{
-			return 60m / recipe.GetCraftTime() * recipe.GetItemCounts().GetCountFor(item).GetCount();
+			return 60m / recipe.GetCraftTime() * recipe.GetItemCounts().GetCountFor(itemUID).GetCount();
 		}
 
-		public void SetMultiplierAndRelatedRelative(IItem item, decimal rate)
+		public void SetMultiplierAndRelatedRelative(string itemUID, decimal rate)
 		{
-			SetMultiplierAndRelated(CalculateMultiplierForRate(item, rate));
+			SetMultiplierAndRelated(CalculateMultiplierForRate(itemUID, rate));
 		}
 
-		private decimal CalculateMultiplierForRate(IItem item, decimal rate)
+		private decimal CalculateMultiplierForRate(string itemUID, decimal rate)
 		{
-			return Math.Abs(rate / CalculateDefaultItemRate(item));
+			return Math.Abs(rate / CalculateDefaultItemRate(itemUID));
 		}
 
-		public decimal GetItemRate(IItem item)
+		public decimal GetItemRate(string itemUID)
 		{
-			return CalculateDefaultItemRate(item) * multiplier;
+			return CalculateDefaultItemRate(itemUID) * multiplier;
 		}
 
 		public void SetControl(ProductionStepControl control)
@@ -124,18 +125,18 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			this.control = control;
 		}
 
-		public List<IItem> GetItemsWithRelatedStep()
+		public List<string> GetItemUIDsWithRelatedStep()
 		{
-			List<IItem> items = new List<IItem>();
+			List<string> items = new List<string>();
 			foreach (ProductionStep child in childSteps)
 			{
-				items.AddRangeIfNew(child.recipe.GetItemCounts().GetIngredients().ToItems().FindMatches(recipe.GetItemCounts().GetProducts().ToItems()));
-				items.AddRangeIfNew(child.recipe.GetItemCounts().GetProducts().ToItems().FindMatches(recipe.GetItemCounts().GetIngredients().ToItems()));
+				items.AddRangeIfNew(child.recipe.GetItemCounts().GetIngredients().ToItemUIDs().FindMatches(recipe.GetItemCounts().GetProducts().ToItemUIDs()));
+				items.AddRangeIfNew(child.recipe.GetItemCounts().GetProducts().ToItemUIDs().FindMatches(recipe.GetItemCounts().GetIngredients().ToItemUIDs()));
 			}
 			if (parentStep != null)
 			{
-				items.AddRangeIfNew(parentStep.recipe.GetItemCounts().GetIngredients().ToItems().FindMatches(recipe.GetItemCounts().GetProducts().ToItems()));
-				items.AddRangeIfNew(parentStep.recipe.GetItemCounts().GetProducts().ToItems().FindMatches(recipe.GetItemCounts().GetIngredients().ToItems()));
+				items.AddRangeIfNew(parentStep.recipe.GetItemCounts().GetIngredients().ToItemUIDs().FindMatches(recipe.GetItemCounts().GetProducts().ToItemUIDs()));
+				items.AddRangeIfNew(parentStep.recipe.GetItemCounts().GetProducts().ToItemUIDs().FindMatches(recipe.GetItemCounts().GetIngredients().ToItemUIDs()));
 			}
 			return items;
 		}
@@ -156,11 +157,6 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return list;
 		}
 
-		public override string ToString()
-		{
-			return recipe.ToString();
-		}
-
 		public List<ProductionStep> GetChildSteps()
 		{
 			return childSteps;
@@ -179,6 +175,18 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		public void RemoveStep()
 		{
 			parentStep.childSteps.Remove(this);
+		}
+
+		public decimal GetPowerDraw(List<IEncoder> encodings)
+		{
+			return (encodings.FindByID(recipe.GetMachineUID()) as IBuilding).GetPowerConsumption() * multiplier;
+		}
+
+		public decimal GetRecursivePowerDraw(List<IEncoder> encodings)
+		{
+			decimal total = GetPowerDraw(encodings);
+			foreach (ProductionStep childStep in childSteps) total += childStep.GetRecursivePowerDraw(encodings);
+			return total;
 		}
 	}
 }

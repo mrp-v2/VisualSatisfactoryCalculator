@@ -51,7 +51,7 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 		{
 			foreach (ItemCount count in me)
 			{
-				if (count.GetItem().Equals(item))
+				if (count.GetItemUID().Equals(item))
 				{
 					return true;
 				}
@@ -59,11 +59,11 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			return false;
 		}
 
-		public static ItemCount GetCountFor(this List<ItemCount> me, IItem item)
+		public static ItemCount GetCountFor(this List<ItemCount> me, string itemUID)
 		{
 			foreach (ItemCount count in me)
 			{
-				if (count.GetItem().Equals(item))
+				if (count.GetItemUID().Equals(itemUID))
 				{
 					return count;
 				}
@@ -71,12 +71,12 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			return default;
 		}
 
-		public static List<IItem> ToItems(this List<ItemCount> me)
+		public static List<string> ToItemUIDs(this List<ItemCount> me)
 		{
-			List<IItem> items = new List<IItem>();
+			List<string> items = new List<string>();
 			foreach (ItemCount item in me)
 			{
-				items.Add(item.GetItem());
+				items.Add(item.GetItemUID());
 			}
 			return items;
 		}

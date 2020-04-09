@@ -4,11 +4,11 @@ using VisualSatisfactoryCalculator.code.DataStorage;
 
 namespace VisualSatisfactoryCalculator.code.Interfaces
 {
-	public interface IRecipe : IMyCloneable<IRecipe>, IEquatable<IRecipe>, IHasUID
+	public interface IRecipe : IEquatable<IRecipe>, IEncoder
 	{
-		string GetMachine();
+		string GetMachineUID();
 		List<ItemCount> GetItemCounts();
 		decimal GetCraftTime();
-		string GetUID();
+		string ToString(List<IEncoder> encodings);
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
@@ -8,7 +9,7 @@ using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
-	class JSONGenerator
+	class JSONGenerator : IBuilding
 	{
 		private readonly string UID;
 		private readonly string[] defaultFuelClasses;
@@ -28,7 +29,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 
 		public static readonly decimal GeneratorEnergyDivisor = 16m + 2m / 3m;
 
-		public List<IRecipe> GetRecipes(List<JSONItem> items)
+		public List<IRecipe> GetRecipes(List<IEncoder> encodings)
 		{
 			List<IRecipe> recipes = new List<IRecipe>();
 			foreach (string item in defaultFuelClasses)
@@ -38,30 +39,52 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 				{
 					itemID = itemID.Substring(0, itemID.IndexOf(")"));
 				}
-				JSONItem jItem = items.MatchID(itemID);
+				IEncoder encodingItem = encodings.FindByID(itemID);
+				Trace.Assert(encodingItem is JSONItem);
+				JSONItem jItem = encodingItem as JSONItem;
 				List<ItemCount> counts = new List<ItemCount>();
 				if (fuelForm.Equals("RF_LIQUID"))
 				{
-					counts.Add(new ItemCount(jItem, -1 * (decimal.Parse(powerProduction) / jItem.GetEnergyValue() / GeneratorEnergyDivisor)));
+					counts.Add(new ItemCount(itemID, -1 * (decimal.Parse(powerProduction) / (jItem.GetEnergyValue() / 1000) / GeneratorEnergyDivisor)));
 				}
 				else if (fuelForm.Equals("RF_SOLID"))
 				{
-					counts.Add(new ItemCount(jItem, -1 * (decimal.Parse(powerProduction) / (jItem.GetEnergyValue() / 1000m) / GeneratorEnergyDivisor)));
+					counts.Add(new ItemCount(itemID, -1 * (decimal.Parse(powerProduction) / jItem.GetEnergyValue() / GeneratorEnergyDivisor)));
 				}
 				else
 				{
 					throw new ArgumentOutOfRangeException("Form " + fuelForm + " is unrecognized!");
 				}
-				counts.Add(new ItemCount(Constants.MWItem, decimal.Parse(powerProduction)));
-				IRecipe recipe = new SimpleCustomRecipe(UID + itemID, 60, displayName, counts, jItem.ToString() + " to Power");
+				counts.Add(new ItemCount(Constants.MWItem.GetUID(), decimal.Parse(powerProduction)));
+				IRecipe recipe = new SimpleCustomRecipe(UID + itemID, 60, UID, counts, jItem.GetDisplayName() + " to Power");
 				recipes.Add(recipe);
 			}
 			return recipes;
 		}
 
-		public override string ToString()
+		public bool EqualID(string id)
+		{
+			return UID.Equals(id);
+		}
+
+		public bool EqualID(IHasUID obj)
+		{
+			return obj.EqualID(UID);
+		}
+
+		public string GetUID()
+		{
+			return UID;
+		}
+
+		public string GetDisplayName()
 		{
 			return displayName;
+		}
+
+		public decimal GetPowerConsumption()
+		{
+			return 0;
 		}
 	}
 }

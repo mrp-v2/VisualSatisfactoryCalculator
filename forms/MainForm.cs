@@ -29,6 +29,7 @@ namespace VisualSatisfactoryCalculator.forms
 
 		private const string firstRecipePurpose = "first recipe";
 		private readonly List<IRecipe> AllRecipes;
+		public readonly List<IEncoder> encoders;
 		private ProductionPlan plan;
 		private ProductionPlanTotalViewControl PPTVC;
 
@@ -36,6 +37,7 @@ namespace VisualSatisfactoryCalculator.forms
 		{
 			InitializeComponent();
 			AllRecipes = new List<IRecipe>();
+			encoders = new List<IEncoder>();
 		}
 
 		private static bool SafeNewMainForm(out MainForm form)
@@ -50,7 +52,8 @@ namespace VisualSatisfactoryCalculator.forms
 			};
 			if (dialog.ShowDialog() == DialogResult.OK)
 			{
-				form.AllRecipes.AddRange(SaveFileInteractor.GetRecipesFromSave(dialog.FileName));
+				form.encoders.AddRange(SaveFileInteractor.GetEncoders());
+				form.AllRecipes.AddRange(SaveFileInteractor.GetUnlockedRecipesFromSave(dialog.FileName, form.encoders));
 				SuggestionsController.SC = new SuggestionsController(form.AllRecipes);
 				return true;
 			}
@@ -120,9 +123,9 @@ namespace VisualSatisfactoryCalculator.forms
 
 		public void UpdateTotalView()
 		{
-			PPTVC.NetProductsLabel.Text = plan.GetNetProductsString();
-			PPTVC.MachinesLabel.Text = plan.GetTotalMachineString();
-			PPTVC.NetIngredientsLabel.Text = plan.GetNetIngredientsString();
+			PPTVC.NetProductsLabel.Text = plan.GetNetProductsString(encoders);
+			PPTVC.MachinesLabel.Text = plan.GetTotalMachineString(encoders);
+			PPTVC.NetIngredientsLabel.Text = plan.GetNetIngredientsString(encoders);
 		}
 
 		private void LoadChartButton_Click(object sender, EventArgs e)

@@ -28,13 +28,13 @@ namespace VisualSatisfactoryCalculator.controls.user
 			parentStep.SetControl(this);
 			foreach (ItemCount ic in parentStep.GetRecipe().GetItemCounts().GetProducts())
 			{
-				ProductsPanel.Controls.Add(new ItemRateControl(this, ic.GetItem(), parentStep.GetItemRate(ic.GetItem())));
+				ProductsPanel.Controls.Add(new ItemRateControl(this, ic.GetItemUID(), parentStep.GetItemRate(ic.GetItemUID())));
 			}
 			foreach (ItemCount ic in parentStep.GetRecipe().GetItemCounts().GetIngredients())
 			{
-				IngredientsPanel.Controls.Add(new ItemRateControl(this, ic.GetItem(), parentStep.GetItemRate(ic.GetItem())));
+				IngredientsPanel.Controls.Add(new ItemRateControl(this, ic.GetItemUID(), parentStep.GetItemRate(ic.GetItemUID())));
 			}
-			RecipeLabel.Text = parentStep.ToString();
+			RecipeLabel.Text = parentStep.GetRecipe().ToString(mainForm.encoders);
 			MultiplierChanged();
 			foreach (ItemRateControl irc in GetItemRateControls())
 			{
@@ -46,11 +46,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 			foreach (ProductionStep childStep in parentStep.GetChildSteps())
 			{
-				if (childStep.GetRecipe().GetItemCounts().GetIngredients().ToItems().ContainsAny(parentStep.GetRecipe().GetItemCounts().GetProducts().ToItems()))
+				if (childStep.GetRecipe().GetItemCounts().GetIngredients().ToItemUIDs().ContainsAny(parentStep.GetRecipe().GetItemCounts().GetProducts().ToItemUIDs()))
 				{
 					ChildProductsPanel.Controls.Add(new ProductionStepControl(childStep, mainForm));
 				}
-				else if (childStep.GetRecipe().GetItemCounts().GetProducts().ToItems().ContainsAny(parentStep.GetRecipe().GetItemCounts().GetIngredients().ToItems()))
+				else if (childStep.GetRecipe().GetItemCounts().GetProducts().ToItemUIDs().ContainsAny(parentStep.GetRecipe().GetItemCounts().GetIngredients().ToItemUIDs()))
 				{
 					ChildIngredientsPanel.Controls.Add(new ProductionStepControl(childStep, mainForm));
 				}
@@ -66,38 +66,39 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			foreach (ItemRateControl irc in GetItemRateControls())
 			{
-				irc.UpdateRateValue(parentStep.GetItemRate(irc.GetItem()));
+				irc.UpdateRateValue(parentStep.GetItemRate(irc.GetItemUID()));
 			}
 			if (MultiplierNumeric.Value != parentStep.GetMultiplier())
 			{
 				MultiplierNumeric.Value = parentStep.GetMultiplier();
 			}
-			MachineCountLabel.Text = parentStep.GetRecipe().GetMachine() + ": " + parentStep.CalculateMachineCount();
+			MachineCountLabel.Text = mainForm.encoders.GetDisplayNameFor(parentStep.GetRecipe().GetMachineUID()) + ": " + parentStep.CalculateMachineCount();
+			PowerConsumptionLabel.Text = "Power Consumption: " + Math.Round(parentStep.GetPowerDraw(mainForm.encoders), 3) + "MW";
 		}
 
-		public void RateChanged(IItem item, decimal newRate)
+		public void RateChanged(string itemUID, decimal newRate)
 		{
-			if (Math.Abs(parentStep.GetItemRate(item)) != newRate)
+			if (Math.Abs(parentStep.GetItemRate(itemUID)) != newRate)
 			{
-				parentStep.SetMultiplierAndRelatedRelative(item, newRate);
+				parentStep.SetMultiplierAndRelatedRelative(itemUID, newRate);
 			}
 		}
 
-		public void ItemClicked(IItem item)
+		public void ItemClicked(string itemUID)
 		{
-			if (parentStep.GetItemsWithRelatedStep().Contains(item))
+			if (parentStep.GetItemUIDsWithRelatedStep().Contains(itemUID))
 			{
 
 			}
 			else
 			{
-				if (parentStep.GetRecipe().GetItemCounts().GetProducts().ContainsItem(item))
+				if (parentStep.GetRecipe().GetItemCounts().GetProducts().ToItemUIDs().Contains(itemUID))
 				{
-					new SelectRecipePrompt(mainForm.GetAllRecipes().GetRecipesThatConsume(item), this, null).ShowDialog();
+					new SelectRecipePrompt(mainForm.GetAllRecipes().GetRecipesThatConsume(itemUID), this, null).ShowDialog();
 				}
-				else if (parentStep.GetRecipe().GetItemCounts().GetIngredients().ContainsItem(item))
+				else if (parentStep.GetRecipe().GetItemCounts().GetIngredients().ToItemUIDs().Contains(itemUID))
 				{
-					new SelectRecipePrompt(mainForm.GetAllRecipes().GetRecipesThatProduce(item), this, null).ShowDialog();
+					new SelectRecipePrompt(mainForm.GetAllRecipes().GetRecipesThatProduce(itemUID), this, null).ShowDialog();
 				}
 				else
 				{
@@ -142,9 +143,9 @@ namespace VisualSatisfactoryCalculator.controls.user
 			mainForm.PlanUpdated();
 		}
 
-		public bool ItemHasRelatedRecipe(IItem item)
+		public bool ItemHasRelatedRecipe(string itemUID)
 		{
-			return parentStep.GetItemsWithRelatedStep().Contains(item);
+			return parentStep.GetItemUIDsWithRelatedStep().Contains(itemUID);
 		}
 
 		public void ToggleInput(bool on)

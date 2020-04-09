@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
 
@@ -8,22 +9,17 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 	{
 		private readonly string UID;
 		private readonly decimal craftTime;
-		private readonly string machine;
+		private readonly string machineUID;
 		private readonly List<ItemCount> itemCounts;
 		private readonly string displayName;
 
-		public SimpleCustomRecipe(string UID, decimal craftTime, string machine, List<ItemCount> itemCounts, string displayName)
+		public SimpleCustomRecipe(string UID, decimal craftTime, string machineUID, List<ItemCount> itemCounts, string displayName)
 		{
 			this.UID = UID;
 			this.craftTime = craftTime;
-			this.machine = machine;
+			this.machineUID = machineUID;
 			this.itemCounts = itemCounts;
 			this.displayName = displayName;
-		}
-
-		public IRecipe Clone()
-		{
-			return new SimpleCustomRecipe(UID, craftTime, machine, itemCounts, displayName);
 		}
 
 		public bool EqualID(string id)
@@ -41,9 +37,9 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return itemCounts;
 		}
 
-		public string GetMachine()
+		public string GetMachineUID()
 		{
-			return machine;
+			return machineUID;
 		}
 
 		public bool Equals(IRecipe other)
@@ -58,35 +54,39 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return UID.GetHashCode();
 		}
 
-		public override string ToString()
+		public string ToString(List<IEncoder> encodings)
 		{
 			string str = displayName + ": ";
 			List<ItemCount> ingredients = itemCounts.GetIngredients().Inverse();
 			for (int i = 0; i < ingredients.Count; i++)
 			{
-				if (i > 0)
-				{
-					str += ", ";
-				}
-				str += ingredients[i].ToString();
+				if (i > 0) str += ", ";
+				str += ingredients[i].ToString(encodings);
 			}
 			str += " -> ";
 			List<ItemCount> products = itemCounts.GetProducts();
 			for (int i = 0; i < products.Count; i++)
 			{
-				if (i > 0)
-				{
-					str += ", ";
-				}
-				str += products[i].ToString();
+				if (i > 0) str += ", ";
+				str += products[i].ToString(encodings);
 			}
-			str += " in " + craftTime + " seconds using a " + machine;
+			str += " in " + Math.Round(craftTime, 3) + " seconds using a " + encodings.GetDisplayNameFor(machineUID);
 			return str;
 		}
 
 		public string GetUID()
 		{
 			return UID;
+		}
+
+		public bool EqualID(IHasUID obj)
+		{
+			return obj.EqualID(UID);
+		}
+
+		public string GetDisplayName()
+		{
+			return displayName;
 		}
 	}
 }
