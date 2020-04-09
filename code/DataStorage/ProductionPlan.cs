@@ -12,45 +12,9 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public List<ProductionStep> GetAllSteps()
 		{
-			List<ProductionStep> allSteps = GetAllStepsRecursively(null);
+			List<ProductionStep> allSteps = GetAllStepsRecursively();
 			allSteps.Add(this);
 			return allSteps;
-		}
-
-		public Dictionary<sbyte, List<ProductionStep>> GetTierList()
-		{
-			Dictionary<sbyte, List<ProductionStep>> tiers = GetRelativeTiersRecursively(null, 0);
-			if (!tiers.ContainsKey(0))
-			{
-				tiers.Add(0, new List<ProductionStep>());
-			}
-			tiers[0].Add(this);
-			sbyte additive = 0;
-			additive -= tiers.Keys.Min();
-			if (additive != 0)
-			{
-				if (additive > 0)
-				{
-					for (sbyte i = tiers.Keys.Max(); i >= tiers.Keys.Min(); i--)
-					{
-						sbyte newKey = i;
-						newKey += additive;
-						tiers.Add(newKey, tiers[i]);
-						tiers.Remove(i);
-					}
-				}
-				else
-				{
-					for (sbyte i = tiers.Keys.Min(); i <= tiers.Keys.Max(); i++)
-					{
-						sbyte newKey = i;
-						newKey += additive;
-						tiers.Add(newKey, tiers[i]);
-						tiers.Remove(i);
-					}
-				}
-			}
-			return tiers;
 		}
 
 		public Dictionary<IItem, decimal> GetNetRates()

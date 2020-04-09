@@ -75,7 +75,6 @@ namespace VisualSatisfactoryCalculator.forms
 
 		public void PlanUpdated()
 		{
-			Dictionary<sbyte, List<ProductionStep>> tiers = plan.GetTierList();
 			foreach (Control c in ProductionPlanPanel.Controls)
 			{
 				c.Dispose();
@@ -84,21 +83,8 @@ namespace VisualSatisfactoryCalculator.forms
 			PPTVC = new ProductionPlanTotalViewControl();
 			UpdateTotalView();
 			ProductionPlanPanel.Controls.Add(PPTVC);
-			for (sbyte i = 0; i < tiers.Count; i++)
-			{
-				FlowLayoutPanel flp = new FlowLayoutPanel
-				{
-					AutoSizeMode = AutoSizeMode.GrowAndShrink,
-					AutoSize = true,
-					Margin = new Padding(3),
-					WrapContents = false,
-				};
-				ProductionPlanPanel.Controls.Add(flp);
-				foreach (ProductionStep step in tiers[i])
-				{
-					flp.Controls.Add(new ProductionStepControl(step, this));
-				}
-			}
+			ProductionStepControl PSC = new ProductionStepControl(plan, this);
+			ProductionPlanPanel.Controls.Add(PSC);
 		}
 
 		public List<IRecipe> GetAllRecipes()

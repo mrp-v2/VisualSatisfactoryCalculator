@@ -37,10 +37,15 @@
 			this.RecipeLabel = new System.Windows.Forms.Label();
 			this.MachineCountLabel = new System.Windows.Forms.Label();
 			this.MainPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.DeleteStepButton = new System.Windows.Forms.Button();
+			this.ChildProductsPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.ChildIngredientsPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.MainLayout = new System.Windows.Forms.FlowLayoutPanel();
 			this.InfoPanel.SuspendLayout();
 			this.MultiplierPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MultiplierNumeric)).BeginInit();
 			this.MainPanel.SuspendLayout();
+			this.MainLayout.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// ProductsPanel
@@ -56,7 +61,7 @@
 			// 
 			this.IngredientsPanel.AutoSize = true;
 			this.IngredientsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.IngredientsPanel.Location = new System.Drawing.Point(3, 78);
+			this.IngredientsPanel.Location = new System.Drawing.Point(3, 82);
 			this.IngredientsPanel.Name = "IngredientsPanel";
 			this.IngredientsPanel.Size = new System.Drawing.Size(0, 0);
 			this.IngredientsPanel.TabIndex = 0;
@@ -71,7 +76,7 @@
 			this.InfoPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.InfoPanel.Location = new System.Drawing.Point(3, 9);
 			this.InfoPanel.Name = "InfoPanel";
-			this.InfoPanel.Size = new System.Drawing.Size(451, 63);
+			this.InfoPanel.Size = new System.Drawing.Size(451, 67);
 			this.InfoPanel.TabIndex = 1;
 			// 
 			// MultiplierPanel
@@ -80,10 +85,11 @@
 			this.MultiplierPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.MultiplierPanel.Controls.Add(this.MultiplierLable);
 			this.MultiplierPanel.Controls.Add(this.MultiplierNumeric);
+			this.MultiplierPanel.Controls.Add(this.DeleteStepButton);
 			this.MultiplierPanel.Location = new System.Drawing.Point(0, 0);
 			this.MultiplierPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.MultiplierPanel.Name = "MultiplierPanel";
-			this.MultiplierPanel.Size = new System.Drawing.Size(200, 29);
+			this.MultiplierPanel.Size = new System.Drawing.Size(282, 33);
 			this.MultiplierPanel.TabIndex = 3;
 			// 
 			// MultiplierLable
@@ -91,7 +97,7 @@
 			this.MultiplierLable.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.MultiplierLable.AutoSize = true;
 			this.MultiplierLable.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.MultiplierLable.Location = new System.Drawing.Point(3, 6);
+			this.MultiplierLable.Location = new System.Drawing.Point(3, 8);
 			this.MultiplierLable.Name = "MultiplierLable";
 			this.MultiplierLable.Size = new System.Drawing.Size(68, 17);
 			this.MultiplierLable.TabIndex = 0;
@@ -99,17 +105,18 @@
 			// 
 			// MultiplierNumeric
 			// 
+			this.MultiplierNumeric.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.MultiplierNumeric.AutoSize = true;
 			this.MultiplierNumeric.DecimalPlaces = 3;
 			this.MultiplierNumeric.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.MultiplierNumeric.Location = new System.Drawing.Point(77, 3);
+			this.MultiplierNumeric.Location = new System.Drawing.Point(77, 5);
 			this.MultiplierNumeric.Maximum = new decimal(new int[] {
             1000000,
             0,
             0,
             0});
 			this.MultiplierNumeric.Name = "MultiplierNumeric";
-			this.MultiplierNumeric.Size = new System.Drawing.Size(120, 23);
+			this.MultiplierNumeric.Size = new System.Drawing.Size(104, 23);
 			this.MultiplierNumeric.TabIndex = 1;
 			this.MultiplierNumeric.ThousandsSeparator = true;
 			this.MultiplierNumeric.ValueChanged += new System.EventHandler(this.MultiplierNumeric_ValueChanged);
@@ -118,7 +125,7 @@
 			// 
 			this.RecipeLabel.AutoSize = true;
 			this.RecipeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.RecipeLabel.Location = new System.Drawing.Point(3, 29);
+			this.RecipeLabel.Location = new System.Drawing.Point(3, 33);
 			this.RecipeLabel.Name = "RecipeLabel";
 			this.RecipeLabel.Size = new System.Drawing.Size(445, 17);
 			this.RecipeLabel.TabIndex = 1;
@@ -128,7 +135,7 @@
 			// 
 			this.MachineCountLabel.AutoSize = true;
 			this.MachineCountLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.MachineCountLabel.Location = new System.Drawing.Point(3, 46);
+			this.MachineCountLabel.Location = new System.Drawing.Point(3, 50);
 			this.MachineCountLabel.Name = "MachineCountLabel";
 			this.MachineCountLabel.Size = new System.Drawing.Size(241, 17);
 			this.MachineCountLabel.TabIndex = 2;
@@ -138,16 +145,61 @@
 			// 
 			this.MainPanel.AutoSize = true;
 			this.MainPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.MainPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.MainPanel.Controls.Add(this.ProductsPanel);
 			this.MainPanel.Controls.Add(this.InfoPanel);
 			this.MainPanel.Controls.Add(this.IngredientsPanel);
-			this.MainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-			this.MainPanel.Location = new System.Drawing.Point(0, 0);
+			this.MainPanel.Location = new System.Drawing.Point(0, 6);
 			this.MainPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.MainPanel.Name = "MainPanel";
-			this.MainPanel.Size = new System.Drawing.Size(457, 81);
+			this.MainPanel.Size = new System.Drawing.Size(459, 87);
 			this.MainPanel.TabIndex = 2;
+			// 
+			// DeleteStepButton
+			// 
+			this.DeleteStepButton.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.DeleteStepButton.AutoSize = true;
+			this.DeleteStepButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.DeleteStepButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.DeleteStepButton.Location = new System.Drawing.Point(187, 3);
+			this.DeleteStepButton.Name = "DeleteStepButton";
+			this.DeleteStepButton.Size = new System.Drawing.Size(92, 27);
+			this.DeleteStepButton.TabIndex = 2;
+			this.DeleteStepButton.Text = "Delete Step";
+			this.DeleteStepButton.UseVisualStyleBackColor = true;
+			this.DeleteStepButton.Click += new System.EventHandler(this.DeleteStepButton_Click);
+			// 
+			// ChildProductsPanel
+			// 
+			this.ChildProductsPanel.AutoSize = true;
+			this.ChildProductsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.ChildProductsPanel.Location = new System.Drawing.Point(3, 3);
+			this.ChildProductsPanel.Name = "ChildProductsPanel";
+			this.ChildProductsPanel.Size = new System.Drawing.Size(0, 0);
+			this.ChildProductsPanel.TabIndex = 2;
+			// 
+			// ChildIngredientsPanel
+			// 
+			this.ChildIngredientsPanel.AutoSize = true;
+			this.ChildIngredientsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.ChildIngredientsPanel.Location = new System.Drawing.Point(3, 96);
+			this.ChildIngredientsPanel.Name = "ChildIngredientsPanel";
+			this.ChildIngredientsPanel.Size = new System.Drawing.Size(0, 0);
+			this.ChildIngredientsPanel.TabIndex = 3;
+			// 
+			// MainLayout
+			// 
+			this.MainLayout.AutoSize = true;
+			this.MainLayout.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.MainLayout.Controls.Add(this.ChildProductsPanel);
+			this.MainLayout.Controls.Add(this.MainPanel);
+			this.MainLayout.Controls.Add(this.ChildIngredientsPanel);
+			this.MainLayout.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+			this.MainLayout.Location = new System.Drawing.Point(3, 3);
+			this.MainLayout.Name = "MainLayout";
+			this.MainLayout.Size = new System.Drawing.Size(459, 99);
+			this.MainLayout.TabIndex = 4;
 			// 
 			// ProductionStepControl
 			// 
@@ -155,10 +207,9 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.Controls.Add(this.MainPanel);
+			this.Controls.Add(this.MainLayout);
 			this.Name = "ProductionStepControl";
-			this.Size = new System.Drawing.Size(457, 81);
+			this.Size = new System.Drawing.Size(465, 105);
 			this.InfoPanel.ResumeLayout(false);
 			this.InfoPanel.PerformLayout();
 			this.MultiplierPanel.ResumeLayout(false);
@@ -166,6 +217,8 @@
 			((System.ComponentModel.ISupportInitialize)(this.MultiplierNumeric)).EndInit();
 			this.MainPanel.ResumeLayout(false);
 			this.MainPanel.PerformLayout();
+			this.MainLayout.ResumeLayout(false);
+			this.MainLayout.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -182,5 +235,9 @@
 		public System.Windows.Forms.FlowLayoutPanel MainPanel;
 		private System.Windows.Forms.FlowLayoutPanel MultiplierPanel;
 		private System.Windows.Forms.NumericUpDown MultiplierNumeric;
+		private System.Windows.Forms.Button DeleteStepButton;
+		private System.Windows.Forms.FlowLayoutPanel MainLayout;
+		public System.Windows.Forms.FlowLayoutPanel ChildProductsPanel;
+		public System.Windows.Forms.FlowLayoutPanel ChildIngredientsPanel;
 	}
 }

@@ -26,6 +26,8 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			displayName = mDisplayName;
 		}
 
+		public static readonly decimal GeneratorEnergyDivisor = 16m + 2m / 3m;
+
 		public List<IRecipe> GetRecipes(List<JSONItem> items)
 		{
 			List<IRecipe> recipes = new List<IRecipe>();
@@ -40,11 +42,11 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 				List<ItemCount> counts = new List<ItemCount>();
 				if (fuelForm.Equals("RF_LIQUID"))
 				{
-					counts.Add(new ItemCount(jItem, -1 * (decimal.Parse(powerProduction) / jItem.GetEnergyValue() / Constants.GeneratorEnergyDivisor)));
+					counts.Add(new ItemCount(jItem, -1 * (decimal.Parse(powerProduction) / jItem.GetEnergyValue() / GeneratorEnergyDivisor)));
 				}
 				else if (fuelForm.Equals("RF_SOLID"))
 				{
-					counts.Add(new ItemCount(jItem, -1 * (decimal.Parse(powerProduction) / (jItem.GetEnergyValue() / 1000m) / Constants.GeneratorEnergyDivisor)));
+					counts.Add(new ItemCount(jItem, -1 * (decimal.Parse(powerProduction) / (jItem.GetEnergyValue() / 1000m) / GeneratorEnergyDivisor)));
 				}
 				else
 				{

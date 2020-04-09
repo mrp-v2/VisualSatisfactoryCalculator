@@ -40,6 +40,25 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				irc.FinishInitialization();
 			}
+			if (parentStep is ProductionPlan)
+			{
+				DeleteStepButton.Enabled = false;
+			}
+			foreach (ProductionStep childStep in parentStep.GetChildSteps())
+			{
+				if (childStep.GetRecipe().GetItemCounts().GetIngredients().ToItems().ContainsAny(parentStep.GetRecipe().GetItemCounts().GetProducts().ToItems()))
+				{
+					ChildProductsPanel.Controls.Add(new ProductionStepControl(childStep, mainForm));
+				}
+				else if (childStep.GetRecipe().GetItemCounts().GetProducts().ToItems().ContainsAny(parentStep.GetRecipe().GetItemCounts().GetIngredients().ToItems()))
+				{
+					ChildIngredientsPanel.Controls.Add(new ProductionStepControl(childStep, mainForm));
+				}
+				else
+				{
+					throw new ArgumentException("The child does not have a similarity to its parent!");
+				}
+			}
 			FinishInitialization();
 		}
 
@@ -111,7 +130,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			if (Enabled && initialized)
 			{
-				Console.WriteLine(e.ToString());
 				parentStep.SetMultiplierAndRelated(MultiplierNumeric.Value);
 				mainForm.UpdateTotalView();
 			}
@@ -120,7 +138,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 		public void SendObject(IRecipe recipe, string purpose)
 		{
 			ProductionStep ps = new ProductionStep(recipe, parentStep);
-			parentStep.AddRelatedStep(ps);
+			parentStep.AddChildStep(ps);
 			mainForm.PlanUpdated();
 		}
 
@@ -141,6 +159,12 @@ namespace VisualSatisfactoryCalculator.controls.user
 		public void FinishInitialization()
 		{
 			initialized = true;
+		}
+
+		private void DeleteStepButton_Click(object sender, EventArgs e)
+		{
+			parentStep.RemoveStep();
+			mainForm.PlanUpdated();
 		}
 	}
 }

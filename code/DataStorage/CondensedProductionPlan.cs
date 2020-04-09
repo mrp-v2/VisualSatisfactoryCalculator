@@ -16,22 +16,20 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		public ProductionPlan ToProductionPlan(List<IRecipe> recipes)
 		{
 			IRecipe myRecipe = GetRecipe(recipes);
-			ProductionPlan plan = new ProductionPlan(myRecipe, 1);
+			ProductionPlan plan = new ProductionPlan(myRecipe, multiplier);
 			if (children != null && children.Count > 0)
 			{
 				foreach (CondensedProductionStep child in children)
 				{
-					ProductionStep childStep = child.ToProductionStep(recipes);
-					childStep.AddRelatedStep(plan);
-					plan.AddRelatedStep(childStep);
-
+					ProductionStep childStep = child.ToProductionStep(recipes, plan);
+					plan.AddChildStep(childStep);
 				}
 			}
-			plan.SetMultiplierAndRelated(multiplier);
+			//plan.SetMultiplierAndRelated(multiplier);
 			return plan;
 		}
 
-		public CondensedProductionPlan(ProductionPlan plan) : base(plan, null)
+		public CondensedProductionPlan(ProductionPlan plan) : base(plan)
 		{
 			multiplier = plan.GetMultiplier();
 		}

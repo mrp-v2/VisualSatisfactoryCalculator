@@ -6,25 +6,26 @@ using VisualSatisfactoryCalculator.controls.user;
 
 namespace VisualSatisfactoryCalculator.code.DataStorage
 {
-	public class ProductionStep
+	public class ProductionStep : IEquatable<ProductionStep>
 	{
 		private decimal multiplier;
-		private readonly List<ProductionStep> relatedSteps;
+		private readonly List<ProductionStep> childSteps;
+		private readonly ProductionStep parentStep;
 		private ProductionStepControl control;
 
 		private readonly IRecipe recipe;
 
-		public ProductionStep(IRecipe recipe, ProductionStep related) : this(recipe, 1m)
+		public ProductionStep(IRecipe recipe, ProductionStep parent) : this(recipe, 1m)
 		{
-			relatedSteps.Add(related);
-			UpdateMultiplierRelativeTo(related);
+			parentStep = parent;
+			UpdateMultiplierRelativeTo(parent);
 		}
 
 		public ProductionStep(IRecipe recipe, decimal multiplier)
 		{
 			this.recipe = recipe;
 			this.multiplier = multiplier;
-			relatedSteps = new List<ProductionStep>();
+			childSteps = new List<ProductionStep>();
 			control = default;
 		}
 
@@ -38,9 +39,9 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return (int)Math.Ceiling(multiplier);
 		}
 
-		public void AddRelatedStep(ProductionStep step)
+		public void AddChildStep(ProductionStep child)
 		{
-			relatedSteps.Add(step);
+			childSteps.Add(child);
 		}
 
 		private void SetMultiplier(decimal multiplier)
@@ -57,32 +58,45 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		public void SetMultiplierAndRelated(decimal multiplier)
 		{
 			SetMultiplier(multiplier);
-			foreach (ProductionStep step in relatedSteps)
+			foreach (ProductionStep step in childSteps)
 			{
-				step.UpdateMultiplierAndRelated(this);
+				step.UpdateMultiplierFromParent();
 			}
+			if (parentStep != null) parentStep.UpdateMultiplierFromChild(this);
 		}
 
-		private void UpdateMultiplierAndRelated(ProductionStep caller)
+		private void UpdateMultiplierFromChild(ProductionStep child)
 		{
-			UpdateMultiplierRelativeTo(caller);
-			foreach (ProductionStep step in relatedSteps)
+			if (!childSteps.Contains(child)) throw new ArgumentException("The given step is not actually a child!");
+			UpdateMultiplierRelativeTo(child);
+			foreach (ProductionStep childStep in childSteps)
 			{
-				if (!step.Equals(caller))
+				if (!childStep.Equals(child))
 				{
-					step.UpdateMultiplierAndRelated(this);
+					childStep.UpdateMultiplierFromParent();
 				}
 			}
+			if (parentStep != null) parentStep.UpdateMultiplierFromChild(this);
 		}
 
-		private void UpdateMultiplierRelativeTo(ProductionStep origin)
+		private void UpdateMultiplierFromParent()
 		{
-			IItem match = recipe.GetItemCounts().GetProducts().ToItems().FindMatch(origin.recipe.GetItemCounts().GetIngredients().ToItems());
+			UpdateMultiplierRelativeTo(parentStep);
+			foreach (ProductionStep step in childSteps)
+			{
+				step.UpdateMultiplierFromParent();
+			}
+		}
+
+		private void UpdateMultiplierRelativeTo(ProductionStep step)
+		{
+			IItem match = recipe.GetItemCounts().GetProducts().ToItems().FindMatch(step.recipe.GetItemCounts().GetIngredients().ToItems());
 			if (match == null)
 			{
-				match = recipe.GetItemCounts().GetIngredients().ToItems().FindMatch(origin.recipe.GetItemCounts().GetProducts().ToItems());
+				match = recipe.GetItemCounts().GetIngredients().ToItems().FindMatch(step.recipe.GetItemCounts().GetProducts().ToItems());
 			}
-			SetMultiplier(CalculateMultiplierForRate(match, origin.CalculateDefaultItemRate(match) * origin.multiplier));
+			if (match == null) throw new ArgumentException("Could not find a similarity between the given step an this.");
+			SetMultiplier(CalculateMultiplierForRate(match, step.CalculateDefaultItemRate(match) * step.multiplier));
 		}
 
 		private decimal CalculateDefaultItemRate(IItem item)
@@ -113,10 +127,15 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		public List<IItem> GetItemsWithRelatedStep()
 		{
 			List<IItem> items = new List<IItem>();
-			foreach (ProductionStep step in relatedSteps)
+			foreach (ProductionStep child in childSteps)
 			{
-				items.AddRangeIfNew(step.recipe.GetItemCounts().GetIngredients().ToItems().FindMatches(recipe.GetItemCounts().GetProducts().ToItems()));
-				items.AddRangeIfNew(step.recipe.GetItemCounts().GetProducts().ToItems().FindMatches(recipe.GetItemCounts().GetIngredients().ToItems()));
+				items.AddRangeIfNew(child.recipe.GetItemCounts().GetIngredients().ToItems().FindMatches(recipe.GetItemCounts().GetProducts().ToItems()));
+				items.AddRangeIfNew(child.recipe.GetItemCounts().GetProducts().ToItems().FindMatches(recipe.GetItemCounts().GetIngredients().ToItems()));
+			}
+			if (parentStep != null)
+			{
+				items.AddRangeIfNew(parentStep.recipe.GetItemCounts().GetIngredients().ToItems().FindMatches(recipe.GetItemCounts().GetProducts().ToItems()));
+				items.AddRangeIfNew(parentStep.recipe.GetItemCounts().GetProducts().ToItems().FindMatches(recipe.GetItemCounts().GetIngredients().ToItems()));
 			}
 			return items;
 		}
@@ -126,53 +145,13 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return multiplier;
 		}
 
-		protected Dictionary<sbyte, List<ProductionStep>> GetRelativeTiersRecursively(ProductionStep relativeTo, sbyte origin)
-		{
-			Dictionary<sbyte, List<ProductionStep>> tiers = new Dictionary<sbyte, List<ProductionStep>>();
-			sbyte above = origin, below = origin;
-			above -= 1;
-			below += 1;
-			foreach (ProductionStep step in relatedSteps)
-			{
-				if (!step.Equals(relativeTo))
-				{
-					if (step.recipe.GetItemCounts().GetIngredients().ToItems().ContainsAny(recipe.GetItemCounts().GetProducts().ToItems()))
-					{
-						if (!tiers.ContainsKey(above))
-						{
-							tiers.Add(above, new List<ProductionStep>());
-						}
-						tiers[above].Add(step);
-						tiers.AddRange(step.GetRelativeTiersRecursively(this, above));
-					}
-					else if (step.recipe.GetItemCounts().GetProducts().ToItems().ContainsAny(recipe.GetItemCounts().GetIngredients().ToItems()))
-					{
-						if (!tiers.ContainsKey(below))
-						{
-							tiers.Add(below, new List<ProductionStep>());
-						}
-						tiers[below].Add(step);
-						tiers.AddRange(step.GetRelativeTiersRecursively(this, below));
-					}
-					else
-					{
-						throw new ArgumentException("Unable to find a product/ingredient relationship between this and the given step.");
-					}
-				}
-			}
-			return tiers;
-		}
-
-		protected List<ProductionStep> GetAllStepsRecursively(ProductionStep origin)
+		protected List<ProductionStep> GetAllStepsRecursively()
 		{
 			List<ProductionStep> list = new List<ProductionStep>();
-			foreach (ProductionStep step in relatedSteps)
+			foreach (ProductionStep child in childSteps)
 			{
-				if (!step.Equals(origin))
-				{
-					list.Add(step);
-					list.AddRange(step.GetAllStepsRecursively(this));
-				}
+				list.Add(child);
+				list.AddRange(child.GetAllStepsRecursively());
 			}
 			return list;
 		}
@@ -182,9 +161,24 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return recipe.ToString();
 		}
 
-		public List<ProductionStep> GetRelatedSteps()
+		public List<ProductionStep> GetChildSteps()
 		{
-			return relatedSteps;
+			return childSteps;
+		}
+
+		public bool Equals(ProductionStep obj)
+		{
+			return recipe.Equals(obj.recipe);
+		}
+
+		public override int GetHashCode()
+		{
+			return recipe.GetHashCode();
+		}
+
+		public void RemoveStep()
+		{
+			parentStep.childSteps.Remove(this);
 		}
 	}
 }

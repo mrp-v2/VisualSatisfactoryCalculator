@@ -6,6 +6,5 @@ namespace VisualSatisfactoryCalculator.code.Utility
 	public static class Constants
 	{
 		public static readonly IItem MWItem = new SimpleCustomItem("FillerEnergyItemMW", "MW");
-		public static readonly decimal GeneratorEnergyDivisor = 16m + 2m / 3m;
 	}
 }

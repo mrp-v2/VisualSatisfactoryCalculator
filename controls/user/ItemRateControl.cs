@@ -34,7 +34,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			if (Enabled && initialized)
 			{
-				Console.WriteLine(e.ToString());
 				parentControl.RateChanged(item, RateNumeric.Value);
 				parentControl.mainForm.UpdateTotalView();
 			}

@@ -16,35 +16,30 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return recipes.MatchID(recipeUID);
 		}
 
-		public ProductionStep ToProductionStep(List<IRecipe> recipes)
+		public ProductionStep ToProductionStep(List<IRecipe> recipes, ProductionStep parent)
 		{
 			IRecipe myRecipe = GetRecipe(recipes);
-			ProductionStep step = new ProductionStep(myRecipe, 1);
+			ProductionStep step = new ProductionStep(myRecipe, parent);
 			if (children != null && children.Count > 0)
 			{
 				foreach (CondensedProductionStep child in children)
 				{
-					IItem shared = myRecipe.GetItemCounts().ToItems().FindMatch(child.GetRecipe(recipes).GetItemCounts().ToItems());
-					ProductionStep childStep = child.ToProductionStep(recipes);
-					childStep.AddRelatedStep(step);
-					step.AddRelatedStep(childStep);
+					ProductionStep childStep = child.ToProductionStep(recipes, step);
+					step.AddChildStep(childStep);
 				}
 			}
 			return step;
 		}
 
-		public CondensedProductionStep(ProductionStep step, ProductionStep parent)
+		public CondensedProductionStep(ProductionStep step)
 		{
 			recipeUID = step.GetRecipe().GetUID();
-			if (step.GetRelatedSteps().Count > 1)
+			if (step.GetChildSteps().Count > 0)
 			{
 				children = new List<CondensedProductionStep>();
-				foreach (ProductionStep relatedStep in step.GetRelatedSteps())
+				foreach (ProductionStep childStep in step.GetChildSteps())
 				{
-					if (!relatedStep.Equals(parent))
-					{
-						children.Add(new CondensedProductionStep(relatedStep, step));
-					}
+					children.Add(new CondensedProductionStep(childStep));
 				}
 			}
 		}
