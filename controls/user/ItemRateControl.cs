@@ -25,10 +25,13 @@ namespace VisualSatisfactoryCalculator.controls.user
 			ItemButton.Text = parentControl.mainForm.encoders.GetDisplayNameFor(itemUID);
 			if ((parentControl.mainForm.encoders.FindByID(itemUID) as IItem).IsLiquid()) RateNumeric.Value = rate.Abs() / 1000;
 			else RateNumeric.Value = rate.Abs();
-			if (parentControl.ItemHasRelatedRecipe(itemUID))
-			{
-				ItemButton.Enabled = false;
-			}
+			UpdateButton();
+		}
+
+		public void UpdateButton()
+		{
+			if (parentControl.ItemHasRelatedRecipe(itemUID)) ItemButton.Enabled = false;
+			else ItemButton.Enabled = true;
 		}
 
 		private void RateNumeric_ValueChanged(object sender, EventArgs e)
@@ -36,7 +39,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			if (Enabled && initialized)
 			{
 				if ((parentControl.mainForm.encoders.FindByID(itemUID) as IItem).IsLiquid()) parentControl.RateChanged(itemUID, RateNumeric.Value * 1000);
-				parentControl.RateChanged(itemUID, RateNumeric.Value);
+				else parentControl.RateChanged(itemUID, RateNumeric.Value);
 				parentControl.mainForm.UpdateTotalView();
 			}
 		}

@@ -13,18 +13,20 @@ namespace VisualSatisfactoryCalculator.controls.user
 		private readonly ProductionStep parentStep;
 		public readonly MainForm mainForm;
 		private bool initialized;
+		private readonly ProductionStepControl parentControl;
 
 		public ProductionStepControl()
 		{
 
 		}
 
-		public ProductionStepControl(ProductionStep parentStep, MainForm mainForm)
+		public ProductionStepControl(ProductionStep parentStep, MainForm mainForm, ProductionStepControl parentControl)
 		{
 			initialized = false;
 			InitializeComponent();
 			this.parentStep = parentStep;
 			this.mainForm = mainForm;
+			this.parentControl = parentControl;
 			parentStep.SetControl(this);
 			foreach (ItemCount ic in parentStep.GetRecipe().GetItemCounts().GetProducts())
 			{
@@ -48,11 +50,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				if (childStep.GetRecipe().GetItemCounts().GetIngredients().ToItemUIDs().ContainsAny(parentStep.GetRecipe().GetItemCounts().GetProducts().ToItemUIDs()))
 				{
-					ChildProductsPanel.Controls.Add(new ProductionStepControl(childStep, mainForm));
+					AddProductControl(childStep);
 				}
 				else if (childStep.GetRecipe().GetItemCounts().GetProducts().ToItemUIDs().ContainsAny(parentStep.GetRecipe().GetItemCounts().GetIngredients().ToItemUIDs()))
 				{
-					ChildIngredientsPanel.Controls.Add(new ProductionStepControl(childStep, mainForm));
+					AddIngredientControl(childStep);
 				}
 				else
 				{
@@ -60,6 +62,16 @@ namespace VisualSatisfactoryCalculator.controls.user
 				}
 			}
 			FinishInitialization();
+		}
+
+		private void AddIngredientControl(ProductionStep step)
+		{
+			ChildIngredientsPanel.Controls.Add(new ProductionStepControl(step, mainForm, this));
+		}
+
+		private void AddProductControl(ProductionStep step)
+		{
+			ChildProductsPanel.Controls.Add(new ProductionStepControl(step, mainForm, this));
 		}
 
 		public void MultiplierChanged()
@@ -140,7 +152,10 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			ProductionStep ps = new ProductionStep(recipe, parentStep);
 			parentStep.AddChildStep(ps);
-			mainForm.PlanUpdated();
+			if (parentStep.IsChildStepIngredient(ps)) AddIngredientControl(ps);
+			else if (parentStep.IsChildStepProduct(ps)) AddProductControl(ps);
+			UpdateButtons();
+			mainForm.UpdateTotalView();
 		}
 
 		public bool ItemHasRelatedRecipe(string itemUID)
@@ -165,7 +180,21 @@ namespace VisualSatisfactoryCalculator.controls.user
 		private void DeleteStepButton_Click(object sender, EventArgs e)
 		{
 			parentStep.RemoveStep();
-			mainForm.PlanUpdated();
+			if (parentControl != null) parentControl.UpdateButtons();
+			mainForm.UpdateTotalView();
+			Parent.Controls.Remove(this);
+		}
+
+		private void UpdateButtons()
+		{
+			foreach (ItemRateControl irc in IngredientsPanel.Controls)
+			{
+				irc.UpdateButton();
+			} 
+			foreach (ItemRateControl irc in ProductsPanel.Controls)
+			{
+				irc.UpdateButton();
+			}
 		}
 	}
 }

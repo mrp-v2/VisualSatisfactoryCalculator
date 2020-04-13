@@ -86,7 +86,7 @@ namespace VisualSatisfactoryCalculator.forms
 			PPTVC = new ProductionPlanTotalViewControl();
 			UpdateTotalView();
 			ProductionPlanPanel.Controls.Add(PPTVC);
-			ProductionStepControl PSC = new ProductionStepControl(plan, this);
+			ProductionStepControl PSC = new ProductionStepControl(plan, this, null);
 			ProductionPlanPanel.Controls.Add(PSC);
 		}
 

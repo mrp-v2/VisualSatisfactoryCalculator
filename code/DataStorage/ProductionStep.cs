@@ -173,6 +173,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public void RemoveStep()
 		{
+			if (!parentStep.childSteps.Contains(this)) throw new InvalidOperationException("This is not a child of its parent!");
 			parentStep.childSteps.Remove(this);
 		}
 
@@ -186,6 +187,23 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			decimal total = GetPowerDraw(encodings);
 			foreach (ProductionStep childStep in childSteps) total += childStep.GetRecursivePowerDraw(encodings);
 			return total;
+		}
+
+		public bool IsChildStepIngredient(ProductionStep child)
+		{
+			if (!IsStepChild(child)) throw new ArgumentException("The given step was not a child!");
+			return child.recipe.GetItemCounts().GetProducts().ToItemUIDs().ContainsAny(recipe.GetItemCounts().GetIngredients().ToItemUIDs());
+		}
+
+		public bool IsChildStepProduct(ProductionStep child)
+		{
+			if (!IsStepChild(child)) throw new ArgumentException("The given step was not a child!");
+			return child.recipe.GetItemCounts().GetIngredients().ToItemUIDs().ContainsAny(recipe.GetItemCounts().GetProducts().ToItemUIDs());
+		}
+
+		public bool IsStepChild(ProductionStep test)
+		{
+			return childSteps.Contains(test);
 		}
 	}
 }
