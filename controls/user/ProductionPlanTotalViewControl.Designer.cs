@@ -29,9 +29,9 @@
 		private void InitializeComponent()
 		{
 			this.MainPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this.NetProductsLabel = new System.Windows.Forms.Label();
+			this.ProductsLabel = new System.Windows.Forms.Label();
 			this.MachinesLabel = new System.Windows.Forms.Label();
-			this.NetIngredientsLabel = new System.Windows.Forms.Label();
+			this.IngredientsLabel = new System.Windows.Forms.Label();
 			this.MainPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -39,25 +39,25 @@
 			// 
 			this.MainPanel.AutoSize = true;
 			this.MainPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.MainPanel.Controls.Add(this.NetProductsLabel);
+			this.MainPanel.Controls.Add(this.ProductsLabel);
 			this.MainPanel.Controls.Add(this.MachinesLabel);
-			this.MainPanel.Controls.Add(this.NetIngredientsLabel);
+			this.MainPanel.Controls.Add(this.IngredientsLabel);
 			this.MainPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.MainPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainPanel.Name = "MainPanel";
 			this.MainPanel.Size = new System.Drawing.Size(84, 51);
 			this.MainPanel.TabIndex = 0;
 			// 
-			// NetProductsLabel
+			// ProductsLabel
 			// 
-			this.NetProductsLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.NetProductsLabel.AutoSize = true;
-			this.NetProductsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.NetProductsLabel.Location = new System.Drawing.Point(3, 0);
-			this.NetProductsLabel.Name = "NetProductsLabel";
-			this.NetProductsLabel.Size = new System.Drawing.Size(63, 17);
-			this.NetProductsLabel.TabIndex = 0;
-			this.NetProductsLabel.Text = "products";
+			this.ProductsLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.ProductsLabel.AutoSize = true;
+			this.ProductsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.ProductsLabel.Location = new System.Drawing.Point(3, 0);
+			this.ProductsLabel.Name = "ProductsLabel";
+			this.ProductsLabel.Size = new System.Drawing.Size(63, 17);
+			this.ProductsLabel.TabIndex = 0;
+			this.ProductsLabel.Text = "products";
 			// 
 			// MachinesLabel
 			// 
@@ -70,16 +70,16 @@
 			this.MachinesLabel.TabIndex = 1;
 			this.MachinesLabel.Text = "machines";
 			// 
-			// NetIngredientsLabel
+			// IngredientsLabel
 			// 
-			this.NetIngredientsLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.NetIngredientsLabel.AutoSize = true;
-			this.NetIngredientsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.NetIngredientsLabel.Location = new System.Drawing.Point(3, 34);
-			this.NetIngredientsLabel.Name = "NetIngredientsLabel";
-			this.NetIngredientsLabel.Size = new System.Drawing.Size(78, 17);
-			this.NetIngredientsLabel.TabIndex = 2;
-			this.NetIngredientsLabel.Text = "ingredients";
+			this.IngredientsLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.IngredientsLabel.AutoSize = true;
+			this.IngredientsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.IngredientsLabel.Location = new System.Drawing.Point(3, 34);
+			this.IngredientsLabel.Name = "IngredientsLabel";
+			this.IngredientsLabel.Size = new System.Drawing.Size(78, 17);
+			this.IngredientsLabel.TabIndex = 2;
+			this.IngredientsLabel.Text = "ingredients";
 			// 
 			// ProductionPlanTotalViewControl
 			// 
@@ -100,8 +100,8 @@
 		#endregion
 
 		private System.Windows.Forms.FlowLayoutPanel MainPanel;
-		public System.Windows.Forms.Label NetProductsLabel;
+		public System.Windows.Forms.Label ProductsLabel;
 		public System.Windows.Forms.Label MachinesLabel;
-		public System.Windows.Forms.Label NetIngredientsLabel;
+		public System.Windows.Forms.Label IngredientsLabel;
 	}
 }

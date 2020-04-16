@@ -120,5 +120,33 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			foreach (IEncoder UIDEncoder in me) if (UIDEncoder.EqualID(UID)) return UIDEncoder.GetDisplayName();
 			return UID;
 		}
+
+		public static Dictionary<T, decimal> Merge<T>(this Dictionary<T, decimal> me, Dictionary<T, decimal> other)
+		{
+			Dictionary<T, decimal> merged = new Dictionary<T, decimal>();
+			foreach (T key in me.Keys)
+			{
+				if (merged.ContainsKey(key))
+				{
+					merged[key] += me[key];
+				}
+				else
+				{
+					merged.Add(key, me[key]);
+				}
+			}
+			foreach (T key in other.Keys)
+			{
+				if (merged.ContainsKey(key))
+				{
+					merged[key] += other[key];
+				}
+				else
+				{
+					merged.Add(key, other[key]);
+				}
+			}
+			return merged;
+		}
 	}
 }

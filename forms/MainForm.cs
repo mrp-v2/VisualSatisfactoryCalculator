@@ -123,9 +123,9 @@ namespace VisualSatisfactoryCalculator.forms
 
 		public void UpdateTotalView()
 		{
-			PPTVC.NetProductsLabel.Text = plan.GetNetProductsString(encoders);
+			PPTVC.ProductsLabel.Text = plan.GetProductsString(encoders);
 			PPTVC.MachinesLabel.Text = plan.GetTotalMachineString(encoders);
-			PPTVC.NetIngredientsLabel.Text = plan.GetNetIngredientsString(encoders);
+			PPTVC.IngredientsLabel.Text = plan.GetIngredientsString(encoders);
 		}
 
 		private void LoadChartButton_Click(object sender, EventArgs e)
