@@ -14,7 +14,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 {
 	public class SaveFileInteractor
 	{
-		public static readonly string jsonFile = File.ReadAllText("C:\\Program Files\\Epic Games\\SatisfactoryEarlyAccess\\CommunityResources\\Docs\\Docs.json");
+		public static readonly string jsonFile = File.ReadAllText(".\\data\\Docs.json");
 
 		public static List<IRecipe> GetUnlockedRecipesFromSave(string saveFile, List<IEncoder> encoders)
 		{

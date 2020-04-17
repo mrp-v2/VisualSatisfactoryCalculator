@@ -26,8 +26,8 @@
     <TargetCulture>en-US</TargetCulture>
     <ProductName>Visual Satisfactory Calculator</ProductName>
     <PublisherName>mrp_v2</PublisherName>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.1.0.0</ApplicationVersion>
+    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationVersion>1.1.0.2</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -274,6 +274,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Content Include="data\Docs.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="keypair.pfx" />
     <None Include="Properties\app.manifest" />
     <None Include="SatisfactorySaveEditorCode\Research.xsd">
