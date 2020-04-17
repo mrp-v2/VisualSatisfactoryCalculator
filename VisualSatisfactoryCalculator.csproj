@@ -26,8 +26,8 @@
     <TargetCulture>en-US</TargetCulture>
     <ProductName>Visual Satisfactory Calculator</ProductName>
     <PublisherName>mrp_v2</PublisherName>
-    <ApplicationRevision>2</ApplicationRevision>
-    <ApplicationVersion>1.1.0.2</ApplicationVersion>
+    <ApplicationRevision>3</ApplicationRevision>
+    <ApplicationVersion>1.1.0.3</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -78,7 +78,7 @@
     <ManifestKeyFile>VisualSatisfactoryCalculator_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>keypair.pfx</AssemblyOriginatorKeyFile>
