@@ -26,8 +26,8 @@
     <TargetCulture>en-US</TargetCulture>
     <ProductName>Visual Satisfactory Calculator</ProductName>
     <PublisherName>mrp_v2</PublisherName>
-    <ApplicationRevision>3</ApplicationRevision>
-    <ApplicationVersion>1.1.0.3</ApplicationVersion>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>2.0.0.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -174,7 +174,6 @@
     <Compile Include="SatisfactorySaveEditorCode\IntProperty.cs" />
     <Compile Include="SatisfactorySaveEditorCode\InventoryItem.cs" />
     <Compile Include="SatisfactorySaveEditorCode\IObjectReference.cs" />
-    <Compile Include="code\Interfaces\IReceives.cs" />
     <Compile Include="code\Extensions\ItemCountExtensions.cs" />
     <Compile Include="code\DataStorage\ProductionPlan.cs" />
     <Compile Include="code\DataStorage\ProductionStep.cs" />

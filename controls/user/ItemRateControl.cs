@@ -30,8 +30,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		public void UpdateButton()
 		{
-			if (parentControl.ItemHasRelatedRecipe(itemUID)) ItemButton.Enabled = false;
-			else ItemButton.Enabled = true;
+			ItemButton.Enabled = !parentControl.ItemHasRelatedRecipe(itemUID);
 		}
 
 		private void RateNumeric_ValueChanged(object sender, EventArgs e)

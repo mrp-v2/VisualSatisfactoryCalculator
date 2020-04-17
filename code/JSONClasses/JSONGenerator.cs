@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using VisualSatisfactoryCalculator.code.DataStorage;
@@ -13,16 +12,14 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 	{
 		private readonly string UID;
 		private readonly string[] defaultFuelClasses;
-		private readonly string fuelForm;
 		private readonly string powerProduction;
 		private readonly string displayName;
 
 		[JsonConstructor]
-		public JSONGenerator(string ClassName, string mDefaultFuelClasses, string mFuelResourceForm, string mPowerProduction, string mDisplayName)
+		public JSONGenerator(string ClassName, string mDefaultFuelClasses, string mPowerProduction, string mDisplayName)
 		{
 			UID = ClassName;
 			defaultFuelClasses = mDefaultFuelClasses.Split(',');
-			fuelForm = mFuelResourceForm;
 			powerProduction = mPowerProduction;
 			displayName = mDisplayName;
 		}
@@ -42,20 +39,11 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 				IEncoder encodingItem = encodings.FindByID(itemID);
 				Trace.Assert(encodingItem is JSONItem);
 				JSONItem jItem = encodingItem as JSONItem;
-				List<ItemCount> counts = new List<ItemCount>();
-				if (fuelForm.Equals("RF_LIQUID"))
+				List<ItemCount> counts = new List<ItemCount>
 				{
-					counts.Add(new ItemCount(itemID, -1 * (decimal.Parse(powerProduction) / (jItem.GetEnergyValue() / 1000) / GeneratorEnergyDivisor)));
-				}
-				else if (fuelForm.Equals("RF_SOLID"))
-				{
-					counts.Add(new ItemCount(itemID, -1 * (decimal.Parse(powerProduction) / jItem.GetEnergyValue() / GeneratorEnergyDivisor)));
-				}
-				else
-				{
-					throw new ArgumentOutOfRangeException("Form " + fuelForm + " is unrecognized!");
-				}
-				counts.Add(new ItemCount(Constants.MWItem.GetUID(), decimal.Parse(powerProduction)));
+					new ItemCount(itemID, -1 * (decimal.Parse(powerProduction) / (jItem.GetEnergyValue() / 1000) / GeneratorEnergyDivisor)),
+					new ItemCount(Constants.MWItem.GetUID(), decimal.Parse(powerProduction))
+				};
 				IRecipe recipe = new BasicRecipe(UID + itemID, 60, UID, counts, jItem.GetDisplayName() + " to Power");
 				recipes.Add(recipe);
 			}

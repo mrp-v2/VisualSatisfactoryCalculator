@@ -11,7 +11,7 @@ using VisualSatisfactoryCalculator.controls.user;
 
 namespace VisualSatisfactoryCalculator.forms
 {
-	public partial class MainForm : Form, IReceives<IRecipe>
+	public partial class MainForm : Form
 	{
 		[STAThread]
 		public static void Main()
@@ -27,7 +27,6 @@ namespace VisualSatisfactoryCalculator.forms
 			}
 		}
 
-		private const string firstRecipePurpose = "first recipe";
 		private readonly List<IRecipe> AllRecipes;
 		public readonly List<IEncoder> encoders;
 		private ProductionPlan plan;
@@ -54,6 +53,7 @@ namespace VisualSatisfactoryCalculator.forms
 			{
 				form.encoders.AddRange(SaveFileInteractor.GetEncoders());
 				form.AllRecipes.AddRange(SaveFileInteractor.GetUnlockedRecipesFromSave(dialog.FileName, form.encoders));
+				SaveFileInteractor.FinishedInteracting();
 				SuggestionsController.SC = new SuggestionsController(form.AllRecipes);
 				return true;
 			}
@@ -62,17 +62,11 @@ namespace VisualSatisfactoryCalculator.forms
 
 		private void SelectFirstRecipeButton_Click(object sender, EventArgs e)
 		{
-			new SelectRecipePrompt(AllRecipes, this, firstRecipePurpose).ShowDialog();
-		}
-
-		public void SendObject(IRecipe recipe, string purpose)
-		{
-			switch (purpose)
+			SelectRecipePrompt srp = new SelectRecipePrompt(AllRecipes);
+			if (srp.ShowDialog() == DialogResult.OK)
 			{
-				case firstRecipePurpose:
-					plan = new ProductionPlan(recipe);
-					PlanUpdated();
-					break;
+				plan = new ProductionPlan(srp.GetSelectedRecipe());
+				PlanUpdated();
 			}
 		}
 

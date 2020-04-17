@@ -35,13 +35,11 @@
 			this.MultiplierLable = new System.Windows.Forms.Label();
 			this.MultiplierNumeric = new System.Windows.Forms.NumericUpDown();
 			this.DeleteStepButton = new System.Windows.Forms.Button();
+			this.PowerConsumptionLabel = new System.Windows.Forms.Label();
 			this.RecipeLabel = new System.Windows.Forms.Label();
 			this.MachineCountLabel = new System.Windows.Forms.Label();
 			this.MainPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this.ChildProductsPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this.ChildIngredientsPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.MainLayout = new System.Windows.Forms.FlowLayoutPanel();
-			this.PowerConsumptionLabel = new System.Windows.Forms.Label();
 			this.InfoPanel.SuspendLayout();
 			this.MultiplierPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MultiplierNumeric)).BeginInit();
@@ -51,12 +49,14 @@
 			// 
 			// ProductsPanel
 			// 
+			this.ProductsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.ProductsPanel.AutoSize = true;
 			this.ProductsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ProductsPanel.Location = new System.Drawing.Point(3, 3);
 			this.ProductsPanel.Name = "ProductsPanel";
 			this.ProductsPanel.Size = new System.Drawing.Size(0, 0);
 			this.ProductsPanel.TabIndex = 0;
+			this.ProductsPanel.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.ProductsPanel_ControlAdded);
 			// 
 			// IngredientsPanel
 			// 
@@ -137,6 +137,17 @@
 			this.DeleteStepButton.UseVisualStyleBackColor = true;
 			this.DeleteStepButton.Click += new System.EventHandler(this.DeleteStepButton_Click);
 			// 
+			// PowerConsumptionLabel
+			// 
+			this.PowerConsumptionLabel.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.PowerConsumptionLabel.AutoSize = true;
+			this.PowerConsumptionLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.PowerConsumptionLabel.Location = new System.Drawing.Point(285, 8);
+			this.PowerConsumptionLabel.Name = "PowerConsumptionLabel";
+			this.PowerConsumptionLabel.Size = new System.Drawing.Size(157, 17);
+			this.PowerConsumptionLabel.TabIndex = 3;
+			this.PowerConsumptionLabel.Text = "Power Consumption: <>";
+			// 
 			// RecipeLabel
 			// 
 			this.RecipeLabel.AutoSize = true;
@@ -166,53 +177,22 @@
 			this.MainPanel.Controls.Add(this.InfoPanel);
 			this.MainPanel.Controls.Add(this.IngredientsPanel);
 			this.MainPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-			this.MainPanel.Location = new System.Drawing.Point(0, 6);
+			this.MainPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.MainPanel.Name = "MainPanel";
 			this.MainPanel.Size = new System.Drawing.Size(459, 87);
 			this.MainPanel.TabIndex = 2;
 			// 
-			// ChildProductsPanel
-			// 
-			this.ChildProductsPanel.AutoSize = true;
-			this.ChildProductsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ChildProductsPanel.Location = new System.Drawing.Point(3, 3);
-			this.ChildProductsPanel.Name = "ChildProductsPanel";
-			this.ChildProductsPanel.Size = new System.Drawing.Size(0, 0);
-			this.ChildProductsPanel.TabIndex = 2;
-			// 
-			// ChildIngredientsPanel
-			// 
-			this.ChildIngredientsPanel.AutoSize = true;
-			this.ChildIngredientsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ChildIngredientsPanel.Location = new System.Drawing.Point(3, 96);
-			this.ChildIngredientsPanel.Name = "ChildIngredientsPanel";
-			this.ChildIngredientsPanel.Size = new System.Drawing.Size(0, 0);
-			this.ChildIngredientsPanel.TabIndex = 3;
-			// 
 			// MainLayout
 			// 
 			this.MainLayout.AutoSize = true;
 			this.MainLayout.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.MainLayout.Controls.Add(this.ChildProductsPanel);
 			this.MainLayout.Controls.Add(this.MainPanel);
-			this.MainLayout.Controls.Add(this.ChildIngredientsPanel);
 			this.MainLayout.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.MainLayout.Location = new System.Drawing.Point(3, 3);
 			this.MainLayout.Name = "MainLayout";
-			this.MainLayout.Size = new System.Drawing.Size(459, 99);
+			this.MainLayout.Size = new System.Drawing.Size(459, 87);
 			this.MainLayout.TabIndex = 4;
-			// 
-			// PowerConsumptionLabel
-			// 
-			this.PowerConsumptionLabel.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.PowerConsumptionLabel.AutoSize = true;
-			this.PowerConsumptionLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.PowerConsumptionLabel.Location = new System.Drawing.Point(285, 8);
-			this.PowerConsumptionLabel.Name = "PowerConsumptionLabel";
-			this.PowerConsumptionLabel.Size = new System.Drawing.Size(157, 17);
-			this.PowerConsumptionLabel.TabIndex = 3;
-			this.PowerConsumptionLabel.Text = "Power Consumption: <>";
 			// 
 			// ProductionStepControl
 			// 
@@ -222,7 +202,7 @@
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.Controls.Add(this.MainLayout);
 			this.Name = "ProductionStepControl";
-			this.Size = new System.Drawing.Size(465, 105);
+			this.Size = new System.Drawing.Size(465, 93);
 			this.InfoPanel.ResumeLayout(false);
 			this.InfoPanel.PerformLayout();
 			this.MultiplierPanel.ResumeLayout(false);
@@ -250,8 +230,6 @@
 		private System.Windows.Forms.NumericUpDown MultiplierNumeric;
 		private System.Windows.Forms.Button DeleteStepButton;
 		private System.Windows.Forms.FlowLayoutPanel MainLayout;
-		public System.Windows.Forms.FlowLayoutPanel ChildProductsPanel;
-		public System.Windows.Forms.FlowLayoutPanel ChildIngredientsPanel;
 		private System.Windows.Forms.Label PowerConsumptionLabel;
 	}
 }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SatisfactorySaveEditor.Model;
 using SatisfactorySaveEditor.Util;
 using SatisfactorySaveEditor.ViewModel.Property;
@@ -14,7 +15,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 {
 	public class SaveFileInteractor
 	{
-		public static readonly string jsonFile = File.ReadAllText(".\\data\\Docs.json");
+		public static string jsonFile = File.ReadAllText(".\\data\\Docs.json");
 
 		public static List<IRecipe> GetUnlockedRecipesFromSave(string saveFile, List<IEncoder> encoders)
 		{
@@ -59,6 +60,16 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			return unlockedRecipes;
 		}
 
+		public static void FinishedInteracting()
+		{
+			jsonFile = default;
+		}
+
+		private static readonly JsonSerializer jsonSerializer = new JsonSerializer()
+		{
+			Culture = System.Globalization.CultureInfo.GetCultureInfo(1033),
+		};
+
 		public static List<IEncoder> GetEncoders()
 		{
 			//JSONItems
@@ -75,14 +86,14 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			List<IEncoder> totalResults = new List<IEncoder>();
 			foreach (JToken token in results)
 			{
-				totalResults.Add(token.ToObject<JSONItem>());
+				totalResults.Add(token.ToObject<JSONItem>(jsonSerializer));
 			}
 			//JSONBuildings
 			results.Clear();
 			results.AddRange(GetSection("FactoryGame.FGBuildableManufacturer", "FactoryGame.FGPortableMinerDispenser"));
 			foreach (JToken token in results)
 			{
-				totalResults.Add(token.ToObject<JSONBuilding>());
+				totalResults.Add(token.ToObject<JSONBuilding>(jsonSerializer));
 			}
 			//Constants
 			totalResults.AddRange(Constants.AllConstantEncoders);
@@ -91,7 +102,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			results.AddRange(GetSection("FactoryGame.FGRecipe", "FactoryGame.FGBuildableConveyorBelt"));
 			foreach (JToken token in results)
 			{
-				totalResults.Add(token.ToObject<JSONRecipe>());
+				totalResults.Add(token.ToObject<JSONRecipe>(jsonSerializer));
 			}
 			//JSONGenerators -- must go near end, uses encodings to get energy value of fuel
 			results.Clear();
@@ -100,7 +111,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			List<JSONGenerator> generatorResults = new List<JSONGenerator>();
 			foreach (JToken token in results)
 			{
-				generatorResults.Add(token.ToObject<JSONGenerator>());
+				generatorResults.Add(token.ToObject<JSONGenerator>(jsonSerializer));
 			}
 			foreach (JSONGenerator generator in generatorResults)
 			{
@@ -125,14 +136,14 @@ namespace VisualSatisfactoryCalculator.code.Utility
 
 		private static void BuildNode(ObservableCollection<SaveObjectModel> items, EditorTreeNode node)
 		{
-			foreach (var child in node.Children)
+			foreach (KeyValuePair<string, EditorTreeNode> child in node.Children)
 			{
-				var childItem = new SaveObjectModel(child.Value.Name);
+				SaveObjectModel childItem = new SaveObjectModel(child.Value.Name);
 				BuildNode(childItem.Items, child.Value);
 				items.Add(childItem);
 			}
 
-			foreach (var entry in node.Content)
+			foreach (SaveObject entry in node.Content)
 			{
 				switch (entry)
 				{

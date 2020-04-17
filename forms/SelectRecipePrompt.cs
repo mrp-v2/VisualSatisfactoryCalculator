@@ -7,15 +7,11 @@ namespace VisualSatisfactoryCalculator.forms
 {
 	public partial class SelectRecipePrompt : Form
 	{
-		private readonly IReceives<IRecipe> parent;
-		private readonly string purpose;
 		private readonly List<IRecipe> originalList;
 
-		public SelectRecipePrompt(List<IRecipe> options, IReceives<IRecipe> parent, string purpose)
+		public SelectRecipePrompt(List<IRecipe> options)
 		{
 			InitializeComponent();
-			this.parent = parent;
-			this.purpose = purpose;
 			originalList = options;
 			foreach (IRecipe rec in options)
 			{
@@ -27,13 +23,23 @@ namespace VisualSatisfactoryCalculator.forms
 		{
 			if (RecipesList.SelectedItem is IRecipe)
 			{
-				parent.SendObject(RecipesList.SelectedItem as IRecipe, purpose);
+				DialogResult = DialogResult.OK;
 				Close();
 			}
 		}
 
+		public IRecipe GetSelectedRecipe()
+		{
+			if (RecipesList.SelectedItem is IRecipe)
+			{
+				return RecipesList.SelectedItem as IRecipe;
+			}
+			return default;
+		}
+
 		private void NoButton_Click(object sender, EventArgs e)
 		{
+			DialogResult = DialogResult.Cancel;
 			Close();
 		}
 

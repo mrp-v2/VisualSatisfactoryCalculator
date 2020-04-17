@@ -19,10 +19,10 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			ProductionPlan plan = new ProductionPlan(myRecipe, multiplier);
 			if (children != null && children.Count > 0)
 			{
-				foreach (CondensedProductionStep child in children)
+				foreach (CondensedProductionStep child in children.Keys)
 				{
-					ProductionStep childStep = child.ToProductionStep(recipes, plan);
-					plan.AddChildStep(childStep);
+					ProductionStep childStep = child.ToProductionStep(recipes, plan, children[child]);
+					plan.AddChildStep(childStep, children[child]);
 				}
 			}
 			//plan.SetMultiplierAndRelated(multiplier);
@@ -85,6 +85,11 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 					return default;
 				}
 				catch (SerializationException e)
+				{
+					Console.Error.WriteLine(e.ToString());
+					return default;
+				}
+				catch (ArgumentException e)
 				{
 					Console.Error.WriteLine(e.ToString());
 					return default;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.controls.user;
@@ -9,15 +10,16 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 	public class ProductionStep : IEquatable<ProductionStep>
 	{
 		private decimal multiplier;
-		private readonly List<ProductionStep> childSteps;
+		private readonly Dictionary<ProductionStep, string> childSteps;
 		private readonly ProductionStep parentStep;
 		private ProductionStepControl control;
 
 		private readonly IRecipe recipe;
 
-		public ProductionStep(IRecipe recipe, ProductionStep parent) : this(recipe, 1m)
+		public ProductionStep(IRecipe recipe, ProductionStep parent, string itemUID) : this(recipe, 1m)
 		{
 			parentStep = parent;
+			parentStep.childSteps.Add(this, itemUID);
 			UpdateMultiplierRelativeTo(parent);
 		}
 
@@ -25,7 +27,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		{
 			this.recipe = recipe;
 			this.multiplier = multiplier;
-			childSteps = new List<ProductionStep>();
+			childSteps = new Dictionary<ProductionStep, string>();
 			control = default;
 		}
 
@@ -39,9 +41,9 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return (int)Math.Ceiling(multiplier);
 		}
 
-		public void AddChildStep(ProductionStep child)
+		public void AddChildStep(ProductionStep child, string itemUID)
 		{
-			childSteps.Add(child);
+			childSteps.Add(child, itemUID);
 		}
 
 		private void SetMultiplier(decimal multiplier)
@@ -58,7 +60,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		public void SetMultiplierAndRelated(decimal multiplier)
 		{
 			SetMultiplier(multiplier);
-			foreach (ProductionStep step in childSteps)
+			foreach (ProductionStep step in childSteps.Keys)
 			{
 				step.UpdateMultiplierFromParent();
 			}
@@ -67,9 +69,9 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		private void UpdateMultiplierFromChild(ProductionStep child)
 		{
-			if (!childSteps.Contains(child)) throw new ArgumentException("The given step is not actually a child!");
+			if (!childSteps.ContainsKey(child)) throw new ArgumentException("The given step is not actually a child!");
 			UpdateMultiplierRelativeTo(child);
-			foreach (ProductionStep childStep in childSteps)
+			foreach (ProductionStep childStep in childSteps.Keys)
 			{
 				if (!childStep.Equals(child))
 				{
@@ -82,7 +84,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		private void UpdateMultiplierFromParent()
 		{
 			UpdateMultiplierRelativeTo(parentStep);
-			foreach (ProductionStep step in childSteps)
+			foreach (ProductionStep step in childSteps.Keys)
 			{
 				step.UpdateMultiplierFromParent();
 			}
@@ -90,13 +92,9 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		private void UpdateMultiplierRelativeTo(ProductionStep step)
 		{
-			string matchUID = recipe.GetItemCounts().GetProducts().ToItemUIDs().FindMatch(step.recipe.GetItemCounts().GetIngredients().ToItemUIDs());
-			if (matchUID == default)
-			{
-				matchUID = recipe.GetItemCounts().GetIngredients().ToItemUIDs().FindMatch(step.recipe.GetItemCounts().GetProducts().ToItemUIDs());
-			}
-			if (matchUID == null) throw new ArgumentException("Could not find a similarity between the given step an this.");
-			SetMultiplier(CalculateMultiplierForRate(matchUID, step.CalculateDefaultItemRate(matchUID) * step.multiplier));
+			if (childSteps.ContainsKey(step)) SetMultiplier(CalculateMultiplierForRate(childSteps[step], step.CalculateDefaultItemRate(childSteps[step]) * step.multiplier));
+			else if (step.childSteps.ContainsKey(this)) SetMultiplier(CalculateMultiplierForRate(step.childSteps[this], step.CalculateDefaultItemRate(step.childSteps[this]) * step.multiplier));
+			else throw new ArgumentException("Could not find a similarity between the given step an this.");
 		}
 
 		private decimal CalculateDefaultItemRate(string itemUID)
@@ -126,18 +124,12 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public List<string> GetItemUIDsWithRelatedStep()
 		{
-			List<string> items = new List<string>();
-			foreach (ProductionStep child in childSteps)
-			{
-				items.AddRangeIfNew(child.recipe.GetItemCounts().GetIngredients().ToItemUIDs().FindMatches(recipe.GetItemCounts().GetProducts().ToItemUIDs()));
-				items.AddRangeIfNew(child.recipe.GetItemCounts().GetProducts().ToItemUIDs().FindMatches(recipe.GetItemCounts().GetIngredients().ToItemUIDs()));
-			}
+			List<string> uids = childSteps.Values.ToList();
 			if (parentStep != null)
 			{
-				items.AddRangeIfNew(parentStep.recipe.GetItemCounts().GetIngredients().ToItemUIDs().FindMatches(recipe.GetItemCounts().GetProducts().ToItemUIDs()));
-				items.AddRangeIfNew(parentStep.recipe.GetItemCounts().GetProducts().ToItemUIDs().FindMatches(recipe.GetItemCounts().GetIngredients().ToItemUIDs()));
+				uids.Add(parentStep.childSteps[this]);
 			}
-			return items;
+			return uids;
 		}
 
 		public decimal GetMultiplier()
@@ -148,7 +140,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		protected List<ProductionStep> GetAllStepsRecursively()
 		{
 			List<ProductionStep> list = new List<ProductionStep>();
-			foreach (ProductionStep child in childSteps)
+			foreach (ProductionStep child in childSteps.Keys)
 			{
 				list.Add(child);
 				list.AddRange(child.GetAllStepsRecursively());
@@ -156,7 +148,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return list;
 		}
 
-		public List<ProductionStep> GetChildSteps()
+		public Dictionary<ProductionStep, string> GetChildSteps()
 		{
 			return childSteps;
 		}
@@ -173,7 +165,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public void RemoveStep()
 		{
-			if (!parentStep.childSteps.Contains(this)) throw new InvalidOperationException("This is not a child of its parent!");
+			if (!parentStep.childSteps.ContainsKey(this)) throw new InvalidOperationException("This is not a child of its parent!");
 			parentStep.childSteps.Remove(this);
 		}
 
@@ -185,25 +177,25 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		public decimal GetRecursivePowerDraw(List<IEncoder> encodings)
 		{
 			decimal total = GetPowerDraw(encodings);
-			foreach (ProductionStep childStep in childSteps) total += childStep.GetRecursivePowerDraw(encodings);
+			foreach (ProductionStep childStep in childSteps.Keys) total += childStep.GetRecursivePowerDraw(encodings);
 			return total;
 		}
 
 		public bool IsChildStepIngredient(ProductionStep child)
 		{
 			if (!IsStepChild(child)) throw new ArgumentException("The given step was not a child!");
-			return child.recipe.GetItemCounts().GetProducts().ToItemUIDs().ContainsAny(recipe.GetItemCounts().GetIngredients().ToItemUIDs());
+			return recipe.GetItemCounts().GetIngredients().ToItemUIDs().Contains(childSteps[child]);
 		}
 
 		public bool IsChildStepProduct(ProductionStep child)
 		{
 			if (!IsStepChild(child)) throw new ArgumentException("The given step was not a child!");
-			return child.recipe.GetItemCounts().GetIngredients().ToItemUIDs().ContainsAny(recipe.GetItemCounts().GetProducts().ToItemUIDs());
+			return recipe.GetItemCounts().GetProducts().ToItemUIDs().Contains(childSteps[child]);
 		}
 
 		public bool IsStepChild(ProductionStep test)
 		{
-			return childSteps.Contains(test);
+			return childSteps.ContainsKey(test);
 		}
 	}
 }
