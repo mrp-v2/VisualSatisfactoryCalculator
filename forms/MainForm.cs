@@ -51,9 +51,9 @@ namespace VisualSatisfactoryCalculator.forms
 			};
 			if (dialog.ShowDialog() == DialogResult.OK)
 			{
-				form.encoders.AddRange(SaveFileInteractor.GetEncoders());
-				form.AllRecipes.AddRange(SaveFileInteractor.GetUnlockedRecipesFromSave(dialog.FileName, form.encoders));
-				SaveFileInteractor.FinishedInteracting();
+				SaveFileInteractor sfi = new SaveFileInteractor();
+				form.encoders.AddRange(sfi.GetEncoders());
+				form.AllRecipes.AddRange(sfi.GetUnlockedRecipesFromSave(dialog.FileName, form.encoders));
 				SuggestionsController.SC = new SuggestionsController(form.AllRecipes);
 				return true;
 			}
