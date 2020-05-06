@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Windows.Forms;
 using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Extensions;
@@ -14,11 +16,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 		private bool initialized;
 		private readonly ProductionStepControl parentControl;
 
-		public ProductionStepControl()
-		{
-
-		}
-
 		public ProductionStepControl(ProductionStep parentStep, MainForm mainForm, ProductionStepControl parentControl)
 		{
 			initialized = false;
@@ -27,23 +24,27 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.mainForm = mainForm;
 			this.parentControl = parentControl;
 			parentStep.SetControl(this);
-			foreach (ItemCount ic in parentStep.GetRecipe().GetItemCounts().GetProducts())
+			foreach (ItemCount ic in parentStep.GetRecipe().Products.Values)
 			{
-				AddItemRateControl(ic.GetItemUID());
+				AddItemRateControl(ic.ItemUID, true);
 			}
-			foreach (ItemCount ic in parentStep.GetRecipe().GetItemCounts().GetIngredients())
+			foreach (ItemCount ic in parentStep.GetRecipe().Ingredients.Values)
 			{
-				AddItemRateControl(ic.GetItemUID());
+				AddItemRateControl(ic.ItemUID, false);
 			}
-			RecipeLabel.Text = parentStep.GetRecipe().ToString(mainForm.encoders);
+			RecipeLabel.Text = parentStep.GetRecipe().ToString(mainForm.Encoders);
 			MultiplierChanged();
 			if (parentStep is ProductionPlan)
 			{
 				DeleteStepButton.Enabled = false;
 			}
-			foreach (ProductionStep childStep in parentStep.GetChildSteps().Keys)
+			foreach (ProductionStep childStep in parentStep.ChildIngredientSteps.Keys)
 			{
-				AddProductionStep(childStep);
+				AddProductionStep(childStep, false);
+			}
+			foreach (ProductionStep childStep in parentStep.ChildProductSteps.Keys)
+			{
+				AddProductionStep(childStep, true);
 			}
 			UpdateButtons();
 			FinishInitialization();
@@ -53,74 +54,67 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			foreach (ItemRateControl irc in GetItemRateControls())
 			{
-				irc.UpdateRateValue(parentStep.GetItemRate(irc.GetItemUID()));
+				irc.UpdateRateValue(parentStep.GetItemRate(irc.ItemUID, irc.IsProduct));
 			}
 			if (MultiplierNumeric.Value != parentStep.GetMultiplier())
 			{
 				MultiplierNumeric.Value = parentStep.GetMultiplier();
 			}
-			MachineCountLabel.Text = mainForm.encoders.GetDisplayNameFor(parentStep.GetRecipe().GetMachineUID()) + ": " + parentStep.CalculateMachineCount();
-			PowerConsumptionLabel.Text = "Power Consumption: " + Math.Round(parentStep.GetPowerDraw(mainForm.encoders), 3) + "MW";
+			MachineCountLabel.Text = mainForm.Encoders[parentStep.GetRecipe().MachineUID].DisplayName + ": " + parentStep.CalculateMachineCount();
+			PowerConsumptionLabel.Text = "Power Consumption: " + Math.Round(parentStep.GetPowerDraw(mainForm.Encoders), 3) + "MW";
 		}
 
-		public void RateChanged(string itemUID, decimal newRate)
+		public void RateChanged(string itemUID, decimal newRate, bool isProduct)
 		{
-			if (Math.Abs(parentStep.GetItemRate(itemUID)) != newRate)
+			if (Math.Abs(parentStep.GetItemRate(itemUID, isProduct)) != newRate)
 			{
-				parentStep.SetMultiplierAndRelatedRelative(itemUID, newRate);
+				parentStep.SetMultiplierAndRelatedRelative(itemUID, newRate, isProduct);
 			}
 		}
 
-		public void ItemClicked(string itemUID)
+		public void ItemClicked(string itemUID, bool isProduct)
 		{
 			if (!parentStep.GetItemUIDsWithRelatedStep().Contains(itemUID))
 			{
-				if (parentStep.GetRecipe().GetItemCounts().GetProducts().ToItemUIDs().Contains(itemUID))
+				if (isProduct)
 				{
-					SelectRecipePrompt srp = new SelectRecipePrompt(mainForm.GetAllRecipes().GetRecipesThatConsume(itemUID));
+					SelectRecipePrompt srp = new SelectRecipePrompt(mainForm.Recipes.GetRecipesThatConsume(itemUID));
 					if (srp.ShowDialog() == DialogResult.OK)
 					{
-						ProductionStep ps = new ProductionStep(srp.GetSelectedRecipe(), parentStep, itemUID);
-						AddProductionStep(ps);
-					}
-				}
-				else if (parentStep.GetRecipe().GetItemCounts().GetIngredients().ToItemUIDs().Contains(itemUID))
-				{
-					SelectRecipePrompt srp = new SelectRecipePrompt(mainForm.GetAllRecipes().GetRecipesThatProduce(itemUID));
-					if (srp.ShowDialog() == DialogResult.OK)
-					{
-						ProductionStep ps = new ProductionStep(srp.GetSelectedRecipe(), parentStep, itemUID);
-						AddProductionStep(ps);
+						ProductionStep ps = new ProductionStep(srp.GetSelectedRecipe(), parentStep, itemUID, isProduct);
+						AddProductionStep(ps, isProduct);
 					}
 				}
 				else
 				{
-					throw new ArgumentException();
+					SelectRecipePrompt srp = new SelectRecipePrompt(mainForm.Recipes.GetRecipesThatProduce(itemUID));
+					if (srp.ShowDialog() == DialogResult.OK)
+					{
+						ProductionStep ps = new ProductionStep(srp.GetSelectedRecipe(), parentStep, itemUID, isProduct);
+						AddProductionStep(ps, isProduct);
+					}
 				}
 			}
 		}
 
-		private void AddItemRateControl(string itemUID)
+		private void AddItemRateControl(string itemUID, bool isProduct)
 		{
-			ItemRateControl irc = new ItemRateControl(this, itemUID, parentStep.GetItemRate(itemUID));
-			if (parentStep.GetRecipe().GetItemCounts().GetIngredients().ToItemUIDs().Contains(itemUID))
-			{
-				IngredientsPanel.Controls.Add(irc);
-			}
-			else if (parentStep.GetRecipe().GetItemCounts().GetProducts().ToItemUIDs().Contains(itemUID))
+			ItemRateControl irc = new ItemRateControl(this, itemUID, parentStep.GetItemRate(itemUID, isProduct), isProduct);
+			if (isProduct)
 			{
 				ProductsPanel.Controls.Add(irc);
 			}
 			else
 			{
-				throw new ArgumentException();
+				IngredientsPanel.Controls.Add(irc);
 			}
 			irc.FinishInitialization();
 		}
 
-		private void AddProductionStep(ProductionStep ps)
+		private void AddProductionStep(ProductionStep ps, bool isItemProduct)
 		{
-			ReplaceItemRateControl(parentStep.GetChildSteps()[ps], new ProductionStepControl(ps, mainForm, this));
+			if (isItemProduct) ReplaceItemRateControl(parentStep.ChildProductSteps[ps], new ProductionStepControl(ps, mainForm, this), isItemProduct);
+			else ReplaceItemRateControl(parentStep.ChildIngredientSteps[ps], new ProductionStepControl(ps, mainForm, this), isItemProduct);
 			mainForm.UpdateTotalView();
 		}
 
@@ -144,18 +138,18 @@ namespace VisualSatisfactoryCalculator.controls.user
 			return irc;
 		}
 
-		private void ReplaceItemRateControl(string itemUID, ProductionStepControl psc)
+		private void ReplaceItemRateControl(string itemUID, ProductionStepControl psc, bool isProduct)
 		{
 			foreach (ItemRateControl irc in GetItemRateControls())
 			{
-				if (irc.GetItemUID().Equals(itemUID))
+				if (irc.ItemUID.Equals(itemUID))
 				{
-					if (ProductsPanel.Controls.Contains(irc))
+					if (isProduct)
 					{
 						ProductsPanel.Controls.Add(psc);
 						ProductsPanel.Controls.Remove(irc);
 					}
-					if (IngredientsPanel.Controls.Contains(irc))
+					else
 					{
 						IngredientsPanel.Controls.Add(psc);
 						IngredientsPanel.Controls.Remove(irc);
@@ -206,9 +200,13 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				irc.UpdateButton();
 			}
-			foreach (string itemUID in GetItemUIDsWithNoMatch())
+			foreach (string itemUID in GetIngredientUIDsWithNoMatch())
 			{
-				AddItemRateControl(itemUID);
+				AddItemRateControl(itemUID, false);
+			}
+			foreach (string itemUID in GetProductUIDsWithNoMatch())
+			{
+				AddItemRateControl(itemUID, true);
 			}
 		}
 
@@ -232,18 +230,44 @@ namespace VisualSatisfactoryCalculator.controls.user
 			return psc;
 		}
 
-		private List<string> GetItemUIDsWithNoMatch()
+		private List<string> GetProductUIDsWithNoMatch()
 		{
-			List<string> allUIDs = parentStep.GetRecipe().GetItemCounts().ToItemUIDs();
-			foreach (ItemRateControl irc in GetItemRateControls())
+			List<string> productUIDs = parentStep.GetRecipe().Products.Keys.ToList();
+			foreach (ItemRateControl itemRateControl in GetItemRateControls())
 			{
-				allUIDs.Remove(irc.GetItemUID());
+				if (itemRateControl.IsProduct)
+				{
+					productUIDs.Remove(itemRateControl.ItemUID);
+				}
 			}
-			foreach (ProductionStepControl psc in GetProductionStepControls())
+			foreach (ProductionStepControl productionStepControl in GetProductionStepControls())
 			{
-				allUIDs.Remove(parentStep.GetChildSteps()[psc.parentStep]);
+				if (productionStepControl.parentStep.IsProductOfParent)
+				{
+					productUIDs.Remove(parentStep.ChildProductSteps[productionStepControl.parentStep]);
+				}
 			}
-			return allUIDs;
+			return productUIDs;
+		}
+
+		private List<string> GetIngredientUIDsWithNoMatch()
+		{
+			List<string> ingredientUIDs = parentStep.GetRecipe().Ingredients.Keys.ToList();
+			foreach (ItemRateControl itemRateControl in GetItemRateControls())
+			{
+				if (!itemRateControl.IsProduct)
+				{
+					ingredientUIDs.Remove(itemRateControl.ItemUID);
+				}
+			}
+			foreach (ProductionStepControl productionStepControl in GetProductionStepControls())
+			{
+				if (!productionStepControl.parentStep.IsProductOfParent)
+				{
+					ingredientUIDs.Remove(parentStep.ChildIngredientSteps[productionStepControl.parentStep]);
+				}
+			}
+			return ingredientUIDs;
 		}
 
 		private void ProductsPanel_ControlAdded(object sender, EventArgs e)

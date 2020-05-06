@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Interfaces;
 
@@ -21,7 +22,7 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			List<string> ingredients = new List<string>();
 			foreach (IRecipe rec in me)
 			{
-				ingredients.AddRange(rec.GetItemCounts().GetIngredients().ToItemUIDs());
+				ingredients.AddRange(rec.Ingredients.Keys);
 			}
 			return ingredients;
 		}
@@ -31,47 +32,35 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			List<string> products = new List<string>();
 			foreach (IRecipe rec in me)
 			{
-				products.AddRange(rec.GetItemCounts().GetProducts().ToItemUIDs());
+				products.AddRange(rec.Products.Keys);
 			}
 			return products;
 		}
 
-		public static List<IRecipe> GetRecipesThatProduce(this List<IRecipe> me, string productUID)
+		public static Dictionary<string, IRecipe> GetRecipesThatProduce(this Dictionary<string, IRecipe> me, string productUID)
 		{
-			List<IRecipe> recs = new List<IRecipe>();
-			foreach (IRecipe rec in me)
+			Dictionary<string, IRecipe> recs = new Dictionary<string, IRecipe>();
+			foreach (IRecipe rec in me.Values)
 			{
-				if (rec.GetItemCounts().GetProducts().ToItemUIDs().Contains(productUID))
+				if (rec.Products.Keys.Contains(productUID))
 				{
-					recs.Add(rec);
+					recs.Add(rec.UID, rec);
 				}
 			}
 			return recs;
 		}
 
-		public static List<IRecipe> GetRecipesThatConsume(this List<IRecipe> me, string ingredientUID)
+		public static Dictionary<string, IRecipe> GetRecipesThatConsume(this Dictionary<string, IRecipe> me, string ingredientUID)
 		{
-			List<IRecipe> recs = new List<IRecipe>();
-			foreach (IRecipe rec in me)
+			Dictionary<string, IRecipe> recs = new Dictionary<string, IRecipe>();
+			foreach (IRecipe rec in me.Values)
 			{
-				if (rec.GetItemCounts().GetIngredients().ToItemUIDs().Contains(ingredientUID))
+				if (rec.Ingredients.Keys.Contains(ingredientUID))
 				{
-					recs.Add(rec);
+					recs.Add(rec.UID, rec);
 				}
 			}
 			return recs;
-		}
-
-		public static decimal GetRateOf(this IRecipe me, IItem item)
-		{
-			foreach (ItemCount count in me.GetItemCounts())
-			{
-				if (count.GetItemUID().Equals(item))
-				{
-					return count.GetCount() * (60m / me.GetCraftTime());
-				}
-			}
-			return default;
 		}
 	}
 }

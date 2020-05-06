@@ -10,10 +10,11 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
 	class JSONGenerator : IBuilding
 	{
-		private readonly string UID;
+		public string UID { get; }
 		private readonly string[] defaultFuelClasses;
 		private readonly string powerProduction;
-		private readonly string displayName;
+		public string DisplayName { get; }
+		public decimal PowerConsumption { get { return 0; } }
 
 		[JsonConstructor]
 		public JSONGenerator(string ClassName, string mDefaultFuelClasses, string mPowerProduction, string mDisplayName)
@@ -21,14 +22,14 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			UID = ClassName;
 			defaultFuelClasses = mDefaultFuelClasses.Split(',');
 			powerProduction = mPowerProduction;
-			displayName = mDisplayName;
+			DisplayName = mDisplayName;
 		}
 
 		public static readonly decimal GeneratorEnergyDivisor = 16m + 2m / 3m;
 
-		public List<IRecipe> GetRecipes(List<IEncoder> encodings)
+		public Dictionary<string, IRecipe> GetRecipes(Dictionary<string, IEncoder> encodings)
 		{
-			List<IRecipe> recipes = new List<IRecipe>();
+			Dictionary<string, IRecipe> recipes = new Dictionary<string, IRecipe>();
 			foreach (string item in defaultFuelClasses)
 			{
 				string itemID = item.Substring(item.IndexOf('.') + 1);
@@ -36,16 +37,19 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 				{
 					itemID = itemID.Substring(0, itemID.IndexOf(")"));
 				}
-				IEncoder encodingItem = encodings.FindByID(itemID);
+				IEncoder encodingItem = encodings[itemID];
 				Trace.Assert(encodingItem is JSONItem);
 				JSONItem jItem = encodingItem as JSONItem;
-				List<ItemCount> counts = new List<ItemCount>
+				List<ItemCount> ingredients = new List<ItemCount>
 				{
-					new ItemCount(itemID, -1 * (decimal.Parse(powerProduction) / (jItem.GetEnergyValue() / 1000) / GeneratorEnergyDivisor)),
-					new ItemCount(Constants.MWItem.GetUID(), decimal.Parse(powerProduction))
+					new ItemCount(itemID, (decimal.Parse(powerProduction) / (jItem.EnergyValue / 1000) / GeneratorEnergyDivisor))
 				};
-				IRecipe recipe = new BasicRecipe(UID + itemID, 60, UID, counts, jItem.GetDisplayName() + " to Power");
-				recipes.Add(recipe);
+				List<ItemCount> products = new List<ItemCount>
+				{
+					new ItemCount(Constants.MWItem.UID, decimal.Parse(powerProduction))
+				};
+				IRecipe recipe = new BasicRecipe(UID + itemID, 60, UID, ingredients, products, jItem.DisplayName + " to Power");
+				recipes.Add(recipe.UID, recipe);
 			}
 			return recipes;
 		}
@@ -58,21 +62,6 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		public bool EqualID(IHasUID obj)
 		{
 			return obj.EqualID(UID);
-		}
-
-		public string GetUID()
-		{
-			return UID;
-		}
-
-		public string GetDisplayName()
-		{
-			return displayName;
-		}
-
-		public decimal GetPowerConsumption()
-		{
-			return 0;
 		}
 	}
 }

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.JSONClasses;
 
@@ -19,7 +20,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 		private readonly Dictionary<string, JArray> docGroups;
 		private readonly JsonSerializer jsonSerializer;
 
-		public List<IRecipe> GetUnlockedRecipesFromSave(string saveFile, List<IEncoder> encoders)
+		public Dictionary<string, IRecipe> GetUnlockedRecipesFromSave(string saveFile, Dictionary<string, IEncoder> encoders)
 		{
 			SatisfactorySave save = new SatisfactorySave(saveFile);
 			SaveObjectModel root = new SaveRootModel(save.Header);
@@ -35,12 +36,12 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				obj.IsExpanded = true;
 			}
 			SaveObjectModel schematics = root.FindChild("Persistent_Level:PersistentLevel.schematicManager", false);
-			List<IRecipe> allRecipes = new List<IRecipe>();
-			foreach (IEncoder encoder in encoders)
+			Dictionary<string, IRecipe> allRecipes = new Dictionary<string, IRecipe>();
+			foreach (IEncoder encoder in encoders.Values)
 			{
-				if (encoder is IRecipe) allRecipes.Add(encoder as IRecipe);
+				if (encoder is IRecipe) allRecipes.Add((encoder as IRecipe).UID, encoder as IRecipe);
 			}
-			List<IRecipe> unlockedRecipes = new List<IRecipe>();
+			Dictionary<string, IRecipe> unlockedRecipes = new Dictionary<string, IRecipe>();
 			foreach (SerializedPropertyViewModel field in schematics.Fields)
 			{
 				if (field.PropertyName == "mPurchasedSchematics")
@@ -62,6 +63,16 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			return unlockedRecipes;
 		}
 
+		public Dictionary<string, IRecipe> GetAllRecipes(Dictionary<string, IEncoder> encoders)
+		{
+			Dictionary<string, IRecipe> allRecipes = new Dictionary<string, IRecipe>();
+			foreach (IEncoder encoder in encoders.Values)
+			{
+				if (encoder is IRecipe) allRecipes.Add((encoder as IRecipe).UID, encoder as IRecipe);
+			}
+			return ResearchToRecipeMapping.GetAllRelevantRecipes(allRecipes);
+		}
+
 		public SaveFileInteractor()
 		{
 			jsonFile = File.ReadAllText(".\\data\\Docs.json");
@@ -79,7 +90,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			}
 		}
 
-		public List<IEncoder> GetEncoders()
+		public Dictionary<string, IEncoder> GetEncoders()
 		{
 			//JSONItems
 			List<JToken> results = new List<JToken>();
@@ -90,17 +101,19 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			results.AddRange(GetSection("FGResourceDescriptor"));
 			results.AddRange(GetSection("FGConsumableDescriptor"));
 			results.AddRange(GetSection("FGItemDescriptorNuclearFuel"));
-			List<IEncoder> totalResults = new List<IEncoder>();
+			Dictionary<string, IEncoder> totalResults = new Dictionary<string, IEncoder>();
 			foreach (JToken token in results)
 			{
-				totalResults.Add(token.ToObject<JSONItem>(jsonSerializer));
+				JSONItem item = token.ToObject<JSONItem>(jsonSerializer);
+				totalResults.Add(item.UID, item);
 			}
 			//JSONBuildings
 			results.Clear();
 			results.AddRange(GetSection("FGBuildableManufacturer"));
 			foreach (JToken token in results)
 			{
-				totalResults.Add(token.ToObject<JSONBuilding>(jsonSerializer));
+				JSONBuilding building = token.ToObject<JSONBuilding>(jsonSerializer);
+				totalResults.Add(building.UID, building);
 			}
 			//Constants
 			totalResults.AddRange(Constants.AllConstantEncoders);
@@ -109,7 +122,8 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			results.AddRange(GetSection("FGRecipe"));
 			foreach (JToken token in results)
 			{
-				totalResults.Add(token.ToObject<JSONRecipe>(jsonSerializer));
+				JSONRecipe recipe = token.ToObject<JSONRecipe>(jsonSerializer);
+				totalResults.Add(recipe.UID, recipe);
 			}
 			//JSONGenerators -- must go near end, uses encodings to get energy value of fuel
 			results.Clear();
@@ -122,9 +136,11 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			}
 			foreach (JSONGenerator generator in generatorResults)
 			{
-				if (generator.GetDisplayName().Equals("Biomass Burner")) continue;
+				if (generator.DisplayName.Equals("Biomass Burner")) continue;
+				//generators recipes
 				totalResults.AddRange(generator.GetRecipes(totalResults));
-				totalResults.Add(generator);
+				//generator itself
+				totalResults.Add(generator.UID, generator);
 			}
 			//finished
 			Constants.LastResortEncoderList.AddRange(totalResults);

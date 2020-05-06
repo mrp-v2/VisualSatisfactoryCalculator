@@ -13,19 +13,24 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 	{
 		private readonly decimal multiplier;
 
-		public ProductionPlan ToProductionPlan(List<IRecipe> recipes)
+		public ProductionPlan ToProductionPlan(Dictionary<string, IRecipe> recipes)
 		{
 			IRecipe myRecipe = GetRecipe(recipes);
 			ProductionPlan plan = new ProductionPlan(myRecipe, multiplier);
-			if (children != null && children.Count > 0)
+			if (childIngredients != null && childIngredients.Count > 0)
 			{
-				foreach (CondensedProductionStep child in children.Keys)
+				foreach (CondensedProductionStep child in childIngredients.Keys)
 				{
-					ProductionStep childStep = child.ToProductionStep(recipes, plan, children[child]);
-					plan.AddChildStep(childStep, children[child]);
+					child.ToProductionStep(recipes, plan, childIngredients[child]);
 				}
 			}
-			//plan.SetMultiplierAndRelated(multiplier);
+			if (childProducts != null && childProducts.Count > 0)
+			{
+				foreach (CondensedProductionStep child in childProducts.Keys)
+				{
+					child.ToProductionStep(recipes, plan, childProducts[child]);
+				}
+			}
 			return plan;
 		}
 

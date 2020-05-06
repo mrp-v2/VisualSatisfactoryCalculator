@@ -4,6 +4,6 @@
 	{
 		bool EqualID(string id);
 		bool EqualID(IHasUID obj);
-		string GetUID();
+		string UID { get; }
 	}
 }

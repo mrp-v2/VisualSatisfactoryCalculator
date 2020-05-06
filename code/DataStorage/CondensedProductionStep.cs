@@ -8,24 +8,32 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 	[Serializable]
 	class CondensedProductionStep
 	{
-		protected readonly Dictionary<CondensedProductionStep, string> children;
+		protected readonly Dictionary<CondensedProductionStep, string> childProducts;
+		protected readonly Dictionary<CondensedProductionStep, string> childIngredients;
 		private readonly string recipeUID;
+		private readonly bool isProduct;
 
-		public IRecipe GetRecipe(List<IRecipe> recipes)
+		public IRecipe GetRecipe(Dictionary<string, IRecipe> recipes)
 		{
-			return recipes.FindByID(recipeUID);
+			return recipes[recipeUID];
 		}
 
-		public ProductionStep ToProductionStep(List<IRecipe> recipes, ProductionStep parent, string itemUID)
+		public ProductionStep ToProductionStep(Dictionary<string, IRecipe> recipes, ProductionStep parent, string itemUID)
 		{
 			IRecipe myRecipe = GetRecipe(recipes);
-			ProductionStep step = new ProductionStep(myRecipe, parent, itemUID);
-			if (children != null && children.Count > 0)
+			ProductionStep step = new ProductionStep(myRecipe, parent, itemUID, isProduct);
+			if (childProducts != null && childProducts.Count > 0)
 			{
-				foreach (CondensedProductionStep child in children.Keys)
+				foreach (CondensedProductionStep child in childProducts.Keys)
 				{
-					ProductionStep childStep = child.ToProductionStep(recipes, step, children[child]);
-					step.AddChildStep(childStep, children[child]);
+					child.ToProductionStep(recipes, step, childProducts[child]);
+				}
+			}
+			if (childIngredients != null && childIngredients.Count > 0)
+			{
+				foreach (CondensedProductionStep child in childIngredients.Keys)
+				{
+					child.ToProductionStep(recipes, step, childIngredients[child]);
 				}
 			}
 			return step;
@@ -33,13 +41,22 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public CondensedProductionStep(ProductionStep step)
 		{
-			recipeUID = step.GetRecipe().GetUID();
-			if (step.GetChildSteps().Count > 0)
+			recipeUID = step.GetRecipe().UID;
+			isProduct = step.IsProductOfParent;
+			if (step.ChildIngredientSteps.Count > 0)
 			{
-				children = new Dictionary<CondensedProductionStep, string>();
-				foreach (ProductionStep childStep in step.GetChildSteps().Keys)
+				childIngredients = new Dictionary<CondensedProductionStep, string>();
+				foreach (ProductionStep childStep in step.ChildIngredientSteps.Keys)
 				{
-					children.Add(new CondensedProductionStep(childStep), step.GetChildSteps()[childStep]);
+					childIngredients.Add(new CondensedProductionStep(childStep), step.ChildIngredientSteps[childStep]);
+				}
+			}
+			if (step.ChildProductSteps.Count > 0)
+			{
+				childProducts = new Dictionary<CondensedProductionStep, string>();
+				foreach (ProductionStep childStep in step.ChildProductSteps.Keys)
+				{
+					childProducts.Add(new CondensedProductionStep(childStep), step.ChildProductSteps[childStep]);
 				}
 			}
 		}

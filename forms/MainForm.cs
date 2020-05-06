@@ -27,34 +27,45 @@ namespace VisualSatisfactoryCalculator.forms
 			}
 		}
 
-		private readonly List<IRecipe> AllRecipes;
-		public readonly List<IEncoder> encoders;
+		public Dictionary<string, IRecipe> Recipes { get; }
+		public Dictionary<string, IEncoder> Encoders { get; }
+
 		private ProductionPlan plan;
 		private ProductionPlanTotalViewControl PPTVC;
 
-		private MainForm()
+		private MainForm(Dictionary<string, IEncoder> encoders, Dictionary<string, IRecipe> recipes)
 		{
 			InitializeComponent();
-			AllRecipes = new List<IRecipe>();
-			encoders = new List<IEncoder>();
+			Encoders = encoders;
+			Recipes = recipes;
 		}
 
 		private static bool SafeNewMainForm(out MainForm form)
 		{
-			form = new MainForm();
-			OpenFileDialog dialog = new OpenFileDialog()
+			form = null;
+			UseSaveFilePrompt useFilePrompt = new UseSaveFilePrompt();
+			if (useFilePrompt.ShowDialog() == DialogResult.Yes)
 			{
-				Title = "Select a save file",
-				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\FactoryGame\\Saved\\SaveGames\\",
-				DefaultExt = ".sav",
-				Filter = "save files (*.sav)|*.sav"
-			};
-			if (dialog.ShowDialog() == DialogResult.OK)
+				OpenFileDialog fileDialog = new OpenFileDialog()
+				{
+					Title = "Select a save file",
+					InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\FactoryGame\\Saved\\SaveGames\\",
+					DefaultExt = ".sav",
+					Filter = "save files (*.sav)|*.sav"
+				};
+				if (fileDialog.ShowDialog() == DialogResult.OK)
+				{
+					SaveFileInteractor sfi = new SaveFileInteractor();
+					Dictionary<string, IEncoder> encoders = sfi.GetEncoders();
+					form = new MainForm(encoders, sfi.GetUnlockedRecipesFromSave(fileDialog.FileName, encoders));
+					return true;
+				}
+			}
+			else
 			{
 				SaveFileInteractor sfi = new SaveFileInteractor();
-				form.encoders.AddRange(sfi.GetEncoders());
-				form.AllRecipes.AddRange(sfi.GetUnlockedRecipesFromSave(dialog.FileName, form.encoders));
-				SuggestionsController.SC = new SuggestionsController(form.AllRecipes);
+				Dictionary<string, IEncoder> encoders = sfi.GetEncoders();
+				form = new MainForm(encoders, sfi.GetAllRecipes(encoders));
 				return true;
 			}
 			return false;
@@ -62,7 +73,7 @@ namespace VisualSatisfactoryCalculator.forms
 
 		private void SelectFirstRecipeButton_Click(object sender, EventArgs e)
 		{
-			SelectRecipePrompt srp = new SelectRecipePrompt(AllRecipes);
+			SelectRecipePrompt srp = new SelectRecipePrompt(Recipes);
 			if (srp.ShowDialog() == DialogResult.OK)
 			{
 				plan = new ProductionPlan(srp.GetSelectedRecipe());
@@ -82,11 +93,6 @@ namespace VisualSatisfactoryCalculator.forms
 			ProductionPlanPanel.Controls.Add(PPTVC);
 			ProductionStepControl PSC = new ProductionStepControl(plan, this, null);
 			ProductionPlanPanel.Controls.Add(PSC);
-		}
-
-		public List<IRecipe> GetAllRecipes()
-		{
-			return AllRecipes.ShallowClone();
 		}
 
 		private void SaveChartButton_Click(object sender, EventArgs e)
@@ -117,9 +123,9 @@ namespace VisualSatisfactoryCalculator.forms
 
 		public void UpdateTotalView()
 		{
-			PPTVC.ProductsLabel.Text = plan.GetProductsString(encoders);
-			PPTVC.MachinesLabel.Text = plan.GetTotalMachineString(encoders);
-			PPTVC.IngredientsLabel.Text = plan.GetIngredientsString(encoders);
+			PPTVC.ProductsLabel.Text = plan.GetProductsString(Encoders);
+			PPTVC.MachinesLabel.Text = plan.GetTotalMachineString(Encoders);
+			PPTVC.IngredientsLabel.Text = plan.GetIngredientsString(Encoders);
 		}
 
 		private void LoadChartButton_Click(object sender, EventArgs e)
@@ -144,7 +150,7 @@ namespace VisualSatisfactoryCalculator.forms
 					}
 					if (loadedPlan != null)
 					{
-						plan = loadedPlan.ToProductionPlan(AllRecipes);
+						plan = loadedPlan.ToProductionPlan(Recipes);
 						PlanUpdated();
 					}
 					stream.Close();

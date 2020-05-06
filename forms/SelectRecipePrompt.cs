@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using VisualSatisfactoryCalculator.code.Interfaces;
 
@@ -7,13 +8,13 @@ namespace VisualSatisfactoryCalculator.forms
 {
 	public partial class SelectRecipePrompt : Form
 	{
-		private readonly List<IRecipe> originalList;
+		private readonly Dictionary<string, IRecipe>.ValueCollection originalList;
 
-		public SelectRecipePrompt(List<IRecipe> options)
+		public SelectRecipePrompt(Dictionary<string, IRecipe> options)
 		{
 			InitializeComponent();
-			originalList = options;
-			foreach (IRecipe rec in options)
+			originalList = options.Values;
+			foreach (IRecipe rec in options.Values)
 			{
 				RecipesList.Items.Add(rec);
 			}

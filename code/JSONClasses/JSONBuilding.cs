@@ -5,16 +5,16 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
 	class JSONBuilding : IBuilding
 	{
-		private readonly string UID;
-		private readonly decimal powerConsumption;
-		private readonly string displayName;
+		public string UID { get; }
+		public decimal PowerConsumption { get; }
+		public string DisplayName { get; }
 
 		[JsonConstructor]
 		public JSONBuilding(string ClassName, string mPowerConsumption, string mDisplayName)
 		{
 			UID = ClassName;
-			powerConsumption = decimal.Parse(mPowerConsumption);
-			displayName = mDisplayName;
+			PowerConsumption = decimal.Parse(mPowerConsumption);
+			DisplayName = mDisplayName;
 		}
 
 		public bool EqualID(string id)
@@ -25,21 +25,6 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		public bool EqualID(IHasUID obj)
 		{
 			return obj.EqualID(UID);
-		}
-
-		public string GetDisplayName()
-		{
-			return displayName;
-		}
-
-		public decimal GetPowerConsumption()
-		{
-			return powerConsumption;
-		}
-
-		public string GetUID()
-		{
-			return UID;
 		}
 	}
 }

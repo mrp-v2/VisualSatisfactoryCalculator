@@ -12,7 +12,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 		{
 			/*
 			alternate template
-			{"Schematic_Alternate__C", new string[] { } },
+			{"Schematic_Alternate__C", new string[] { "Recipe_Alternate__C" } },
 			schematic template
 			{"Schematic__C", new string[] { } },
 			research template
@@ -126,36 +126,118 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			{"Research_Sulfur_4_2_1_C", new string[] { } },
 			{"Research_Sulfur_5_C", new string[] { } },
 			{"Research_Sulfur_6_C", new string[] { } },
-			//overridden hard drive recipes
+			//hard-drive recipes
+			{"Schematic_Alternate_AdheredIronPlate_C", new string[] { "Recipe_Alternate_AdheredIronPlate_C" } },
+			{"Schematic_Alternate_Beacon1_C", new string[] { "Recipe_Alternate_Beacon_1_C" } },
+			{"Schematic_Alternate_BoltedFrame_C", new string[] { "Recipe_Alternate_BoltedFrame_C" } },
+			{"Schematic_Alternate_Cable1_C", new string[] { "Recipe_Alternate_Cable_1_C" } },
+			{"Schematic_Alternate_Cable2_C", new string[] { "Recipe_Alternate_Cable_2_C" } },
+			{"Schematic_Alternate_CircuitBoard1_C", new string[] { "Recipe_Alternate_CircuitBoard_1_C" } },
+			{"Schematic_Alternate_CircuitBoard2_C", new string[] { "Recipe_Alternate_CircuitBoard_2_C" } },
+			{"Schematic_Alternate_Coal1_C", new string[] { "Recipe_Alternate_Coal_1_C" } },
+			{"Schematic_Alternate_Coal2_C", new string[] { "Recipe_Alternate_Coal_2_C" } },
+			{"Schematic_Alternate_CoatedCable_C", new string[] { "Recipe_Alternate_CoatedCable_C" } },
+			{"Schematic_Alternate_CoatedIronPlate_C", new string[] { "Recipe_Alternate_CoatedIronPlate_C" } },
+			{"Schematic_Alternate_CokeSteelIngot_C", new string[] { "Recipe_Alternate_CokeSteelIngot_C" } },
+			{"Schematic_Alternate_Computer1_C", new string[] { "Recipe_Alternate_Computer_1_C" } },
+			{"Schematic_Alternate_Computer2_C", new string[] { "Recipe_Alternate_Computer_2_C" } },
+			{"Schematic_Alternate_Concrete_C", new string[] { "Recipe_Alternate_Concrete_C" } },
+			{"Schematic_Alternate_CopperAlloyIngot_C", new string[] { "Recipe_Alternate_CopperAlloyIngot_C" } },
+			{"Schematic_Alternate_CopperRotor_C", new string[] { "Recipe_Alternate_CopperRotor_C" } },
+			{"Schematic_Alternate_CrystalOscillator_C", new string[] { "Recipe_Alternate_CrystalOscillator_C" } },
+			{"Schematic_Alternate_DilutedPackagedFuel_C", new string[] { "Recipe_Alternate_DilutedPackagedFuel_C" } },
+			{"Schematic_Alternate_ElectroAluminumScrap_C", new string[] { "Recipe_Alternate_ElectroAluminumScrap_C" } },
+			{"Schematic_Alternate_ElectrodeCircuitBoard_C", new string[] { "Recipe_Alternate_ElectrodeCircuitBoard_C" } },
+			{"Schematic_Alternate_ElectromagneticControlRod1_C", new string[] { "Recipe_Alternate_ElectromagneticControlRod_1_C" } },
+			{"Schematic_Alternate_EnrichedCoal_C", new string[] { "Recipe_Alternate_EnrichedCoal_C" } },
+			{"Schematic_Alternate_FlexibleFramework_C", new string[] { "Recipe_Alternate_FlexibleFramework_C" } },
+			{"Schematic_Alternate_FusedWire_C", new string[] { "Recipe_Alternate_FusedWire_C" } },
+			{"Schematic_Alternate_Gunpowder1_C", new string[] { "Recipe_Alternate_Gunpowder_1_C" } },
+			{"Schematic_Alternate_HeatSink1_C", new string[] { "Recipe_Alternate_HeatSink_1_C" } },
+			{"Schematic_Alternate_HeavyFlexibleFrame_C", new string[] { "Recipe_Alternate_HeavyFlexibleFrame_C" } },
 			{"Schematic_Alternate_HeavyModularFrame_C", new string[] { "Recipe_Alternate_ModularFrameHeavy_C" } },
+			{"Schematic_Alternate_HeavyOilResidue_C", new string[] { "Recipe_Alternate_HeavyOilResidue_C" } },
+			{"Schematic_Alternate_HighSpeedConnector_C", new string[] { "Recipe_Alternate_HighSpeedConnector_C" } },
+			{"Schematic_Alternate_HighSpeedWiring_C", new string[] { "Recipe_Alternate_HighSpeedWiring_C" } },
+			{"Schematic_Alternate_IngotIron_C", new string[] { "Recipe_Alternate_IngotIron_C" } },
+			{"Schematic_Alternate_IngotSteel1_C", new string[] { "Recipe_Alternate_IngotSteel_1_C" } },
+			{"Schematic_Alternate_IngotSteel2_C", new string[] { "Recipe_Alternate_IngotSteel_2_C" } },
+			{"Schematic_Alternate_InventorySlots1_C", new string[] { } },
+			{"Schematic_Alternate_InventorySlots2_C", new string[] { } },
+			{"Schematic_Alternate_ModularFrame_C", new string[] { "Recipe_Alternate_ModularFrame_C" } },
+			{"Schematic_Alternate_Motor1_C", new string[] { "Recipe_Alternate_Motor_1_C" } },
+			{"Schematic_Alternate_Nobelisk1_C", new string[] { "Recipe_Alternate_Nobelisk_1_C" } },
+			{"Schematic_Alternate_NuclearFuelRod1_C", new string[] { "Recipe_Alternate_NuclearFuelRod_1_C" } },
+			{"Schematic_Alternate_Plastic1_C", new string[] { "Recipe_Alternate_Plastic_1_C" } },
+			{"Schematic_Alternate_PlasticSmartPlating_C", new string[] { "Recipe_Alternate_PlasticSmartPlating_C" } },
+			{"Schematic_Alternate_PolyesterFabric_C", new string[] { "Recipe_Alternate_PolyesterFabric_C" } },
+			{"Schematic_Alternate_PolymerResin_C", new string[] { "Recipe_Alternate_PolymerResin_C" } },
+			{"Schematic_Alternate_PureAluminumIngot_C", new string[] { "Recipe_PureAluminumIngot_C" } },
+			{"Schematic_Alternate_PureCateriumIngot_C", new string[] { "Recipe_Alternate_PureCateriumIngot_C" } },
+			{"Schematic_Alternate_PureCopperIngot_C", new string[] { "Recipe_Alternate_PureCopperIngot_C" } },
+			{"Schematic_Alternate_PureIronIngot_C", new string[] { "Recipe_Alternate_PureIronIngot_C" } },
+			{"Schematic_Alternate_PureQuartzCrystal_C", new string[] { "Recipe_Alternate_PureQuartzCrystal_C" } },
+			{"Schematic_Alternate_Quickwire_C", new string[] { "Recipe_Alternate_Quickwire_C" } },
+			{"Schematic_Alternate_RadioControlUnit1_C", new string[] { "Recipe_Alternate_RadioControlUnit_1_C" } },
+			{"Schematic_Alternate_RecycledRubber_C", new string[] { "Recipe_Alternate_RecycledRubber_C" } },
+			{"Schematic_Alternate_ReinforcedIronPlate1_C", new string[] { "Recipe_Alternate_ReinforcedIronPlate_1_C" } },
+			{"Schematic_Alternate_ReinforcedIronPlate2_C", new string[] { "Recipe_Alternate_ReinforcedIronPlate_2_C" } },
 			{"Schematic_Alternate_ReinforcedSteelPlate_C", new string[] { "Recipe_Alternate_EncasedIndustrialBeam_C" } },
+			{"Schematic_Alternate_Rotor_C", new string[] { "Recipe_Alternate_Rotor_C" } },
+			{"Schematic_Alternate_RubberConcrete_C", new string[] { "Recipe_Alternate_RubberConcrete_C" } },
+			{"Schematic_Alternate_Screw2_C", new string[] { "Recipe_Alternate_Screw_2_C" } },
+			{"Schematic_Alternate_Screw_C", new string[] { "Recipe_Alternate_Screw_C" } },
+			{"Schematic_Alternate_Silica_C", new string[] { "Recipe_Alternate_Silica_C" } },
+			{"Schematic_Alternate_Stator_C", new string[] { "Recipe_Alternate_Stator_C" } },
+			{"Schematic_Alternate_SteamedCopperSheet_C", new string[] { "Recipe_Alternate_SteamedCopperSheet_C" } },
+			{"Schematic_Alternate_SteelCoatedPlate_C", new string[] { "Recipe_Alternate_SteelCoatedPlate_C" } },
+			{"Schematic_Alternate_SteelRod_C", new string[] { "Recipe_Alternate_SteelRod_C" } },
 			{"Schematic_Alternate_TurboFuel_C", new string[] { "Recipe_Alternate_Turbofuel_C" } },
+			{"Schematic_Alternate_TurboHeavyFuel_C", new string[] { "Recipe_Alternate_TurboHeavyFuel_C" } },
+			{"Schematic_Alternate_TurboMotor1_C", new string[] { "Recipe_Alternate_TurboMotor_1_C" } },
+			{"Schematic_Alternate_UraniumCell1_C", new string[] { "Recipe_Alternate_UraniumCell_1_C" } },
+			{"Schematic_Alternate_WetConcrete_C", new string[] { "Recipe_Alternate_WetConcrete_C" } },
+			{"Schematic_Alternate_Wire1_C", new string[] { "Recipe_Alternate_Wire_1_C" } },
+			{"Schematic_Alternate_Wire2_C", new string[] { "Recipe_Alternate_Wire_2_C" } },
 		};
 
-		public static List<IRecipe> GetRecipesForResearch(string research, List<IRecipe> recipes)
+		public static Dictionary<string, IRecipe> GetRecipesForResearch(string research, Dictionary<string, IRecipe> recipes)
 		{
 			if (mapping.ContainsKey(research))
 			{
-				List<IRecipe> unlockedRecipes = new List<IRecipe>();
+				Dictionary<string, IRecipe> unlockedRecipes = new Dictionary<string, IRecipe>();
 				foreach (string str in mapping[research])
 				{
-					unlockedRecipes.Add(recipes.FindByID(str));
+					unlockedRecipes.Add(recipes[str].UID, recipes[str]);
 				}
 				return unlockedRecipes;
 			}
 			if (research.Contains("ResourceSink") || research.Contains("HardDrive") || research.Contains("Inventory"))
 			{
-				return new List<IRecipe>();
+				return new Dictionary<string, IRecipe>();
 			}
 			if (research.StartsWith("Schematic_Alternate"))
 			{
 				string temp = research.Remove(0, "Schematic".Length);
 				temp = temp.Insert(0, "Recipe");
 				temp = SeperateNumbers(temp);
-				return new List<IRecipe>() { recipes.FindByID(temp) };
+				return new Dictionary<string, IRecipe>() { { recipes[temp].UID, recipes[temp] } };
 			}
 			Console.WriteLine("Research " + research + " does not have a mapping!");
-			return new List<IRecipe>();
+			return new Dictionary<string, IRecipe>();
+		}
+
+		public static Dictionary<string, IRecipe> GetAllRelevantRecipes(Dictionary<string, IRecipe> recipes)
+		{
+			Dictionary<string, IRecipe> allRecipes = new Dictionary<string, IRecipe>();
+			foreach (string key in mapping.Keys)
+			{
+				foreach (string str in mapping[key])
+				{
+					allRecipes.Add(str, recipes[str]);
+				}
+			}
+			return allRecipes;
 		}
 
 		public static readonly char[] numbers = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };

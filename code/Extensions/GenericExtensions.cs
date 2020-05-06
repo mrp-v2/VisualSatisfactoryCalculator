@@ -117,11 +117,11 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 
 		public static string GetDisplayNameFor(this IEnumerable<IEncoder> me, string UID)
 		{
-			foreach (IEncoder UIDEncoder in me) if (UIDEncoder.EqualID(UID)) return UIDEncoder.GetDisplayName();
+			foreach (IEncoder UIDEncoder in me) if (UIDEncoder.EqualID(UID)) return UIDEncoder.DisplayName;
 			return UID;
 		}
 
-		public static Dictionary<T, decimal> Merge<T>(this Dictionary<T, decimal> me, Dictionary<T, decimal> other)
+		public static Dictionary<T, decimal> Subtract<T>(this Dictionary<T, decimal> me, Dictionary<T, decimal> other)
 		{
 			Dictionary<T, decimal> merged = new Dictionary<T, decimal>();
 			foreach (T key in me.Keys)
@@ -139,14 +139,22 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			{
 				if (merged.ContainsKey(key))
 				{
-					merged[key] += other[key];
+					merged[key] -= other[key];
 				}
 				else
 				{
-					merged.Add(key, other[key]);
+					merged.Add(key, -other[key]);
 				}
 			}
 			return merged;
+		}
+
+		public static void AddRange<TKey, TValueA, TValueB>(this Dictionary<TKey, TValueA> me, Dictionary<TKey, TValueB> other) where TValueB : TValueA
+		{
+			foreach (TKey key in other.Keys)
+			{
+				me.Add(key, other[key]);
+			}
 		}
 	}
 }

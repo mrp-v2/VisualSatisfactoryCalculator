@@ -4,23 +4,19 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 {
 	public class SimpleCustomItem : IItem
 	{
-		private readonly string UID;
-		private readonly string displayName;
+		public string UID { get; }
+		public string DisplayName { get; }
+		public bool IsLiquid { get { return false; } }
 
 		public SimpleCustomItem(string UID, string displayName)
 		{
 			this.UID = UID;
-			this.displayName = displayName;
-		}
-
-		public bool IsLiquid()
-		{
-			return false;
+			DisplayName = displayName;
 		}
 
 		public override string ToString()
 		{
-			return displayName;
+			return DisplayName;
 		}
 
 		public override int GetHashCode()
@@ -42,16 +38,6 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		public bool EqualID(IHasUID obj)
 		{
 			return obj.EqualID(UID);
-		}
-
-		public string GetDisplayName()
-		{
-			return displayName;
-		}
-
-		public string GetUID()
-		{
-			return UID;
 		}
 	}
 }

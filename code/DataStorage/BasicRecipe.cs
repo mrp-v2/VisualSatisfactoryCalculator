@@ -8,39 +8,34 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 {
 	public class BasicRecipe : IRecipe
 	{
-		private readonly string UID;
-		private readonly decimal craftTime;
-		private readonly string machineUID;
-		private readonly List<ItemCount> itemCounts;
-		private readonly string displayName;
+		public string UID { get; }
+		public decimal CraftTime { get; }
+		public string MachineUID { get; }
+		public Dictionary<string, ItemCount> Ingredients { get; }
+		public Dictionary<string, ItemCount> Products { get; }
+		public string DisplayName { get; }
 
-		public BasicRecipe(string UID, decimal craftTime, string machineUID, List<ItemCount> itemCounts, string displayName)
+		public BasicRecipe(string UID, decimal craftTime, string machineUID, List<ItemCount> ingredients, List<ItemCount> products, string displayName)
 		{
 			this.UID = UID;
-			this.craftTime = craftTime;
-			this.machineUID = machineUID;
-			this.itemCounts = itemCounts;
-			this.displayName = displayName;
+			CraftTime = craftTime;
+			MachineUID = machineUID;
+			Ingredients = new Dictionary<string, ItemCount>();
+			foreach (ItemCount itemCount in ingredients)
+			{
+				Ingredients.Add(itemCount.ItemUID, itemCount);
+			}
+			Products = new Dictionary<string, ItemCount>();
+			foreach (ItemCount itemCount in products)
+			{
+				Products.Add(itemCount.ItemUID, itemCount);
+			}
+			DisplayName = displayName;
 		}
 
 		public bool EqualID(string id)
 		{
 			return UID.Equals(id);
-		}
-
-		public decimal GetCraftTime()
-		{
-			return craftTime;
-		}
-
-		public List<ItemCount> GetItemCounts()
-		{
-			return itemCounts;
-		}
-
-		public string GetMachineUID()
-		{
-			return machineUID;
 		}
 
 		public bool Equals(IRecipe other)
@@ -55,29 +50,26 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return UID.GetHashCode();
 		}
 
-		public string ToString(List<IEncoder> encodings)
+		public string ToString(Dictionary<string, IEncoder> encodings)
 		{
-			string str = displayName + ": ";
-			List<ItemCount> ingredients = itemCounts.GetIngredients().Inverse();
-			for (int i = 0; i < ingredients.Count; i++)
+			string str = DisplayName + ": ";
+			bool first = true;
+			foreach (string key in Ingredients.Keys)
 			{
-				if (i > 0) str += ", ";
-				str += ingredients[i].ToString(encodings);
+				if (!first) str += ", ";
+				else first = false;
+				str += Ingredients[key].ToString(encodings);
 			}
 			str += " -> ";
-			List<ItemCount> products = itemCounts.GetProducts();
-			for (int i = 0; i < products.Count; i++)
+			first = true;
+			foreach (string key in Products.Keys)
 			{
-				if (i > 0) str += ", ";
-				str += products[i].ToString(encodings);
+				if (!first) str += ", ";
+				else first = false;
+				str += Products[key].ToString(encodings);
 			}
-			str += " in " + Math.Round(craftTime, 3) + " seconds using a " + encodings.GetDisplayNameFor(machineUID);
+			str += " in " + Math.Round(CraftTime, 3) + " seconds using a " + encodings[MachineUID].DisplayName;
 			return str;
-		}
-
-		public string GetUID()
-		{
-			return UID;
 		}
 
 		public bool EqualID(IHasUID obj)
@@ -85,14 +77,15 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return obj.EqualID(UID);
 		}
 
-		public string GetDisplayName()
-		{
-			return displayName;
-		}
-
 		public override string ToString()
 		{
 			return ToString(Constants.LastResortEncoderList);
+		}
+
+		public decimal GetCountFor(string itemUID, bool isProduct)
+		{
+			if (isProduct) return Products[itemUID].Count;
+			else return Ingredients[itemUID].Count;
 		}
 	}
 }

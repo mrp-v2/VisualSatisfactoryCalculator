@@ -26,7 +26,7 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			List<ItemCount> products = new List<ItemCount>();
 			foreach (ItemCount ic in me)
 			{
-				if (ic.GetCount() > 0)
+				if (ic.Count > 0)
 				{
 					products.Add(ic);
 				}
@@ -39,7 +39,7 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			List<ItemCount> ingredients = new List<ItemCount>();
 			foreach (ItemCount ic in me)
 			{
-				if (ic.GetCount() < 0)
+				if (ic.Count < 0)
 				{
 					ingredients.Add(ic);
 				}
@@ -51,7 +51,7 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 		{
 			foreach (ItemCount count in me)
 			{
-				if (count.GetItemUID().Equals(item))
+				if (count.ItemUID.Equals(item))
 				{
 					return true;
 				}
@@ -63,22 +63,12 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 		{
 			foreach (ItemCount count in me)
 			{
-				if (count.GetItemUID().Equals(itemUID))
+				if (count.ItemUID.Equals(itemUID))
 				{
 					return count;
 				}
 			}
 			return default;
-		}
-
-		public static List<string> ToItemUIDs(this List<ItemCount> me)
-		{
-			List<string> items = new List<string>();
-			foreach (ItemCount item in me)
-			{
-				items.Add(item.GetItemUID());
-			}
-			return items;
 		}
 	}
 }

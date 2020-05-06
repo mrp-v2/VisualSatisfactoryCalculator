@@ -2,6 +2,6 @@
 {
 	public interface IHasDisplayName
 	{
-		string GetDisplayName();
+		string DisplayName { get; }
 	}
 }

@@ -2,6 +2,6 @@
 {
 	public interface IBuilding : IEncoder
 	{
-		decimal GetPowerConsumption();
+		decimal PowerConsumption { get; }
 	}
 }
