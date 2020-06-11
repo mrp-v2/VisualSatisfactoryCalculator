@@ -31,7 +31,11 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public bool Equals(IItem other)
 		{
-			if (!(other is SimpleCustomItem)) return false;
+			if (!(other is SimpleCustomItem))
+			{
+				return false;
+			}
+
 			return UID.Equals((other as SimpleCustomItem).UID);
 		}
 

@@ -1,6 +1,7 @@
-﻿using SatisfactorySaveParser;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+
+using SatisfactorySaveParser;
 
 namespace SatisfactorySaveEditor.Util
 {
@@ -43,7 +44,7 @@ namespace SatisfactorySaveEditor.Util
 				return;
 			}
 
-			var first = path.First();
+			string first = path.First();
 			if (!Children.TryGetValue(first, out EditorTreeNode child))
 			{
 				child = Children[first] = new EditorTreeNode(first);

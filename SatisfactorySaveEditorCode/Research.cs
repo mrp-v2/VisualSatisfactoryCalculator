@@ -15,8 +15,8 @@ namespace SatisfactorySaveParser.Data
 
 		public static IEnumerable<Research> GetResearches()
 		{
-			var doc = XDocument.Load("Data/Research.xml");
-			var node = doc.Element("ResearchData");
+			XDocument doc = XDocument.Load("Data/Research.xml");
+			XElement node = doc.Element("ResearchData");
 
 			return node.Elements("Research").Select(c => new Research(c));
 		}

@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
+
+using Newtonsoft.Json;
+
 using VisualSatisfactoryCalculator.code.DataStorage;
 
 namespace VisualSatisfactoryCalculator.code.JSONClasses
@@ -20,7 +22,10 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 				if (str.Contains("Buildable/Factory") && !str.Contains("WorkBench"))
 				{
 					machineUID = str.Substring(str.IndexOf('.') + 1);
-					if (machineUID.Contains(")")) machineUID = machineUID.Substring(0, machineUID.IndexOf(")"));
+					if (machineUID.Contains(")"))
+					{
+						machineUID = machineUID.Substring(0, machineUID.IndexOf(")"));
+					}
 				}
 			}
 			return machineUID;
@@ -31,7 +36,11 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			List<ItemCount> ingredientsList = new List<ItemCount>();
 			string[] ingredientsArray = mIngredients.Split(',');
 			Trace.Assert(ingredientsArray.Length % 2 == 0);
-			for (int i = 0; i < ingredientsArray.Length; i += 2) ingredientsList.Add(ParseItemCount(ingredientsArray[i], ingredientsArray[i + 1]));
+			for (int i = 0; i < ingredientsArray.Length; i += 2)
+			{
+				ingredientsList.Add(ParseItemCount(ingredientsArray[i], ingredientsArray[i + 1]));
+			}
+
 			return ingredientsList;
 		}
 
@@ -40,7 +49,11 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			List<ItemCount> productsList = new List<ItemCount>();
 			string[] productsArray = mProduct.Split(',');
 			Trace.Assert(productsArray.Length % 2 == 0);
-			for (int i = 0; i < productsArray.Length; i += 2) productsList.Add(ParseItemCount(productsArray[i], productsArray[i + 1]));
+			for (int i = 0; i < productsArray.Length; i += 2)
+			{
+				productsList.Add(ParseItemCount(productsArray[i], productsArray[i + 1]));
+			}
+
 			return productsList;
 		}
 

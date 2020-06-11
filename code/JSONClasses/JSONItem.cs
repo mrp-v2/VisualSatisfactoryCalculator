@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+
 using VisualSatisfactoryCalculator.code.Interfaces;
 
 namespace VisualSatisfactoryCalculator.code.JSONClasses
@@ -34,8 +35,16 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 
 		public bool Equals(IItem other)
 		{
-			if (other == null) return false;
-			if (!(other is JSONItem)) return false;
+			if (other == null)
+			{
+				return false;
+			}
+
+			if (!(other is JSONItem))
+			{
+				return false;
+			}
+
 			return EqualID(other);
 		}
 

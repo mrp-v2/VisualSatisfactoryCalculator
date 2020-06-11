@@ -1,7 +1,8 @@
-﻿using SatisfactorySaveParser.PropertyTypes;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+
+using SatisfactorySaveParser.PropertyTypes;
 
 namespace SatisfactorySaveParser
 {
@@ -11,8 +12,8 @@ namespace SatisfactorySaveParser
 
 		public static SerializedFields Parse(int length, BinaryReader reader)
 		{
-			var start = reader.BaseStream.Position;
-			var result = new SerializedFields();
+			long start = reader.BaseStream.Position;
+			SerializedFields result = new SerializedFields();
 
 			SerializedProperty prop;
 			while ((prop = SerializedProperty.Parse(reader)) != null)
@@ -20,10 +21,10 @@ namespace SatisfactorySaveParser
 				result.Add(prop);
 			}
 
-			var int1 = reader.ReadInt32();
+			int int1 = reader.ReadInt32();
 			Trace.Assert(int1 == 0);
 
-			var remainingBytes = start + length - reader.BaseStream.Position;
+			long remainingBytes = start + length - reader.BaseStream.Position;
 			if (remainingBytes > 0)
 			{
 				//log.Warn($"{remainingBytes} bytes left after reading all serialized fields!");

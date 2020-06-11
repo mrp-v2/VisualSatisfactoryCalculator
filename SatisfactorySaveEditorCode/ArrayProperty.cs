@@ -9,7 +9,14 @@ namespace SatisfactorySaveParser.PropertyTypes
 	public class ArrayProperty : SerializedProperty
 	{
 		public const string TypeName = nameof(ArrayProperty);
-		public override string PropertyType => TypeName;
+		public override string PropertyType
+		{
+			get
+			{
+				return TypeName;
+			}
+		}
+
 		public override int SerializedLength
 		{
 			get
@@ -51,7 +58,7 @@ namespace SatisfactorySaveParser.PropertyTypes
 
 		public static ArrayProperty Parse(string propertyName, int index, BinaryReader reader, out int overhead)
 		{
-			var result = new ArrayProperty(propertyName, index)
+			ArrayProperty result = new ArrayProperty(propertyName, index)
 			{
 				Type = reader.ReadLengthPrefixedString()
 			};
@@ -70,69 +77,69 @@ namespace SatisfactorySaveParser.PropertyTypes
 				break;
 				case ObjectProperty.TypeName:
 				{
-					var count = reader.ReadInt32();
-					for (var i = 0; i < count; i++)
+					int count = reader.ReadInt32();
+					for (int i = 0; i < count; i++)
 					{
-						var obj1 = reader.ReadLengthPrefixedString();
-						var obj2 = reader.ReadLengthPrefixedString();
+						string obj1 = reader.ReadLengthPrefixedString();
+						string obj2 = reader.ReadLengthPrefixedString();
 						result.Elements.Add(new ObjectProperty($"Element {i}", obj1, obj2));
 					}
 				}
 				break;
 				case IntProperty.TypeName:
 				{
-					var count = reader.ReadInt32();
-					for (var i = 0; i < count; i++)
+					int count = reader.ReadInt32();
+					for (int i = 0; i < count; i++)
 					{
-						var value = reader.ReadInt32();
+						int value = reader.ReadInt32();
 						result.Elements.Add(new IntProperty($"Element {i}") { Value = value });
 					}
 				}
 				break;
 				case ByteProperty.TypeName:
 				{
-					var count = reader.ReadInt32();
-					for (var i = 0; i < count; i++)
+					int count = reader.ReadInt32();
+					for (int i = 0; i < count; i++)
 					{
-						var value = reader.ReadByte();
+						byte value = reader.ReadByte();
 						result.Elements.Add(new ByteProperty($"Element {i}") { Type = "None", Value = value.ToString() });
 					}
 				}
 				break;
 				case EnumProperty.TypeName:
 				{
-					var count = reader.ReadInt32();
-					for (var i = 0; i < count; i++)
+					int count = reader.ReadInt32();
+					for (int i = 0; i < count; i++)
 					{
-						var str = reader.ReadLengthPrefixedString();
+						string str = reader.ReadLengthPrefixedString();
 						result.Elements.Add(new EnumProperty($"Element {i}") { Type = str.Split(':')[0], Name = str });
 					}
 				}
 				break;
 				case StrProperty.TypeName:
 				{
-					var count = reader.ReadInt32();
-					for (var i = 0; i < count; i++)
+					int count = reader.ReadInt32();
+					for (int i = 0; i < count; i++)
 					{
-						var str = reader.ReadLengthPrefixedString();
+						string str = reader.ReadLengthPrefixedString();
 						result.Elements.Add(new StrProperty($"Element {i}") { Value = str });
 					}
 				}
 				break;
 				case FloatProperty.TypeName:
 				{
-					var count = reader.ReadInt32();
-					for (var i = 0; i < count; i++)
+					int count = reader.ReadInt32();
+					for (int i = 0; i < count; i++)
 					{
-						var value = reader.ReadSingle();
+						float value = reader.ReadSingle();
 						result.Elements.Add(new FloatProperty($"Element {i}") { Value = value });
 					}
 				}
 				break;
 				case TextProperty.TypeName:
 				{
-					var count = reader.ReadInt32();
-					for (var i = 0; i < count; i++)
+					int count = reader.ReadInt32();
+					for (int i = 0; i < count; i++)
 					{
 						result.Elements.Add(TextProperty.Parse($"Element {i}", 0, reader, true));
 					}
@@ -140,11 +147,11 @@ namespace SatisfactorySaveParser.PropertyTypes
 				break;
 				case InterfaceProperty.TypeName:
 				{
-					var count = reader.ReadInt32();
-					for (var i = 0; i < count; i++)
+					int count = reader.ReadInt32();
+					for (int i = 0; i < count; i++)
 					{
-						var obj1 = reader.ReadLengthPrefixedString();
-						var obj2 = reader.ReadLengthPrefixedString();
+						string obj1 = reader.ReadLengthPrefixedString();
+						string obj2 = reader.ReadLengthPrefixedString();
 						result.Elements.Add(new InterfaceProperty($"Element {i}", obj1, obj2));
 					}
 				}

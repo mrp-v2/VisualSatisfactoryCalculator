@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Drawing;
+
 using VisualSatisfactoryCalculator.code.Extensions;
 
 namespace VisualSatisfactoryCalculator.code.Utility
 {
-	class BitmapSerializer
+	internal class BitmapSerializer
 	{
 		private int xPosition;
 		private int yPosition;
@@ -125,7 +126,11 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			byte b = 0;
 			for (int i = 0; i < 8; i++)
 			{
-				if (bytes[i] > 1) throw new ArgumentException("A byte in the array was greater than 1 bit!");
+				if (bytes[i] > 1)
+				{
+					throw new ArgumentException("A byte in the array was greater than 1 bit!");
+				}
+
 				b |= (byte)(bytes[startIndex + i] << (7 - i));
 			}
 			return b;
@@ -138,7 +143,11 @@ namespace VisualSatisfactoryCalculator.code.Utility
 		/// <returns></returns>
 		private byte[] MergeBytes(byte[] bytes)
 		{
-			if (bytes.Length % 8 != 0) throw new ArgumentException("The length of the given array is not divisible by 8!");
+			if (bytes.Length % 8 != 0)
+			{
+				throw new ArgumentException("The length of the given array is not divisible by 8!");
+			}
+
 			byte[] array = new byte[bytes.Length / 8];
 			for (int i = 0; i < array.Length; i++)
 			{
@@ -159,7 +168,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			{
 				for (int j = 0; j < 8; j++)
 				{
-					seperated[i * 8 + j] = IsolateBit(bytes[i], 7 - j);
+					seperated[(i * 8) + j] = IsolateBit(bytes[i], 7 - j);
 				}
 			}
 			return seperated;

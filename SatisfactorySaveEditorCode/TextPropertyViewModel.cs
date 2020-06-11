@@ -11,14 +11,22 @@ namespace SatisfactorySaveEditor.ViewModel.Property
 
 		public string Value
 		{
-			get => value;
+			get
+			{
+				return value;
+			}
+
 			set { Set(() => Value, ref this.value, value); }
 		}
 
 		public int Unknown4
 		{
-			get => unknown4;
-			set { Set(() => Unknown4, ref this.unknown4, value); }
+			get
+			{
+				return unknown4;
+			}
+
+			set { Set(() => Unknown4, ref unknown4, value); }
 		}
 
 		public TextPropertyViewModel(TextProperty textProperty) : base(textProperty)

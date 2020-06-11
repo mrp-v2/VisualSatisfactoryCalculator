@@ -6,8 +6,21 @@ namespace SatisfactorySaveParser.PropertyTypes
 	public class BoolProperty : SerializedProperty
 	{
 		public const string TypeName = nameof(BoolProperty);
-		public override string PropertyType => TypeName;
-		public override int SerializedLength => 0;
+		public override string PropertyType
+		{
+			get
+			{
+				return TypeName;
+			}
+		}
+
+		public override int SerializedLength
+		{
+			get
+			{
+				return 0;
+			}
+		}
 
 		public bool Value { get; set; }
 
@@ -22,7 +35,7 @@ namespace SatisfactorySaveParser.PropertyTypes
 
 		public static BoolProperty Parse(string propertyName, int index, BinaryReader reader)
 		{
-			var result = new BoolProperty(propertyName, index)
+			BoolProperty result = new BoolProperty(propertyName, index)
 			{
 				Value = reader.ReadByte() > 0
 			};

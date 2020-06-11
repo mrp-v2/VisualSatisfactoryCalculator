@@ -1,9 +1,10 @@
 ﻿using Newtonsoft.Json;
+
 using VisualSatisfactoryCalculator.code.Interfaces;
 
 namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
-	class JSONBuilding : IBuilding
+	internal class JSONBuilding : IBuilding
 	{
 		public string UID { get; }
 		public decimal PowerConsumption { get; }

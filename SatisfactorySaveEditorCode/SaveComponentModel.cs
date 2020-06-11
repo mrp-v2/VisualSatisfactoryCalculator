@@ -8,7 +8,11 @@ namespace SatisfactorySaveEditor.Model
 
 		public string ParentEntityName
 		{
-			get => parentEntityName;
+			get
+			{
+				return parentEntityName;
+			}
+
 			set { Set(() => ParentEntityName, ref parentEntityName, value); }
 		}
 

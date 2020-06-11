@@ -13,45 +13,87 @@ namespace SatisfactorySaveEditor.Model
 		private long saveDateTime;
 		private ESessionVisibility sessionVisibility;
 
-		public SaveHeaderVersion HeaderVersion => model.HeaderVersion;
+		public SaveHeaderVersion HeaderVersion
+		{
+			get
+			{
+				return model.HeaderVersion;
+			}
+		}
 
-		public FSaveCustomVersion SaveVersion => model.SaveVersion;
+		public FSaveCustomVersion SaveVersion
+		{
+			get
+			{
+				return model.SaveVersion;
+			}
+		}
 
 		public string MapName
 		{
-			get => mapName;
+			get
+			{
+				return mapName;
+			}
+
 			set { Set(() => MapName, ref mapName, value); }
 		}
 
 		public string MapOptions
 		{
-			get => mapOptions;
+			get
+			{
+				return mapOptions;
+			}
+
 			set { Set(() => MapOptions, ref mapOptions, value); }
 		}
 
 		public string SessionName
 		{
-			get => sessionName;
+			get
+			{
+				return sessionName;
+			}
+
 			set { Set(() => SessionName, ref sessionName, value); }
 		}
 
 		public int PlayDuration
 		{
-			get => playDuration;
+			get
+			{
+				return playDuration;
+			}
+
 			set { Set(() => PlayDuration, ref playDuration, value); }
 		}
 
-		public bool HasSessionVisibility => HeaderVersion >= SaveHeaderVersion.AddedSessionVisibility;
+		public bool HasSessionVisibility
+		{
+			get
+			{
+				return HeaderVersion >= SaveHeaderVersion.AddedSessionVisibility;
+			}
+		}
 
 		public ESessionVisibility SessionVisibility
 		{
-			get => sessionVisibility;
+			get
+			{
+				return sessionVisibility;
+			}
+
 			set { Set(() => SessionVisibility, ref sessionVisibility, value); }
 		}
 
 		public long SaveDateTime
 		{
-			get => saveDateTime;
+			get
+			{
+				return saveDateTime;
+			}
+
 			set { Set(() => SaveDateTime, ref saveDateTime, value); }
 		}
 

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
+
+using MrpV2.GenericLibrary.code.persistance.classes;
+
 using VisualSatisfactoryCalculator.code.DataStorage;
-using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.controls.user;
@@ -30,14 +30,17 @@ namespace VisualSatisfactoryCalculator.forms
 		public Dictionary<string, IRecipe> Recipes { get; }
 		public Dictionary<string, IEncoder> Encoders { get; }
 
-		private ProductionPlan plan;
-		private ProductionPlanTotalViewControl PPTVC;
+		private ProductionPlan _plan;
+		private ProductionPlanTotalViewControl _PPTVC;
+
+		private readonly DigitalStenographySaveLoad _saveLoad;
 
 		private MainForm(Dictionary<string, IEncoder> encoders, Dictionary<string, IRecipe> recipes)
 		{
 			InitializeComponent();
 			Encoders = encoders;
 			Recipes = recipes;
+			_saveLoad = new DigitalStenographySaveLoad();
 		}
 
 		private static bool SafeNewMainForm(out MainForm form)
@@ -76,7 +79,7 @@ namespace VisualSatisfactoryCalculator.forms
 			SelectRecipePrompt srp = new SelectRecipePrompt(Recipes);
 			if (srp.ShowDialog() == DialogResult.OK)
 			{
-				plan = new ProductionPlan(srp.GetSelectedRecipe());
+				_plan = new ProductionPlan(srp.GetSelectedRecipe());
 				PlanUpdated();
 			}
 		}
@@ -88,10 +91,10 @@ namespace VisualSatisfactoryCalculator.forms
 				c.Dispose();
 			}
 			ProductionPlanPanel.Controls.Clear();
-			PPTVC = new ProductionPlanTotalViewControl();
+			_PPTVC = new ProductionPlanTotalViewControl();
 			UpdateTotalView();
-			ProductionPlanPanel.Controls.Add(PPTVC);
-			ProductionStepControl PSC = new ProductionStepControl(plan, this, null);
+			ProductionPlanPanel.Controls.Add(_PPTVC);
+			ProductionStepControl PSC = new ProductionStepControl(_plan, this, null);
 			ProductionPlanPanel.Controls.Add(PSC);
 		}
 
@@ -106,26 +109,15 @@ namespace VisualSatisfactoryCalculator.forms
 			};
 			if (dialog.ShowDialog() == DialogResult.OK)
 			{
-				Stream stream;
-				if ((stream = dialog.OpenFile()) != null)
-				{
-					using (Bitmap map = new Bitmap(ProductionPlanPanel.PreferredSize.Width, ProductionPlanPanel.PreferredSize.Height))
-					{
-						ProductionPlanPanel.DrawToBitmap(map, new Rectangle(0, 0, map.Width, map.Height));
-						byte[] bytes = new CondensedProductionPlan(plan).ToBytes();
-						new BitmapSerializer(map).WriteBytes(bytes);
-						map.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-					}
-					stream.Close();
-				}
+				_saveLoad.Save(dialog.FileName, new CondensedProductionPlan(_plan));
 			}
 		}
 
 		public void UpdateTotalView()
 		{
-			PPTVC.ProductsLabel.Text = plan.GetProductsString(Encoders);
-			PPTVC.MachinesLabel.Text = plan.GetTotalMachineString(Encoders);
-			PPTVC.IngredientsLabel.Text = plan.GetIngredientsString(Encoders);
+			_PPTVC.ProductsLabel.Text = _plan.GetProductsString(Encoders);
+			_PPTVC.MachinesLabel.Text = _plan.GetTotalMachineString(Encoders);
+			_PPTVC.IngredientsLabel.Text = _plan.GetIngredientsString(Encoders);
 		}
 
 		private void LoadChartButton_Click(object sender, EventArgs e)
@@ -139,21 +131,12 @@ namespace VisualSatisfactoryCalculator.forms
 			};
 			if (dialog.ShowDialog() == DialogResult.OK)
 			{
-				Stream stream;
-				if ((stream = dialog.OpenFile()) != null)
+				if (_saveLoad.TryLoad(dialog.FileName, out CondensedProductionPlan loadedPlan))
 				{
-					CondensedProductionPlan loadedPlan;
-					using (Bitmap map = new Bitmap(stream))
-					{
-						int length = CondensedProductionPlan.BytesToInt(new BitmapSerializer(map).ReadBytes(CondensedProductionPlan.BYTES_OF_LENGTH));
-						loadedPlan = CondensedProductionPlan.FromBytes(new BitmapSerializer(map).ReadBytes(CondensedProductionPlan.BYTES_OF_LENGTH + length));
-					}
 					if (loadedPlan != null)
 					{
-						plan = loadedPlan.ToProductionPlan(Recipes);
-						PlanUpdated();
+						_plan = loadedPlan.ToProductionPlan(Recipes);
 					}
-					stream.Close();
 				}
 			}
 		}

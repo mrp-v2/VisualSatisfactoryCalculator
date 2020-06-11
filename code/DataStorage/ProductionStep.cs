@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
-using VisualSatisfactoryCalculator.code.Extensions;
+
 using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.controls.user;
 
@@ -10,58 +9,71 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 {
 	public class ProductionStep : IEquatable<ProductionStep>
 	{
-		private decimal multiplier;
+		private decimal _multiplier;
 		public Dictionary<ProductionStep, string> ChildIngredientSteps { get; }
 		public Dictionary<ProductionStep, string> ChildProductSteps { get; }
-		private readonly ProductionStep parentStep;
-		private ProductionStepControl control;
+		private readonly ProductionStep _parentStep;
+		private ProductionStepControl _control;
 
-		private readonly IRecipe recipe;
+		private readonly IRecipe _recipe;
 
 		public bool IsProductOfParent { get; }
 
 		public ProductionStep(IRecipe recipe, ProductionStep parent, string itemUID, bool isProductOfParent) : this(recipe, 1m)
 		{
-			parentStep = parent;
+			_parentStep = parent;
 			IsProductOfParent = isProductOfParent;
-			if (isProductOfParent) parentStep.ChildProductSteps.Add(this, itemUID);
-			else parentStep.ChildIngredientSteps.Add(this, itemUID);
+			if (isProductOfParent)
+			{
+				_parentStep.ChildProductSteps.Add(this, itemUID);
+			}
+			else
+			{
+				_parentStep.ChildIngredientSteps.Add(this, itemUID);
+			}
+
 			UpdateMultiplierRelativeTo(parent);
 		}
 
 		public ProductionStep(IRecipe recipe, decimal multiplier)
 		{
-			this.recipe = recipe;
-			this.multiplier = multiplier;
+			_recipe = recipe;
+			_multiplier = multiplier;
 			ChildIngredientSteps = new Dictionary<ProductionStep, string>();
 			ChildProductSteps = new Dictionary<ProductionStep, string>();
-			control = default;
+			_control = default;
 		}
 
 		public IRecipe GetRecipe()
 		{
-			return recipe;
+			return _recipe;
 		}
 
 		public int CalculateMachineCount()
 		{
-			return (int)Math.Ceiling(multiplier);
+			return (int)Math.Ceiling(_multiplier);
 		}
 
 		public void AddChildStep(ProductionStep child, string itemUID, bool isChildProduct)
 		{
-			if (isChildProduct) ChildProductSteps.Add(child, itemUID);
-			else ChildIngredientSteps.Add(child, itemUID);
+			if (isChildProduct)
+			{
+				ChildProductSteps.Add(child, itemUID);
+			}
+			else
+			{
+				ChildIngredientSteps.Add(child, itemUID);
+			}
 		}
 
 		private void SetMultiplier(decimal multiplier)
 		{
-			this.multiplier = multiplier;
-			if (control != default(ProductionStepControl))
+			_multiplier = multiplier;
+			if (_control != default(ProductionStepControl))
 			{
-				control.ToggleInput(false);
-				control.MultiplierChanged();
-				control.ToggleInput(true);
+				_control.ToggleInput(false);
+				_control.MultiplierChanged();
+				_control.ToggleInput(true);
 			}
 		}
 
@@ -76,7 +88,10 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			{
 				step.UpdateMultiplierFromParent();
 			}
-			if (parentStep != null) parentStep.UpdateMultiplierFromChild(this);
+			if (_parentStep != null)
+			{
+				_parentStep.UpdateMultiplierFromChild(this);
+			}
 		}
 
 		private void UpdateMultiplierFromChild(ProductionStep child)
@@ -96,12 +111,15 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 					childStep.UpdateMultiplierFromParent();
 				}
 			}
-			if (parentStep != null) parentStep.UpdateMultiplierFromChild(this);
+			if (_parentStep != null)
+			{
+				_parentStep.UpdateMultiplierFromChild(this);
+			}
 		}
 
 		private void UpdateMultiplierFromParent()
 		{
-			UpdateMultiplierRelativeTo(parentStep);
+			UpdateMultiplierRelativeTo(_parentStep);
 			foreach (ProductionStep step in ChildIngredientSteps.Keys)
 			{
 				step.UpdateMultiplierFromParent();
@@ -114,16 +132,31 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		private void UpdateMultiplierRelativeTo(ProductionStep step)
 		{
-			if (ChildIngredientSteps.ContainsKey(step)) SetMultiplier(CalculateMultiplierForRate(ChildIngredientSteps[step], step.GetItemRate(ChildIngredientSteps[step], true), false));
-			else if (ChildProductSteps.ContainsKey(step)) SetMultiplier(CalculateMultiplierForRate(ChildProductSteps[step], step.GetItemRate(ChildProductSteps[step], false), true));
-			else if (step.ChildIngredientSteps.ContainsKey(this)) SetMultiplier(CalculateMultiplierForRate(step.ChildIngredientSteps[this], step.GetItemRate(step.ChildIngredientSteps[this], false), true));
-			else if (step.ChildProductSteps.ContainsKey(this)) SetMultiplier(CalculateMultiplierForRate(step.ChildProductSteps[this], step.GetItemRate(step.ChildProductSteps[this], true), false));
-			else throw new ArgumentException("Could not find a similarity between the given step and this.");
+			if (ChildIngredientSteps.ContainsKey(step))
+			{
+				SetMultiplier(CalculateMultiplierForRate(ChildIngredientSteps[step], step.GetItemRate(ChildIngredientSteps[step], true), false));
+			}
+			else if (ChildProductSteps.ContainsKey(step))
+			{
+				SetMultiplier(CalculateMultiplierForRate(ChildProductSteps[step], step.GetItemRate(ChildProductSteps[step], false), true));
+			}
+			else if (step.ChildIngredientSteps.ContainsKey(this))
+			{
+				SetMultiplier(CalculateMultiplierForRate(step.ChildIngredientSteps[this], step.GetItemRate(step.ChildIngredientSteps[this], false), true));
+			}
+			else if (step.ChildProductSteps.ContainsKey(this))
+			{
+				SetMultiplier(CalculateMultiplierForRate(step.ChildProductSteps[this], step.GetItemRate(step.ChildProductSteps[this], true), false));
+			}
+			else
+			{
+				throw new ArgumentException("Could not find a similarity between the given step and this.");
+			}
 		}
 
 		private decimal CalculateDefaultItemRate(string itemUID, bool isItemProduct)
 		{
-			return 60m / recipe.CraftTime * recipe.GetCountFor(itemUID, isItemProduct);
+			return 60m / _recipe.CraftTime * _recipe.GetCountFor(itemUID, isItemProduct);
 		}
 
 		public void SetMultiplierAndRelatedRelative(string itemUID, decimal rate, bool isItemProduct)
@@ -138,12 +171,12 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public decimal GetItemRate(string itemUID, bool isItemProduct)
 		{
-			return CalculateDefaultItemRate(itemUID, isItemProduct) * multiplier;
+			return CalculateDefaultItemRate(itemUID, isItemProduct) * _multiplier;
 		}
 
 		public void SetControl(ProductionStepControl control)
 		{
-			this.control = control;
+			_control = control;
 		}
 
 		public List<string> GetItemUIDsWithRelatedStep()
@@ -151,17 +184,23 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			List<string> uids = new List<string>();
 			uids.AddRange(ChildIngredientSteps.Values);
 			uids.AddRange(ChildProductSteps.Values);
-			if (parentStep != null)
+			if (_parentStep != null)
 			{
-				if (IsProductOfParent) uids.Add(parentStep.ChildProductSteps[this]);
-				else uids.Add(parentStep.ChildIngredientSteps[this]);
+				if (IsProductOfParent)
+				{
+					uids.Add(_parentStep.ChildProductSteps[this]);
+				}
+				else
+				{
+					uids.Add(_parentStep.ChildIngredientSteps[this]);
+				}
 			}
 			return uids;
 		}
 
 		public decimal GetMultiplier()
 		{
-			return multiplier;
+			return _multiplier;
 		}
 
 		protected List<ProductionStep> GetAllStepsRecursively()
@@ -182,49 +221,65 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public bool Equals(ProductionStep obj)
 		{
-			return recipe.Equals(obj.recipe);
+			return _recipe.Equals(obj._recipe);
 		}
 
 		public override int GetHashCode()
 		{
-			return recipe.GetHashCode();
+			return _recipe.GetHashCode();
 		}
 
 		public void RemoveStep()
 		{
 			if (IsProductOfParent)
 			{
-				parentStep.ChildProductSteps.Remove(this);
+				_ = _parentStep.ChildProductSteps.Remove(this);
 			}
 			else
 			{
-				parentStep.ChildIngredientSteps.Remove(this);
+				_ = _parentStep.ChildIngredientSteps.Remove(this);
 			}
 		}
 
 		public decimal GetPowerDraw(Dictionary<string, IEncoder> encodings)
 		{
-			return (encodings[recipe.MachineUID] as IBuilding).PowerConsumption * multiplier;
+			return (encodings[_recipe.MachineUID] as IBuilding).PowerConsumption * _multiplier;
 		}
 
 		public decimal GetRecursivePowerDraw(Dictionary<string, IEncoder> encodings)
 		{
 			decimal total = GetPowerDraw(encodings);
-			foreach (ProductionStep childIngredientStep in ChildIngredientSteps.Keys) total += childIngredientStep.GetRecursivePowerDraw(encodings);
-			foreach (ProductionStep childProductStep in ChildProductSteps.Keys) total += childProductStep.GetRecursivePowerDraw(encodings);
+			foreach (ProductionStep childIngredientStep in ChildIngredientSteps.Keys)
+			{
+				total += childIngredientStep.GetRecursivePowerDraw(encodings);
+			}
+
+			foreach (ProductionStep childProductStep in ChildProductSteps.Keys)
+			{
+				total += childProductStep.GetRecursivePowerDraw(encodings);
+			}
+
 			return total;
 		}
 
 		public bool IsChildStepIngredient(ProductionStep child)
 		{
-			if (!IsStepChild(child)) throw new ArgumentException("The given step was not a child!");
-			return recipe.Ingredients.Keys.Contains(ChildIngredientSteps[child]);
+			if (!IsStepChild(child))
+			{
+				throw new ArgumentException("The given step was not a child!");
+			}
+
+			return _recipe.Ingredients.Keys.Contains(ChildIngredientSteps[child]);
 		}
 
 		public bool IsChildStepProduct(ProductionStep child)
 		{
-			if (!IsStepChild(child)) throw new ArgumentException("The given step was not a child!");
-			return recipe.Products.Keys.Contains(ChildProductSteps[child]);
+			if (!IsStepChild(child))
+			{
+				throw new ArgumentException("The given step was not a child!");
+			}
+
+			return _recipe.Products.Keys.Contains(ChildProductSteps[child]);
 		}
 
 		public bool IsStepChild(ProductionStep test)

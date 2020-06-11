@@ -1,10 +1,12 @@
-﻿using Ionic.Zlib;
-using SatisfactorySaveParser.Save;
-using SatisfactorySaveParser.Structures;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+
+using Ionic.Zlib;
+
+using SatisfactorySaveParser.Save;
+using SatisfactorySaveParser.Structures;
 
 namespace SatisfactorySaveParser
 {
@@ -41,8 +43,8 @@ namespace SatisfactorySaveParser
 		{
 			FileName = Environment.ExpandEnvironmentVariables(file);
 
-			using (var stream = new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-			using (var reader = new BinaryReader(stream))
+			using (FileStream stream = new FileStream(FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+			using (BinaryReader reader = new BinaryReader(stream))
 			{
 				Header = FSaveHeader.Parse(reader);
 
@@ -52,22 +54,22 @@ namespace SatisfactorySaveParser
 				}
 				else
 				{
-					using (var buffer = new MemoryStream())
+					using (MemoryStream buffer = new MemoryStream())
 					{
-						var uncompressedSize = 0L;
+						long uncompressedSize = 0L;
 
 						while (stream.Position < stream.Length)
 						{
-							var header = reader.ReadChunkInfo();
+							ChunkInfo header = reader.ReadChunkInfo();
 							Trace.Assert(header.CompressedSize == ChunkInfo.Magic);
 
-							var summary = reader.ReadChunkInfo();
+							ChunkInfo summary = reader.ReadChunkInfo();
 
-							var subChunk = reader.ReadChunkInfo();
+							ChunkInfo subChunk = reader.ReadChunkInfo();
 							Trace.Assert(subChunk.UncompressedSize == summary.UncompressedSize);
 
-							var startPosition = stream.Position;
-							using (var zStream = new ZlibStream(stream, CompressionMode.Decompress, true))
+							long startPosition = stream.Position;
+							using (ZlibStream zStream = new ZlibStream(stream, CompressionMode.Decompress, true))
 							{
 								zStream.CopyTo(buffer);
 							}
@@ -80,9 +82,9 @@ namespace SatisfactorySaveParser
 
 						buffer.Position = 0;
 
-						using (var bufferReader = new BinaryReader(buffer))
+						using (BinaryReader bufferReader = new BinaryReader(buffer))
 						{
-							var dataLength = bufferReader.ReadInt32();
+							int dataLength = bufferReader.ReadInt32();
 							Trace.Assert(uncompressedSize == dataLength + 4);
 
 							LoadData(bufferReader);
@@ -94,11 +96,11 @@ namespace SatisfactorySaveParser
 
 		private void LoadData(BinaryReader reader)
 		{
-			var totalSaveObjects = reader.ReadUInt32();
+			uint totalSaveObjects = reader.ReadUInt32();
 
 			for (int i = 0; i < totalSaveObjects; i++)
 			{
-				var type = reader.ReadInt32();
+				int type = reader.ReadInt32();
 				switch (type)
 				{
 					case SaveEntity.TypeID:
@@ -112,17 +114,17 @@ namespace SatisfactorySaveParser
 				}
 			}
 
-			var totalSaveObjectData = reader.ReadInt32();
+			int totalSaveObjectData = reader.ReadInt32();
 			Trace.Assert(Entries.Count == totalSaveObjects);
 			Trace.Assert(Entries.Count == totalSaveObjectData);
 
 			for (int i = 0; i < Entries.Count; i++)
 			{
-				var len = reader.ReadInt32();
-				var before = reader.BaseStream.Position;
+				int len = reader.ReadInt32();
+				long before = reader.BaseStream.Position;
 
 				Entries[i].ParseData(len, reader);
-				var after = reader.BaseStream.Position;
+				long after = reader.BaseStream.Position;
 
 				if (before + len != after)
 				{
@@ -130,7 +132,7 @@ namespace SatisfactorySaveParser
 				}
 			}
 
-			var collectedObjectsCount = reader.ReadInt32();
+			int collectedObjectsCount = reader.ReadInt32();
 			for (int i = 0; i < collectedObjectsCount; i++)
 			{
 				CollectedObjects.Add(new ObjectReference(reader));

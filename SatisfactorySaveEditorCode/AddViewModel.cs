@@ -1,8 +1,11 @@
-﻿using GalaSoft.MvvmLight;
-using SatisfactorySaveEditor.Model;
-using SatisfactorySaveParser.PropertyTypes;
-using System;
+﻿using System;
 using System.Windows;
+
+using GalaSoft.MvvmLight;
+
+using SatisfactorySaveEditor.Model;
+
+using SatisfactorySaveParser.PropertyTypes;
 
 namespace SatisfactorySaveEditor.ViewModel
 {
@@ -34,7 +37,11 @@ namespace SatisfactorySaveEditor.ViewModel
 
 		public string Name
 		{
-			get => name;
+			get
+			{
+				return name;
+			}
+
 			set
 			{
 				Set(() => Name, ref name, value);
@@ -43,7 +50,11 @@ namespace SatisfactorySaveEditor.ViewModel
 		}
 		public AddTypeEnum Type
 		{
-			get => type;
+			get
+			{
+				return type;
+			}
+
 			set
 			{
 				Set(() => Type, ref type, value);
@@ -53,7 +64,11 @@ namespace SatisfactorySaveEditor.ViewModel
 		}
 		public AddTypeEnum ArrayType
 		{
-			get => arrayType;
+			get
+			{
+				return arrayType;
+			}
+
 			set
 			{
 				Set(() => ArrayType, ref arrayType, value);
@@ -61,13 +76,22 @@ namespace SatisfactorySaveEditor.ViewModel
 			}
 		}
 
-		public Visibility IsArray => type == AddTypeEnum.Array ? Visibility.Visible : Visibility.Collapsed;
+		public Visibility IsArray
+		{
+			get
+			{
+				return type == AddTypeEnum.Array ? Visibility.Visible : Visibility.Collapsed;
+			}
+		}
 
 		public bool CanConfirm
 		{
 			get
 			{
-				if (type != AddTypeEnum.Array) return !string.IsNullOrWhiteSpace(Name);
+				if (type != AddTypeEnum.Array)
+				{
+					return !string.IsNullOrWhiteSpace(Name);
+				}
 
 				return arrayType != AddTypeEnum.Array && !string.IsNullOrWhiteSpace(Name);
 			}

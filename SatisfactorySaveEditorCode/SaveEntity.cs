@@ -1,6 +1,7 @@
-﻿using SatisfactorySaveParser.Structures;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
+
+using SatisfactorySaveParser.Structures;
 
 namespace SatisfactorySaveParser
 {
@@ -65,19 +66,23 @@ namespace SatisfactorySaveParser
 
 		public override void ParseData(int length, BinaryReader reader)
 		{
-			var newLen = length - 12;
+			int newLen = length - 12;
 			ParentObjectRoot = reader.ReadLengthPrefixedString();
 			if (ParentObjectRoot.Length > 0)
+			{
 				newLen -= ParentObjectRoot.Length + 1;
+			}
 
 			ParentObjectName = reader.ReadLengthPrefixedString();
 			if (ParentObjectName.Length > 0)
+			{
 				newLen -= ParentObjectName.Length + 1;
+			}
 
-			var componentCount = reader.ReadInt32();
+			int componentCount = reader.ReadInt32();
 			for (int i = 0; i < componentCount; i++)
 			{
-				var componentRef = new ObjectReference(reader);
+				ObjectReference componentRef = new ObjectReference(reader);
 				Components.Add(componentRef);
 				newLen -= 10 + componentRef.LevelName.Length + componentRef.PathName.Length;
 			}

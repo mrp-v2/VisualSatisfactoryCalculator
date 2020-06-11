@@ -1,5 +1,6 @@
-﻿using SatisfactorySaveParser.Structures;
-using System.IO;
+﻿using System.IO;
+
+using SatisfactorySaveParser.Structures;
 
 namespace SatisfactorySaveParser.PropertyTypes.Structs
 {
@@ -10,8 +11,21 @@ namespace SatisfactorySaveParser.PropertyTypes.Structs
 
 		public byte UnknownByte { get; set; }
 
-		public int SerializedLength => 25;
-		public string Type => "Box";
+		public int SerializedLength
+		{
+			get
+			{
+				return 25;
+			}
+		}
+
+		public string Type
+		{
+			get
+			{
+				return "Box";
+			}
+		}
 
 		public Box(BinaryReader reader)
 		{

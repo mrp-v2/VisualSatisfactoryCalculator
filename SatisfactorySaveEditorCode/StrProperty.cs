@@ -6,8 +6,21 @@ namespace SatisfactorySaveParser.PropertyTypes
 	public class StrProperty : SerializedProperty
 	{
 		public const string TypeName = nameof(StrProperty);
-		public override string PropertyType => TypeName;
-		public override int SerializedLength => Value.GetSerializedLength();
+		public override string PropertyType
+		{
+			get
+			{
+				return TypeName;
+			}
+		}
+
+		public override int SerializedLength
+		{
+			get
+			{
+				return Value.GetSerializedLength();
+			}
+		}
 
 		public string Value { get; set; }
 
@@ -22,9 +35,9 @@ namespace SatisfactorySaveParser.PropertyTypes
 
 		public static StrProperty Parse(string propertyName, int index, BinaryReader reader)
 		{
-			var result = new StrProperty(propertyName, index);
+			StrProperty result = new StrProperty(propertyName, index);
 
-			var unk3 = reader.ReadByte();
+			byte unk3 = reader.ReadByte();
 			Trace.Assert(unk3 == 0);
 
 			result.Value = reader.ReadLengthPrefixedString();

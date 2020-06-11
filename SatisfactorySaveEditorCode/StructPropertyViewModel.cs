@@ -1,4 +1,5 @@
 ﻿using SatisfactorySaveEditor.ViewModel.Struct;
+
 using SatisfactorySaveParser.PropertyTypes;
 using SatisfactorySaveParser.PropertyTypes.Structs;
 
@@ -10,11 +11,21 @@ namespace SatisfactorySaveEditor.ViewModel.Property
 
 		private object structData; // TODO: Rest of the owl, implement view models for structs
 
-		public string Type => model.Type;
+		public string Type
+		{
+			get
+			{
+				return model.Type;
+			}
+		}
 
 		public object StructData
 		{
-			get => structData;
+			get
+			{
+				return structData;
+			}
+
 			set { Set(() => StructData, ref structData, value); }
 		}
 
@@ -22,8 +33,14 @@ namespace SatisfactorySaveEditor.ViewModel.Property
 		{
 			model = structProperty;
 
-			if (model.Data is DynamicStructData dsd) structData = new DynamicStructDataViewModel(dsd);
-			else structData = model.Data;
+			if (model.Data is DynamicStructData dsd)
+			{
+				structData = new DynamicStructDataViewModel(dsd);
+			}
+			else
+			{
+				structData = model.Data;
+			}
 		}
 	}
 }

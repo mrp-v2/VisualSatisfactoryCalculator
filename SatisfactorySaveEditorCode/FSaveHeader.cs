@@ -51,7 +51,7 @@ namespace SatisfactorySaveParser.Save
 
 		public static FSaveHeader Parse(BinaryReader reader)
 		{
-			var header = new FSaveHeader
+			FSaveHeader header = new FSaveHeader
 			{
 				HeaderVersion = (SaveHeaderVersion)reader.ReadInt32(),
 				SaveVersion = (FSaveCustomVersion)reader.ReadInt32(),
@@ -66,7 +66,9 @@ namespace SatisfactorySaveParser.Save
 			};
 
 			if (header.HeaderVersion >= SaveHeaderVersion.AddedSessionVisibility)
+			{
 				header.SessionVisibility = (ESessionVisibility)reader.ReadByte();
+			}
 
 			return header;
 		}

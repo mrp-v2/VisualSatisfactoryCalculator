@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+
 using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.forms;
@@ -113,8 +113,15 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		private void AddProductionStep(ProductionStep ps, bool isItemProduct)
 		{
-			if (isItemProduct) ReplaceItemRateControl(parentStep.ChildProductSteps[ps], new ProductionStepControl(ps, mainForm, this), isItemProduct);
-			else ReplaceItemRateControl(parentStep.ChildIngredientSteps[ps], new ProductionStepControl(ps, mainForm, this), isItemProduct);
+			if (isItemProduct)
+			{
+				ReplaceItemRateControl(parentStep.ChildProductSteps[ps], new ProductionStepControl(ps, mainForm, this), isItemProduct);
+			}
+			else
+			{
+				ReplaceItemRateControl(parentStep.ChildIngredientSteps[ps], new ProductionStepControl(ps, mainForm, this), isItemProduct);
+			}
+
 			mainForm.UpdateTotalView();
 		}
 
@@ -191,7 +198,10 @@ namespace VisualSatisfactoryCalculator.controls.user
 			parentStep.RemoveStep();
 			mainForm.UpdateTotalView();
 			Parent.Controls.Remove(this);
-			if (parentControl != null) parentControl.UpdateButtons();
+			if (parentControl != null)
+			{
+				parentControl.UpdateButtons();
+			}
 		}
 
 		private void UpdateButtons()
@@ -237,14 +247,14 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				if (itemRateControl.IsProduct)
 				{
-					productUIDs.Remove(itemRateControl.ItemUID);
+					_ = productUIDs.Remove(itemRateControl.ItemUID);
 				}
 			}
 			foreach (ProductionStepControl productionStepControl in GetProductionStepControls())
 			{
 				if (productionStepControl.parentStep.IsProductOfParent)
 				{
-					productUIDs.Remove(parentStep.ChildProductSteps[productionStepControl.parentStep]);
+					_ = productUIDs.Remove(parentStep.ChildProductSteps[productionStepControl.parentStep]);
 				}
 			}
 			return productUIDs;
@@ -257,14 +267,14 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				if (!itemRateControl.IsProduct)
 				{
-					ingredientUIDs.Remove(itemRateControl.ItemUID);
+					_ = ingredientUIDs.Remove(itemRateControl.ItemUID);
 				}
 			}
 			foreach (ProductionStepControl productionStepControl in GetProductionStepControls())
 			{
 				if (!productionStepControl.parentStep.IsProductOfParent)
 				{
-					ingredientUIDs.Remove(parentStep.ChildIngredientSteps[productionStepControl.parentStep]);
+					_ = ingredientUIDs.Remove(parentStep.ChildIngredientSteps[productionStepControl.parentStep]);
 				}
 			}
 			return ingredientUIDs;

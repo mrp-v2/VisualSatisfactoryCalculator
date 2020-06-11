@@ -5,9 +5,21 @@ namespace SatisfactorySaveParser.PropertyTypes.Structs
 {
 	public class GuidStruct : IStructData
 	{
-		public int SerializedLength => 16;
+		public int SerializedLength
+		{
+			get
+			{
+				return 16;
+			}
+		}
 
-		public string Type => "Guid";
+		public string Type
+		{
+			get
+			{
+				return "Guid";
+			}
+		}
 
 		public Guid Data { get; set; }
 

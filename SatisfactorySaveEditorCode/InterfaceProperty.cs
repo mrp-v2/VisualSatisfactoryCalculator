@@ -6,8 +6,21 @@ namespace SatisfactorySaveParser.PropertyTypes
 	public class InterfaceProperty : SerializedProperty
 	{
 		public const string TypeName = nameof(InterfaceProperty);
-		public override string PropertyType => TypeName;
-		public override int SerializedLength => LevelName.GetSerializedLength() + PathName.GetSerializedLength();
+		public override string PropertyType
+		{
+			get
+			{
+				return TypeName;
+			}
+		}
+
+		public override int SerializedLength
+		{
+			get
+			{
+				return LevelName.GetSerializedLength() + PathName.GetSerializedLength();
+			}
+		}
 
 		public string LevelName { get; set; }
 		public string PathName { get; set; }
@@ -29,9 +42,9 @@ namespace SatisfactorySaveParser.PropertyTypes
 
 		public static InterfaceProperty Parse(string propertyName, int index, BinaryReader reader)
 		{
-			var result = new InterfaceProperty(propertyName, index);
+			InterfaceProperty result = new InterfaceProperty(propertyName, index);
 
-			var unk3 = reader.ReadByte();
+			byte unk3 = reader.ReadByte();
 			Trace.Assert(unk3 == 0);
 
 			result.LevelName = reader.ReadLengthPrefixedString();

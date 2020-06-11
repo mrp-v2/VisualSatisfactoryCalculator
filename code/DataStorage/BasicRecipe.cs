@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using VisualSatisfactoryCalculator.code.Extensions;
+
 using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.Utility;
 
@@ -40,8 +40,16 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public bool Equals(IRecipe other)
 		{
-			if (other == null) return false;
-			if (!(other is BasicRecipe)) return false;
+			if (other == null)
+			{
+				return false;
+			}
+
+			if (!(other is BasicRecipe))
+			{
+				return false;
+			}
+
 			return EqualID(other);
 		}
 
@@ -56,16 +64,30 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			bool first = true;
 			foreach (string key in Ingredients.Keys)
 			{
-				if (!first) str += ", ";
-				else first = false;
+				if (!first)
+				{
+					str += ", ";
+				}
+				else
+				{
+					first = false;
+				}
+
 				str += Ingredients[key].ToString(encodings);
 			}
 			str += " -> ";
 			first = true;
 			foreach (string key in Products.Keys)
 			{
-				if (!first) str += ", ";
-				else first = false;
+				if (!first)
+				{
+					str += ", ";
+				}
+				else
+				{
+					first = false;
+				}
+
 				str += Products[key].ToString(encodings);
 			}
 			str += " in " + Math.Round(CraftTime, 3) + " seconds using a " + encodings[MachineUID].DisplayName;
@@ -84,8 +106,14 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public decimal GetCountFor(string itemUID, bool isProduct)
 		{
-			if (isProduct) return Products[itemUID].Count;
-			else return Ingredients[itemUID].Count;
+			if (isProduct)
+			{
+				return Products[itemUID].Count;
+			}
+			else
+			{
+				return Ingredients[itemUID].Count;
+			}
 		}
 	}
 }

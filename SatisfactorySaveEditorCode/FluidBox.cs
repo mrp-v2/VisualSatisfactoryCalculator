@@ -6,8 +6,21 @@ namespace SatisfactorySaveParser.PropertyTypes.Structs
 	{
 		public float Unknown { get; set; }
 
-		public int SerializedLength => 25;
-		public string Type => "FluidBox";
+		public int SerializedLength
+		{
+			get
+			{
+				return 25;
+			}
+		}
+
+		public string Type
+		{
+			get
+			{
+				return "FluidBox";
+			}
+		}
 
 		public FluidBox(BinaryReader reader)
 		{

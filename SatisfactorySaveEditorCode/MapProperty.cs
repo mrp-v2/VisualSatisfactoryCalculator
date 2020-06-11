@@ -6,8 +6,21 @@ namespace SatisfactorySaveParser.PropertyTypes
 	public class MapProperty : SerializedProperty
 	{
 		public const string TypeName = nameof(MapProperty);
-		public override string PropertyType => TypeName;
-		public override int SerializedLength => Data.Length + 4;
+		public override string PropertyType
+		{
+			get
+			{
+				return TypeName;
+			}
+		}
+
+		public override int SerializedLength
+		{
+			get
+			{
+				return Data.Length + 4;
+			}
+		}
 
 		public string KeyType { get; set; }
 		public string ValueType { get; set; }
@@ -21,7 +34,7 @@ namespace SatisfactorySaveParser.PropertyTypes
 
 		public static MapProperty Parse(string propertyName, int index, BinaryReader reader, int size, out int overhead)
 		{
-			var result = new MapProperty(propertyName, index)
+			MapProperty result = new MapProperty(propertyName, index)
 			{
 				KeyType = reader.ReadLengthPrefixedString(),
 				ValueType = reader.ReadLengthPrefixedString()
@@ -29,10 +42,10 @@ namespace SatisfactorySaveParser.PropertyTypes
 
 			overhead = result.KeyType.Length + result.ValueType.Length + 11;
 
-			var unk = reader.ReadByte();
+			byte unk = reader.ReadByte();
 			Trace.Assert(unk == 0);
 
-			var unk1 = reader.ReadInt32();
+			int unk1 = reader.ReadInt32();
 			Trace.Assert(unk1 == 0);
 
 			result.Data = reader.ReadBytes(size - 4);

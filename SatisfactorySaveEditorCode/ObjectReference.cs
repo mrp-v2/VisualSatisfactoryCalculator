@@ -10,7 +10,18 @@ namespace SatisfactorySaveParser.Structures
 	{
 		public string LevelName { get; set; }
 		public string PathName { get; set; }
-		public SaveObject ReferencedObject { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+		public SaveObject ReferencedObject
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
 
 		public ObjectReference()
 		{

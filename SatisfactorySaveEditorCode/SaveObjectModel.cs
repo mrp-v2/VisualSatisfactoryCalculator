@@ -1,11 +1,14 @@
-using GalaSoft.MvvmLight;
-using SatisfactorySaveEditor.Util;
-using SatisfactorySaveEditor.ViewModel.Property;
-using SatisfactorySaveParser;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+
+using GalaSoft.MvvmLight;
+
+using SatisfactorySaveEditor.Util;
+using SatisfactorySaveEditor.ViewModel.Property;
+
+using SatisfactorySaveParser;
 
 namespace SatisfactorySaveEditor.Model
 {
@@ -28,10 +31,16 @@ namespace SatisfactorySaveEditor.Model
 		{
 			get
 			{
-				var list = new List<SaveObject>();
-				if (Model != null) list.Add(Model);
+				List<SaveObject> list = new List<SaveObject>();
+				if (Model != null)
+				{
+					list.Add(Model);
+				}
 
-				foreach (var item in Items) list.AddRange(item.DescendantSelf);
+				foreach (SaveObjectModel item in Items)
+				{
+					list.AddRange(item.DescendantSelf);
+				}
 
 				return list;
 			}
@@ -44,10 +53,16 @@ namespace SatisfactorySaveEditor.Model
 		{
 			get
 			{
-				var list = new List<SaveObjectModel>();
-				if (Model != null) list.Add(this);
+				List<SaveObjectModel> list = new List<SaveObjectModel>();
+				if (Model != null)
+				{
+					list.Add(this);
+				}
 
-				foreach (var item in Items) list.AddRange(item.DescendantSelfViewModel);
+				foreach (SaveObjectModel item in Items)
+				{
+					list.AddRange(item.DescendantSelfViewModel);
+				}
 
 				return list;
 			}
@@ -55,31 +70,51 @@ namespace SatisfactorySaveEditor.Model
 
 		public string Title
 		{
-			get => title;
+			get
+			{
+				return title;
+			}
+
 			set { Set(() => Title, ref title, value); }
 		}
 
 		public string RootObject
 		{
-			get => rootObject;
+			get
+			{
+				return rootObject;
+			}
+
 			set { Set(() => RootObject, ref rootObject, value); }
 		}
 
 		public string Type
 		{
-			get => type;
+			get
+			{
+				return type;
+			}
+
 			set { Set(() => Type, ref type, value); }
 		}
 
 		public bool IsSelected
 		{
-			get => isSelected;
+			get
+			{
+				return isSelected;
+			}
+
 			set { Set(() => IsSelected, ref isSelected, value); }
 		}
 
 		public bool IsExpanded
 		{
-			get => isExpanded;
+			get
+			{
+				return isExpanded;
+			}
+
 			set { Set(() => IsExpanded, ref isExpanded, value); }
 		}
 
@@ -112,16 +147,24 @@ namespace SatisfactorySaveEditor.Model
 		{
 			if (title == name)
 			{
-				if (expand) IsSelected = true;
+				if (expand)
+				{
+					IsSelected = true;
+				}
+
 				return this;
 			}
 
-			foreach (var item in Items)
+			foreach (SaveObjectModel item in Items)
 			{
-				var foundChild = item.FindChild(name, expand);
+				SaveObjectModel foundChild = item.FindChild(name, expand);
 				if (foundChild != null)
 				{
-					if (expand) IsExpanded = true;
+					if (expand)
+					{
+						IsExpanded = true;
+					}
+
 					return foundChild;
 				}
 			}
@@ -136,7 +179,7 @@ namespace SatisfactorySaveEditor.Model
 
 		public T FindField<T>(string fieldName, Action<T> edit = null) where T : SerializedPropertyViewModel
 		{
-			var field = Fields.FirstOrDefault(f => f.PropertyName == fieldName);
+			SerializedPropertyViewModel field = Fields.FirstOrDefault(f => f.PropertyName == fieldName);
 
 			if (field == null)
 			{
@@ -154,11 +197,11 @@ namespace SatisfactorySaveEditor.Model
 
 		public T FindOrCreateField<T>(string fieldName, Action<T> edit = null) where T : SerializedPropertyViewModel
 		{
-			var field = Fields.FirstOrDefault(f => f.PropertyName == fieldName);
+			SerializedPropertyViewModel field = Fields.FirstOrDefault(f => f.PropertyName == fieldName);
 
 			if (field == null)
 			{
-				var newVM = (T)PropertyViewModelMapper.Create<T>(fieldName);
+				T newVM = (T)PropertyViewModelMapper.Create<T>(fieldName);
 				Fields.Add(newVM);
 
 				edit?.Invoke(newVM);

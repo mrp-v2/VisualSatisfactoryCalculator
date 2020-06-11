@@ -1,8 +1,11 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
-using SatisfactorySaveEditor.Util;
-using SatisfactorySaveParser.PropertyTypes;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
+
+using GalaSoft.MvvmLight.CommandWpf;
+
+using SatisfactorySaveEditor.Util;
+
+using SatisfactorySaveParser.PropertyTypes;
 
 namespace SatisfactorySaveEditor.ViewModel.Property
 {
@@ -17,11 +20,21 @@ namespace SatisfactorySaveEditor.ViewModel.Property
 
 		public ObservableCollection<SerializedPropertyViewModel> Elements { get; }
 
-		public string Type => model.Type;
+		public string Type
+		{
+			get
+			{
+				return model.Type;
+			}
+		}
 
 		public bool IsExpanded
 		{
-			get => isExpanded;
+			get
+			{
+				return isExpanded;
+			}
+
 			set { Set(() => IsExpanded, ref isExpanded, value); }
 		}
 
@@ -30,7 +43,10 @@ namespace SatisfactorySaveEditor.ViewModel.Property
 			model = arrayProperty;
 
 			Elements = new ObservableCollection<SerializedPropertyViewModel>(arrayProperty.Elements.Select(PropertyViewModelMapper.Convert));
-			for (var i = 0; i < Elements.Count; i++) Elements[i].Index = i.ToString();
+			for (int i = 0; i < Elements.Count; i++)
+			{
+				Elements[i].Index = i.ToString();
+			}
 
 			AddElementCommand = new RelayCommand(AddElement);
 			RemoveElementCommand = new RelayCommand<SerializedPropertyViewModel>(RemoveElement);
@@ -41,8 +57,8 @@ namespace SatisfactorySaveEditor.ViewModel.Property
 		private void AddElement()
 		{
 			// TODO: Is copying the last PropertyName ok?
-			var property = AddViewModel.CreateProperty(AddViewModel.FromStringType(Type), Elements.Last().PropertyName);
-			var viewModel = PropertyViewModelMapper.Convert(property);
+			SerializedProperty property = AddViewModel.CreateProperty(AddViewModel.FromStringType(Type), Elements.Last().PropertyName);
+			SerializedPropertyViewModel viewModel = PropertyViewModelMapper.Convert(property);
 			viewModel.Index = Elements.Count.ToString();
 
 			Elements.Add(viewModel);

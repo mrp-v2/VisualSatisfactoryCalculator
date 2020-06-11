@@ -1,18 +1,39 @@
-﻿using SatisfactorySaveParser.PropertyTypes.Structs;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+
+using SatisfactorySaveParser.PropertyTypes.Structs;
 
 namespace SatisfactorySaveParser.PropertyTypes
 {
 	public class StructProperty : SerializedProperty
 	{
 		public const string TypeName = nameof(StructProperty);
-		public override string PropertyType => TypeName;
-		public override int SerializedLength => Data.SerializedLength;
+		public override string PropertyType
+		{
+			get
+			{
+				return TypeName;
+			}
+		}
 
-		public string Type => Data.Type;
+		public override int SerializedLength
+		{
+			get
+			{
+				return Data.SerializedLength;
+			}
+		}
+
+		public string Type
+		{
+			get
+			{
+				return Data.Type;
+			}
+		}
+
 		public int Unk1 { get; set; }
 		public int Unk2 { get; set; }
 		public int Unk3 { get; set; }
@@ -32,9 +53,9 @@ namespace SatisfactorySaveParser.PropertyTypes
 
 		public static int GetSerializedArrayLength(StructProperty[] properties)
 		{
-			var size = 4;
+			int size = 4;
 
-			var first = properties[0];
+			StructProperty first = properties[0];
 
 			size += first.PropertyName.GetSerializedLength();
 			size += TypeName.GetSerializedLength();
@@ -96,38 +117,38 @@ namespace SatisfactorySaveParser.PropertyTypes
 
 		public static StructProperty[] ParseArray(BinaryReader reader)
 		{
-			var count = reader.ReadInt32();
+			int count = reader.ReadInt32();
 			StructProperty[] result = new StructProperty[count];
 
-			var name = reader.ReadLengthPrefixedString();
+			string name = reader.ReadLengthPrefixedString();
 
-			var propertyType = reader.ReadLengthPrefixedString();
+			string propertyType = reader.ReadLengthPrefixedString();
 			Trace.Assert(propertyType == "StructProperty");
 
 #pragma warning disable IDE0059 // Unnecessary assignment of a value
-			var size = reader.ReadInt32();
+			int size = reader.ReadInt32();
 #pragma warning restore IDE0059 // Unnecessary assignment of a value
-			var index = reader.ReadInt32();
+			int index = reader.ReadInt32();
 
-			var structType = reader.ReadLengthPrefixedString();
+			string structType = reader.ReadLengthPrefixedString();
 
 
-			var unk1 = reader.ReadInt32();
+			int unk1 = reader.ReadInt32();
 			//Trace.Assert(unk1 == 0);
 
-			var unk2 = reader.ReadInt32();
+			int unk2 = reader.ReadInt32();
 			//Trace.Assert(unk2 == 0);
 
-			var unk3 = reader.ReadInt32();
+			int unk3 = reader.ReadInt32();
 			//Trace.Assert(unk3 == 0);
 
-			var unk4 = reader.ReadInt32();
+			int unk4 = reader.ReadInt32();
 			//Trace.Assert(unk4 == 0);
 
-			var unk5 = reader.ReadByte();
+			byte unk5 = reader.ReadByte();
 			Trace.Assert(unk5 == 0);
 
-			for (var i = 0; i < count; i++)
+			for (int i = 0; i < count; i++)
 			{
 				result[i] = new StructProperty(name, index)
 				{
@@ -146,8 +167,8 @@ namespace SatisfactorySaveParser.PropertyTypes
 
 		public static StructProperty Parse(string propertyName, int index, BinaryReader reader, int size, out int overhead)
 		{
-			var result = new StructProperty(propertyName, index);
-			var type = reader.ReadLengthPrefixedString();
+			StructProperty result = new StructProperty(propertyName, index);
+			string type = reader.ReadLengthPrefixedString();
 
 			overhead = type.Length + 22;
 
@@ -166,9 +187,9 @@ namespace SatisfactorySaveParser.PropertyTypes
 			result.Unk5 = reader.ReadByte();
 			Trace.Assert(result.Unk5 == 0);
 
-			var before = reader.BaseStream.Position;
+			long before = reader.BaseStream.Position;
 			result.Data = ParseStructData(reader, type);
-			var after = reader.BaseStream.Position;
+			long after = reader.BaseStream.Position;
 
 			if (before + size != after)
 			{

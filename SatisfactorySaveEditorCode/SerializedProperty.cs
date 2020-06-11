@@ -22,20 +22,20 @@ namespace SatisfactorySaveParser.PropertyTypes
 		{
 			SerializedProperty result;
 
-			var propertyName = reader.ReadLengthPrefixedString();
+			string propertyName = reader.ReadLengthPrefixedString();
 			if (propertyName == "None")
 			{
 				return null;
 			}
 
-			Trace.Assert(!String.IsNullOrEmpty(propertyName));
+			Trace.Assert(!string.IsNullOrEmpty(propertyName));
 
-			var fieldType = reader.ReadLengthPrefixedString();
-			var size = reader.ReadInt32();
-			var index = reader.ReadInt32();
+			string fieldType = reader.ReadLengthPrefixedString();
+			int size = reader.ReadInt32();
+			int index = reader.ReadInt32();
 
 			int overhead;
-			var before = reader.BaseStream.Position;
+			long before = reader.BaseStream.Position;
 			switch (fieldType)
 			{
 				case ArrayProperty.TypeName:
@@ -96,8 +96,8 @@ namespace SatisfactorySaveParser.PropertyTypes
 					throw new NotImplementedException(fieldType);
 			}
 
-			var after = reader.BaseStream.Position;
-			var readBytes = (int)(after - before - overhead);
+			long after = reader.BaseStream.Position;
+			int readBytes = (int)(after - before - overhead);
 
 			if (size != readBytes)
 			{

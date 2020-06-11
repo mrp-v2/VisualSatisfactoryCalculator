@@ -1,39 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
-using VisualSatisfactoryCalculator.code.Extensions;
+
 using VisualSatisfactoryCalculator.code.Interfaces;
 
 namespace VisualSatisfactoryCalculator.code.DataStorage
 {
 	[Serializable]
-	class CondensedProductionStep
+	internal class CondensedProductionStep
 	{
-		protected readonly Dictionary<CondensedProductionStep, string> childProducts;
-		protected readonly Dictionary<CondensedProductionStep, string> childIngredients;
-		private readonly string recipeUID;
-		private readonly bool isProduct;
+		protected readonly Dictionary<CondensedProductionStep, string> _childProducts;
+		protected readonly Dictionary<CondensedProductionStep, string> _childIngredients;
+		private readonly string _recipeUID;
+		private readonly bool _isProduct;
 
 		public IRecipe GetRecipe(Dictionary<string, IRecipe> recipes)
 		{
-			return recipes[recipeUID];
+			return recipes[_recipeUID];
 		}
 
 		public ProductionStep ToProductionStep(Dictionary<string, IRecipe> recipes, ProductionStep parent, string itemUID)
 		{
 			IRecipe myRecipe = GetRecipe(recipes);
-			ProductionStep step = new ProductionStep(myRecipe, parent, itemUID, isProduct);
-			if (childProducts != null && childProducts.Count > 0)
+			ProductionStep step = new ProductionStep(myRecipe, parent, itemUID, _isProduct);
+			if (_childProducts != null && _childProducts.Count > 0)
 			{
-				foreach (CondensedProductionStep child in childProducts.Keys)
+				foreach (CondensedProductionStep child in _childProducts.Keys)
 				{
-					child.ToProductionStep(recipes, step, childProducts[child]);
+					_ = child.ToProductionStep(recipes, step, _childProducts[child]);
 				}
 			}
-			if (childIngredients != null && childIngredients.Count > 0)
+			if (_childIngredients != null && _childIngredients.Count > 0)
 			{
-				foreach (CondensedProductionStep child in childIngredients.Keys)
+				foreach (CondensedProductionStep child in _childIngredients.Keys)
 				{
-					child.ToProductionStep(recipes, step, childIngredients[child]);
+					_ = child.ToProductionStep(recipes, step, _childIngredients[child]);
 				}
 			}
 			return step;
@@ -41,22 +41,22 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public CondensedProductionStep(ProductionStep step)
 		{
-			recipeUID = step.GetRecipe().UID;
-			isProduct = step.IsProductOfParent;
+			_recipeUID = step.GetRecipe().UID;
+			_isProduct = step.IsProductOfParent;
 			if (step.ChildIngredientSteps.Count > 0)
 			{
-				childIngredients = new Dictionary<CondensedProductionStep, string>();
+				_childIngredients = new Dictionary<CondensedProductionStep, string>();
 				foreach (ProductionStep childStep in step.ChildIngredientSteps.Keys)
 				{
-					childIngredients.Add(new CondensedProductionStep(childStep), step.ChildIngredientSteps[childStep]);
+					_childIngredients.Add(new CondensedProductionStep(childStep), step.ChildIngredientSteps[childStep]);
 				}
 			}
 			if (step.ChildProductSteps.Count > 0)
 			{
-				childProducts = new Dictionary<CondensedProductionStep, string>();
+				_childProducts = new Dictionary<CondensedProductionStep, string>();
 				foreach (ProductionStep childStep in step.ChildProductSteps.Keys)
 				{
-					childProducts.Add(new CondensedProductionStep(childStep), step.ChildProductSteps[childStep]);
+					_childProducts.Add(new CondensedProductionStep(childStep), step.ChildProductSteps[childStep]);
 				}
 			}
 		}

@@ -9,7 +9,13 @@ namespace SatisfactorySaveParser.PropertyTypes.Structs
 		public string Type { get; }
 		public List<SerializedProperty> Fields { get; set; } = new List<SerializedProperty>();
 
-		public int SerializedLength => Fields.Sum(f => f.PropertyName.GetSerializedLength() + f.PropertyType.GetSerializedLength() + 8 + f.SerializedLength) + "None".GetSerializedLength();
+		public int SerializedLength
+		{
+			get
+			{
+				return Fields.Sum(f => f.PropertyName.GetSerializedLength() + f.PropertyType.GetSerializedLength() + 8 + f.SerializedLength) + "None".GetSerializedLength();
+			}
+		}
 
 		public DynamicStructData(BinaryReader reader, string type)
 		{

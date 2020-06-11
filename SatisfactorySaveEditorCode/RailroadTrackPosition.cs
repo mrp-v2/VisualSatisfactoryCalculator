@@ -10,8 +10,21 @@ namespace SatisfactorySaveParser.PropertyTypes.Structs
 		public float Forward { get; set; }
 
 
-		public int SerializedLength => Root.GetSerializedLength() + InstanceName.GetSerializedLength() + 8;
-		public string Type => "RailroadTrackPosition";
+		public int SerializedLength
+		{
+			get
+			{
+				return Root.GetSerializedLength() + InstanceName.GetSerializedLength() + 8;
+			}
+		}
+
+		public string Type
+		{
+			get
+			{
+				return "RailroadTrackPosition";
+			}
+		}
 
 		public RailroadTrackPosition(BinaryReader reader)
 		{

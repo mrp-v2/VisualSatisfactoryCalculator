@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+
 using SatisfactorySaveParser.PropertyTypes;
 
 namespace SatisfactorySaveEditor.ViewModel.Property
@@ -7,7 +8,13 @@ namespace SatisfactorySaveEditor.ViewModel.Property
 	{
 		public readonly SerializedProperty Model;
 
-		public string PropertyName => Model.PropertyName;
+		public string PropertyName
+		{
+			get
+			{
+				return Model.PropertyName;
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the index of this property in an array

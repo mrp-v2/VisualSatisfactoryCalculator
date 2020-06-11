@@ -9,8 +9,21 @@ namespace SatisfactorySaveParser.PropertyTypes.Structs
 		public float B { get; set; }
 		public float A { get; set; }
 
-		public int SerializedLength => 16;
-		public string Type => "LinearColor";
+		public int SerializedLength
+		{
+			get
+			{
+				return 16;
+			}
+		}
+
+		public string Type
+		{
+			get
+			{
+				return "LinearColor";
+			}
+		}
 
 		public LinearColor(float r, float g, float b, float a)
 		{

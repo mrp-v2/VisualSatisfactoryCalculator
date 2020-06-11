@@ -1,13 +1,17 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using SatisfactorySaveEditor.Model;
-using SatisfactorySaveEditor.Util;
-using SatisfactorySaveEditor.ViewModel.Property;
-using SatisfactorySaveParser;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+using SatisfactorySaveEditor.Model;
+using SatisfactorySaveEditor.Util;
+using SatisfactorySaveEditor.ViewModel.Property;
+
+using SatisfactorySaveParser;
+
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.JSONClasses;
@@ -16,9 +20,10 @@ namespace VisualSatisfactoryCalculator.code.Utility
 {
 	public class SaveFileInteractor
 	{
-		private readonly string jsonFile;
-		private readonly Dictionary<string, JArray> docGroups;
-		private readonly JsonSerializer jsonSerializer;
+		private readonly string _jsonFile;
+		private readonly Dictionary<string, JArray> _docGroups;
+		private readonly JsonSerializer _jsonSerializer;
+		private readonly ResearchToRecipeMapping _rTRMapping;
 
 		public Dictionary<string, IRecipe> GetUnlockedRecipesFromSave(string saveFile, Dictionary<string, IEncoder> encoders)
 		{
@@ -39,9 +44,15 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			Dictionary<string, IRecipe> allRecipes = new Dictionary<string, IRecipe>();
 			foreach (IEncoder encoder in encoders.Values)
 			{
-				if (encoder is IRecipe) allRecipes.Add((encoder as IRecipe).UID, encoder as IRecipe);
+				if (encoder is IRecipe)
+				{
+					allRecipes.Add((encoder as IRecipe).UID, encoder as IRecipe);
+				}
 			}
 			Dictionary<string, IRecipe> unlockedRecipes = new Dictionary<string, IRecipe>();
+#if DEBUG
+			List<string> unlockedIDs = new List<string>();
+#endif
 			foreach (SerializedPropertyViewModel field in schematics.Fields)
 			{
 				if (field.PropertyName == "mPurchasedSchematics")
@@ -55,11 +66,36 @@ namespace VisualSatisfactoryCalculator.code.Utility
 						if (element is ObjectPropertyViewModel opvm)
 						{
 							string id = opvm.Str2.Substring(opvm.Str2.IndexOf(".") + 1);
-							unlockedRecipes.AddRange(ResearchToRecipeMapping.GetRecipesForResearch(id, allRecipes));
+#if DEBUG
+							unlockedIDs.Add(id);
+#endif
+							unlockedRecipes.AddRange(_rTRMapping.GetRecipesForResearch(id, allRecipes));
 						}
 					}
 				}
 			}
+#if DEBUG
+			unlockedIDs.Sort();
+			string fileToMake = $".\\data\\{saveFile.Substring(saveFile.LastIndexOf("\\") + 1)}-unlocks.txt";
+			if (File.Exists(fileToMake))
+			{
+				File.Delete(fileToMake);
+			}
+			StreamWriter writer = File.CreateText(fileToMake);
+			for (int i = 0; i < unlockedIDs.Count; i++)
+			{
+				if (i < unlockedIDs.Count - 1)
+				{
+					writer.WriteLine(unlockedIDs[i]);
+				}
+				else
+				{
+					writer.Write(unlockedIDs[i]);
+				}
+			}
+			writer.Close();
+			writer.Dispose();
+#endif
 			return unlockedRecipes;
 		}
 
@@ -68,25 +104,29 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			Dictionary<string, IRecipe> allRecipes = new Dictionary<string, IRecipe>();
 			foreach (IEncoder encoder in encoders.Values)
 			{
-				if (encoder is IRecipe) allRecipes.Add((encoder as IRecipe).UID, encoder as IRecipe);
+				if (encoder is IRecipe)
+				{
+					allRecipes.Add((encoder as IRecipe).UID, encoder as IRecipe);
+				}
 			}
-			return ResearchToRecipeMapping.GetAllRelevantRecipes(allRecipes);
+			return _rTRMapping.GetAllRelevantRecipes(allRecipes);
 		}
 
 		public SaveFileInteractor()
 		{
-			jsonFile = File.ReadAllText(".\\data\\Docs.json");
-			jsonSerializer = new JsonSerializer()
+			_jsonFile = File.ReadAllText(".\\data\\Docs.json");
+			_jsonSerializer = new JsonSerializer()
 			{
 				Culture = System.Globalization.CultureInfo.GetCultureInfo(1033),
 			};
-			docGroups = new Dictionary<string, JArray>();
+			_docGroups = new Dictionary<string, JArray>();
+			_rTRMapping = new ResearchToRecipeMapping();
 			//
-			List<JToken> groups = JArray.Parse(jsonFile).Children().ToList();
+			List<JToken> groups = JArray.Parse(_jsonFile).Children().ToList();
 			foreach (JToken token in groups)
 			{
 				string className = token.Value<string>("NativeClass");
-				docGroups.Add(className, token.Value<JArray>("Classes"));
+				_docGroups.Add(className, token.Value<JArray>("Classes"));
 			}
 		}
 
@@ -104,7 +144,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			Dictionary<string, IEncoder> totalResults = new Dictionary<string, IEncoder>();
 			foreach (JToken token in results)
 			{
-				JSONItem item = token.ToObject<JSONItem>(jsonSerializer);
+				JSONItem item = token.ToObject<JSONItem>(_jsonSerializer);
 				totalResults.Add(item.UID, item);
 			}
 			//JSONBuildings
@@ -112,7 +152,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			results.AddRange(GetSection("FGBuildableManufacturer"));
 			foreach (JToken token in results)
 			{
-				JSONBuilding building = token.ToObject<JSONBuilding>(jsonSerializer);
+				JSONBuilding building = token.ToObject<JSONBuilding>(_jsonSerializer);
 				totalResults.Add(building.UID, building);
 			}
 			//Constants
@@ -122,7 +162,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			results.AddRange(GetSection("FGRecipe"));
 			foreach (JToken token in results)
 			{
-				JSONRecipe recipe = token.ToObject<JSONRecipe>(jsonSerializer);
+				JSONRecipe recipe = token.ToObject<JSONRecipe>(_jsonSerializer);
 				totalResults.Add(recipe.UID, recipe);
 			}
 			//JSONGenerators -- must go near end, uses encodings to get energy value of fuel
@@ -132,11 +172,14 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			List<JSONGenerator> generatorResults = new List<JSONGenerator>();
 			foreach (JToken token in results)
 			{
-				generatorResults.Add(token.ToObject<JSONGenerator>(jsonSerializer));
+				generatorResults.Add(token.ToObject<JSONGenerator>(_jsonSerializer));
 			}
 			foreach (JSONGenerator generator in generatorResults)
 			{
-				if (generator.DisplayName.Equals("Biomass Burner")) continue;
+				if (generator.DisplayName.Equals("Biomass Burner"))
+				{
+					continue;
+				}
 				//generators recipes
 				totalResults.AddRange(generator.GetRecipes(totalResults));
 				//generator itself
@@ -150,7 +193,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 		private List<JToken> GetSection(string nativeClass)
 		{
 			nativeClass = "Class'/Script/FactoryGame." + nativeClass + "'";
-			return docGroups[nativeClass].Children().ToList();
+			return _docGroups[nativeClass].Children().ToList();
 		}
 
 		private void BuildNode(ObservableCollection<SaveObjectModel> items, EditorTreeNode node)

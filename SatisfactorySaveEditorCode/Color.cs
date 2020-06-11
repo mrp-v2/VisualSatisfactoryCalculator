@@ -9,8 +9,21 @@ namespace SatisfactorySaveParser.PropertyTypes.Structs
 		public byte B { get; set; }
 		public byte A { get; set; }
 
-		public int SerializedLength => 4;
-		public string Type => "Color";
+		public int SerializedLength
+		{
+			get
+			{
+				return 4;
+			}
+		}
+
+		public string Type
+		{
+			get
+			{
+				return "Color";
+			}
+		}
 
 		public Color(BinaryReader reader)
 		{

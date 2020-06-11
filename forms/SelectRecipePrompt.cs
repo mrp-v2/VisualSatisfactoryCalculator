@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
+
 using VisualSatisfactoryCalculator.code.Interfaces;
 
 namespace VisualSatisfactoryCalculator.forms
@@ -16,7 +16,7 @@ namespace VisualSatisfactoryCalculator.forms
 			originalList = options.Values;
 			foreach (IRecipe rec in options.Values)
 			{
-				RecipesList.Items.Add(rec);
+				_ = RecipesList.Items.Add(rec);
 			}
 		}
 
@@ -52,7 +52,7 @@ namespace VisualSatisfactoryCalculator.forms
 			{
 				if (recipe.ToString().ToLower().Contains(FilterBox.Text.ToLower()))
 				{
-					RecipesList.Items.Add(recipe);
+					_ = RecipesList.Items.Add(recipe);
 				}
 			}
 			RecipesList.EndUpdate();

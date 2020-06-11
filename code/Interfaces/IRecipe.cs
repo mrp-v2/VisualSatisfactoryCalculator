@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using VisualSatisfactoryCalculator.code.DataStorage;
 
 namespace VisualSatisfactoryCalculator.code.Interfaces

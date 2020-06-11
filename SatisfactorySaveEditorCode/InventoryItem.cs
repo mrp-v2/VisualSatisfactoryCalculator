@@ -11,7 +11,11 @@ namespace SatisfactorySaveParser.PropertyTypes.Structs
 
 		public string ItemType
 		{
-			get => itemType;
+			get
+			{
+				return itemType;
+			}
+
 			set
 			{
 				itemType = value;
@@ -22,8 +26,21 @@ namespace SatisfactorySaveParser.PropertyTypes.Structs
 		public string Unknown2 { get; set; }
 		public string Unknown3 { get; set; }
 
-		public int SerializedLength => 4 + ItemType.GetSerializedLength() + Unknown2.GetSerializedLength() + Unknown3.GetSerializedLength();
-		public string Type => "InventoryItem";
+		public int SerializedLength
+		{
+			get
+			{
+				return 4 + ItemType.GetSerializedLength() + Unknown2.GetSerializedLength() + Unknown3.GetSerializedLength();
+			}
+		}
+
+		public string Type
+		{
+			get
+			{
+				return "InventoryItem";
+			}
+		}
 
 		public InventoryItem(BinaryReader reader)
 		{

@@ -8,16 +8,28 @@ namespace SatisfactorySaveParser.PropertyTypes
 	public class TextProperty : SerializedProperty
 	{
 		public const string TypeName = nameof(TextProperty);
-		public override string PropertyType => TypeName;
+		public override string PropertyType
+		{
+			get
+			{
+				return TypeName;
+			}
+		}
+
 		public override int SerializedLength
 		{
 			get
 			{
-				if (Unknown5 == 255) return 5;
+				if (Unknown5 == 255)
+				{
+					return 5;
+				}
 
-				var size = 9 + Unknown8.GetSerializedLength() + Value.GetSerializedLength() + FormatData.Sum(d => d.SerializedLength);
+				int size = 9 + Unknown8.GetSerializedLength() + Value.GetSerializedLength() + FormatData.Sum(d => d.SerializedLength);
 				if (Unknown5 == 3)
+				{
 					size += 9;
+				}
 
 				return size;
 			}
@@ -43,11 +55,11 @@ namespace SatisfactorySaveParser.PropertyTypes
 
 		public static TextProperty Parse(string propertyName, int index, BinaryReader reader, bool inArray = false)
 		{
-			var result = new TextProperty(propertyName, index);
+			TextProperty result = new TextProperty(propertyName, index);
 
 			if (!inArray)
 			{
-				var unk3 = reader.ReadByte();
+				byte unk3 = reader.ReadByte();
 				Trace.Assert(unk3 == 0);
 			}
 
@@ -64,7 +76,7 @@ namespace SatisfactorySaveParser.PropertyTypes
 				return result;
 			}
 
-			var unk5 = reader.ReadInt32();
+			int unk5 = reader.ReadInt32();
 			Trace.Assert(unk5 == 0);
 
 			result.Unknown8 = reader.ReadLengthPrefixedString();
@@ -73,8 +85,8 @@ namespace SatisfactorySaveParser.PropertyTypes
 
 			if (result.Unknown5 == 3)
 			{
-				var count = reader.ReadInt32();
-				for (var i = 0; i < count; i++)
+				int count = reader.ReadInt32();
+				for (int i = 0; i < count; i++)
 				{
 					result.FormatData.Add(new TextFormatData()
 					{
@@ -95,7 +107,13 @@ namespace SatisfactorySaveParser.PropertyTypes
 
 	public class TextFormatData
 	{
-		public int SerializedLength => Name.GetSerializedLength() + 14 + Data.GetSerializedLength();
+		public int SerializedLength
+		{
+			get
+			{
+				return Name.GetSerializedLength() + 14 + Data.GetSerializedLength();
+			}
+		}
 
 		public string Name { get; set; }
 		public byte Unknown1 { get; set; }

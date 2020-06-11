@@ -6,9 +6,21 @@ namespace SatisfactorySaveParser.PropertyTypes
 	public class IntProperty : SerializedProperty
 	{
 		public const string TypeName = nameof(IntProperty);
-		public override string PropertyType => TypeName;
+		public override string PropertyType
+		{
+			get
+			{
+				return TypeName;
+			}
+		}
 
-		public override int SerializedLength => 4;
+		public override int SerializedLength
+		{
+			get
+			{
+				return 4;
+			}
+		}
 
 		public int Value { get; set; }
 
@@ -23,7 +35,7 @@ namespace SatisfactorySaveParser.PropertyTypes
 
 		public static IntProperty Parse(string propertyName, int index, BinaryReader reader)
 		{
-			var unk3 = reader.ReadByte();
+			byte unk3 = reader.ReadByte();
 			Trace.Assert(unk3 == 0);
 
 			return new IntProperty(propertyName, index)

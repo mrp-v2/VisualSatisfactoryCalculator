@@ -1,14 +1,15 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
+
+using Newtonsoft.Json;
+
 using VisualSatisfactoryCalculator.code.DataStorage;
-using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
-	class JSONGenerator : IBuilding
+	internal class JSONGenerator : IBuilding
 	{
 		public string UID { get; }
 		private readonly string[] defaultFuelClasses;
@@ -25,7 +26,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			DisplayName = mDisplayName;
 		}
 
-		public static readonly decimal GeneratorEnergyDivisor = 16m + 2m / 3m;
+		public static readonly decimal GeneratorEnergyDivisor = 16m + (2m / 3m);
 
 		public Dictionary<string, IRecipe> GetRecipes(Dictionary<string, IEncoder> encodings)
 		{
@@ -42,7 +43,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 				JSONItem jItem = encodingItem as JSONItem;
 				List<ItemCount> ingredients = new List<ItemCount>
 				{
-					new ItemCount(itemID, (decimal.Parse(powerProduction) / (jItem.EnergyValue / 1000) / GeneratorEnergyDivisor))
+					new ItemCount(itemID, decimal.Parse(powerProduction) / (jItem.EnergyValue / 1000) / GeneratorEnergyDivisor)
 				};
 				List<ItemCount> products = new List<ItemCount>
 				{

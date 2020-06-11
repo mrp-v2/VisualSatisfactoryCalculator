@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.Utility;
@@ -102,16 +103,28 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			{
 				if (netRates[itemUID] > 0 && Math.Round(netRates[itemUID], 5) != 0)
 				{
-					if ((encodings[itemUID] as IItem).IsLiquid) str += Math.Round(netRates[itemUID] / 1000, 5) + " " + encodings[itemUID].DisplayName + ", ";
-					else str += Math.Round(netRates[itemUID], 5) + " " + encodings[itemUID].DisplayName + ", ";
+					if ((encodings[itemUID] as IItem).IsLiquid)
+					{
+						str += Math.Round(netRates[itemUID] / 1000, 5) + " " + encodings[itemUID].DisplayName + ", ";
+					}
+					else
+					{
+						str += Math.Round(netRates[itemUID], 5) + " " + encodings[itemUID].DisplayName + ", ";
+					}
 				}
 			}
 			str += "\nAll Products: ";
 			Dictionary<string, decimal> rates = GetAllProductRates();
 			foreach (string itemUID in rates.Keys)
 			{
-				if ((encodings[itemUID] as IItem).IsLiquid) str += Math.Round(rates[itemUID] / 1000, 5) + " " + encodings[itemUID].DisplayName + ", ";
-				else str += Math.Round(rates[itemUID], 5) + " " + encodings[itemUID].DisplayName + ", ";
+				if ((encodings[itemUID] as IItem).IsLiquid)
+				{
+					str += Math.Round(rates[itemUID] / 1000, 5) + " " + encodings[itemUID].DisplayName + ", ";
+				}
+				else
+				{
+					str += Math.Round(rates[itemUID], 5) + " " + encodings[itemUID].DisplayName + ", ";
+				}
 			}
 			return str;
 		}
@@ -122,8 +135,14 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			Dictionary<string, decimal> rates = GetAllIngredientRates(encodings);
 			foreach (string itemUID in rates.Keys)
 			{
-				if ((encodings[itemUID] as IItem).IsLiquid) str += Math.Round(rates[itemUID] / 1000, 5) + " " + encodings[itemUID].DisplayName + ", ";
-				else str += Math.Round(rates[itemUID], 5) + " " + encodings[itemUID].DisplayName + ", ";
+				if ((encodings[itemUID] as IItem).IsLiquid)
+				{
+					str += Math.Round(rates[itemUID] / 1000, 5) + " " + encodings[itemUID].DisplayName + ", ";
+				}
+				else
+				{
+					str += Math.Round(rates[itemUID], 5) + " " + encodings[itemUID].DisplayName + ", ";
+				}
 			}
 			str += "\nNet Ingredients: ";
 			Dictionary<string, decimal> netRates = GetNetRates(encodings);
@@ -131,8 +150,14 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			{
 				if (netRates[itemUID] < 0 && Math.Round(netRates[itemUID], 5) != 0)
 				{
-					if ((encodings[itemUID] as IItem).IsLiquid) str += Math.Round(-netRates[itemUID] / 1000, 5) + " " + encodings[itemUID].DisplayName + ", ";
-					else str += Math.Round(-netRates[itemUID], 5) + " " + encodings[itemUID].DisplayName + ", ";
+					if ((encodings[itemUID] as IItem).IsLiquid)
+					{
+						str += Math.Round(-netRates[itemUID] / 1000, 5) + " " + encodings[itemUID].DisplayName + ", ";
+					}
+					else
+					{
+						str += Math.Round(-netRates[itemUID], 5) + " " + encodings[itemUID].DisplayName + ", ";
+					}
 				}
 			}
 			return str;

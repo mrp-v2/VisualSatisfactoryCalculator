@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using VisualSatisfactoryCalculator.code.Interfaces;
 
 namespace VisualSatisfactoryCalculator.code.DataStorage
@@ -17,7 +18,11 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public string ToString(Dictionary<string, IEncoder> encodings)
 		{
-			if ((encodings[ItemUID] as IItem).IsLiquid) return Math.Round(Count / 1000, 3) + " " + encodings[ItemUID].DisplayName;
+			if ((encodings[ItemUID] as IItem).IsLiquid)
+			{
+				return Math.Round(Count / 1000, 3) + " " + encodings[ItemUID].DisplayName;
+			}
+
 			return Math.Round(Count, 3) + " " + encodings[ItemUID].DisplayName;
 		}
 
@@ -28,8 +33,16 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public override bool Equals(object obj)
 		{
-			if (obj == null) return false;
-			if (!(obj is ItemCount)) return false;
+			if (obj == null)
+			{
+				return false;
+			}
+
+			if (!(obj is ItemCount))
+			{
+				return false;
+			}
+
 			return ItemUID.Equals((obj as ItemCount).ItemUID) && Count == (obj as ItemCount).Count;
 		}
 

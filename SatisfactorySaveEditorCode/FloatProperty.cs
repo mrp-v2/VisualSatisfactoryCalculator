@@ -6,8 +6,22 @@ namespace SatisfactorySaveParser.PropertyTypes
 	public class FloatProperty : SerializedProperty
 	{
 		public const string TypeName = nameof(FloatProperty);
-		public override string PropertyType => TypeName;
-		public override int SerializedLength => 4;
+		public override string PropertyType
+		{
+			get
+			{
+				return TypeName;
+			}
+		}
+
+		public override int SerializedLength
+		{
+			get
+			{
+				return 4;
+			}
+		}
+
 		public float Value { get; set; }
 
 		public FloatProperty(string propertyName, int index = 0) : base(propertyName, index)
@@ -21,9 +35,9 @@ namespace SatisfactorySaveParser.PropertyTypes
 
 		public static FloatProperty Parse(string propertyName, int index, BinaryReader reader)
 		{
-			var result = new FloatProperty(propertyName, index);
+			FloatProperty result = new FloatProperty(propertyName, index);
 
-			var unk3 = reader.ReadByte();
+			byte unk3 = reader.ReadByte();
 			Trace.Assert(unk3 == 0);
 
 			result.Value = reader.ReadSingle();

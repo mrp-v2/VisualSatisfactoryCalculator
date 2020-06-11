@@ -10,7 +10,11 @@ namespace SatisfactorySaveEditor.ViewModel.Property
 
 		public long Value
 		{
-			get => value;
+			get
+			{
+				return value;
+			}
+
 			set { Set(() => Value, ref this.value, value); }
 		}
 

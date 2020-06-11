@@ -15,42 +15,70 @@ namespace SatisfactorySaveEditor.Model
 
 		public bool NeedTransform
 		{
-			get => needTransform;
+			get
+			{
+				return needTransform;
+			}
+
 			set { Set(() => NeedTransform, ref needTransform, value); }
 		}
 
 		public bool WasPlacedInLevel
 		{
-			get => wasPlacedInLevel;
+			get
+			{
+				return wasPlacedInLevel;
+			}
+
 			set { Set(() => WasPlacedInLevel, ref wasPlacedInLevel, value); }
 		}
 
 		public Vector4 Rotation
 		{
-			get => rotation;
+			get
+			{
+				return rotation;
+			}
+
 			set { Set(() => Rotation, ref rotation, value); }
 		}
 		public Vector3 Position
 		{
-			get => position;
+			get
+			{
+				return position;
+			}
+
 			set { Set(() => Position, ref position, value); }
 		}
 
 		public Vector3 Scale
 		{
-			get => scale;
+			get
+			{
+				return scale;
+			}
+
 			set { Set(() => Scale, ref scale, value); }
 		}
 
 		public string ParentObjectRoot
 		{
-			get => parentObjectRoot;
+			get
+			{
+				return parentObjectRoot;
+			}
+
 			set { Set(() => ParentObjectRoot, ref parentObjectRoot, value); }
 		}
 
 		public string ParentObjectName
 		{
-			get => parentObjectName;
+			get
+			{
+				return parentObjectName;
+			}
+
 			set { Set(() => ParentObjectName, ref parentObjectName, value); }
 		}
 

@@ -1,8 +1,9 @@
-﻿using SatisfactorySaveParser.Save;
-using SatisfactorySaveParser.Structures;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Text;
+
+using SatisfactorySaveParser.Save;
+using SatisfactorySaveParser.Structures;
 
 namespace SatisfactorySaveParser
 {
@@ -10,14 +11,14 @@ namespace SatisfactorySaveParser
 	{
 		public static char[] ReadCharArray(this BinaryReader reader)
 		{
-			var count = reader.ReadInt32();
+			int count = reader.ReadInt32();
 			if (count >= 0)
 			{
 				return reader.ReadChars(count);
 			}
 			else
 			{
-				var bytes = reader.ReadBytes(count * -2);
+				byte[] bytes = reader.ReadBytes(count * -2);
 				return Encoding.Unicode.GetChars(bytes);
 			}
 		}
@@ -29,7 +30,10 @@ namespace SatisfactorySaveParser
 
 		public static int GetSerializedLength(this string str)
 		{
-			if (str == null || str.Length == 0) return 4;
+			if (str == null || str.Length == 0)
+			{
+				return 4;
+			}
 
 			if (str.Any(c => c > 127))
 			{

@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Runtime.Remoting.Lifetime;
 using System.Windows.Forms;
+
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
 
@@ -21,8 +21,15 @@ namespace VisualSatisfactoryCalculator.controls.user
 			ItemUID = itemUID;
 			IsProduct = isProduct;
 			ItemButton.Text = parentControl.mainForm.Encoders[itemUID].DisplayName;
-			if ((parentControl.mainForm.Encoders[itemUID] as IItem).IsLiquid) RateNumeric.Value = rate.Abs() / 1000;
-			else RateNumeric.Value = rate.Abs();
+			if ((parentControl.mainForm.Encoders[itemUID] as IItem).IsLiquid)
+			{
+				RateNumeric.Value = rate.Abs() / 1000;
+			}
+			else
+			{
+				RateNumeric.Value = rate.Abs();
+			}
+
 			UpdateButton();
 		}
 
@@ -35,8 +42,15 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			if (Enabled && initialized)
 			{
-				if ((parentControl.mainForm.Encoders[ItemUID] as IItem).IsLiquid) parentControl.RateChanged(ItemUID, RateNumeric.Value * 1000, IsProduct);
-				else parentControl.RateChanged(ItemUID, RateNumeric.Value, IsProduct);
+				if ((parentControl.mainForm.Encoders[ItemUID] as IItem).IsLiquid)
+				{
+					parentControl.RateChanged(ItemUID, RateNumeric.Value * 1000, IsProduct);
+				}
+				else
+				{
+					parentControl.RateChanged(ItemUID, RateNumeric.Value, IsProduct);
+				}
+
 				parentControl.mainForm.UpdateTotalView();
 			}
 		}
@@ -50,8 +64,14 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			if (newRate != RateNumeric.Value)
 			{
-				if ((parentControl.mainForm.Encoders[ItemUID] as IItem).IsLiquid) RateNumeric.Value = newRate.Abs() / 1000;
-				else RateNumeric.Value = newRate.Abs();
+				if ((parentControl.mainForm.Encoders[ItemUID] as IItem).IsLiquid)
+				{
+					RateNumeric.Value = newRate.Abs() / 1000;
+				}
+				else
+				{
+					RateNumeric.Value = newRate.Abs();
+				}
 			}
 		}
 

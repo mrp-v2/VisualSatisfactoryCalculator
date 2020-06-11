@@ -11,13 +11,21 @@ namespace SatisfactorySaveEditor.ViewModel.Property
 
 		public string Str1
 		{
-			get => str1;
+			get
+			{
+				return str1;
+			}
+
 			set { Set(() => Str1, ref str1, value); }
 		}
 
 		public string Str2
 		{
-			get => str2;
+			get
+			{
+				return str2;
+			}
+
 			set { Set(() => Str2, ref str2, value); }
 		}
 
