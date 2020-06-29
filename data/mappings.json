@@ -43,13 +43,13 @@
         "Build_GeneratorCoal_CDesc_PetroleumCoke_C"
     ],
     "Schematic_3-2_C": [],
-    "Schematic_3-3_C": [
+    "Schematic_3-3_C": [],
+    "Schematic_3-4_C": [
         "Recipe_IngotSteel_C",
         "Recipe_SteelBeam_C",
         "Recipe_SteelPipe_C",
         "Recipe_SpaceElevatorPart_2_C"
     ],
-    "Schematic_3-4_C": [],
     "Schematic_4-1_C": [
         "Recipe_EncasedIndustrialBeam_C",
         "Recipe_Stator_C",

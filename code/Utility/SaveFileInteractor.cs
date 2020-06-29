@@ -27,6 +27,27 @@ namespace VisualSatisfactoryCalculator.code.Utility
 
 		public Dictionary<string, IRecipe> GetUnlockedRecipesFromSave(string saveFile, Dictionary<string, IEncoder> encoders)
 		{
+			SaveObjectModel schematics = GetSchematicsFromSave(saveFile);
+			//
+			Dictionary<string, IRecipe> allRecipes = new Dictionary<string, IRecipe>();
+			foreach (IEncoder encoder in encoders.Values)
+			{
+				if (encoder is IRecipe)
+				{
+					allRecipes.Add((encoder as IRecipe).UID, encoder as IRecipe);
+				}
+			}
+			List<string> unlockedIDs = GetUnlockedIDFromSave(schematics.Fields);
+			Dictionary<string, IRecipe> unlockedRecipes = new Dictionary<string, IRecipe>();
+			foreach (string unlockedID in unlockedIDs)
+			{
+				unlockedRecipes.AddRangeIfNew(_rTRMapping.GetRecipesForResearch(unlockedID, allRecipes));
+			}
+			return unlockedRecipes;
+		}
+
+		public SaveObjectModel GetSchematicsFromSave(string saveFile)
+		{
 			SatisfactorySave save = new SatisfactorySave(saveFile);
 			SaveObjectModel root = new SaveRootModel(save.Header);
 			EditorTreeNode tree = new EditorTreeNode("Root");
@@ -40,63 +61,30 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			{
 				obj.IsExpanded = true;
 			}
-			SaveObjectModel schematics = root.FindChild("Persistent_Level:PersistentLevel.schematicManager", false);
-			Dictionary<string, IRecipe> allRecipes = new Dictionary<string, IRecipe>();
-			foreach (IEncoder encoder in encoders.Values)
-			{
-				if (encoder is IRecipe)
-				{
-					allRecipes.Add((encoder as IRecipe).UID, encoder as IRecipe);
-				}
-			}
-			Dictionary<string, IRecipe> unlockedRecipes = new Dictionary<string, IRecipe>();
-#if DEBUG
+			return root.FindChild("Persistent_Level:PersistentLevel.schematicManager", false);
+		}
+
+		public List<string> GetUnlockedIDFromSave(ObservableCollection<SerializedPropertyViewModel> fields)
+		{
 			List<string> unlockedIDs = new List<string>();
-#endif
-			foreach (SerializedPropertyViewModel field in schematics.Fields)
+			foreach (SerializedPropertyViewModel field in fields)
 			{
 				if (field.PropertyName == "mPurchasedSchematics")
 				{
 					if (!(field is ArrayPropertyViewModel array))
 					{
-						return default;
+						break;
 					}
 					foreach (SerializedPropertyViewModel element in array.Elements)
 					{
 						if (element is ObjectPropertyViewModel opvm)
 						{
-							string id = opvm.Str2.Substring(opvm.Str2.IndexOf(".") + 1);
-#if DEBUG
-							unlockedIDs.Add(id);
-#endif
-							unlockedRecipes.AddRange(_rTRMapping.GetRecipesForResearch(id, allRecipes));
+							unlockedIDs.Add(opvm.Str2.Substring(opvm.Str2.IndexOf(".") + 1));
 						}
 					}
 				}
 			}
-#if DEBUG
-			unlockedIDs.Sort();
-			string fileToMake = $".\\data\\{saveFile.Substring(saveFile.LastIndexOf("\\") + 1)}-unlocks.txt";
-			if (File.Exists(fileToMake))
-			{
-				File.Delete(fileToMake);
-			}
-			StreamWriter writer = File.CreateText(fileToMake);
-			for (int i = 0; i < unlockedIDs.Count; i++)
-			{
-				if (i < unlockedIDs.Count - 1)
-				{
-					writer.WriteLine(unlockedIDs[i]);
-				}
-				else
-				{
-					writer.Write(unlockedIDs[i]);
-				}
-			}
-			writer.Close();
-			writer.Dispose();
-#endif
-			return unlockedRecipes;
+			return unlockedIDs;
 		}
 
 		public Dictionary<string, IRecipe> GetAllRecipes(Dictionary<string, IEncoder> encoders)
@@ -156,7 +144,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				totalResults.Add(building.UID, building);
 			}
 			//Constants
-			totalResults.AddRange(Constants.AllConstantEncoders);
+			totalResults.AddRangeIfNew(Constants.AllConstantEncoders);
 			//JSONRecipes
 			results.Clear();
 			results.AddRange(GetSection("FGRecipe"));
@@ -181,12 +169,12 @@ namespace VisualSatisfactoryCalculator.code.Utility
 					continue;
 				}
 				//generators recipes
-				totalResults.AddRange(generator.GetRecipes(totalResults));
+				totalResults.AddRangeIfNew(generator.GetRecipes(totalResults));
 				//generator itself
 				totalResults.Add(generator.UID, generator);
 			}
 			//finished
-			Constants.LastResortEncoderList.AddRange(totalResults);
+			Constants.LastResortEncoderList.AddRangeIfNew(totalResults);
 			return totalResults;
 		}
 
