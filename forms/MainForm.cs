@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Windows.Forms;
 
 using MrpV2.GenericLibrary.code.persistance.classes;
@@ -109,7 +111,13 @@ namespace VisualSatisfactoryCalculator.forms
 			};
 			if (dialog.ShowDialog() == DialogResult.OK)
 			{
-				_saveLoad.Save(dialog.FileName, new CondensedProductionPlan(_plan));
+				// TODO create image stuff
+				// ProductionPlanPanel
+				Size size = ProductionPlanPanel.GetPreferredSize(new Size());
+				Bitmap map = new Bitmap(size.Width, size.Height);
+				ProductionPlanPanel.DrawToBitmap(map, new Rectangle(0, 0, size.Width, size.Height));
+				_saveLoad.Save(map, new CondensedProductionPlan(_plan));
+				map.Save(dialog.FileName, ImageFormat.Png);
 			}
 		}
 
@@ -136,6 +144,7 @@ namespace VisualSatisfactoryCalculator.forms
 					if (loadedPlan != null)
 					{
 						_plan = loadedPlan.ToProductionPlan(Recipes);
+						PlanUpdated();
 					}
 				}
 			}
