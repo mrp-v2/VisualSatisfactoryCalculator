@@ -143,7 +143,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		private void ReplaceItemRateControl(string itemUID, ProductionStepControl psc, bool isProduct)
 		{
-			foreach (ItemRateControl irc in GetItemRateControls())
+			foreach (ItemRateControl irc in GetItemRateControls()) // TODO fix this to allow for having an item that is both an ingredient and a product
 			{
 				if (irc.ItemUID.Equals(itemUID))
 				{
