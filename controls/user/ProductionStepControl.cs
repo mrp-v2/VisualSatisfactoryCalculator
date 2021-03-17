@@ -61,7 +61,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 				MultiplierNumeric.Value = parentStep.GetMultiplier();
 			}
 			MachineCountLabel.Text = mainForm.Encoders[parentStep.GetRecipe().MachineUID].DisplayName + ": " + parentStep.CalculateMachineCount() + " x " + parentStep.CalculateMachineClockPercentage() + "%";
-			PowerConsumptionLabel.Text = "Power Consumption: " + Math.Round(parentStep.GetPowerDraw(mainForm.Encoders), 3) + "MW";
+			PowerConsumptionLabel.Text = "Power Consumption: " + parentStep.GetPowerDraw(mainForm.Encoders).ToPrettyString() + "MW";
 		}
 
 		public void RateChanged(string itemUID, decimal newRate, bool isProduct)
@@ -180,6 +180,10 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		private void MultiplierNumeric_ValueChanged(object sender, EventArgs e)
 		{
+			if (MultiplierNumeric.Value == 0)
+			{
+				return;
+			}
 			if (Enabled && initialized)
 			{
 				parentStep.SetMultiplierAndRelated(MultiplierNumeric.Value);

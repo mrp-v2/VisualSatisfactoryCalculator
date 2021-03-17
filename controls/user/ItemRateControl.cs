@@ -35,11 +35,15 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		public void UpdateButton()
 		{
-			ItemButton.Enabled = !parentControl.ItemHasRelatedRecipe(ItemUID);
+			ToggleInput(!parentControl.ItemHasRelatedRecipe(ItemUID));
 		}
 
 		private void RateNumeric_ValueChanged(object sender, EventArgs e)
 		{
+			if (RateNumeric.Value == 0)
+			{
+				return;
+			}
 			if (Enabled && initialized)
 			{
 				if ((parentControl.mainForm.Encoders[ItemUID] as IItem).IsLiquid)
@@ -77,6 +81,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		public void ToggleInput(bool on)
 		{
+			if (on && RateNumeric.Value == 0)
+			{
+				Enabled = false;
+				return;
+			}
 			Enabled = on;
 		}
 

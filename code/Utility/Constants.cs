@@ -7,6 +7,8 @@ namespace VisualSatisfactoryCalculator.code.Utility
 {
 	public static class Constants
 	{
+		public static readonly int DECIMALS = 3;
+
 		public static readonly IItem MWItem = new SimpleCustomItem("FillerEnergyItemMW", "MW");
 
 		public static readonly Dictionary<string, IEncoder> AllConstantEncoders = new Dictionary<string, IEncoder>() { { MWItem.UID, MWItem } };

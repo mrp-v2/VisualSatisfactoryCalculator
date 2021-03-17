@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.Utility;
 
@@ -58,7 +59,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return UID.GetHashCode();
 		}
 
-		private string GetConversionString(Dictionary<string, IEncoder> encodings)
+		protected virtual string GetConversionString(Dictionary<string, IEncoder> encodings)
 		{
 			string str = "";
 			bool first = true;
@@ -72,7 +73,6 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 				{
 					first = false;
 				}
-
 				str += Ingredients[key].ToString(encodings);
 			}
 			str += " -> ";
@@ -87,7 +87,6 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 				{
 					first = false;
 				}
-
 				str += Products[key].ToString(encodings);
 			}
 			return str;
@@ -97,7 +96,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		{
 			string str = DisplayName + ": ";
 			str += GetConversionString(encodings);
-			str += " in " + Math.Round(CraftTime, 3) + " seconds using a " + encodings[MachineUID].DisplayName;
+			str += " in " + CraftTime.ToPrettyString() + " seconds using a " + encodings[MachineUID].DisplayName;
 			return str;
 		}
 
@@ -127,7 +126,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		{
 			format = format.Replace("{name}", DisplayName);
 			format = format.Replace("{conversion}", GetConversionString(encodings));
-			format = format.Replace("{time}", Math.Round(CraftTime, 3).ToString());
+			format = format.Replace("{time}", CraftTime.ToPrettyString());
 			format = format.Replace("{machine}", encodings[MachineUID].DisplayName);
 			return format;
 		}

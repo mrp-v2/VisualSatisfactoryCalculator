@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 using Newtonsoft.Json;
 
 using VisualSatisfactoryCalculator.code.DataStorage;
+using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.Utility;
 
@@ -61,7 +63,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 				{
 					new ItemCount(Constants.MWItem.UID, 0)
 				};
-				IRecipe recipe = new BasicRecipe(UID + itemID, 60, UID, ingredients, products, jItem.DisplayName + " to Power");
+				IRecipe recipe = new GeneratorRecipe(UID + itemID, 60, UID, ingredients, products, jItem.DisplayName + " to Power", this.powerProduction);
 				recipes.Add(recipe.UID, recipe);
 			}
 			return recipes;
@@ -75,6 +77,37 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		public bool EqualID(IHasUID obj)
 		{
 			return obj.EqualID(UID);
+		}
+
+		private class GeneratorRecipe : BasicRecipe
+		{
+
+			private readonly decimal powerProduction;
+
+			public GeneratorRecipe(string UID, decimal craftTime, string machineUID, List<ItemCount> ingredients, List<ItemCount> products, string displayName, decimal powerProduction) : base(UID, craftTime, machineUID, ingredients, products, displayName)
+			{
+				this.powerProduction = powerProduction;
+			}
+
+			protected override string GetConversionString(Dictionary<string, IEncoder> encodings)
+			{
+				string str = "";
+				bool first = true;
+				foreach (string key in Ingredients.Keys)
+				{
+					if (!first)
+					{
+						str += ", ";
+					}
+					else
+					{
+						first = false;
+					}
+					str += Ingredients[key].ToString(encodings);
+				}
+				str += " -> " + powerProduction.ToPrettyString() + " MW";
+				return str;
+			}
 		}
 	}
 }

@@ -33,8 +33,9 @@
 			this.ButtonPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.SelectFirstRecipeButton = new System.Windows.Forms.Button();
 			this.SaveChartButton = new System.Windows.Forms.Button();
-			this.ProductionPlanPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.LoadChartButton = new System.Windows.Forms.Button();
+			this.ProductionPlanPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.LoadSaveButton = new System.Windows.Forms.Button();
 			this.MainPanel.SuspendLayout();
 			this.ButtonPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -58,11 +59,12 @@
 			this.ButtonPanel.AutoSize = true;
 			this.ButtonPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ButtonPanel.Controls.Add(this.SelectFirstRecipeButton);
-			this.ButtonPanel.Controls.Add(this.SaveChartButton);
 			this.ButtonPanel.Controls.Add(this.LoadChartButton);
+			this.ButtonPanel.Controls.Add(this.SaveChartButton);
+			this.ButtonPanel.Controls.Add(this.LoadSaveButton);
 			this.ButtonPanel.Location = new System.Drawing.Point(3, 3);
 			this.ButtonPanel.Name = "ButtonPanel";
-			this.ButtonPanel.Size = new System.Drawing.Size(330, 33);
+			this.ButtonPanel.Size = new System.Drawing.Size(422, 33);
 			this.ButtonPanel.TabIndex = 0;
 			// 
 			// SelectFirstRecipeButton
@@ -83,13 +85,26 @@
 			this.SaveChartButton.AutoSize = true;
 			this.SaveChartButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.SaveChartButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.SaveChartButton.Location = new System.Drawing.Point(145, 3);
+			this.SaveChartButton.Location = new System.Drawing.Point(239, 3);
 			this.SaveChartButton.Name = "SaveChartButton";
 			this.SaveChartButton.Size = new System.Drawing.Size(88, 27);
 			this.SaveChartButton.TabIndex = 3;
 			this.SaveChartButton.Text = "Save Chart";
 			this.SaveChartButton.UseVisualStyleBackColor = true;
 			this.SaveChartButton.Click += new System.EventHandler(this.SaveChartButton_Click);
+			// 
+			// LoadChartButton
+			// 
+			this.LoadChartButton.AutoSize = true;
+			this.LoadChartButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.LoadChartButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.LoadChartButton.Location = new System.Drawing.Point(145, 3);
+			this.LoadChartButton.Name = "LoadChartButton";
+			this.LoadChartButton.Size = new System.Drawing.Size(88, 27);
+			this.LoadChartButton.TabIndex = 4;
+			this.LoadChartButton.Text = "Load Chart";
+			this.LoadChartButton.UseVisualStyleBackColor = true;
+			this.LoadChartButton.Click += new System.EventHandler(this.LoadChartButton_Click);
 			// 
 			// ProductionPlanPanel
 			// 
@@ -102,18 +117,18 @@
 			this.ProductionPlanPanel.Size = new System.Drawing.Size(0, 0);
 			this.ProductionPlanPanel.TabIndex = 1;
 			// 
-			// LoadChartButton
+			// LoadSaveButton
 			// 
-			this.LoadChartButton.AutoSize = true;
-			this.LoadChartButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.LoadChartButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.LoadChartButton.Location = new System.Drawing.Point(239, 3);
-			this.LoadChartButton.Name = "LoadChartButton";
-			this.LoadChartButton.Size = new System.Drawing.Size(88, 27);
-			this.LoadChartButton.TabIndex = 4;
-			this.LoadChartButton.Text = "Load Chart";
-			this.LoadChartButton.UseVisualStyleBackColor = true;
-			this.LoadChartButton.Click += new System.EventHandler(this.LoadChartButton_Click);
+			this.LoadSaveButton.AutoSize = true;
+			this.LoadSaveButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.LoadSaveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+			this.LoadSaveButton.Location = new System.Drawing.Point(333, 3);
+			this.LoadSaveButton.Name = "LoadSaveButton";
+			this.LoadSaveButton.Size = new System.Drawing.Size(86, 27);
+			this.LoadSaveButton.TabIndex = 5;
+			this.LoadSaveButton.Text = "Load Save";
+			this.LoadSaveButton.UseVisualStyleBackColor = true;
+			this.LoadSaveButton.Click += new System.EventHandler(this.LoadSaveButton_Click);
 			// 
 			// MainForm
 			// 
@@ -141,5 +156,6 @@
 		private System.Windows.Forms.FlowLayoutPanel ProductionPlanPanel;
 		private System.Windows.Forms.Button SaveChartButton;
 		private System.Windows.Forms.Button LoadChartButton;
+		private System.Windows.Forms.Button LoadSaveButton;
 	}
 }

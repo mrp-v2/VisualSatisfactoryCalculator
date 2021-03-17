@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.DataStorage
 {
@@ -20,10 +22,9 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		{
 			if ((encodings[ItemUID] as IItem).IsLiquid)
 			{
-				return Math.Round(Count / 1000, 3) + " " + encodings[ItemUID].DisplayName;
+				return (Count / 1000).ToPrettyString() + " " + encodings[ItemUID].DisplayName;
 			}
-
-			return Math.Round(Count, 3) + " " + encodings[ItemUID].DisplayName;
+			return Count.ToPrettyString() + " " + encodings[ItemUID].DisplayName;
 		}
 
 		public override int GetHashCode()
