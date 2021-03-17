@@ -54,9 +54,9 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return (int)Math.Ceiling(_multiplier);
 		}
 
-		public int CalculateMachineClockPercentage()
+		public decimal CalculateMachineClockPercentage()
 		{
-			return (int)Math.Ceiling(_multiplier * 100 / CalculateMachineCount());
+			return Math.Ceiling(_multiplier * 1000 / CalculateMachineCount()) / 10;
 		}
 
 		public void AddChildStep(ProductionStep child, string itemUID, bool isChildProduct)
@@ -248,7 +248,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public decimal GetPowerDraw(Dictionary<string, IEncoder> encodings)
 		{
-			return (encodings[_recipe.MachineUID] as IBuilding).PowerConsumption * (decimal)Math.Pow(CalculateMachineClockPercentage() / 100d, (double)(encodings[_recipe.MachineUID] as IBuilding).PowerConsumptionExponent) * CalculateMachineCount();
+			return (encodings[_recipe.MachineUID] as IBuilding).PowerConsumption * (decimal)Math.Pow((double)(CalculateMachineClockPercentage() / 100m), (double)(encodings[_recipe.MachineUID] as IBuilding).PowerConsumptionExponent) * CalculateMachineCount();
 		}
 
 		public decimal GetRecursivePowerDraw(Dictionary<string, IEncoder> encodings)

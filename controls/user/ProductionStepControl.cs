@@ -121,6 +121,19 @@ namespace VisualSatisfactoryCalculator.controls.user
 			mainForm.UpdateTotalView();
 		}
 
+		private List<ItemRateControl> GetItemRateControls(bool products)
+		{
+			List<ItemRateControl> irc = new List<ItemRateControl>();
+			foreach (Control c in products ? ProductsPanel.Controls : IngredientsPanel.Controls)
+			{
+				if (c is ItemRateControl)
+				{
+					irc.Add(c as ItemRateControl);
+				}
+			}
+			return irc;
+		}
+
 		private List<ItemRateControl> GetItemRateControls()
 		{
 			List<ItemRateControl> irc = new List<ItemRateControl>();
@@ -143,7 +156,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		private void ReplaceItemRateControl(string itemUID, ProductionStepControl psc, bool isProduct)
 		{
-			foreach (ItemRateControl irc in GetItemRateControls()) // TODO fix this to allow for having an item that is both an ingredient and a product
+			foreach (ItemRateControl irc in GetItemRateControls(isProduct))
 			{
 				if (irc.ItemUID.Equals(itemUID))
 				{
