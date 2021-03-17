@@ -58,9 +58,9 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return UID.GetHashCode();
 		}
 
-		public string ToString(Dictionary<string, IEncoder> encodings)
+		private string GetConversionString(Dictionary<string, IEncoder> encodings)
 		{
-			string str = DisplayName + ": ";
+			string str = "";
 			bool first = true;
 			foreach (string key in Ingredients.Keys)
 			{
@@ -90,6 +90,13 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 				str += Products[key].ToString(encodings);
 			}
+			return str;
+		}
+
+		public string ToString(Dictionary<string, IEncoder> encodings)
+		{
+			string str = DisplayName + ": ";
+			str += GetConversionString(encodings);
 			str += " in " + Math.Round(CraftTime, 3) + " seconds using a " + encodings[MachineUID].DisplayName;
 			return str;
 		}
@@ -114,6 +121,15 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			{
 				return Ingredients[itemUID].Count;
 			}
+		}
+
+		public string ToString(Dictionary<string, IEncoder> encodings, string format)
+		{
+			format = format.Replace("{name}", DisplayName);
+			format = format.Replace("{conversion}", GetConversionString(encodings));
+			format = format.Replace("{time}", Math.Round(CraftTime, 3).ToString());
+			format = format.Replace("{machine}", encodings[MachineUID].DisplayName);
+			return format;
 		}
 	}
 }

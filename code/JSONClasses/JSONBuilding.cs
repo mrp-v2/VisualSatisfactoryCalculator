@@ -8,13 +8,15 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 	{
 		public string UID { get; }
 		public decimal PowerConsumption { get; }
+		public decimal PowerConsumptionExponent { get; }
 		public string DisplayName { get; }
 
 		[JsonConstructor]
-		public JSONBuilding(string ClassName, string mPowerConsumption, string mDisplayName)
+		public JSONBuilding(string ClassName, string mPowerConsumption, string mPowerConsumptionExponent, string mDisplayName)
 		{
 			UID = ClassName;
 			PowerConsumption = decimal.Parse(mPowerConsumption);
+			PowerConsumptionExponent = decimal.Parse(mPowerConsumptionExponent);
 			DisplayName = mDisplayName;
 		}
 

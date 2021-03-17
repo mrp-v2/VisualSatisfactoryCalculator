@@ -13,20 +13,28 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 	{
 		public string UID { get; }
 		private readonly string[] defaultFuelClasses;
-		private readonly string powerProduction;
+		private readonly decimal powerProduction;
+		private readonly decimal powerProductionExponent;
 		public string DisplayName { get; }
-		public decimal PowerConsumption { get { return 0; } }
+		public decimal PowerConsumption { get { return -powerProduction; } }
+		public decimal PowerConsumptionExponent { get { return powerProductionExponent; } }
+		private readonly bool requiresSupplementalResource;
+		private readonly decimal supplementalToPowerRatio;
 
 		[JsonConstructor]
-		public JSONGenerator(string ClassName, string mDefaultFuelClasses, string mPowerProduction, string mDisplayName)
+		public JSONGenerator(string ClassName, string mDefaultFuelClasses, bool mRequiresSupplementalResource, decimal mSupplementalToPowerRatio, string mPowerProduction, string mPowerProductionExponent, string mDisplayName)
 		{
 			UID = ClassName;
 			defaultFuelClasses = mDefaultFuelClasses.Split(',');
-			powerProduction = mPowerProduction;
+			powerProduction = decimal.Parse(mPowerProduction);
+			powerProductionExponent = decimal.Parse(mPowerProductionExponent);
 			DisplayName = mDisplayName;
+			requiresSupplementalResource = mRequiresSupplementalResource;
+			supplementalToPowerRatio = mSupplementalToPowerRatio;
 		}
 
-		public static readonly decimal GeneratorEnergyDivisor = 16m + (2m / 3m);
+		public static readonly decimal EnergyDivisor = 16m + (2m / 3m);
+		public static readonly decimal SupplementalResourceFactor = 60m;
 
 		public Dictionary<string, IRecipe> GetRecipes(Dictionary<string, IEncoder> encodings)
 		{
@@ -43,11 +51,15 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 				JSONItem jItem = encodingItem as JSONItem;
 				List<ItemCount> ingredients = new List<ItemCount>
 				{
-					new ItemCount(itemID, decimal.Parse(powerProduction) / (jItem.EnergyValue / 1000) / GeneratorEnergyDivisor)
+					new ItemCount(itemID, powerProduction / (jItem.EnergyValue / 1000) / EnergyDivisor)
 				};
+				if (requiresSupplementalResource)
+				{
+					ingredients.Add(new ItemCount(Constants.WaterID, powerProduction * supplementalToPowerRatio * SupplementalResourceFactor));
+				}
 				List<ItemCount> products = new List<ItemCount>
 				{
-					new ItemCount(Constants.MWItem.UID, decimal.Parse(powerProduction))
+					new ItemCount(Constants.MWItem.UID, 0)
 				};
 				IRecipe recipe = new BasicRecipe(UID + itemID, 60, UID, ingredients, products, jItem.DisplayName + " to Power");
 				recipes.Add(recipe.UID, recipe);

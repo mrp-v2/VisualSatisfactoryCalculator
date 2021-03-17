@@ -32,7 +32,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				AddItemRateControl(ic.ItemUID, false);
 			}
-			RecipeLabel.Text = parentStep.GetRecipe().ToString(mainForm.Encoders);
+			RecipeLabel.Text = parentStep.GetRecipe().ToString(mainForm.Encoders, "{name} | {conversion} | {time} seconds");
 			MultiplierChanged();
 			if (parentStep is ProductionPlan)
 			{
@@ -60,7 +60,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				MultiplierNumeric.Value = parentStep.GetMultiplier();
 			}
-			MachineCountLabel.Text = mainForm.Encoders[parentStep.GetRecipe().MachineUID].DisplayName + ": " + parentStep.CalculateMachineCount();
+			MachineCountLabel.Text = mainForm.Encoders[parentStep.GetRecipe().MachineUID].DisplayName + ": " + parentStep.CalculateMachineCount() + " x " + parentStep.CalculateMachineClockPercentage() + "%";
 			PowerConsumptionLabel.Text = "Power Consumption: " + Math.Round(parentStep.GetPowerDraw(mainForm.Encoders), 3) + "MW";
 		}
 
@@ -76,23 +76,19 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			if (!parentStep.GetItemUIDsWithRelatedStep().Contains(itemUID))
 			{
+				SelectRecipePrompt srp;
 				if (isProduct)
 				{
-					SelectRecipePrompt srp = new SelectRecipePrompt(mainForm.Recipes.GetRecipesThatConsume(itemUID));
-					if (srp.ShowDialog() == DialogResult.OK)
-					{
-						ProductionStep ps = new ProductionStep(srp.GetSelectedRecipe(), parentStep, itemUID, isProduct);
-						AddProductionStep(ps, isProduct);
-					}
+					srp = new SelectRecipePrompt(mainForm.Recipes.GetRecipesThatConsume(itemUID));
 				}
 				else
 				{
-					SelectRecipePrompt srp = new SelectRecipePrompt(mainForm.Recipes.GetRecipesThatProduce(itemUID));
-					if (srp.ShowDialog() == DialogResult.OK)
-					{
-						ProductionStep ps = new ProductionStep(srp.GetSelectedRecipe(), parentStep, itemUID, isProduct);
-						AddProductionStep(ps, isProduct);
-					}
+					srp = new SelectRecipePrompt(mainForm.Recipes.GetRecipesThatProduce(itemUID));
+				}
+				if (srp.ShowDialog() == DialogResult.OK)
+				{
+					ProductionStep ps = new ProductionStep(srp.GetSelectedRecipe(), parentStep, itemUID, isProduct);
+					AddProductionStep(ps, isProduct);
 				}
 			}
 		}
@@ -153,13 +149,17 @@ namespace VisualSatisfactoryCalculator.controls.user
 				{
 					if (isProduct)
 					{
-						ProductsPanel.Controls.Add(psc);
+						int index = ProductsPanel.Controls.GetChildIndex(irc);
 						ProductsPanel.Controls.Remove(irc);
+						ProductsPanel.Controls.Add(psc);
+						ProductsPanel.Controls.SetChildIndex(psc, index);
 					}
 					else
 					{
-						IngredientsPanel.Controls.Add(psc);
+						int index = IngredientsPanel.Controls.GetChildIndex(irc);
 						IngredientsPanel.Controls.Remove(irc);
+						IngredientsPanel.Controls.Add(psc);
+						IngredientsPanel.Controls.SetChildIndex(psc, index);
 					}
 				}
 			}

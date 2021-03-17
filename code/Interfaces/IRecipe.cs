@@ -10,6 +10,20 @@ namespace VisualSatisfactoryCalculator.code.Interfaces
 		string MachineUID { get; }
 		decimal CraftTime { get; }
 		string ToString(Dictionary<string, IEncoder> encodings);
+		/// <summary>
+		/// Creates a formatted string representation of this recipe.
+		/// </summary>
+		/// <param name="encodings">The encodings to use</param>
+		/// <param name="format">The format of the string representation. The format is given as a string with {...}s indicating where to insert specific information about the recipe.
+		/// <list type="bullet">
+		/// <item><term>{name}</term><description>display name</description></item>
+		/// <item><term>{conversion}</term><description>the ingredients and the products</description></item>
+		/// <item><term>{time}</term><description>the amount of time the recipe takes</description></item>
+		/// <item><term>{machine}</term><description>the machine the recipe uses</description></item>
+		/// </list>
+		/// </param>
+		/// <returns></returns>
+		string ToString(Dictionary<string, IEncoder> encodings, string format);
 		Dictionary<string, ItemCount> Ingredients { get; }
 		Dictionary<string, ItemCount> Products { get; }
 		decimal GetCountFor(string itemUID, bool isProduct);
