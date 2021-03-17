@@ -119,7 +119,6 @@
         "Recipe_NuclearFuelRod_C",
         "Recipe_ElectromagneticControlRod_C",
         "Recipe_UraniumCell_C",
-        "Recipe_UraniumPellet_C",
         "Recipe_SulfuricAcid_C",
         "Build_GeneratorNuclear_CDesc_NuclearFuelRod_C"
     ],
