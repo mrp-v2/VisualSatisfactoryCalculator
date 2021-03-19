@@ -1,4 +1,5 @@
-﻿using VisualSatisfactoryCalculator.code.Interfaces;
+﻿using VisualSatisfactoryCalculator.code.Extensions;
+using VisualSatisfactoryCalculator.code.Interfaces;
 
 namespace VisualSatisfactoryCalculator.code.DataStorage
 {
@@ -42,6 +43,11 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		public bool EqualID(IHasUID obj)
 		{
 			return obj.EqualID(UID);
+		}
+
+		public string ToString(decimal rate)
+		{
+			return rate.ToPrettyString();
 		}
 	}
 }

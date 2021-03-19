@@ -101,30 +101,20 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			Dictionary<string, decimal> netRates = GetNetRates(encodings);
 			foreach (string itemUID in netRates.Keys)
 			{
-				if (netRates[itemUID] > 0 && Math.Round(netRates[itemUID], 5) != 0)
+				decimal rate = netRates[itemUID];
+				IItem item = encodings[itemUID] as IItem;
+				string rateStr = item.ToString(rate);
+				if (rate > 0 && decimal.Parse(rateStr) != 0)
 				{
-					if ((encodings[itemUID] as IItem).IsLiquid)
-					{
-						str += Math.Round(netRates[itemUID] / 1000, 5) + " " + encodings[itemUID].DisplayName + ", ";
-					}
-					else
-					{
-						str += Math.Round(netRates[itemUID], 5) + " " + encodings[itemUID].DisplayName + ", ";
-					}
+					str += rateStr + " " + item.DisplayName + ", ";
 				}
 			}
 			str += "\nAll Products: ";
 			Dictionary<string, decimal> rates = GetAllProductRates();
 			foreach (string itemUID in rates.Keys)
 			{
-				if ((encodings[itemUID] as IItem).IsLiquid)
-				{
-					str += Math.Round(rates[itemUID] / 1000, 5) + " " + encodings[itemUID].DisplayName + ", ";
-				}
-				else
-				{
-					str += Math.Round(rates[itemUID], 5) + " " + encodings[itemUID].DisplayName + ", ";
-				}
+				IItem item = encodings[itemUID] as IItem;
+				str += item.ToString(rates[itemUID]) + " " + item.DisplayName + ", ";
 			}
 			return str;
 		}
@@ -135,29 +125,19 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			Dictionary<string, decimal> rates = GetAllIngredientRates(encodings);
 			foreach (string itemUID in rates.Keys)
 			{
-				if ((encodings[itemUID] as IItem).IsLiquid)
-				{
-					str += Math.Round(rates[itemUID] / 1000, 5) + " " + encodings[itemUID].DisplayName + ", ";
-				}
-				else
-				{
-					str += Math.Round(rates[itemUID], 5) + " " + encodings[itemUID].DisplayName + ", ";
-				}
+				IItem item = encodings[itemUID] as IItem;
+				str += item.ToString(rates[itemUID]) + " " + item.DisplayName + ", ";
 			}
 			str += "\nNet Ingredients: ";
 			Dictionary<string, decimal> netRates = GetNetRates(encodings);
 			foreach (string itemUID in netRates.Keys)
 			{
-				if (netRates[itemUID] < 0 && Math.Round(netRates[itemUID], 5) != 0)
+				decimal rate = netRates[itemUID];
+				IItem item = encodings[itemUID] as IItem;
+				string rateStr = item.ToString(-rate);
+				if (rate < 0 && decimal.Parse(rateStr) != 0)
 				{
-					if ((encodings[itemUID] as IItem).IsLiquid)
-					{
-						str += Math.Round(-netRates[itemUID] / 1000, 5) + " " + encodings[itemUID].DisplayName + ", ";
-					}
-					else
-					{
-						str += Math.Round(-netRates[itemUID], 5) + " " + encodings[itemUID].DisplayName + ", ";
-					}
+					str += rateStr + " " + item.DisplayName + ", ";
 				}
 			}
 			return str;

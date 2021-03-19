@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.controls.user;
 
 namespace VisualSatisfactoryCalculator.code.DataStorage
@@ -56,7 +57,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public decimal CalculateMachineClockPercentage()
 		{
-			return Math.Ceiling(_multiplier * 1000 / CalculateMachineCount()) / 10;
+			return Math.Ceiling(_multiplier * (int)Math.Pow(10, Constants.CLOCK_DECIMALS + 2) / CalculateMachineCount()) / (int)Math.Pow(10, Constants.CLOCK_DECIMALS);
 		}
 
 		public void AddChildStep(ProductionStep child, string itemUID, bool isChildProduct)

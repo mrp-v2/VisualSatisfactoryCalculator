@@ -1,4 +1,6 @@
-﻿namespace VisualSatisfactoryCalculator.controls.user
+﻿using VisualSatisfactoryCalculator.code.Utility;
+
+namespace VisualSatisfactoryCalculator.controls.user
 {
 	partial class ItemRateControl
 	{
@@ -38,7 +40,7 @@
 			// RateNumeric
 			// 
 			this.RateNumeric.AutoSize = true;
-			this.RateNumeric.DecimalPlaces = 3;
+			this.RateNumeric.DecimalPlaces = Constants.DECIMALS;
 			this.RateNumeric.Font = new System.Drawing.Font("Microsoft Tai Le", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.RateNumeric.Location = new System.Drawing.Point(3, 3);
 			this.RateNumeric.Maximum = new decimal(new int[] {

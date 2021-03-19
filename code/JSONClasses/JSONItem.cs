@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 
+using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
 
 namespace VisualSatisfactoryCalculator.code.JSONClasses
@@ -51,6 +52,11 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		public bool EqualID(IHasUID obj)
 		{
 			return obj.EqualID(UID);
+		}
+
+		public string ToString(decimal rate)
+		{
+			return (IsLiquid ? rate / 1000 : rate).ToPrettyString();
 		}
 	}
 }

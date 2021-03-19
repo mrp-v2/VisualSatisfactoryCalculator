@@ -16,10 +16,9 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		public string UID { get; }
 		private readonly string[] defaultFuelClasses;
 		private readonly decimal powerProduction;
-		private readonly decimal powerProductionExponent;
 		public string DisplayName { get; }
 		public decimal PowerConsumption { get { return -powerProduction; } }
-		public decimal PowerConsumptionExponent { get { return powerProductionExponent; } }
+		public decimal PowerConsumptionExponent { get; }
 		private readonly bool requiresSupplementalResource;
 		private readonly decimal supplementalToPowerRatio;
 
@@ -29,7 +28,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			UID = ClassName;
 			defaultFuelClasses = mDefaultFuelClasses.Split(',');
 			powerProduction = decimal.Parse(mPowerProduction);
-			powerProductionExponent = decimal.Parse(mPowerProductionExponent);
+			PowerConsumptionExponent = decimal.Parse(mPowerProductionExponent);
 			DisplayName = mDisplayName;
 			requiresSupplementalResource = mRequiresSupplementalResource;
 			supplementalToPowerRatio = mSupplementalToPowerRatio;

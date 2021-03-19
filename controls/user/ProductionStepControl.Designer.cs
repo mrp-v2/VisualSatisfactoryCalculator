@@ -1,4 +1,6 @@
-﻿namespace VisualSatisfactoryCalculator.controls.user
+﻿using VisualSatisfactoryCalculator.code.Utility;
+
+namespace VisualSatisfactoryCalculator.controls.user
 {
 	partial class ProductionStepControl
 	{
@@ -62,7 +64,7 @@
 			// 
 			this.IngredientsPanel.AutoSize = true;
 			this.IngredientsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.IngredientsPanel.Location = new System.Drawing.Point(3, 82);
+			this.IngredientsPanel.Location = new System.Drawing.Point(3, 99);
 			this.IngredientsPanel.Name = "IngredientsPanel";
 			this.IngredientsPanel.Size = new System.Drawing.Size(0, 0);
 			this.IngredientsPanel.TabIndex = 0;
@@ -74,10 +76,11 @@
 			this.InfoPanel.Controls.Add(this.MultiplierPanel);
 			this.InfoPanel.Controls.Add(this.RecipeLabel);
 			this.InfoPanel.Controls.Add(this.MachineCountLabel);
+			this.InfoPanel.Controls.Add(this.PowerConsumptionLabel);
 			this.InfoPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.InfoPanel.Location = new System.Drawing.Point(3, 9);
 			this.InfoPanel.Name = "InfoPanel";
-			this.InfoPanel.Size = new System.Drawing.Size(451, 67);
+			this.InfoPanel.Size = new System.Drawing.Size(451, 84);
 			this.InfoPanel.TabIndex = 1;
 			// 
 			// MultiplierPanel
@@ -87,11 +90,10 @@
 			this.MultiplierPanel.Controls.Add(this.MultiplierLable);
 			this.MultiplierPanel.Controls.Add(this.MultiplierNumeric);
 			this.MultiplierPanel.Controls.Add(this.DeleteStepButton);
-			this.MultiplierPanel.Controls.Add(this.PowerConsumptionLabel);
 			this.MultiplierPanel.Location = new System.Drawing.Point(0, 0);
 			this.MultiplierPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.MultiplierPanel.Name = "MultiplierPanel";
-			this.MultiplierPanel.Size = new System.Drawing.Size(445, 33);
+			this.MultiplierPanel.Size = new System.Drawing.Size(314, 33);
 			this.MultiplierPanel.TabIndex = 3;
 			// 
 			// MultiplierLable
@@ -109,7 +111,7 @@
 			// 
 			this.MultiplierNumeric.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.MultiplierNumeric.AutoSize = true;
-			this.MultiplierNumeric.DecimalPlaces = 3;
+			this.MultiplierNumeric.DecimalPlaces = Constants.DECIMALS;
 			this.MultiplierNumeric.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.MultiplierNumeric.Location = new System.Drawing.Point(77, 5);
 			this.MultiplierNumeric.Maximum = new decimal(new int[] {
@@ -118,7 +120,7 @@
             0,
             0});
 			this.MultiplierNumeric.Name = "MultiplierNumeric";
-			this.MultiplierNumeric.Size = new System.Drawing.Size(104, 23);
+			this.MultiplierNumeric.Size = new System.Drawing.Size(136, 23);
 			this.MultiplierNumeric.TabIndex = 1;
 			this.MultiplierNumeric.ThousandsSeparator = true;
 			this.MultiplierNumeric.ValueChanged += new System.EventHandler(this.MultiplierNumeric_ValueChanged);
@@ -129,7 +131,7 @@
 			this.DeleteStepButton.AutoSize = true;
 			this.DeleteStepButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.DeleteStepButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.DeleteStepButton.Location = new System.Drawing.Point(187, 3);
+			this.DeleteStepButton.Location = new System.Drawing.Point(219, 3);
 			this.DeleteStepButton.Name = "DeleteStepButton";
 			this.DeleteStepButton.Size = new System.Drawing.Size(92, 27);
 			this.DeleteStepButton.TabIndex = 2;
@@ -139,10 +141,9 @@
 			// 
 			// PowerConsumptionLabel
 			// 
-			this.PowerConsumptionLabel.Anchor = System.Windows.Forms.AnchorStyles.None;
 			this.PowerConsumptionLabel.AutoSize = true;
 			this.PowerConsumptionLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.PowerConsumptionLabel.Location = new System.Drawing.Point(285, 8);
+			this.PowerConsumptionLabel.Location = new System.Drawing.Point(3, 67);
 			this.PowerConsumptionLabel.Name = "PowerConsumptionLabel";
 			this.PowerConsumptionLabel.Size = new System.Drawing.Size(157, 17);
 			this.PowerConsumptionLabel.TabIndex = 3;
@@ -180,7 +181,7 @@
 			this.MainPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.MainPanel.Name = "MainPanel";
-			this.MainPanel.Size = new System.Drawing.Size(459, 87);
+			this.MainPanel.Size = new System.Drawing.Size(459, 104);
 			this.MainPanel.TabIndex = 2;
 			// 
 			// MainLayout
@@ -191,7 +192,7 @@
 			this.MainLayout.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.MainLayout.Location = new System.Drawing.Point(3, 3);
 			this.MainLayout.Name = "MainLayout";
-			this.MainLayout.Size = new System.Drawing.Size(459, 87);
+			this.MainLayout.Size = new System.Drawing.Size(459, 104);
 			this.MainLayout.TabIndex = 4;
 			// 
 			// ProductionStepControl
@@ -202,7 +203,7 @@
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.Controls.Add(this.MainLayout);
 			this.Name = "ProductionStepControl";
-			this.Size = new System.Drawing.Size(465, 93);
+			this.Size = new System.Drawing.Size(465, 110);
 			this.InfoPanel.ResumeLayout(false);
 			this.InfoPanel.PerformLayout();
 			this.MultiplierPanel.ResumeLayout(false);
