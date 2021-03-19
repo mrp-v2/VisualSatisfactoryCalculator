@@ -58,11 +58,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 				{
 					ingredients.Add(new ItemCount(Constants.WaterID, powerProduction * supplementalToPowerRatio * SupplementalResourceFactor));
 				}
-				List<ItemCount> products = new List<ItemCount>
-				{
-					new ItemCount(Constants.MWItem.UID, 0)
-				};
-				IRecipe recipe = new GeneratorRecipe(UID + itemID, 60, UID, ingredients, products, jItem.DisplayName + " to Power", this.powerProduction);
+				IRecipe recipe = new GeneratorRecipe(UID + itemID, 60, UID, ingredients, new List<ItemCount>(), jItem.DisplayName + " to Power", this.powerProduction);
 				recipes.Add(recipe.UID, recipe);
 			}
 			return recipes;
@@ -80,7 +76,6 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 
 		private class GeneratorRecipe : BasicRecipe
 		{
-
 			private readonly decimal powerProduction;
 
 			public GeneratorRecipe(string UID, decimal craftTime, string machineUID, List<ItemCount> ingredients, List<ItemCount> products, string displayName, decimal powerProduction) : base(UID, craftTime, machineUID, ingredients, products, displayName)

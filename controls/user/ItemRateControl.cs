@@ -35,7 +35,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		public void UpdateButton()
 		{
-			ToggleInput(!parentControl.ItemHasRelatedRecipe(ItemUID));
+			ItemButton.Enabled = !parentControl.ItemHasRelatedRecipe(ItemUID);
 		}
 
 		private void RateNumeric_ValueChanged(object sender, EventArgs e)
@@ -81,7 +81,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		public void ToggleInput(bool on)
 		{
-			if (on && RateNumeric.Value == 0)
+			if (RateNumeric.Value == 0 && Enabled)
 			{
 				Enabled = false;
 				return;
