@@ -19,7 +19,7 @@ namespace VisualSatisfactoryCalculator.forms
 		public static void Main()
 		{
 			Application.EnableVisualStyles();
-			SaveFileInteractor sfi = new SaveFileInteractor();
+			FileInteractor sfi = new FileInteractor();
 			Dictionary<string, IEncoder> encoders = sfi.GetEncoders();
 			Application.Run(new MainForm(encoders, sfi.GetAllRecipes(encoders)));
 		}
@@ -111,24 +111,6 @@ namespace VisualSatisfactoryCalculator.forms
 						PlanUpdated();
 					}
 				}
-			}
-		}
-
-		private void LoadSaveButton_Click(object sender, EventArgs e)
-		{
-			OpenFileDialog fileDialog = new OpenFileDialog()
-			{
-				Title = "Select a save file",
-				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\FactoryGame\\Saved\\SaveGames\\",
-				DefaultExt = ".sav",
-				Filter = "save files (*.sav)|*.sav"
-			};
-			if (fileDialog.ShowDialog() == DialogResult.OK)
-			{
-				SaveFileInteractor sfi = new SaveFileInteractor();
-				Dictionary<string, IEncoder> encoders = sfi.GetEncoders();
-				Recipes = sfi.GetUnlockedRecipesFromSave(fileDialog.FileName, encoders);
-				Encoders = encoders;
 			}
 		}
 	}

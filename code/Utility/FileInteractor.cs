@@ -1,0 +1,119 @@
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+using VisualSatisfactoryCalculator.code.Extensions;
+using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.JSONClasses;
+
+namespace VisualSatisfactoryCalculator.code.Utility
+{
+	public class FileInteractor
+	{
+		private readonly string _jsonFile;
+		private readonly Dictionary<string, JArray> _docGroups;
+		private readonly JsonSerializer _jsonSerializer;
+		private readonly ResearchToRecipeMapping _rTRMapping;
+
+		public Dictionary<string, IRecipe> GetAllRecipes(Dictionary<string, IEncoder> encoders)
+		{
+			Dictionary<string, IRecipe> allRecipes = new Dictionary<string, IRecipe>();
+			foreach (IEncoder encoder in encoders.Values)
+			{
+				if (encoder is IRecipe)
+				{
+					allRecipes.Add((encoder as IRecipe).UID, encoder as IRecipe);
+				}
+			}
+			return _rTRMapping.GetAllRelevantRecipes(allRecipes);
+		}
+
+		public FileInteractor()
+		{
+			_jsonFile = File.ReadAllText(".\\data\\Docs.json");
+			_jsonSerializer = new JsonSerializer()
+			{
+				Culture = System.Globalization.CultureInfo.GetCultureInfo(1033),
+			};
+			_docGroups = new Dictionary<string, JArray>();
+			_rTRMapping = new ResearchToRecipeMapping();
+			//
+			List<JToken> groups = JArray.Parse(_jsonFile).Children().ToList();
+			foreach (JToken token in groups)
+			{
+				string className = token.Value<string>("NativeClass");
+				_docGroups.Add(className, token.Value<JArray>("Classes"));
+			}
+		}
+
+		public Dictionary<string, IEncoder> GetEncoders()
+		{
+			//JSONItems
+			List<JToken> results = new List<JToken>();
+			results.AddRange(GetSection("FGItemDescriptor"));
+			results.AddRange(GetSection("FGBuildingDescriptor"));
+			results.AddRange(GetSection("FGItemDescriptorBiomass"));
+			results.AddRange(GetSection("FGEquipmentDescriptor"));
+			results.AddRange(GetSection("FGResourceDescriptor"));
+			results.AddRange(GetSection("FGConsumableDescriptor"));
+			results.AddRange(GetSection("FGItemDescriptorNuclearFuel"));
+			Dictionary<string, IEncoder> totalResults = new Dictionary<string, IEncoder>();
+			foreach (JToken token in results)
+			{
+				JSONItem item = token.ToObject<JSONItem>(_jsonSerializer);
+				totalResults.Add(item.UID, item);
+			}
+			//JSONBuildings
+			results.Clear();
+			results.AddRange(GetSection("FGBuildableManufacturer"));
+			foreach (JToken token in results)
+			{
+				JSONBuilding building = token.ToObject<JSONBuilding>(_jsonSerializer);
+				totalResults.Add(building.UID, building);
+			}
+			//Constants
+			totalResults.AddRangeIfNew(Constants.AllConstantEncoders);
+			//JSONRecipes
+			results.Clear();
+			results.AddRange(GetSection("FGRecipe"));
+			foreach (JToken token in results)
+			{
+				JSONRecipe recipe = token.ToObject<JSONRecipe>(_jsonSerializer);
+				totalResults.Add(recipe.UID, recipe);
+			}
+			//JSONGenerators -- must go near end, uses encodings to get energy value of fuel
+			results.Clear();
+			results.AddRange(GetSection("FGBuildableGeneratorFuel"));
+			results.AddRange(GetSection("FGBuildableGeneratorNuclear"));
+			List<JSONGenerator> generatorResults = new List<JSONGenerator>();
+			foreach (JToken token in results)
+			{
+				generatorResults.Add(token.ToObject<JSONGenerator>(_jsonSerializer));
+			}
+			foreach (JSONGenerator generator in generatorResults)
+			{
+				if (generator.DisplayName.Equals("Biomass Burner"))
+				{
+					continue;
+				}
+				//generators recipes
+				totalResults.AddRangeIfNew(generator.GetRecipes(totalResults));
+				//generator itself
+				totalResults.Add(generator.UID, generator);
+			}
+			//finished
+			Constants.LastResortEncoderList.AddRangeIfNew(totalResults);
+			return totalResults;
+		}
+
+		private List<JToken> GetSection(string nativeClass)
+		{
+			nativeClass = "Class'/Script/FactoryGame." + nativeClass + "'";
+			return _docGroups[nativeClass].Children().ToList();
+		}
+	}
+}

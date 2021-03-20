@@ -178,7 +178,7 @@
     <Compile Include="code\DataStorage\ItemCount.cs" />
     <Compile Include="code\Extensions\RecipeExtensions.cs" />
     <Compile Include="code\Extensions\NumberExtensions.cs" />
-    <Compile Include="code\Utility\SaveFileInteractor.cs" />
+    <Compile Include="code\Utility\FileInteractor.cs" />
     <Compile Include="controls\user\ItemRateControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -210,75 +210,6 @@
       <DependentUpon>SelectRecipePrompt.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\model\SaveComponentModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\model\SaveEntityModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\model\SaveObjectModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\model\SaveRootModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\util\EditorTreeNode.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\util\PropertyViewModelMapper.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\viewmodel\property\ArrayPropertyViewModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\viewmodel\property\BoolPropertyViewModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\viewmodel\property\BytePropertyViewModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\viewmodel\property\EnumPropertyViewModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\viewmodel\property\FloatPropertyViewModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\viewmodel\property\Int64PropertyViewModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\viewmodel\property\Int8PropertyViewModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\viewmodel\property\InterfacePropertyViewModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\viewmodel\property\IntPropertyViewModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\viewmodel\property\MapPropertyViewModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\viewmodel\property\NamePropertyViewModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\viewmodel\property\ObjectPropertyViewModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\viewmodel\property\SerializedPropertyViewModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\viewmodel\property\SetPropertyViewModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\viewmodel\property\StrPropertyViewModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\viewmodel\property\StructPropertyViewModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\editor\viewmodel\property\TextPropertyViewModel.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\BinaryIOExtensions.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\exceptions\UnknownBuildVersionException.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\exceptions\UnknownSaveVersionException.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\ArrayProperty.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\BoolProperty.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\ByteProperty.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\EnumProperty.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\FloatProperty.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\Int64Property.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\Int8Property.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\InterfaceProperty.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\IntProperty.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\MapProperty.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\NameProperty.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\ObjectProperty.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\SerializedProperty.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\SetProperty.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\StrProperty.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\StructProperty.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\structs\Box.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\structs\Color.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\structs\DynamicStructData.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\structs\FluidBox.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\structs\Guid.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\structs\InventoryItem.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\structs\IStructData.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\structs\LinearColor.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\structs\Quat.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\structs\RailroadTrackPosition.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\structs\Rotator.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\structs\Vector.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\propertytypes\TextProperty.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\SatisfactorySave.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\SaveComponent.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\SaveEntity.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\SaveObject.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\save\ChunkInfo.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\save\ESessionVisibility.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\save\FSaveCustomVersion.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\save\FSaveHeader.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\save\SaveHeaderVersion.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\SerializedFields.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\structures\IObjectReference.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\structures\ObjectReference.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\structures\Vector3.cs" />
-    <Compile Include="SatisfactorySaveEditorCode\parser\structures\Vector4.cs" />
     <EmbeddedResource Include="controls\user\ItemRateControl.resx">
       <DependentUpon>ItemRateControl.cs</DependentUpon>
     </EmbeddedResource>
