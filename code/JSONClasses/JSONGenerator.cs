@@ -11,7 +11,7 @@ using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
-	internal class JSONGenerator : IBuilding
+	internal class JSONGenerator : IBuilding, IFromJson
 	{
 		public string UID { get; }
 		private readonly string[] defaultFuelClasses;
@@ -19,6 +19,8 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		public string DisplayName { get; }
 		public decimal PowerConsumption { get { return -powerProduction; } }
 		public decimal PowerConsumptionExponent { get; }
+		public string NativeClass { get; }
+
 		private readonly bool requiresSupplementalResource;
 		private readonly decimal supplementalToPowerRatio;
 
@@ -32,6 +34,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			DisplayName = mDisplayName;
 			requiresSupplementalResource = mRequiresSupplementalResource;
 			supplementalToPowerRatio = mSupplementalToPowerRatio;
+			NativeClass = FileInteractor.ActiveNativeClass;
 		}
 
 		public static readonly decimal EnergyDivisor = 16m + (2m / 3m);

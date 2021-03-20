@@ -10,5 +10,8 @@ namespace VisualSatisfactoryCalculator.code.Interfaces
 	{
 		decimal CycleTime { get; }
 		decimal ItemsPerCycle { get; }
+		string AllowedResourceForms { get; }
+		bool OnlySpecificResources { get; }
+		string AllowedResources { get; }
 	}
 }

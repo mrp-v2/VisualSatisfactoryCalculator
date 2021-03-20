@@ -4,14 +4,21 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 
 using VisualSatisfactoryCalculator.code.DataStorage;
+using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
-	public class JSONRecipe : BasicRecipe
+	public class JSONRecipe : BasicRecipe, IFromJson
 	{
+		public string NativeClass { get; }
+
 		[JsonConstructor]
 		public JSONRecipe(string ClassName, string mDisplayName, string mIngredients, string mProduct, string mManufactoringDuration, string mProducedIn)
-			: base(ClassName, decimal.Parse(mManufactoringDuration), GetMachineUID(mProducedIn), GetIngredients(mIngredients), GetProducts(mProduct), mDisplayName) { }
+			: base(ClassName, decimal.Parse(mManufactoringDuration), GetMachineUID(mProducedIn), GetIngredients(mIngredients), GetProducts(mProduct), mDisplayName)
+		{
+			NativeClass = FileInteractor.ActiveNativeClass;
+		}
 
 		private static string GetMachineUID(string mProducedIn)
 		{

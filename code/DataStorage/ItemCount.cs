@@ -20,11 +20,8 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public string ToString(Dictionary<string, IEncoder> encodings)
 		{
-			if ((encodings[ItemUID] as IItem).IsLiquid)
-			{
-				return (Count / 1000).ToPrettyString() + " " + encodings[ItemUID].DisplayName;
-			}
-			return Count.ToPrettyString() + " " + encodings[ItemUID].DisplayName;
+			IItem item = encodings[ItemUID] as IItem;
+			return item.ToString(Count) + " " + item.DisplayName;
 		}
 
 		public override int GetHashCode()

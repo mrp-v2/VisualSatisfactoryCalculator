@@ -2,16 +2,19 @@
 
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
-	public class JSONItem : IItem
+	public class JSONItem : IItem, IFromJson
 	{
 		public string UID { get; }
 		public string DisplayName { get; }
 		public string Form { get; }
 		public decimal EnergyValue { get; }
 		public bool IsLiquid { get { return Form.Equals("RF_LIQUID"); } }
+		public string DocsCategory { get; }
+		public string NativeClass { get; }
 
 		[JsonConstructor]
 		public JSONItem(string ClassName, string mDisplayName, string mForm, string mEnergyValue)
@@ -20,6 +23,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			DisplayName = mDisplayName;
 			Form = mForm;
 			EnergyValue = decimal.Parse(mEnergyValue);
+			NativeClass = FileInteractor.ActiveNativeClass;
 		}
 
 		public JSONItem(JSONItem item) : this(item.UID, item.DisplayName, item.Form, item.EnergyValue.ToString()) { }
@@ -40,12 +44,10 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			{
 				return false;
 			}
-
 			if (!(other is JSONItem))
 			{
 				return false;
 			}
-
 			return EqualID(other);
 		}
 

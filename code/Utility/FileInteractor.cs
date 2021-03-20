@@ -17,7 +17,6 @@ namespace VisualSatisfactoryCalculator.code.Utility
 		private readonly string _jsonFile;
 		private readonly Dictionary<string, JArray> _docGroups;
 		private readonly JsonSerializer _jsonSerializer;
-		private readonly ResearchToRecipeMapping _rTRMapping;
 
 		public Dictionary<string, IRecipe> GetAllRecipes(Dictionary<string, IEncoder> encoders)
 		{
@@ -29,7 +28,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 					allRecipes.Add((encoder as IRecipe).UID, encoder as IRecipe);
 				}
 			}
-			return _rTRMapping.GetAllRelevantRecipes(allRecipes);
+			return allRecipes;
 		}
 
 		public FileInteractor()
@@ -40,7 +39,6 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				Culture = System.Globalization.CultureInfo.GetCultureInfo(1033),
 			};
 			_docGroups = new Dictionary<string, JArray>();
-			_rTRMapping = new ResearchToRecipeMapping();
 			//
 			List<JToken> groups = JArray.Parse(_jsonFile).Children().ToList();
 			foreach (JToken token in groups)
@@ -52,49 +50,37 @@ namespace VisualSatisfactoryCalculator.code.Utility
 
 		public Dictionary<string, IEncoder> GetEncoders()
 		{
-			//JSONItems
-			List<JToken> results = new List<JToken>();
-			results.AddRange(GetSection("FGItemDescriptor"));
-			results.AddRange(GetSection("FGBuildingDescriptor"));
-			results.AddRange(GetSection("FGItemDescriptorBiomass"));
-			results.AddRange(GetSection("FGEquipmentDescriptor"));
-			results.AddRange(GetSection("FGResourceDescriptor"));
-			results.AddRange(GetSection("FGConsumableDescriptor"));
-			results.AddRange(GetSection("FGItemDescriptorNuclearFuel"));
 			Dictionary<string, IEncoder> totalResults = new Dictionary<string, IEncoder>();
-			foreach (JToken token in results)
+			//JSONItems
+			List<JSONItem> items = new List<JSONItem>();
+			GetSection("FGItemDescriptor", items);
+			GetSection("FGBuildingDescriptor", items);
+			GetSection("FGItemDescriptorBiomass", items);
+			GetSection("FGEquipmentDescriptor", items);
+			GetSection("FGResourceDescriptor", items);
+			GetSection("FGConsumableDescriptor", items);
+			GetSection("FGItemDescriptorNuclearFuel", items);
+			foreach (JSONItem item in items)
 			{
-				JSONItem item = token.ToObject<JSONItem>(_jsonSerializer);
 				totalResults.Add(item.UID, item);
 			}
 			//JSONBuildings
-			results.Clear();
-			results.AddRange(GetSection("FGBuildableManufacturer"));
-			foreach (JToken token in results)
+			foreach (JSONBuilding building in GetSection<JSONBuilding>("FGBuildableManufacturer"))
 			{
-				JSONBuilding building = token.ToObject<JSONBuilding>(_jsonSerializer);
 				totalResults.Add(building.UID, building);
 			}
 			//Constants
 			totalResults.AddRangeIfNew(Constants.AllConstantEncoders);
 			//JSONRecipes
-			results.Clear();
-			results.AddRange(GetSection("FGRecipe"));
-			foreach (JToken token in results)
+			foreach (JSONRecipe recipe in GetSection<JSONRecipe>("FGRecipe"))
 			{
-				JSONRecipe recipe = token.ToObject<JSONRecipe>(_jsonSerializer);
 				totalResults.Add(recipe.UID, recipe);
 			}
 			//JSONGenerators -- must go near end, uses encodings to get energy value of fuel
-			results.Clear();
-			results.AddRange(GetSection("FGBuildableGeneratorFuel"));
-			results.AddRange(GetSection("FGBuildableGeneratorNuclear"));
-			List<JSONGenerator> generatorResults = new List<JSONGenerator>();
-			foreach (JToken token in results)
-			{
-				generatorResults.Add(token.ToObject<JSONGenerator>(_jsonSerializer));
-			}
-			foreach (JSONGenerator generator in generatorResults)
+			List<JSONGenerator> generators = new List<JSONGenerator>();
+			GetSection("FGBuildableGeneratorFuel", generators);
+			GetSection("FGBuildableGeneratorNuclear", generators);
+			foreach (JSONGenerator generator in generators)
 			{
 				if (generator.DisplayName.Equals("Biomass Burner"))
 				{
@@ -110,10 +96,23 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			return totalResults;
 		}
 
-		private List<JToken> GetSection(string nativeClass)
+		public static string ActiveNativeClass { get; private set; }
+
+		private List<T> GetSection<T>(string nativeClass, List<T> output)
 		{
+			ActiveNativeClass = nativeClass;
 			nativeClass = "Class'/Script/FactoryGame." + nativeClass + "'";
-			return _docGroups[nativeClass].Children().ToList();
+			foreach (JToken token in _docGroups[nativeClass].Children().ToList())
+			{
+				output.Add(token.ToObject<T>(_jsonSerializer));
+			}
+			ActiveNativeClass = string.Empty;
+			return output;
+		}
+
+		private List<T> GetSection<T>(string nativeClass)
+		{
+			return GetSection<T>(nativeClass, new List<T>());
 		}
 	}
 }
