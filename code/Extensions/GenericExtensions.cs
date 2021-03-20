@@ -5,14 +5,6 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 {
 	internal static class GenericExtensions
 	{
-		public static void AddIfNew<T>(this List<T> me, T other)
-		{
-			if (!me.Contains(other))
-			{
-				me.Add(other);
-			}
-		}
-
 		public static T[] SubArray<T>(this T[] me, int startIndex, int length)
 		{
 			if (startIndex + length > me.Length)

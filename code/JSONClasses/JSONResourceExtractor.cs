@@ -48,9 +48,11 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 					}
 					foreach (string resourceNodeType in NODE_CYCLE_TIME_DIVISORS.Keys)
 					{
-						List<ItemCount> products = new List<ItemCount>();
-						products.Add(new ItemCount(item.UID, ItemsPerCycle));
-						IRecipe recipe = new BasicRecipe(UID + resourceNodeType + item.UID, CycleTime / NODE_CYCLE_TIME_DIVISORS[resourceNodeType], UID, new List<ItemCount>(), products, resourceNodeType + " " + item.DisplayName);
+						List<ItemCount> products = new List<ItemCount>
+						{
+							new ItemCount(item.UID, ItemsPerCycle)
+						};
+						IRecipe recipe = new JSONResourceExtractorRecipe(UID + resourceNodeType + item.UID, CycleTime / NODE_CYCLE_TIME_DIVISORS[resourceNodeType], UID, new List<ItemCount>(), products, resourceNodeType + " " + item.DisplayName);
 						recipes.Add(recipe.UID, recipe);
 					}
 				}
@@ -80,11 +82,37 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 						}
 						List<ItemCount> products = new List<ItemCount>();
 						products.Add(new ItemCount(item.UID, ItemsPerCycle));
-						IRecipe recipe = new BasicRecipe(UID + item.UID, CycleTime, UID, new List<ItemCount>(), products, item.DisplayName);
+						IRecipe recipe = new JSONResourceExtractorRecipe(UID + item.UID, CycleTime, UID, new List<ItemCount>(), products, item.DisplayName);
 						recipes.Add(recipe.UID, recipe);
 					}
 				}
 				return recipes;
+			}
+		}
+
+		public class JSONResourceExtractorRecipe : BasicRecipe
+		{
+			public JSONResourceExtractorRecipe(string UID, decimal craftTime, string machineUID, List<ItemCount> ingredients, List<ItemCount> products, string displayName) : base(UID, craftTime, machineUID, ingredients, products, displayName)
+			{
+			}
+
+			protected override string GetConversionString(Encodings encodings)
+			{
+				string str = "";
+				bool first = true;
+				foreach (string key in Products.Keys)
+				{
+					if (!first)
+					{
+						str += ", ";
+					}
+					else
+					{
+						first = false;
+					}
+					str += Products[key].ToString(encodings);
+				}
+				return str;
 			}
 		}
 	}
