@@ -79,11 +79,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 				SelectRecipePrompt srp;
 				if (isProduct)
 				{
-					srp = new SelectRecipePrompt(mainForm.Recipes.GetRecipesThatConsume(itemUID));
+					srp = new SelectRecipePrompt(mainForm.Encoders.Recipes.GetRecipesThatConsume(itemUID));
 				}
 				else
 				{
-					srp = new SelectRecipePrompt(mainForm.Recipes.GetRecipesThatProduce(itemUID));
+					srp = new SelectRecipePrompt(mainForm.Encoders.Recipes.GetRecipesThatProduce(itemUID));
 				}
 				if (srp.ShowDialog() == DialogResult.OK)
 				{

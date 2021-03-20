@@ -18,7 +18,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			Count = count;
 		}
 
-		public string ToString(Dictionary<string, IEncoder> encodings)
+		public string ToString(Encodings encodings)
 		{
 			IItem item = encodings[ItemUID] as IItem;
 			return item.ToString(Count) + " " + item.DisplayName;

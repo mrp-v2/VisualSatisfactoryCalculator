@@ -7,7 +7,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 	{
 		public string UID { get; }
 		public string DisplayName { get; }
-		public bool IsLiquid { get { return false; } }
+		public bool IsFluid { get { return false; } }
 
 		public SimpleCustomItem(string UID, string displayName)
 		{

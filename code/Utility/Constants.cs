@@ -14,7 +14,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 
 		public static readonly Dictionary<string, IEncoder> AllConstantEncoders = new Dictionary<string, IEncoder>() { { MWItem.UID, MWItem } };
 
-		public static Dictionary<string, IEncoder> LastResortEncoderList = new Dictionary<string, IEncoder>();
+		public static Encodings LastResortEncoderList = new Encodings();
 
 		public static readonly string WaterID = "Desc_Water_C";
 	}

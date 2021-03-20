@@ -247,12 +247,12 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			}
 		}
 
-		public decimal GetPowerDraw(Dictionary<string, IEncoder> encodings)
+		public decimal GetPowerDraw(Encodings encodings)
 		{
 			return (encodings[_recipe.MachineUID] as IBuilding).PowerConsumption * (decimal)Math.Pow((double)(CalculateMachineClockPercentage() / 100m), (double)(encodings[_recipe.MachineUID] as IBuilding).PowerConsumptionExponent) * CalculateMachineCount();
 		}
 
-		public decimal GetRecursivePowerDraw(Dictionary<string, IEncoder> encodings)
+		public decimal GetRecursivePowerDraw(Encodings encodings)
 		{
 			decimal total = GetPowerDraw(encodings);
 			foreach (ProductionStep childIngredientStep in ChildIngredientSteps.Keys)

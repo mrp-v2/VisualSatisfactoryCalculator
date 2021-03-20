@@ -169,6 +169,8 @@
     <Compile Include="code\JSONClasses\JSONResourceExtractor.cs" />
     <Compile Include="code\Utility\BitmapSerializer.cs" />
     <Compile Include="code\Utility\Constants.cs" />
+    <Compile Include="code\Utility\Encodings.cs" />
+    <Compile Include="code\Utility\Util.cs" />
     <Compile Include="forms\UseSaveFilePrompt.cs">
       <SubType>Form</SubType>
     </Compile>

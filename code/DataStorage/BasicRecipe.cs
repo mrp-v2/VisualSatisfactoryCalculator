@@ -59,7 +59,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return UID.GetHashCode();
 		}
 
-		protected virtual string GetConversionString(Dictionary<string, IEncoder> encodings)
+		protected virtual string GetConversionString(Encodings encodings)
 		{
 			string str = "";
 			bool first = true;
@@ -92,7 +92,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return str;
 		}
 
-		public string ToString(Dictionary<string, IEncoder> encodings)
+		public string ToString(Encodings encodings)
 		{
 			string str = DisplayName + ": ";
 			str += GetConversionString(encodings);
@@ -122,7 +122,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			}
 		}
 
-		public string ToString(Dictionary<string, IEncoder> encodings, string format)
+		public string ToString(Encodings encodings, string format)
 		{
 			format = format.Replace("{name}", DisplayName);
 			format = format.Replace("{conversion}", GetConversionString(encodings));

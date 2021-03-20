@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using VisualSatisfactoryCalculator.code.DataStorage;
+using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.Interfaces
 {
@@ -9,7 +10,7 @@ namespace VisualSatisfactoryCalculator.code.Interfaces
 	{
 		string MachineUID { get; }
 		decimal CraftTime { get; }
-		string ToString(Dictionary<string, IEncoder> encodings);
+		string ToString(Encodings encodings);
 		/// <summary>
 		/// Creates a formatted string representation of this recipe.
 		/// </summary>
@@ -23,7 +24,7 @@ namespace VisualSatisfactoryCalculator.code.Interfaces
 		/// </list>
 		/// </param>
 		/// <returns></returns>
-		string ToString(Dictionary<string, IEncoder> encodings, string format);
+		string ToString(Encodings encodings, string format);
 		Dictionary<string, ItemCount> Ingredients { get; }
 		Dictionary<string, ItemCount> Products { get; }
 		decimal GetCountFor(string itemUID, bool isProduct);

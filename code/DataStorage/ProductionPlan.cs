@@ -19,7 +19,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return allSteps;
 		}
 
-		public Dictionary<string, decimal> GetNetRates(Dictionary<string, IEncoder> encodings)
+		public Dictionary<string, decimal> GetNetRates(Encodings encodings)
 		{
 			return GetAllProductRates().Subtract(GetAllIngredientRates(encodings));
 		}
@@ -44,7 +44,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return rates;
 		}
 
-		public Dictionary<string, decimal> GetAllIngredientRates(Dictionary<string, IEncoder> encodings)
+		public Dictionary<string, decimal> GetAllIngredientRates(Encodings encodings)
 		{
 			Dictionary<string, decimal> rates = new Dictionary<string, decimal>()
 			{
@@ -84,7 +84,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return totalMachines;
 		}
 
-		public string GetTotalMachineString(Dictionary<string, IEncoder> encodings)
+		public string GetTotalMachineString(Encodings encodings)
 		{
 			string total = "";
 			Dictionary<string, int> machines = TotalMachineCount();
@@ -95,7 +95,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return total;
 		}
 
-		public string GetProductsString(Dictionary<string, IEncoder> encodings)
+		public string GetProductsString(Encodings encodings)
 		{
 			string str = "Net Products: ";
 			Dictionary<string, decimal> netRates = GetNetRates(encodings);
@@ -119,7 +119,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return str;
 		}
 
-		public string GetIngredientsString(Dictionary<string, IEncoder> encodings)
+		public string GetIngredientsString(Encodings encodings)
 		{
 			string str = "All Ingredients: ";
 			Dictionary<string, decimal> rates = GetAllIngredientRates(encodings);

@@ -22,20 +22,15 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 
 		private static string GetMachineUID(string mProducedIn)
 		{
-			string[] machines = mProducedIn.Split(',');
-			string machineUID = default;
-			foreach (string str in machines)
+			string[] machines = Util.ParseUIDList(mProducedIn);
+			foreach (string machineUID in machines)
 			{
-				if (str.Contains("Buildable/Factory") && !str.Contains("WorkBench"))
+				if (FileInteractor.CurrentEncodings.ContainsKey(machineUID))
 				{
-					machineUID = str.Substring(str.IndexOf('.') + 1);
-					if (machineUID.Contains(")"))
-					{
-						machineUID = machineUID.Substring(0, machineUID.IndexOf(")"));
-					}
+					return machineUID;
 				}
 			}
-			return machineUID;
+			return default;
 		}
 
 		private static List<ItemCount> GetIngredients(string mIngredients)

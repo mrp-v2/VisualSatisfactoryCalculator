@@ -12,6 +12,6 @@ namespace VisualSatisfactoryCalculator.code.Interfaces
 		decimal ItemsPerCycle { get; }
 		string AllowedResourceForms { get; }
 		bool OnlySpecificResources { get; }
-		string AllowedResources { get; }
+		string[] AllowedResources { get; }
 	}
 }

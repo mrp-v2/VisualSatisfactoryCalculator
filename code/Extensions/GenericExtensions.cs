@@ -64,17 +64,5 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			}
 			return merged;
 		}
-
-		public static void AddRangeIfNew<TKey, TValueA, TValueB>(this Dictionary<TKey, TValueA> me, Dictionary<TKey, TValueB> other) where TValueB : TValueA
-		{
-			foreach (TKey key in other.Keys)
-			{
-				if (me.ContainsKey(key))
-				{
-					continue;
-				}
-				me.Add(key, other[key]);
-			}
-		}
 	}
 }

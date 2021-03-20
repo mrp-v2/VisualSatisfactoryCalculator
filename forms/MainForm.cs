@@ -20,29 +20,27 @@ namespace VisualSatisfactoryCalculator.forms
 		{
 			Application.EnableVisualStyles();
 			FileInteractor sfi = new FileInteractor();
-			Dictionary<string, IEncoder> encoders = sfi.GetEncoders();
+			Encodings encoders = sfi.GetEncoders();
 			Application.Run(new MainForm(encoders, sfi.GetAllRecipes(encoders)));
 		}
 
-		public Dictionary<string, IRecipe> Recipes { get; private set; }
-		public Dictionary<string, IEncoder> Encoders { get; private set; }
+		public Encodings Encoders { get; }
 
 		private ProductionPlan _plan;
 		private ProductionPlanTotalViewControl _PPTVC;
 
 		private readonly DigitalStenographySaveLoad _saveLoad;
 
-		private MainForm(Dictionary<string, IEncoder> encoders, Dictionary<string, IRecipe> recipes)
+		private MainForm(Encodings encoders, Dictionary<string, IRecipe> recipes)
 		{
 			InitializeComponent();
 			Encoders = encoders;
-			Recipes = recipes;
 			_saveLoad = new DigitalStenographySaveLoad();
 		}
 
 		private void SelectFirstRecipeButton_Click(object sender, EventArgs e)
 		{
-			SelectRecipePrompt srp = new SelectRecipePrompt(Recipes);
+			SelectRecipePrompt srp = new SelectRecipePrompt(Encoders.Recipes);
 			if (srp.ShowDialog() == DialogResult.OK)
 			{
 				_plan = new ProductionPlan(srp.GetSelectedRecipe());
@@ -107,7 +105,7 @@ namespace VisualSatisfactoryCalculator.forms
 				{
 					if (loadedPlan != null)
 					{
-						_plan = loadedPlan.ToProductionPlan(Recipes);
+						_plan = loadedPlan.ToProductionPlan(Encoders.Recipes);
 						PlanUpdated();
 					}
 				}

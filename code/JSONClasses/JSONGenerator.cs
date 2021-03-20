@@ -14,7 +14,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 	internal class JSONGenerator : IBuilding, IFromJson
 	{
 		public string UID { get; }
-		private readonly string[] defaultFuelClasses;
+		private readonly string[] fuelItemIDs;
 		private readonly decimal powerProduction;
 		public string DisplayName { get; }
 		public decimal PowerConsumption { get { return -powerProduction; } }
@@ -28,7 +28,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		public JSONGenerator(string ClassName, string mDefaultFuelClasses, bool mRequiresSupplementalResource, decimal mSupplementalToPowerRatio, string mPowerProduction, string mPowerProductionExponent, string mDisplayName)
 		{
 			UID = ClassName;
-			defaultFuelClasses = mDefaultFuelClasses.Split(',');
+			fuelItemIDs = Util.ParseUIDList(mDefaultFuelClasses);
 			powerProduction = decimal.Parse(mPowerProduction);
 			PowerConsumptionExponent = decimal.Parse(mPowerProductionExponent);
 			DisplayName = mDisplayName;
@@ -40,28 +40,23 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		public static readonly decimal EnergyDivisor = 16m + (2m / 3m);
 		public static readonly decimal SupplementalResourceFactor = 60m;
 
-		public Dictionary<string, IRecipe> GetRecipes(Dictionary<string, IEncoder> encodings)
+		public Dictionary<string, IRecipe> GetRecipes(Encodings encodings)
 		{
 			Dictionary<string, IRecipe> recipes = new Dictionary<string, IRecipe>();
-			foreach (string item in defaultFuelClasses)
+			foreach (string fuelItemID in fuelItemIDs)
 			{
-				string itemID = item.Substring(item.IndexOf('.') + 1);
-				if (itemID.IndexOf(")") >= 0)
-				{
-					itemID = itemID.Substring(0, itemID.IndexOf(")"));
-				}
-				IEncoder encodingItem = encodings[itemID];
+				IEncoder encodingItem = encodings[fuelItemID];
 				Trace.Assert(encodingItem is JSONItem);
 				JSONItem jItem = encodingItem as JSONItem;
 				List<ItemCount> ingredients = new List<ItemCount>
 				{
-					new ItemCount(itemID, powerProduction / (jItem.EnergyValue / 1000) / EnergyDivisor)
+					new ItemCount(fuelItemID, powerProduction / (jItem.EnergyValue / 1000) / EnergyDivisor)
 				};
 				if (requiresSupplementalResource)
 				{
 					ingredients.Add(new ItemCount(Constants.WaterID, powerProduction * supplementalToPowerRatio * SupplementalResourceFactor));
 				}
-				IRecipe recipe = new GeneratorRecipe(UID + itemID, 60, UID, ingredients, new List<ItemCount>(), jItem.DisplayName + " to Power", this.powerProduction);
+				IRecipe recipe = new GeneratorRecipe(UID + fuelItemID, 60, UID, ingredients, new List<ItemCount>(), jItem.DisplayName + " to Power", powerProduction);
 				recipes.Add(recipe.UID, recipe);
 			}
 			return recipes;
@@ -86,7 +81,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 				this.powerProduction = powerProduction;
 			}
 
-			protected override string GetConversionString(Dictionary<string, IEncoder> encodings)
+			protected override string GetConversionString(Encodings encodings)
 			{
 				string str = "";
 				bool first = true;

@@ -21,7 +21,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			ItemUID = itemUID;
 			IsProduct = isProduct;
 			ItemButton.Text = parentControl.mainForm.Encoders[itemUID].DisplayName;
-			if ((parentControl.mainForm.Encoders[itemUID] as IItem).IsLiquid)
+			if ((parentControl.mainForm.Encoders[itemUID] as IItem).IsFluid)
 			{
 				RateNumeric.Value = rate.Abs() / 1000;
 			}
@@ -46,7 +46,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 			if (Enabled && initialized)
 			{
-				if ((parentControl.mainForm.Encoders[ItemUID] as IItem).IsLiquid)
+				if ((parentControl.mainForm.Encoders[ItemUID] as IItem).IsFluid)
 				{
 					parentControl.RateChanged(ItemUID, RateNumeric.Value * 1000, IsProduct);
 				}
@@ -68,7 +68,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			if (newRate != RateNumeric.Value)
 			{
-				if ((parentControl.mainForm.Encoders[ItemUID] as IItem).IsLiquid)
+				if ((parentControl.mainForm.Encoders[ItemUID] as IItem).IsFluid)
 				{
 					RateNumeric.Value = newRate.Abs() / 1000;
 				}

@@ -18,7 +18,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 		private readonly Dictionary<string, JArray> _docGroups;
 		private readonly JsonSerializer _jsonSerializer;
 
-		public Dictionary<string, IRecipe> GetAllRecipes(Dictionary<string, IEncoder> encoders)
+		public Dictionary<string, IRecipe> GetAllRecipes(Encodings encoders)
 		{
 			Dictionary<string, IRecipe> allRecipes = new Dictionary<string, IRecipe>();
 			foreach (IEncoder encoder in encoders.Values)
@@ -48,18 +48,19 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			}
 		}
 
-		public Dictionary<string, IEncoder> GetEncoders()
+		public Encodings GetEncoders()
 		{
-			Dictionary<string, IEncoder> totalResults = new Dictionary<string, IEncoder>();
+			Encodings totalResults = new Encodings();
+			CurrentEncodings = totalResults;
 			//JSONItems
 			List<JSONItem> items = new List<JSONItem>();
-			GetSection("FGItemDescriptor", items);
-			GetSection("FGBuildingDescriptor", items);
-			GetSection("FGItemDescriptorBiomass", items);
-			GetSection("FGEquipmentDescriptor", items);
-			GetSection("FGResourceDescriptor", items);
-			GetSection("FGConsumableDescriptor", items);
-			GetSection("FGItemDescriptorNuclearFuel", items);
+			GetSection<JSONItem, JSONItem>("FGItemDescriptor", items);
+			GetSection<JSONItem, JSONItem>("FGBuildingDescriptor", items);
+			GetSection<JSONItem, JSONItem>("FGItemDescriptorBiomass", items);
+			GetSection<JSONItem, JSONItem>("FGEquipmentDescriptor", items);
+			GetSection<JSONItem, JSONItem>("FGResourceDescriptor", items);
+			GetSection<JSONItem, JSONItem>("FGConsumableDescriptor", items);
+			GetSection<JSONItem, JSONItem>("FGItemDescriptorNuclearFuel", items);
 			foreach (JSONItem item in items)
 			{
 				totalResults.Add(item.UID, item);
@@ -69,36 +70,62 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			{
 				totalResults.Add(building.UID, building);
 			}
-			//Constants
-			totalResults.AddRangeIfNew(Constants.AllConstantEncoders);
-			//JSONRecipes
+			//JSONRecipes -- must go after all buildings, uses buildings to decide what produces this recipe
 			foreach (JSONRecipe recipe in GetSection<JSONRecipe>("FGRecipe"))
 			{
-				totalResults.Add(recipe.UID, recipe);
+				if (recipe.MachineUID != default)
+				{
+					totalResults.Add(recipe.UID, recipe);
+				}
 			}
-			//JSONGenerators -- must go near end, uses encodings to get energy value of fuel
+			//JSONResourceExtractors
+			List<JSONResourceExtractor> resourceExtractors = new List<JSONResourceExtractor>();
+			GetSection<JSONResourceExtractor, JSONResourceExtractor>("FGBuildableResourceExtractor", resourceExtractors);
+			GetSection<JSONResourceExtractor.JSONWaterPump, JSONResourceExtractor>("FGBuildableWaterPump", resourceExtractors);
+			GetSection<JSONResourceExtractor, JSONResourceExtractor>("FGBuildableFrackingExtractor", resourceExtractors);
+			foreach (JSONResourceExtractor resourceExtractor in resourceExtractors)
+			{
+				totalResults.Add(resourceExtractor.UID, resourceExtractor);
+			}
+			//JSONGenerators
 			List<JSONGenerator> generators = new List<JSONGenerator>();
-			GetSection("FGBuildableGeneratorFuel", generators);
-			GetSection("FGBuildableGeneratorNuclear", generators);
+			GetSection<JSONGenerator, JSONGenerator>("FGBuildableGeneratorFuel", generators);
+			GetSection<JSONGenerator, JSONGenerator>("FGBuildableGeneratorNuclear", generators);
 			foreach (JSONGenerator generator in generators)
 			{
 				if (generator.DisplayName.Equals("Biomass Burner"))
 				{
 					continue;
 				}
-				//generators recipes
-				totalResults.AddRangeIfNew(generator.GetRecipes(totalResults));
-				//generator itself
 				totalResults.Add(generator.UID, generator);
 			}
+			//Constants
+			totalResults.AddRange(Constants.AllConstantEncoders);
+			//Generated Recipes -- must go after all items, uses item properties
+			//JSONResourceExtractor Recipes
+			foreach (JSONResourceExtractor resourceExtractor in resourceExtractors)
+			{
+				totalResults.AddRange(resourceExtractor.GetRecipes(totalResults));
+			}
+			//JSONGenerator Recipes
+			foreach (JSONGenerator generator in generators)
+			{
+				if (generator.DisplayName.Equals("Biomass Burner"))
+				{
+					continue;
+				}
+				totalResults.AddRange(generator.GetRecipes(totalResults));
+			}
 			//finished
-			Constants.LastResortEncoderList.AddRangeIfNew(totalResults);
+			Constants.LastResortEncoderList.AddRange(totalResults);
 			return totalResults;
 		}
 
+		public static Encodings CurrentEncodings { get; private set; }
+
 		public static string ActiveNativeClass { get; private set; }
 
-		private List<T> GetSection<T>(string nativeClass, List<T> output)
+		private List<V> GetSection<T, V>(string nativeClass, List<V> output) where T : V
 		{
 			ActiveNativeClass = nativeClass;
 			nativeClass = "Class'/Script/FactoryGame." + nativeClass + "'";
@@ -112,7 +139,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 
 		private List<T> GetSection<T>(string nativeClass)
 		{
-			return GetSection<T>(nativeClass, new List<T>());
+			return GetSection<T, T>(nativeClass, new List<T>());
 		}
 	}
 }

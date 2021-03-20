@@ -12,8 +12,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		public string DisplayName { get; }
 		public string Form { get; }
 		public decimal EnergyValue { get; }
-		public bool IsLiquid { get { return Form.Equals("RF_LIQUID"); } }
-		public string DocsCategory { get; }
+		public bool IsFluid { get { return Form.Equals("RF_LIQUID") || Form.Equals("RF_GAS"); } }
 		public string NativeClass { get; }
 
 		[JsonConstructor]
@@ -58,7 +57,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 
 		public string ToString(decimal rate)
 		{
-			return (IsLiquid ? rate / 1000 : rate).ToPrettyString();
+			return (IsFluid ? rate / 1000 : rate).ToPrettyString();
 		}
 	}
 }
