@@ -11,18 +11,16 @@ namespace VisualSatisfactoryCalculator.controls.user
 {
 	public partial class ProductionStepControl : UserControl
 	{
-		private readonly ProductionStep parentStep;
+		private readonly Step parentStep;
 		public readonly MainForm mainForm;
 		private bool initialized;
-		private readonly ProductionStepControl parentControl;
 
-		public ProductionStepControl(ProductionStep parentStep, MainForm mainForm, ProductionStepControl parentControl)
+		public ProductionStepControl(Step parentStep, MainForm mainForm, ProductionStepControl parentControl)
 		{
 			initialized = false;
 			InitializeComponent();
 			this.parentStep = parentStep;
 			this.mainForm = mainForm;
-			this.parentControl = parentControl;
 			parentStep.SetControl(this);
 			foreach (ItemCount ic in parentStep.GetRecipe().Products.Values)
 			{
@@ -34,19 +32,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 			RecipeLabel.Text = parentStep.GetRecipe().ToString(mainForm.Encoders, "{name} | {conversion} | {time} seconds");
 			MultiplierChanged();
-			if (parentStep is ProductionPlan)
-			{
-				DeleteStepButton.Enabled = false;
-			}
-			foreach (ProductionStep childStep in parentStep.ChildIngredientSteps.Keys)
-			{
-				AddProductionStep(childStep, false);
-			}
-			foreach (ProductionStep childStep in parentStep.ChildProductSteps.Keys)
-			{
-				AddProductionStep(childStep, true);
-			}
-			UpdateButtons();
 			FinishInitialization();
 		}
 
@@ -68,7 +53,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			if (Math.Abs(parentStep.GetItemRate(itemUID, isProduct)) != newRate)
 			{
-				parentStep.SetMultiplierAndRelatedRelative(itemUID, newRate, isProduct);
+				//parentStep.SetMultiplierAndRelatedRelative(itemUID, newRate, isProduct);
 			}
 		}
 
@@ -87,8 +72,8 @@ namespace VisualSatisfactoryCalculator.controls.user
 				}
 				if (srp.ShowDialog() == DialogResult.OK)
 				{
-					ProductionStep ps = new ProductionStep(srp.GetSelectedRecipe(), parentStep, itemUID, isProduct);
-					AddProductionStep(ps, isProduct);
+					Step ps = new Step(srp.GetSelectedRecipe(), parentStep, itemUID, isProduct);
+					//AddProductionStep(ps, isProduct);
 				}
 			}
 		}
@@ -105,20 +90,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 				IngredientsPanel.Controls.Add(irc);
 			}
 			irc.FinishInitialization();
-		}
-
-		private void AddProductionStep(ProductionStep ps, bool isItemProduct)
-		{
-			if (isItemProduct)
-			{
-				ReplaceItemRateControl(parentStep.ChildProductSteps[ps], new ProductionStepControl(ps, mainForm, this), isItemProduct);
-			}
-			else
-			{
-				ReplaceItemRateControl(parentStep.ChildIngredientSteps[ps], new ProductionStepControl(ps, mainForm, this), isItemProduct);
-			}
-
-			mainForm.UpdateTotalView();
 		}
 
 		private List<ItemRateControl> GetItemRateControls(bool products)
@@ -186,7 +157,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 			if (Enabled && initialized)
 			{
-				parentStep.SetMultiplierAndRelated(MultiplierNumeric.Value);
+				//parentStep.SetMultiplierAndRelated(MultiplierNumeric.Value);
 				mainForm.UpdateTotalView();
 			}
 		}
@@ -212,29 +183,9 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		private void DeleteStepButton_Click(object sender, EventArgs e)
 		{
-			parentStep.RemoveStep();
+			parentStep.Delete();
 			mainForm.UpdateTotalView();
 			Parent.Controls.Remove(this);
-			if (parentControl != null)
-			{
-				parentControl.UpdateButtons();
-			}
-		}
-
-		private void UpdateButtons()
-		{
-			foreach (ItemRateControl irc in GetItemRateControls())
-			{
-				irc.UpdateButton();
-			}
-			foreach (string itemUID in GetIngredientUIDsWithNoMatch())
-			{
-				AddItemRateControl(itemUID, false);
-			}
-			foreach (string itemUID in GetProductUIDsWithNoMatch())
-			{
-				AddItemRateControl(itemUID, true);
-			}
 		}
 
 		private List<ProductionStepControl> GetProductionStepControls()
@@ -255,46 +206,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 				}
 			}
 			return psc;
-		}
-
-		private List<string> GetProductUIDsWithNoMatch()
-		{
-			List<string> productUIDs = parentStep.GetRecipe().Products.Keys.ToList();
-			foreach (ItemRateControl itemRateControl in GetItemRateControls())
-			{
-				if (itemRateControl.IsProduct)
-				{
-					_ = productUIDs.Remove(itemRateControl.ItemUID);
-				}
-			}
-			foreach (ProductionStepControl productionStepControl in GetProductionStepControls())
-			{
-				if (productionStepControl.parentStep.IsProductOfParent)
-				{
-					_ = productUIDs.Remove(parentStep.ChildProductSteps[productionStepControl.parentStep]);
-				}
-			}
-			return productUIDs;
-		}
-
-		private List<string> GetIngredientUIDsWithNoMatch()
-		{
-			List<string> ingredientUIDs = parentStep.GetRecipe().Ingredients.Keys.ToList();
-			foreach (ItemRateControl itemRateControl in GetItemRateControls())
-			{
-				if (!itemRateControl.IsProduct)
-				{
-					_ = ingredientUIDs.Remove(itemRateControl.ItemUID);
-				}
-			}
-			foreach (ProductionStepControl productionStepControl in GetProductionStepControls())
-			{
-				if (!productionStepControl.parentStep.IsProductOfParent)
-				{
-					_ = ingredientUIDs.Remove(parentStep.ChildIngredientSteps[productionStepControl.parentStep]);
-				}
-			}
-			return ingredientUIDs;
 		}
 
 		private void ProductsPanel_ControlAdded(object sender, EventArgs e)

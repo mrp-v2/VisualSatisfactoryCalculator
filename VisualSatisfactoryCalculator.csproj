@@ -149,11 +149,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="code\DataStorage\CondensedProductionStep.cs" />
-    <Compile Include="code\DataStorage\ProductionStepConnection.cs" />
+    <Compile Include="code\Production\Connection.cs" />
     <Compile Include="code\DataStorage\SimpleCustomItem.cs" />
     <Compile Include="code\DataStorage\BasicRecipe.cs" />
-    <Compile Include="code\DataStorage\CondensedProductionPlan.cs" />
     <Compile Include="code\Extensions\GenericExtensions.cs" />
     <Compile Include="code\Interfaces\IBuilding.cs" />
     <Compile Include="code\Interfaces\IEncoder.cs" />
@@ -178,8 +176,8 @@
     <Compile Include="forms\UseSaveFilePrompt.Designer.cs">
       <DependentUpon>UseSaveFilePrompt.cs</DependentUpon>
     </Compile>
-    <Compile Include="code\DataStorage\ProductionPlan.cs" />
-    <Compile Include="code\DataStorage\ProductionStep.cs" />
+    <Compile Include="code\Production\Plan.cs" />
+    <Compile Include="code\Production\Step.cs" />
     <Compile Include="code\DataStorage\ItemCount.cs" />
     <Compile Include="code\Extensions\RecipeExtensions.cs" />
     <Compile Include="code\Extensions\NumberExtensions.cs" />

@@ -26,7 +26,7 @@ namespace VisualSatisfactoryCalculator.forms
 
 		public Encodings Encoders { get; }
 
-		private ProductionPlan _plan;
+		private Plan _plan;
 		private ProductionPlanTotalViewControl _PPTVC;
 
 		private readonly DigitalStenographySaveLoad _saveLoad;
@@ -43,7 +43,7 @@ namespace VisualSatisfactoryCalculator.forms
 			SelectRecipePrompt srp = new SelectRecipePrompt(Encoders.Recipes);
 			if (srp.ShowDialog() == DialogResult.OK)
 			{
-				_plan = new ProductionPlan(srp.GetSelectedRecipe());
+				_plan = new Plan();
 				PlanUpdated();
 			}
 		}
@@ -58,8 +58,8 @@ namespace VisualSatisfactoryCalculator.forms
 			_PPTVC = new ProductionPlanTotalViewControl();
 			UpdateTotalView();
 			ProductionPlanPanel.Controls.Add(_PPTVC);
-			ProductionStepControl PSC = new ProductionStepControl(_plan, this, null);
-			ProductionPlanPanel.Controls.Add(PSC);
+			//ProductionStepControl PSC = new ProductionStepControl(_plan, this, null);
+			//ProductionPlanPanel.Controls.Add(PSC);
 		}
 
 		private void SaveChartButton_Click(object sender, EventArgs e)
@@ -73,12 +73,10 @@ namespace VisualSatisfactoryCalculator.forms
 			};
 			if (dialog.ShowDialog() == DialogResult.OK)
 			{
-				// TODO create image stuff
-				// ProductionPlanPanel
 				Size size = ProductionPlanPanel.GetPreferredSize(new Size());
 				Bitmap map = new Bitmap(size.Width, size.Height);
 				ProductionPlanPanel.DrawToBitmap(map, new Rectangle(0, 0, size.Width, size.Height));
-				_saveLoad.Save(map, new CondensedProductionPlan(_plan));
+				//_saveLoad.Save(map, new CondensedPlan(_plan));
 				map.Save(dialog.FileName, ImageFormat.Png);
 			}
 		}
@@ -86,7 +84,7 @@ namespace VisualSatisfactoryCalculator.forms
 		public void UpdateTotalView()
 		{
 			_PPTVC.ProductsLabel.Text = _plan.GetProductsString(Encoders);
-			_PPTVC.MachinesLabel.Text = _plan.GetTotalMachineString(Encoders);
+			_PPTVC.MachinesLabel.Text = _plan.GetMachinesString(Encoders);
 			_PPTVC.IngredientsLabel.Text = _plan.GetIngredientsString(Encoders);
 		}
 
@@ -99,9 +97,9 @@ namespace VisualSatisfactoryCalculator.forms
 				DefaultExt = ".png",
 				Filter = "png images (*.png)|*.png"
 			};
-			if (dialog.ShowDialog() == DialogResult.OK)
+			/*if (dialog.ShowDialog() == DialogResult.OK)
 			{
-				if (_saveLoad.TryLoad(dialog.FileName, out CondensedProductionPlan loadedPlan))
+				if (_saveLoad.TryLoad(dialog.FileName, out CondensedPlan loadedPlan))
 				{
 					if (loadedPlan != null)
 					{
@@ -109,7 +107,7 @@ namespace VisualSatisfactoryCalculator.forms
 						PlanUpdated();
 					}
 				}
-			}
+			}*/
 		}
 	}
 }

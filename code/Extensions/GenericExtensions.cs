@@ -5,6 +5,21 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 {
 	internal static class GenericExtensions
 	{
+		public static void AddRange<T>(this ICollection<T> me, ICollection<T> collection)
+		{
+			foreach (T item in collection)
+			{
+				me.Add(item);
+			}
+		}
+
+		public static List<T> ToList<T>(this ICollection<T> me)
+		{
+			List<T> list = new List<T>();
+			list.AddRange(me);
+			return list;
+		}
+
 		public static T[] SubArray<T>(this T[] me, int startIndex, int length)
 		{
 			if (startIndex + length > me.Length)
