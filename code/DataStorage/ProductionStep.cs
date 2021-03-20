@@ -11,8 +11,9 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 	public class ProductionStep : IEquatable<ProductionStep>
 	{
 		private decimal _multiplier;
-		public Dictionary<ProductionStep, string> ChildIngredientSteps { get; }
-		public Dictionary<ProductionStep, string> ChildProductSteps { get; }
+		public Dictionary<ProductionStepConnection, string> ChildIngredientSteps { get; }
+		public Dictionary<ProductionStepConnection, string> ChildProductSteps { get; }
+		private List<ProductionStepConnection> Connections { get; }
 		private readonly ProductionStep _parentStep;
 		private ProductionStepControl _control;
 
@@ -22,6 +23,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public ProductionStep(IRecipe recipe, ProductionStep parent, string itemUID, bool isProductOfParent) : this(recipe, 1m)
 		{
+			Connections = new List<ProductionStepConnection>();
 			_parentStep = parent;
 			IsProductOfParent = isProductOfParent;
 			if (isProductOfParent)
@@ -32,7 +34,6 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			{
 				_parentStep.ChildIngredientSteps.Add(this, itemUID);
 			}
-
 			UpdateMultiplierRelativeTo(parent);
 		}
 
@@ -40,8 +41,8 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		{
 			_recipe = recipe;
 			_multiplier = multiplier;
-			ChildIngredientSteps = new Dictionary<ProductionStep, string>();
-			ChildProductSteps = new Dictionary<ProductionStep, string>();
+			ChildIngredientSteps = new Dictionary<ProductionStepConnection, string>();
+			ChildProductSteps = new Dictionary<ProductionStepConnection, string>();
 			_control = default;
 		}
 

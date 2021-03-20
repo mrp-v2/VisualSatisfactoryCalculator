@@ -150,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="code\DataStorage\CondensedProductionStep.cs" />
+    <Compile Include="code\DataStorage\ProductionStepConnection.cs" />
     <Compile Include="code\DataStorage\SimpleCustomItem.cs" />
     <Compile Include="code\DataStorage\BasicRecipe.cs" />
     <Compile Include="code\DataStorage\CondensedProductionPlan.cs" />
