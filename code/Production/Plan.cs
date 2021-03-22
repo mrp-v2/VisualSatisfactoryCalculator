@@ -1,29 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.Utility;
 
-namespace VisualSatisfactoryCalculator.code.DataStorage
+namespace VisualSatisfactoryCalculator.code.Production
 {
-	public class Plan
+	public class Plan : HashSet<Connection>
 	{
-		public HashSet<Connection> Connections { get; }
+		public ProcessedPlan ProcessedPlan { get; private set; }
 
 		public HashSet<Step> GetSteps()
 		{
-			if (Connections.Count == 0)
+			HashSet<Step> steps = new HashSet<Step>();
+			foreach (Connection connection in this)
 			{
-				return new HashSet<Step>();
+				steps.UnionWith(connection.GetSteps());
 			}
-			HashSet<Step> allSteps = Connections.ToList()[0].GetAllSteps(new HashSet<Step>());
-			return allSteps;
+			return steps;
 		}
 
-		public Plan()
+		new public bool Add(Connection item)
 		{
-			Connections = new HashSet<Connection>();
+			bool baseAdd = base.Add(item);
+			PlanChanged();
+			return baseAdd;
+		}
+
+		private void PlanChanged()
+		{
+			ProcessedPlan = new ProcessedPlan(this);
+		}
+
+		public Plan() : base()
+		{
+
 		}
 
 		public Dictionary<string, decimal> GetNetRates(Encodings encodings)

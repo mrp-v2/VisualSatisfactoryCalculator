@@ -166,6 +166,7 @@
     <Compile Include="code\JSONClasses\JSONItem.cs" />
     <Compile Include="code\JSONClasses\JSONRecipe.cs" />
     <Compile Include="code\JSONClasses\JSONResourceExtractor.cs" />
+    <Compile Include="code\Production\ProcessedPlan.cs" />
     <Compile Include="code\Utility\BitmapSerializer.cs" />
     <Compile Include="code\Utility\Constants.cs" />
     <Compile Include="code\Utility\Encodings.cs" />

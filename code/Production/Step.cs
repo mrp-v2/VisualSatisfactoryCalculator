@@ -6,7 +6,7 @@ using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.controls.user;
 
-namespace VisualSatisfactoryCalculator.code.DataStorage
+namespace VisualSatisfactoryCalculator.code.Production
 {
 	public class Step : IEquatable<Step>
 	{

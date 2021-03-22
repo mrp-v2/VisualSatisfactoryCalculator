@@ -6,19 +6,21 @@ using System.Threading.Tasks;
 
 using VisualSatisfactoryCalculator.code.Extensions;
 
-namespace VisualSatisfactoryCalculator.code.DataStorage
+namespace VisualSatisfactoryCalculator.code.Production
 {
 	public class Connection
 	{
 		private Dictionary<Step, ConnectionType> Consumers { get; }
 		private Dictionary<Step, ConnectionType> Producers { get; }
 		public string ItemUID { get; }
+		public OverallConnectionType Type { get; private set; }
 
 		public Connection(string itemUID)
 		{
 			Consumers = new Dictionary<Step, ConnectionType>();
 			Producers = new Dictionary<Step, ConnectionType>();
 			ItemUID = itemUID;
+			Type = OverallConnectionType.NONE;
 		}
 
 		public bool ContainsStep(Step step)
@@ -26,7 +28,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return Consumers.ContainsKey(step) || Producers.ContainsKey(step);
 		}
 
-		private HashSet<Step> GetLocalSteps()
+		public HashSet<Step> GetSteps()
 		{
 			HashSet<Step> steps = new HashSet<Step>();
 			steps.AddRange(Consumers.Keys);
@@ -60,6 +62,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			}
 			Consumers.Add(consumer, connectionType);
 			consumer.Connections.Add(this);
+			CalculateOverallConnectionType();
 			return this;
 		}
 
@@ -71,6 +74,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			}
 			Producers.Add(producer, connectionType);
 			producer.Connections.Add(this);
+			CalculateOverallConnectionType();
 			return this;
 		}
 
@@ -86,28 +90,12 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			}
 		}
 
-		public HashSet<Step> GetAllSteps(HashSet<Step> visited)
-		{
-			foreach (Step step in GetLocalSteps())
-			{
-				if (!visited.Contains(step))
-				{
-					visited.Add(step);
-					foreach (Connection connection in step.Connections)
-					{
-						connection.GetAllSteps(visited);
-					}
-				}
-			}
-			return visited;
-		}
-
 		public void UpdateMultipliers(List<Step> updated, Step from)
 		{
-			if (VerifyOverallConnectionType() == OverallConnectionType.NORMAL)
+			if (Type == OverallConnectionType.NORMAL)
 			{
 				bool isUpdateFromProducer = Producers.ContainsKey(from);
-				foreach (Step step in GetLocalSteps())
+				foreach (Step step in GetSteps())
 				{
 					if (!updated.Contains(step))
 					{
@@ -126,27 +114,78 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			}
 		}
 
-		OverallConnectionType VerifyOverallConnectionType()
+		void CalculateOverallConnectionType()
 		{
-			// Test 1: NORMAL
 			if (Consumers.Count == 1 && Producers.Count == 1)
 			{
 				if (Producers.Values.ToArray()[0] == ConnectionType.NORMAL && Consumers.Values.ToArray()[0] == ConnectionType.NORMAL)
 				{
-					return OverallConnectionType.NORMAL;
+					Type = OverallConnectionType.NORMAL;
+					return;
 				}
 			}
-			throw new InvalidOperationException("Illegal state detected - could not match any OverallConnectionType");
+			Type = OverallConnectionType.NONE;
 		}
 
-		private enum OverallConnectionType
+		public enum OverallConnectionType
 		{
-			NORMAL
+			NORMAL, NONE
 		}
 
-		private enum ConnectionType
+		public enum ConnectionType
 		{
-			NORMAL
+			NORMAL, NONE
+		}
+
+		public bool IsConnectedNormallyTo(Connection other)
+		{
+			if (other.Type != OverallConnectionType.NORMAL)
+			{
+				return false;
+			}
+			if (other.Equals(this))
+			{
+				return true;
+			}
+			return IsConnectedNormallyToRecursive(other, new HashSet<Connection> { this });
+		}
+
+		private bool IsConnectedNormallyToRecursive(Connection other, HashSet<Connection> visited)
+		{
+			if (Type != OverallConnectionType.NORMAL)
+			{
+				return false;
+			}
+			HashSet<Step> connectedNormallySteps = GetSteps();
+			foreach (Step step in GetSteps())
+			{
+				if (step.Connections.Contains(other))
+				{
+					if (other.Consumers.ContainsKey(step))
+					{
+						return true;
+					}
+					if (other.Producers.ContainsKey(step))
+					{
+						return true;
+					}
+				}
+			}
+			foreach (Step step in connectedNormallySteps)
+			{
+				foreach (Connection connection in step.Connections)
+				{
+					if (!visited.Contains(connection))
+					{
+						visited.Add(connection);
+						if (connection.IsConnectedNormallyToRecursive(other, visited))
+						{
+							return true;
+						}
+					}
+				}
+			}
+			return false;
 		}
 	}
 }
