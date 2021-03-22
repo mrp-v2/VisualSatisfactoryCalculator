@@ -58,7 +58,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.ProductsPanel.Name = "ProductsPanel";
 			this.ProductsPanel.Size = new System.Drawing.Size(0, 0);
 			this.ProductsPanel.TabIndex = 0;
-			this.ProductsPanel.ControlAdded += new System.Windows.Forms.ControlEventHandler(this.ProductsPanel_ControlAdded);
 			// 
 			// IngredientsPanel
 			// 

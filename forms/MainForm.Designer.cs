@@ -34,7 +34,7 @@
 			this.SelectFirstRecipeButton = new System.Windows.Forms.Button();
 			this.LoadChartButton = new System.Windows.Forms.Button();
 			this.SaveChartButton = new System.Windows.Forms.Button();
-			this.ProductionPlanPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.PlanPanel = new System.Windows.Forms.Panel();
 			this.MainPanel.SuspendLayout();
 			this.ButtonPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -44,7 +44,7 @@
 			this.MainPanel.AutoScroll = true;
 			this.MainPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.MainPanel.Controls.Add(this.ButtonPanel);
-			this.MainPanel.Controls.Add(this.ProductionPlanPanel);
+			this.MainPanel.Controls.Add(this.PlanPanel);
 			this.MainPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.MainPanel.Location = new System.Drawing.Point(0, 0);
@@ -104,16 +104,14 @@
 			this.SaveChartButton.UseVisualStyleBackColor = true;
 			this.SaveChartButton.Click += new System.EventHandler(this.SaveChartButton_Click);
 			// 
-			// ProductionPlanPanel
+			// PlanPanel
 			// 
-			this.ProductionPlanPanel.AutoSize = true;
-			this.ProductionPlanPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ProductionPlanPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-			this.ProductionPlanPanel.Location = new System.Drawing.Point(0, 39);
-			this.ProductionPlanPanel.Margin = new System.Windows.Forms.Padding(0);
-			this.ProductionPlanPanel.Name = "ProductionPlanPanel";
-			this.ProductionPlanPanel.Size = new System.Drawing.Size(0, 0);
-			this.ProductionPlanPanel.TabIndex = 1;
+			this.PlanPanel.AutoSize = true;
+			this.PlanPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.PlanPanel.Location = new System.Drawing.Point(3, 42);
+			this.PlanPanel.Name = "PlanPanel";
+			this.PlanPanel.Size = new System.Drawing.Size(0, 0);
+			this.PlanPanel.TabIndex = 1;
 			// 
 			// MainForm
 			// 
@@ -138,8 +136,8 @@
 		private System.Windows.Forms.FlowLayoutPanel MainPanel;
 		private System.Windows.Forms.FlowLayoutPanel ButtonPanel;
 		private System.Windows.Forms.Button SelectFirstRecipeButton;
-		private System.Windows.Forms.FlowLayoutPanel ProductionPlanPanel;
 		private System.Windows.Forms.Button SaveChartButton;
 		private System.Windows.Forms.Button LoadChartButton;
+		public System.Windows.Forms.Panel PlanPanel;
 	}
 }

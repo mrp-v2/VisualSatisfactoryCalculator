@@ -11,7 +11,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 {
 	public partial class ProductionStepControl : UserControl
 	{
-		private readonly Step parentStep;
+		private readonly Step backingStep;
 		public readonly MainForm mainForm;
 		private bool initialized;
 
@@ -19,7 +19,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			initialized = false;
 			InitializeComponent();
-			this.parentStep = parentStep;
+			this.backingStep = parentStep;
 			this.mainForm = mainForm;
 			parentStep.SetControl(this);
 			foreach (ItemCount ic in parentStep.GetRecipe().Products.Values)
@@ -39,27 +39,27 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			foreach (ItemRateControl irc in GetItemRateControls())
 			{
-				irc.UpdateRateValue(parentStep.GetItemRate(irc.ItemUID, irc.IsProduct));
+				irc.UpdateRateValue(backingStep.GetItemRate(irc.ItemUID, irc.IsProduct));
 			}
-			if (MultiplierNumeric.Value != parentStep.GetMultiplier())
+			if (MultiplierNumeric.Value != backingStep.GetMultiplier())
 			{
-				MultiplierNumeric.Value = parentStep.GetMultiplier();
+				MultiplierNumeric.Value = backingStep.GetMultiplier();
 			}
-			MachineCountLabel.Text = mainForm.Encoders[parentStep.GetRecipe().MachineUID].DisplayName + ": " + parentStep.CalculateMachineCount() + " x " + parentStep.CalculateMachineClockPercentage() + "%";
-			PowerConsumptionLabel.Text = "Power Consumption: " + parentStep.GetPowerDraw(mainForm.Encoders).ToPrettyString() + "MW";
+			MachineCountLabel.Text = mainForm.Encoders[backingStep.GetRecipe().MachineUID].DisplayName + ": " + backingStep.CalculateMachineCount() + " x " + backingStep.CalculateMachineClockPercentage() + "%";
+			PowerConsumptionLabel.Text = "Power Consumption: " + backingStep.GetPowerDraw(mainForm.Encoders).ToPrettyString() + "MW";
 		}
 
 		public void RateChanged(string itemUID, decimal newRate, bool isProduct)
 		{
-			if (Math.Abs(parentStep.GetItemRate(itemUID, isProduct)) != newRate)
+			if (Math.Abs(backingStep.GetItemRate(itemUID, isProduct)) != newRate)
 			{
-				//parentStep.SetMultiplierAndRelatedRelative(itemUID, newRate, isProduct);
+				// TODO
 			}
 		}
 
 		public void ItemClicked(string itemUID, bool isProduct)
 		{
-			if (!parentStep.GetItemUIDsWithRelatedStep().Contains(itemUID))
+			if (!backingStep.GetItemUIDsWithRelatedStep().Contains(itemUID))
 			{
 				SelectRecipePrompt srp;
 				if (isProduct)
@@ -72,17 +72,18 @@ namespace VisualSatisfactoryCalculator.controls.user
 				}
 				if (srp.ShowDialog() == DialogResult.OK)
 				{
-					Step ps = new Step(srp.GetSelectedRecipe(), parentStep, itemUID, isProduct);
-					//AddProductionStep(ps, isProduct);
+					Step ps = new Step(srp.GetSelectedRecipe(), backingStep, itemUID, isProduct);
+					// TODO
 				}
 			}
 		}
 
 		private void AddItemRateControl(string itemUID, bool isProduct)
 		{
-			ItemRateControl irc = new ItemRateControl(this, itemUID, parentStep.GetItemRate(itemUID, isProduct), isProduct);
+			ItemRateControl irc = new ItemRateControl(this, itemUID, backingStep.GetItemRate(itemUID, isProduct), isProduct);
 			if (isProduct)
 			{
+				irc.Anchor = AnchorStyles.Bottom;
 				ProductsPanel.Controls.Add(irc);
 			}
 			else
@@ -90,6 +91,13 @@ namespace VisualSatisfactoryCalculator.controls.user
 				IngredientsPanel.Controls.Add(irc);
 			}
 			irc.FinishInitialization();
+		}
+
+		private List<ItemRateControl> GetItemRateControls()
+		{
+			List<ItemRateControl> list = GetItemRateControls(true);
+			list.AddRange(GetItemRateControls(false));
+			return list;
 		}
 
 		private List<ItemRateControl> GetItemRateControls(bool products)
@@ -105,50 +113,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 			return irc;
 		}
 
-		private List<ItemRateControl> GetItemRateControls()
-		{
-			List<ItemRateControl> irc = new List<ItemRateControl>();
-			foreach (Control c in ProductsPanel.Controls)
-			{
-				if (c is ItemRateControl)
-				{
-					irc.Add(c as ItemRateControl);
-				}
-			}
-			foreach (Control c in IngredientsPanel.Controls)
-			{
-				if (c is ItemRateControl)
-				{
-					irc.Add(c as ItemRateControl);
-				}
-			}
-			return irc;
-		}
-
-		private void ReplaceItemRateControl(string itemUID, ProductionStepControl psc, bool isProduct)
-		{
-			foreach (ItemRateControl irc in GetItemRateControls(isProduct))
-			{
-				if (irc.ItemUID.Equals(itemUID))
-				{
-					if (isProduct)
-					{
-						int index = ProductsPanel.Controls.GetChildIndex(irc);
-						ProductsPanel.Controls.Remove(irc);
-						ProductsPanel.Controls.Add(psc);
-						ProductsPanel.Controls.SetChildIndex(psc, index);
-					}
-					else
-					{
-						int index = IngredientsPanel.Controls.GetChildIndex(irc);
-						IngredientsPanel.Controls.Remove(irc);
-						IngredientsPanel.Controls.Add(psc);
-						IngredientsPanel.Controls.SetChildIndex(psc, index);
-					}
-				}
-			}
-		}
-
 		private void MultiplierNumeric_ValueChanged(object sender, EventArgs e)
 		{
 			if (MultiplierNumeric.Value == 0)
@@ -157,22 +121,17 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 			if (Enabled && initialized)
 			{
-				//parentStep.SetMultiplierAndRelated(MultiplierNumeric.Value);
-				mainForm.UpdateTotalView();
+				// TODO
 			}
 		}
 
 		public bool ItemHasRelatedRecipe(string itemUID)
 		{
-			return parentStep.GetItemUIDsWithRelatedStep().Contains(itemUID);
+			return backingStep.GetItemUIDsWithRelatedStep().Contains(itemUID);
 		}
 
 		public void ToggleInput(bool on)
 		{
-			foreach (ItemRateControl irc in GetItemRateControls())
-			{
-				irc.ToggleInput(on);
-			}
 			Enabled = on;
 		}
 
@@ -183,37 +142,10 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		private void DeleteStepButton_Click(object sender, EventArgs e)
 		{
-			parentStep.Delete();
+			backingStep.Delete();
 			mainForm.UpdateTotalView();
 			Parent.Controls.Remove(this);
-		}
-
-		private List<ProductionStepControl> GetProductionStepControls()
-		{
-			List<ProductionStepControl> psc = new List<ProductionStepControl>();
-			foreach (Control c in ProductsPanel.Controls)
-			{
-				if (c is ProductionStepControl)
-				{
-					psc.Add(c as ProductionStepControl);
-				}
-			}
-			foreach (Control c in IngredientsPanel.Controls)
-			{
-				if (c is ProductionStepControl)
-				{
-					psc.Add(c as ProductionStepControl);
-				}
-			}
-			return psc;
-		}
-
-		private void ProductsPanel_ControlAdded(object sender, EventArgs e)
-		{
-			foreach (Control c in ProductsPanel.Controls)
-			{
-				c.Anchor = AnchorStyles.Bottom;
-			}
+			// TODO
 		}
 	}
 }

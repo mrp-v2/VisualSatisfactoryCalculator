@@ -50,14 +50,14 @@ namespace VisualSatisfactoryCalculator.forms
 
 		public void PlanUpdated()
 		{
-			foreach (Control c in ProductionPlanPanel.Controls)
+			foreach (Control c in PlanPanel.Controls)
 			{
 				c.Dispose();
 			}
-			ProductionPlanPanel.Controls.Clear();
+			PlanPanel.Controls.Clear();
 			_PPTVC = new ProductionPlanTotalViewControl();
 			UpdateTotalView();
-			ProductionPlanPanel.Controls.Add(_PPTVC);
+			PlanPanel.Controls.Add(_PPTVC);
 			//ProductionStepControl PSC = new ProductionStepControl(_plan, this, null);
 			//ProductionPlanPanel.Controls.Add(PSC);
 		}
@@ -73,9 +73,9 @@ namespace VisualSatisfactoryCalculator.forms
 			};
 			if (dialog.ShowDialog() == DialogResult.OK)
 			{
-				Size size = ProductionPlanPanel.GetPreferredSize(new Size());
+				Size size = PlanPanel.GetPreferredSize(new Size());
 				Bitmap map = new Bitmap(size.Width, size.Height);
-				ProductionPlanPanel.DrawToBitmap(map, new Rectangle(0, 0, size.Width, size.Height));
+				PlanPanel.DrawToBitmap(map, new Rectangle(0, 0, size.Width, size.Height));
 				//_saveLoad.Save(map, new CondensedPlan(_plan));
 				map.Save(dialog.FileName, ImageFormat.Png);
 			}
