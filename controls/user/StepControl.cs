@@ -1,0 +1,164 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+
+using VisualSatisfactoryCalculator.code.DataStorage;
+using VisualSatisfactoryCalculator.code.Extensions;
+using VisualSatisfactoryCalculator.code.Production;
+using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.forms;
+
+namespace VisualSatisfactoryCalculator.controls.user
+{
+	public partial class StepControl : UserControl, PlanLayoutMaker.ILayoutControl
+	{
+		private readonly Step backingStep;
+		public readonly MainForm mainForm;
+		private bool initialized;
+
+		public StepControl(Step backingStep, MainForm mainForm)
+		{
+			initialized = false;
+			InitializeComponent();
+			this.backingStep = backingStep;
+			this.mainForm = mainForm;
+			backingStep.SetControl(this);
+			foreach (ItemCount ic in backingStep.GetRecipe().Products.Values)
+			{
+				AddItemRateControl(ic.ItemUID, true);
+			}
+			foreach (ItemCount ic in backingStep.GetRecipe().Ingredients.Values)
+			{
+				AddItemRateControl(ic.ItemUID, false);
+			}
+			RecipeLabel.Text = backingStep.GetRecipe().ToString(mainForm.Encoders, "{name} | {conversion} | {time} seconds");
+			MultiplierChanged();
+			FinishInitialization();
+		}
+
+		public void MultiplierChanged()
+		{
+			foreach (ItemRateControl irc in GetItemRateControls())
+			{
+				irc.UpdateRateValue(backingStep.GetItemRate(irc.ItemUID, irc.IsProduct));
+			}
+			if (MultiplierNumeric.Value != backingStep.GetMultiplier())
+			{
+				MultiplierNumeric.Value = backingStep.GetMultiplier();
+			}
+			MachineCountLabel.Text = mainForm.Encoders[backingStep.GetRecipe().MachineUID].DisplayName + ": " + backingStep.CalculateMachineCount() + " x " + backingStep.CalculateMachineClockPercentage() + "%";
+			PowerConsumptionLabel.Text = "Power Consumption: " + backingStep.GetPowerDraw(mainForm.Encoders).ToPrettyString() + "MW";
+		}
+
+		public void RateChanged(string itemUID, decimal newRate, bool isProduct)
+		{
+			if (Math.Abs(backingStep.GetItemRate(itemUID, isProduct)) != newRate)
+			{
+				// TODO
+			}
+		}
+
+		public void ItemClicked(string itemUID, bool isProduct)
+		{
+			if (!backingStep.GetItemUIDsWithRelatedStep().Contains(itemUID))
+			{
+				SelectRecipePrompt srp;
+				if (isProduct)
+				{
+					srp = new SelectRecipePrompt(mainForm.Encoders.Recipes.GetRecipesThatConsume(itemUID));
+				}
+				else
+				{
+					srp = new SelectRecipePrompt(mainForm.Encoders.Recipes.GetRecipesThatProduce(itemUID));
+				}
+				if (srp.ShowDialog() == DialogResult.OK)
+				{
+					Step ps = new Step(srp.GetSelectedRecipe(), backingStep, itemUID, isProduct);
+					mainForm.Plan.Steps.Add(ps);
+					mainForm.Plan.ProcessedPlan.Invalidate();
+					mainForm.PlanUpdated();
+				}
+			}
+		}
+
+		private void AddItemRateControl(string itemUID, bool isProduct)
+		{
+			ItemRateControl irc = new ItemRateControl(this, itemUID, backingStep.GetItemRate(itemUID, isProduct), isProduct);
+			if (isProduct)
+			{
+				irc.Anchor = AnchorStyles.Bottom;
+				ProductsPanel.Controls.Add(irc);
+			}
+			else
+			{
+				IngredientsPanel.Controls.Add(irc);
+			}
+			irc.FinishInitialization();
+		}
+
+		private List<ItemRateControl> GetItemRateControls()
+		{
+			List<ItemRateControl> list = GetItemRateControls(true);
+			list.AddRange(GetItemRateControls(false));
+			return list;
+		}
+
+		private List<ItemRateControl> GetItemRateControls(bool products)
+		{
+			List<ItemRateControl> irc = new List<ItemRateControl>();
+			foreach (Control c in products ? ProductsPanel.Controls : IngredientsPanel.Controls)
+			{
+				if (c is ItemRateControl)
+				{
+					irc.Add(c as ItemRateControl);
+				}
+			}
+			return irc;
+		}
+
+		private void MultiplierNumeric_ValueChanged(object sender, EventArgs e)
+		{
+			if (MultiplierNumeric.Value == 0)
+			{
+				return;
+			}
+			if (Enabled && initialized)
+			{
+				// TODO
+			}
+		}
+
+		public bool ItemHasRelatedRecipe(string itemUID)
+		{
+			return backingStep.GetItemUIDsWithRelatedStep().Contains(itemUID);
+		}
+
+		public void ToggleInput(bool on)
+		{
+			Enabled = on;
+		}
+
+		public void FinishInitialization()
+		{
+			initialized = true;
+		}
+
+		private void DeleteStepButton_Click(object sender, EventArgs e)
+		{
+			backingStep.Delete(mainForm.Plan);
+			mainForm.PlanUpdated();
+		}
+
+		public Size GetPreferredSize()
+		{
+			return GetPreferredSize(new Size());
+		}
+
+		public void Place(int xStart, int yStart)
+		{
+			Location = new Point(xStart, yStart);
+		}
+	}
+}

@@ -8,35 +8,20 @@ using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.Production
 {
-	public class Plan : HashSet<Connection>
+	public class Plan
 	{
-		public ProcessedPlan ProcessedPlan { get; private set; }
+		public readonly HashSet<Step> Steps;
+		public readonly CachedValue<ProcessedPlan> ProcessedPlan;
 
-		public HashSet<Step> GetSteps()
+		private void ConnectionsChanged()
 		{
-			HashSet<Step> steps = new HashSet<Step>();
-			foreach (Connection connection in this)
-			{
-				steps.UnionWith(connection.GetSteps());
-			}
-			return steps;
+			ProcessedPlan.Invalidate();
 		}
 
-		new public bool Add(Connection item)
+		public Plan()
 		{
-			bool baseAdd = base.Add(item);
-			PlanChanged();
-			return baseAdd;
-		}
-
-		private void PlanChanged()
-		{
-			ProcessedPlan = new ProcessedPlan(this);
-		}
-
-		public Plan() : base()
-		{
-
+			Steps = new HashSet<Step>();
+			ProcessedPlan = new CachedValue<ProcessedPlan>(() => new ProcessedPlan(this));
 		}
 
 		public Dictionary<string, decimal> GetNetRates(Encodings encodings)
@@ -47,7 +32,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public Dictionary<string, decimal> GetProductRates()
 		{
 			Dictionary<string, decimal> rates = new Dictionary<string, decimal>();
-			foreach (Step step in GetSteps())
+			foreach (Step step in Steps)
 			{
 				foreach (ItemCount itemCount in step.GetRecipe().Products.Values)
 				{
@@ -67,7 +52,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public decimal GetPowerDraw(Encodings encodings)
 		{
 			decimal powerDraw = 0;
-			foreach (Step step in GetSteps())
+			foreach (Step step in Steps)
 			{
 				powerDraw += step.GetPowerDraw(encodings);
 			}
@@ -80,7 +65,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				{ Constants.MWItem.UID, GetPowerDraw(encodings) }
 			};
-			foreach (Step step in GetSteps())
+			foreach (Step step in Steps)
 			{
 				foreach (ItemCount itemCount in step.GetRecipe().Ingredients.Values)
 				{
@@ -100,7 +85,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public Dictionary<string, int> MachineCount()
 		{
 			Dictionary<string, int> totalMachines = new Dictionary<string, int>();
-			foreach (Step step in GetSteps())
+			foreach (Step step in Steps)
 			{
 				if (!totalMachines.ContainsKey(step.GetRecipe().MachineUID))
 				{

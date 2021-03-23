@@ -8,6 +8,7 @@ using MrpV2.GenericLibrary.code.persistance.classes;
 
 using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.Production;
 using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.controls.user;
 
@@ -21,29 +22,32 @@ namespace VisualSatisfactoryCalculator.forms
 			Application.EnableVisualStyles();
 			FileInteractor sfi = new FileInteractor();
 			Encodings encoders = sfi.GetEncoders();
-			Application.Run(new MainForm(encoders, sfi.GetAllRecipes(encoders)));
+			Application.Run(new MainForm(encoders));
 		}
 
 		public Encodings Encoders { get; }
 
-		private Plan _plan;
-		private ProductionPlanTotalViewControl _PPTVC;
+		public readonly Plan Plan;
+		private PlanTotalViewControl PPTVC;
 
-		private readonly DigitalStenographySaveLoad _saveLoad;
+		private readonly DigitalStenographySaveLoad saveLoad;
 
-		private MainForm(Encodings encoders, Dictionary<string, IRecipe> recipes)
+		private MainForm(Encodings encoders)
 		{
 			InitializeComponent();
 			Encoders = encoders;
-			_saveLoad = new DigitalStenographySaveLoad();
+			saveLoad = new DigitalStenographySaveLoad();
+			Plan = new Plan();
 		}
 
-		private void SelectFirstRecipeButton_Click(object sender, EventArgs e)
+		private void AddStepButton_Click(object sender, EventArgs e)
 		{
 			SelectRecipePrompt srp = new SelectRecipePrompt(Encoders.Recipes);
 			if (srp.ShowDialog() == DialogResult.OK)
 			{
-				_plan = new Plan();
+				Step step = new Step(srp.GetSelectedRecipe());
+				Plan.Steps.Add(step);
+				Plan.ProcessedPlan.Invalidate();
 				PlanUpdated();
 			}
 		}
@@ -55,11 +59,10 @@ namespace VisualSatisfactoryCalculator.forms
 				c.Dispose();
 			}
 			PlanPanel.Controls.Clear();
-			_PPTVC = new ProductionPlanTotalViewControl();
+			PPTVC = new PlanTotalViewControl();
 			UpdateTotalView();
-			PlanPanel.Controls.Add(_PPTVC);
-			//ProductionStepControl PSC = new ProductionStepControl(_plan, this, null);
-			//ProductionPlanPanel.Controls.Add(PSC);
+			PlanPanel.Controls.Add(PPTVC);
+			PlanLayoutMaker.LayoutSteps(this, PlanPanel, Plan);
 		}
 
 		private void SaveChartButton_Click(object sender, EventArgs e)
@@ -76,16 +79,16 @@ namespace VisualSatisfactoryCalculator.forms
 				Size size = PlanPanel.GetPreferredSize(new Size());
 				Bitmap map = new Bitmap(size.Width, size.Height);
 				PlanPanel.DrawToBitmap(map, new Rectangle(0, 0, size.Width, size.Height));
-				//_saveLoad.Save(map, new CondensedPlan(_plan));
+				//saveLoad.Save(map, Plan);
 				map.Save(dialog.FileName, ImageFormat.Png);
 			}
 		}
 
 		public void UpdateTotalView()
 		{
-			_PPTVC.ProductsLabel.Text = _plan.GetProductsString(Encoders);
-			_PPTVC.MachinesLabel.Text = _plan.GetMachinesString(Encoders);
-			_PPTVC.IngredientsLabel.Text = _plan.GetIngredientsString(Encoders);
+			PPTVC.ProductsLabel.Text = Plan.GetProductsString(Encoders);
+			PPTVC.MachinesLabel.Text = Plan.GetMachinesString(Encoders);
+			PPTVC.IngredientsLabel.Text = Plan.GetIngredientsString(Encoders);
 		}
 
 		private void LoadChartButton_Click(object sender, EventArgs e)
@@ -97,17 +100,25 @@ namespace VisualSatisfactoryCalculator.forms
 				DefaultExt = ".png",
 				Filter = "png images (*.png)|*.png"
 			};
-			/*if (dialog.ShowDialog() == DialogResult.OK)
+			if (dialog.ShowDialog() == DialogResult.OK)
 			{
-				if (_saveLoad.TryLoad(dialog.FileName, out CondensedPlan loadedPlan))
+				if (saveLoad.TryLoad(dialog.FileName, out ProcessedPlan loadedPlan))
 				{
 					if (loadedPlan != null)
 					{
-						_plan = loadedPlan.ToProductionPlan(Encoders.Recipes);
-						PlanUpdated();
+						//_plan = loadedPlan.ToProductionPlan(Encoders.Recipes);
+						//PlanUpdated();
+						// TODO
 					}
 				}
-			}*/
+			}
+		}
+
+		private void ClearStepsButton_Click(object sender, EventArgs e)
+		{
+			Plan.Steps.Clear();
+			Plan.ProcessedPlan.Invalidate();
+			PlanUpdated();
 		}
 	}
 }

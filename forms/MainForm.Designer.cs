@@ -31,7 +31,8 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.MainPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.ButtonPanel = new System.Windows.Forms.FlowLayoutPanel();
-			this.SelectFirstRecipeButton = new System.Windows.Forms.Button();
+			this.AddStepButton = new System.Windows.Forms.Button();
+			this.ClearStepsButton = new System.Windows.Forms.Button();
 			this.LoadChartButton = new System.Windows.Forms.Button();
 			this.SaveChartButton = new System.Windows.Forms.Button();
 			this.PlanPanel = new System.Windows.Forms.Panel();
@@ -57,33 +58,47 @@
 			// 
 			this.ButtonPanel.AutoSize = true;
 			this.ButtonPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ButtonPanel.Controls.Add(this.SelectFirstRecipeButton);
+			this.ButtonPanel.Controls.Add(this.AddStepButton);
+			this.ButtonPanel.Controls.Add(this.ClearStepsButton);
 			this.ButtonPanel.Controls.Add(this.LoadChartButton);
 			this.ButtonPanel.Controls.Add(this.SaveChartButton);
 			this.ButtonPanel.Location = new System.Drawing.Point(3, 3);
 			this.ButtonPanel.Name = "ButtonPanel";
-			this.ButtonPanel.Size = new System.Drawing.Size(330, 33);
+			this.ButtonPanel.Size = new System.Drawing.Size(367, 33);
 			this.ButtonPanel.TabIndex = 0;
 			// 
-			// SelectFirstRecipeButton
+			// AddStepButton
 			// 
-			this.SelectFirstRecipeButton.AutoSize = true;
-			this.SelectFirstRecipeButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.SelectFirstRecipeButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.SelectFirstRecipeButton.Location = new System.Drawing.Point(3, 3);
-			this.SelectFirstRecipeButton.Name = "SelectFirstRecipeButton";
-			this.SelectFirstRecipeButton.Size = new System.Drawing.Size(136, 27);
-			this.SelectFirstRecipeButton.TabIndex = 2;
-			this.SelectFirstRecipeButton.Text = "Select First Recipe";
-			this.SelectFirstRecipeButton.UseVisualStyleBackColor = true;
-			this.SelectFirstRecipeButton.Click += new System.EventHandler(this.SelectFirstRecipeButton_Click);
+			this.AddStepButton.AutoSize = true;
+			this.AddStepButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.AddStepButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.AddStepButton.Location = new System.Drawing.Point(3, 3);
+			this.AddStepButton.Name = "AddStepButton";
+			this.AddStepButton.Size = new System.Drawing.Size(76, 27);
+			this.AddStepButton.TabIndex = 2;
+			this.AddStepButton.Text = "Add Step";
+			this.AddStepButton.UseVisualStyleBackColor = true;
+			this.AddStepButton.Click += new System.EventHandler(this.AddStepButton_Click);
+			// 
+			// ClearStepsButton
+			// 
+			this.ClearStepsButton.AutoSize = true;
+			this.ClearStepsButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.ClearStepsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+			this.ClearStepsButton.Location = new System.Drawing.Point(85, 3);
+			this.ClearStepsButton.Name = "ClearStepsButton";
+			this.ClearStepsButton.Size = new System.Drawing.Size(91, 27);
+			this.ClearStepsButton.TabIndex = 5;
+			this.ClearStepsButton.Text = "Clear Steps";
+			this.ClearStepsButton.UseVisualStyleBackColor = true;
+			this.ClearStepsButton.Click += new System.EventHandler(this.ClearStepsButton_Click);
 			// 
 			// LoadChartButton
 			// 
 			this.LoadChartButton.AutoSize = true;
 			this.LoadChartButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.LoadChartButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.LoadChartButton.Location = new System.Drawing.Point(145, 3);
+			this.LoadChartButton.Location = new System.Drawing.Point(182, 3);
 			this.LoadChartButton.Name = "LoadChartButton";
 			this.LoadChartButton.Size = new System.Drawing.Size(88, 27);
 			this.LoadChartButton.TabIndex = 4;
@@ -96,7 +111,7 @@
 			this.SaveChartButton.AutoSize = true;
 			this.SaveChartButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.SaveChartButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.SaveChartButton.Location = new System.Drawing.Point(239, 3);
+			this.SaveChartButton.Location = new System.Drawing.Point(276, 3);
 			this.SaveChartButton.Name = "SaveChartButton";
 			this.SaveChartButton.Size = new System.Drawing.Size(88, 27);
 			this.SaveChartButton.TabIndex = 3;
@@ -108,6 +123,7 @@
 			// 
 			this.PlanPanel.AutoSize = true;
 			this.PlanPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.PlanPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.PlanPanel.Location = new System.Drawing.Point(3, 42);
 			this.PlanPanel.Name = "PlanPanel";
 			this.PlanPanel.Size = new System.Drawing.Size(0, 0);
@@ -135,9 +151,10 @@
 
 		private System.Windows.Forms.FlowLayoutPanel MainPanel;
 		private System.Windows.Forms.FlowLayoutPanel ButtonPanel;
-		private System.Windows.Forms.Button SelectFirstRecipeButton;
+		private System.Windows.Forms.Button AddStepButton;
 		private System.Windows.Forms.Button SaveChartButton;
 		private System.Windows.Forms.Button LoadChartButton;
 		public System.Windows.Forms.Panel PlanPanel;
+		private System.Windows.Forms.Button ClearStepsButton;
 	}
 }

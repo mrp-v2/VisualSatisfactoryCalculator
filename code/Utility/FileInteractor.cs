@@ -18,19 +18,6 @@ namespace VisualSatisfactoryCalculator.code.Utility
 		private readonly Dictionary<string, JArray> _docGroups;
 		private readonly JsonSerializer _jsonSerializer;
 
-		public Dictionary<string, IRecipe> GetAllRecipes(Encodings encoders)
-		{
-			Dictionary<string, IRecipe> allRecipes = new Dictionary<string, IRecipe>();
-			foreach (IEncoder encoder in encoders.Values)
-			{
-				if (encoder is IRecipe)
-				{
-					allRecipes.Add((encoder as IRecipe).UID, encoder as IRecipe);
-				}
-			}
-			return allRecipes;
-		}
-
 		public FileInteractor()
 		{
 			_jsonFile = File.ReadAllText(".\\data\\Docs.json");

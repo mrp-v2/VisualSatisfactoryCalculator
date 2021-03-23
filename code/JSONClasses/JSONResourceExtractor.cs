@@ -80,8 +80,10 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 								continue;
 							}
 						}
-						List<ItemCount> products = new List<ItemCount>();
-						products.Add(new ItemCount(item.UID, ItemsPerCycle));
+						List<ItemCount> products = new List<ItemCount>
+						{
+							new ItemCount(item.UID, ItemsPerCycle)
+						};
 						IRecipe recipe = new JSONResourceExtractorRecipe(UID + item.UID, CycleTime, UID, new List<ItemCount>(), products, item.DisplayName);
 						recipes.Add(recipe.UID, recipe);
 					}

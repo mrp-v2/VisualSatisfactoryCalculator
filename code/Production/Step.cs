@@ -8,17 +8,46 @@ using VisualSatisfactoryCalculator.controls.user;
 
 namespace VisualSatisfactoryCalculator.code.Production
 {
-	public class Step : IEquatable<Step>
+	public class Step
 	{
 		private decimal _multiplier;
-		public List<Connection> Connections { get; }
-		private ProductionStepControl _control;
+		public readonly CachedValue<IEnumerable<Connection>> Connections;
+		public readonly CachedValue<bool> HasNormalProductConnections;
+		public readonly CachedValue<HashSet<Connection>> NormalIngredientConnections;
+		private readonly HashSet<Connection> IngredientConnections;
+		private readonly HashSet<Connection> ProductConnections;
+		private StepControl _control;
+
+		public void AddIngredientConnection(Connection connection)
+		{
+			IngredientConnections.Add(connection);
+			Connections.Invalidate();
+		}
+
+		public void AddProductConnection(Connection connection)
+		{
+			ProductConnections.Add(connection);
+			Connections.Invalidate();
+			HasNormalProductConnections.InvalidateIf(false);
+		}
+
+		public void RemoveIngredientConnection(Connection connection)
+		{
+			IngredientConnections.Remove(connection);
+			Connections.Invalidate();
+		}
+
+		public void RemoveProductConnection(Connection connection)
+		{
+			ProductConnections.Remove(connection);
+			Connections.Invalidate();
+			HasNormalProductConnections.InvalidateIf(true);
+		}
 
 		private readonly IRecipe _recipe;
 
-		public Step(IRecipe recipe, Step relatedStep, string itemUID, bool isProductOfRelated) : this(recipe, 1m)
+		public Step(IRecipe recipe, Step relatedStep, string itemUID, bool isProductOfRelated) : this(recipe)
 		{
-			Connections = new List<Connection>();
 			if (isProductOfRelated)
 			{
 				new Connection(itemUID).AddNormalConsumer(this).AddNormalProducer(relatedStep);
@@ -30,12 +59,47 @@ namespace VisualSatisfactoryCalculator.code.Production
 			SetMultiplier(CalculateMultiplierForRate(itemUID, relatedStep.GetItemRate(itemUID, isProductOfRelated), !isProductOfRelated));
 		}
 
-		public Step(IRecipe recipe, decimal multiplier)
+		public Step(IRecipe recipe) : this()
 		{
-			Connections = new List<Connection>();
 			_recipe = recipe;
-			_multiplier = multiplier;
+			_multiplier = 1m;
 			_control = default;
+		}
+
+		private Step()
+		{
+			IngredientConnections = new HashSet<Connection>();
+			ProductConnections = new HashSet<Connection>();
+			Connections = new CachedValue<IEnumerable<Connection>>(() =>
+			{
+				List<Connection> list = new List<Connection>();
+				list.AddRange(IngredientConnections);
+				list.AddRange(ProductConnections);
+				return list;
+			});
+			HasNormalProductConnections = new CachedValue<bool>(() =>
+			{
+				foreach (Connection connection in ProductConnections)
+				{
+					if (connection.Type == Connection.OverallConnectionType.NORMAL)
+					{
+						return true;
+					}
+				}
+				return false;
+			});
+			NormalIngredientConnections = new CachedValue<HashSet<Connection>>(() =>
+			{
+				HashSet<Connection> normalIngredients = new HashSet<Connection>();
+				foreach (Connection connection in IngredientConnections)
+				{
+					if (connection.Type == Connection.OverallConnectionType.NORMAL)
+					{
+						normalIngredients.Add(connection);
+					}
+				}
+				return normalIngredients;
+			});
 		}
 
 		public IRecipe GetRecipe()
@@ -68,7 +132,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public void SetMultiplier(decimal multiplier)
 		{
 			_multiplier = multiplier;
-			if (_control != default(ProductionStepControl))
+			if (_control != default(StepControl))
 			{
 				_control.ToggleInput(false);
 				_control.MultiplierChanged();
@@ -91,7 +155,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			return CalculateDefaultItemRate(itemUID, isItemProduct) * _multiplier;
 		}
 
-		public void SetControl(ProductionStepControl control)
+		public void SetControl(StepControl control)
 		{
 			_control = control;
 		}
@@ -99,7 +163,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public List<string> GetItemUIDsWithRelatedStep()
 		{
 			List<string> uids = new List<string>();
-			foreach (Connection connection in Connections)
+			foreach (Connection connection in Connections.Get())
 			{
 				uids.Add(connection.ItemUID);
 			}
@@ -111,22 +175,14 @@ namespace VisualSatisfactoryCalculator.code.Production
 			return _multiplier;
 		}
 
-		public bool Equals(Step obj)
+		public void Delete(Plan plan)
 		{
-			return _recipe.Equals(obj._recipe);
-		}
-
-		public override int GetHashCode()
-		{
-			return _recipe.GetHashCode();
-		}
-
-		public void Delete()
-		{
-			foreach (Connection connection in Connections)
+			foreach (Connection connection in Connections.Get())
 			{
-				connection.Delete();
+				connection.Delete(); // TODO this won't work for multi-connections
 			}
+			plan.Steps.Remove(this);
+			plan.ProcessedPlan.Invalidate();
 		}
 
 		public decimal GetPowerDraw(Encodings encodings)
@@ -136,7 +192,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		public bool IsStepRelated(Step test)
 		{
-			foreach (Connection connection in Connections)
+			foreach (Connection connection in Connections.Get())
 			{
 				if (connection.ContainsStep(test))
 				{

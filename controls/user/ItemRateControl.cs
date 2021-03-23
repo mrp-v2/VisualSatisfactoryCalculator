@@ -8,12 +8,12 @@ namespace VisualSatisfactoryCalculator.controls.user
 {
 	public partial class ItemRateControl : UserControl
 	{
-		private readonly ProductionStepControl parentControl;
+		private readonly StepControl parentControl;
 		public string ItemUID { get; }
 		private bool initialized;
 		public bool IsProduct { get; }
 
-		public ItemRateControl(ProductionStepControl parentControl, string itemUID, decimal rate, bool isProduct)
+		public ItemRateControl(StepControl parentControl, string itemUID, decimal rate, bool isProduct)
 		{
 			initialized = false;
 			InitializeComponent();

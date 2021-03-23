@@ -15,6 +15,11 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public string ItemUID { get; }
 		public OverallConnectionType Type { get; private set; }
 
+		public IEnumerable<Step> GetProducerSteps()
+		{
+			return Producers.Keys;
+		}
+
 		public Connection(string itemUID)
 		{
 			Consumers = new Dictionary<Step, ConnectionType>();
@@ -61,7 +66,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 				throw new ArgumentException("Cannot add " + consumer + " as a consumer because it does not consume " + ItemUID);
 			}
 			Consumers.Add(consumer, connectionType);
-			consumer.Connections.Add(this);
+			consumer.AddIngredientConnection(this);
 			CalculateOverallConnectionType();
 			return this;
 		}
@@ -73,7 +78,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 				throw new ArgumentException("Cannot add " + producer + " as a producer because it does not produce " + ItemUID);
 			}
 			Producers.Add(producer, connectionType);
-			producer.Connections.Add(this);
+			producer.AddProductConnection(this);
 			CalculateOverallConnectionType();
 			return this;
 		}
@@ -82,11 +87,11 @@ namespace VisualSatisfactoryCalculator.code.Production
 		{
 			foreach (Step step in Consumers.Keys)
 			{
-				step.Connections.Remove(this);
+				step.RemoveIngredientConnection(this);
 			}
 			foreach (Step step in Producers.Keys)
 			{
-				step.Connections.Remove(this);
+				step.RemoveProductConnection(this);
 			}
 		}
 
@@ -105,7 +110,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 						}
 						step.SetMultiplier(step.CalculateMultiplierForRate(ItemUID, from.GetItemRate(ItemUID, isUpdateFromProducer), !isUpdateFromProducer));
 						updated.Add(step);
-						foreach (Connection connection in step.Connections)
+						foreach (Connection connection in step.Connections.Get())
 						{
 							connection.UpdateMultipliers(updated, step);
 						}
@@ -159,7 +164,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			HashSet<Step> connectedNormallySteps = GetSteps();
 			foreach (Step step in GetSteps())
 			{
-				if (step.Connections.Contains(other))
+				if (step.Connections.Get().Contains(other))
 				{
 					if (other.Consumers.ContainsKey(step))
 					{
@@ -173,7 +178,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			}
 			foreach (Step step in connectedNormallySteps)
 			{
-				foreach (Connection connection in step.Connections)
+				foreach (Connection connection in step.Connections.Get())
 				{
 					if (!visited.Contains(connection))
 					{

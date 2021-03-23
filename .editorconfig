@@ -2,3 +2,6 @@
 
 # IDE0058: Expression value is never used
 csharp_style_unused_value_expression_statement_preference = discard_variable:none
+
+# IDE0053: Use block body for lambda expressions
+csharp_style_expression_bodied_lambdas = when_on_single_line

@@ -168,9 +168,29 @@
     <Compile Include="code\JSONClasses\JSONResourceExtractor.cs" />
     <Compile Include="code\Production\ProcessedPlan.cs" />
     <Compile Include="code\Utility\BitmapSerializer.cs" />
+    <Compile Include="code\Utility\CachedValue.cs" />
     <Compile Include="code\Utility\Constants.cs" />
     <Compile Include="code\Utility\Encodings.cs" />
+    <Compile Include="code\Utility\PlanLayoutMaker.cs" />
     <Compile Include="code\Utility\Util.cs" />
+    <Compile Include="controls\user\AddConnectionControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="controls\user\AddConnectionControl.Designer.cs">
+      <DependentUpon>AddConnectionControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="controls\user\LineControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="controls\user\LineControl.Designer.cs">
+      <DependentUpon>LineControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="controls\user\SplitAndMergeControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="controls\user\SplitAndMergeControl.Designer.cs">
+      <DependentUpon>SplitAndMergeControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="forms\UseSaveFilePrompt.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -189,11 +209,11 @@
     <Compile Include="controls\user\ItemRateControl.Designer.cs">
       <DependentUpon>ItemRateControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="controls\user\ProductionPlanTotalViewControl.cs">
+    <Compile Include="controls\user\PlanTotalViewControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="controls\user\ProductionPlanTotalViewControl.Designer.cs">
-      <DependentUpon>ProductionPlanTotalViewControl.cs</DependentUpon>
+    <Compile Include="controls\user\PlanTotalViewControl.Designer.cs">
+      <DependentUpon>PlanTotalViewControl.cs</DependentUpon>
     </Compile>
     <Compile Include="forms\MainForm.cs">
       <SubType>Form</SubType>
@@ -201,11 +221,11 @@
     <Compile Include="forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="controls\user\ProductionStepControl.cs">
+    <Compile Include="controls\user\StepControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="controls\user\ProductionStepControl.Designer.cs">
-      <DependentUpon>ProductionStepControl.cs</DependentUpon>
+    <Compile Include="controls\user\StepControl.Designer.cs">
+      <DependentUpon>StepControl.cs</DependentUpon>
     </Compile>
     <Compile Include="forms\SelectRecipePrompt.cs">
       <SubType>Form</SubType>
@@ -214,17 +234,26 @@
       <DependentUpon>SelectRecipePrompt.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="controls\user\AddConnectionControl.resx">
+      <DependentUpon>AddConnectionControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="controls\user\ItemRateControl.resx">
       <DependentUpon>ItemRateControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="controls\user\ProductionPlanTotalViewControl.resx">
-      <DependentUpon>ProductionPlanTotalViewControl.cs</DependentUpon>
+    <EmbeddedResource Include="controls\user\LineControl.resx">
+      <DependentUpon>LineControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="controls\user\PlanTotalViewControl.resx">
+      <DependentUpon>PlanTotalViewControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="controls\user\SplitAndMergeControl.resx">
+      <DependentUpon>SplitAndMergeControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="controls\user\ProductionStepControl.resx">
-      <DependentUpon>ProductionStepControl.cs</DependentUpon>
+    <EmbeddedResource Include="controls\user\StepControl.resx">
+      <DependentUpon>StepControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="forms\SelectRecipePrompt.resx">
       <DependentUpon>SelectRecipePrompt.cs</DependentUpon>
@@ -264,6 +293,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="images\VisualSatisfactoryCalculatorIcon.ico" />
+    <None Include="Resources\plus-button.png" />
     <Content Include="VisualSatisfactoryCalculatorIcon.ico" />
   </ItemGroup>
   <ItemGroup>

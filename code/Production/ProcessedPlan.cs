@@ -10,30 +10,128 @@ namespace VisualSatisfactoryCalculator.code.Production
 	{
 		private readonly HashSet<HashSet<Connection>> normalConnectionGroups;
 		private readonly HashSet<Connection> abnormalConnections;
+		private readonly HashSet<Step> steps;
+		private readonly Dictionary<int, HashSet<Step>> tierSteps;
 
 		public ProcessedPlan(Plan plan)
 		{
+			steps = plan.Steps;
 			normalConnectionGroups = new HashSet<HashSet<Connection>>();
 			abnormalConnections = new HashSet<Connection>();
-		MainLoop:
-			foreach (Connection connection in plan)
+			tierSteps = new Dictionary<int, HashSet<Step>>();
+			CalculateConnectionGroups();
+			CalculateStepTiers();
+		}
+
+		public int Tiers
+		{
+			get
 			{
-				if (connection.Type == Connection.OverallConnectionType.NORMAL)
+				return tierSteps.Count;
+			}
+		}
+
+		public IEnumerable<Step> GetStepsInTier(int tier)
+		{
+			if (!tierSteps.ContainsKey(tier))
+			{
+				return new List<Step>();
+			}
+			return tierSteps[tier];
+		}
+
+		private void CalculateStepTiers()
+		{
+			Dictionary<Step, int> stepTiers = new Dictionary<Step, int>();
+			HashSet<Step> remainingSteps = new HashSet<Step>(steps);
+			// tier 0
+			HashSet<Step> tier0 = new HashSet<Step>();
+			foreach (Step step in remainingSteps)
+			{
+				if (!step.HasNormalProductConnections.Get())
 				{
-					foreach (HashSet<Connection> connections in normalConnectionGroups)
+					tier0.Add(step);
+				}
+			}
+			foreach (Step step in tier0)
+			{
+				stepTiers.Add(step, 0);
+			}
+			remainingSteps.ExceptWith(tier0);
+			// the other tiers
+			int currentTier = 1;
+			HashSet<Step> previousTier = tier0;
+			while (remainingSteps.Count > 0)
+			{
+				HashSet<Step> ingredientSteps = new HashSet<Step>();
+				foreach (Step step in previousTier)
+				{
+					foreach (Connection connection in step.NormalIngredientConnections.Get())
 					{
-						if (connections.First().IsConnectedNormallyTo(connection))
-						{
-							if (connections.Add(connection))
-							{
-								goto MainLoop;
-							}
-						}
+						ingredientSteps.UnionWith(connection.GetProducerSteps());
 					}
 				}
-				else
+				foreach (Step step in ingredientSteps)
 				{
-					abnormalConnections.Add(connection);
+					if (stepTiers.ContainsKey(step))
+					{
+						stepTiers.Remove(step);
+					}
+					stepTiers.Add(step, currentTier);
+				}
+				previousTier = ingredientSteps;
+				currentTier++;
+				remainingSteps.ExceptWith(ingredientSteps);
+			}
+			// assemble final tier list
+			foreach (Step step in stepTiers.Keys)
+			{
+				int stepTier = stepTiers[step];
+				if (!tierSteps.ContainsKey(stepTier))
+				{
+					tierSteps.Add(stepTier, new HashSet<Step>());
+				}
+				tierSteps[stepTier].Add(step);
+			}
+		}
+
+		private void CalculateConnectionGroups()
+		{
+			foreach (Step step in steps)
+			{
+				foreach (Connection connection in step.Connections.Get())
+				{
+					if (abnormalConnections.Contains(connection))
+					{
+						continue;
+					}
+					foreach (HashSet<Connection> connectionGroup in normalConnectionGroups)
+					{
+						if (connectionGroup.Contains(connection))
+						{
+							goto Continue;
+						}
+					}
+					if (connection.Type == Connection.OverallConnectionType.NORMAL)
+					{
+						foreach (HashSet<Connection> connections in normalConnectionGroups)
+						{
+							if (connections.First().IsConnectedNormallyTo(connection))
+							{
+								if (connections.Add(connection))
+								{
+									goto Continue;
+								}
+							}
+						}
+						normalConnectionGroups.Add(new HashSet<Connection>() { connection });
+					}
+					else
+					{
+						abnormalConnections.Add(connection);
+					}
+				Continue:
+					continue;
 				}
 			}
 		}
