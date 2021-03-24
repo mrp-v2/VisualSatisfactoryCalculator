@@ -129,9 +129,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			_multiplier = multiplier;
 			if (_control != default(StepControl))
 			{
-				_control.ToggleInput(false);
-				_control.MultiplierChanged();
-				_control.ToggleInput(true);
+				_control.UpdateNumerics();
 			}
 		}
 

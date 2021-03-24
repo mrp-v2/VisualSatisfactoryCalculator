@@ -36,12 +36,13 @@ namespace VisualSatisfactoryCalculator.controls.user
 				AddItemRateControl(ic.ItemUID, false);
 			}
 			RecipeLabel.Text = backingStep.Recipe.ToString(mainForm.Encoders, "{name} | {conversion} | {time} seconds");
-			MultiplierChanged();
+			UpdateNumerics();
 			FinishInitialization();
 		}
 
-		public void MultiplierChanged()
+		public void UpdateNumerics()
 		{
+			ToggleInput(false);
 			foreach (ItemRateControl irc in GetItemRateControls())
 			{
 				irc.UpdateRateValue(BackingStep.GetItemRate(irc.ItemUID, irc.IsProduct));
@@ -52,6 +53,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 			MachineCountLabel.Text = mainForm.Encoders[BackingStep.Recipe.MachineUID].DisplayName + ": " + BackingStep.CalculateMachineCount() + " x " + BackingStep.CalculateMachineClockPercentage() + "%";
 			PowerConsumptionLabel.Text = "Power Consumption: " + BackingStep.GetPowerDraw(mainForm.Encoders).ToPrettyString() + "MW";
+			ToggleInput(true);
 		}
 
 		public void RateChanged(string itemUID, decimal newRate, bool isProduct)
@@ -118,16 +120,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 			if (Enabled && initialized)
 			{
-				// TODO
+				BackingStep.SetMultiplier(MultiplierNumeric.Value);
 			}
 		}
 
-		public bool ItemHasRelatedRecipe(string itemUID)
-		{
-			return BackingStep.GetItemUIDsWithRelatedStep().Contains(itemUID);
-		}
-
-		public void ToggleInput(bool on)
+		private void ToggleInput(bool on)
 		{
 			Enabled = on;
 		}
