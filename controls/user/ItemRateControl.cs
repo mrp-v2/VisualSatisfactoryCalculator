@@ -29,13 +29,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				RateNumeric.Value = rate.Abs();
 			}
-
-			UpdateButton();
-		}
-
-		public void UpdateButton()
-		{
-			ItemButton.Enabled = !parentControl.ItemHasRelatedRecipe(ItemUID);
 		}
 
 		private void RateNumeric_ValueChanged(object sender, EventArgs e)

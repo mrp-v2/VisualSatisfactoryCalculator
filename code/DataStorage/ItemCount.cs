@@ -35,18 +35,11 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			{
 				return false;
 			}
-
 			if (!(obj is ItemCount))
 			{
 				return false;
 			}
-
 			return ItemUID.Equals((obj as ItemCount).ItemUID) && Count == (obj as ItemCount).Count;
-		}
-
-		public ItemCount Inverse()
-		{
-			return new ItemCount(ItemUID, -Count);
 		}
 	}
 }

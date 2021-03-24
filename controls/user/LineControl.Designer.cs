@@ -38,7 +38,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.BackColor = System.Drawing.Color.Black;
 			this.Margin = new System.Windows.Forms.Padding(0);
 			this.Name = "LineControl";
-			this.Size = new System.Drawing.Size(10, 10);
+			this.Size = new System.Drawing.Size(5, 5);
 			this.ResumeLayout(false);
 
 		}

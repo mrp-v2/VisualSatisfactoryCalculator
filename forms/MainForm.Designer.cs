@@ -123,7 +123,6 @@
 			// 
 			this.PlanPanel.AutoSize = true;
 			this.PlanPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.PlanPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.PlanPanel.Location = new System.Drawing.Point(3, 42);
 			this.PlanPanel.Name = "PlanPanel";
 			this.PlanPanel.Size = new System.Drawing.Size(0, 0);

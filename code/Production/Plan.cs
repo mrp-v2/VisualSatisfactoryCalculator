@@ -13,11 +13,6 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public readonly HashSet<Step> Steps;
 		public readonly CachedValue<ProcessedPlan> ProcessedPlan;
 
-		private void ConnectionsChanged()
-		{
-			ProcessedPlan.Invalidate();
-		}
-
 		public Plan()
 		{
 			Steps = new HashSet<Step>();
@@ -34,7 +29,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			Dictionary<string, decimal> rates = new Dictionary<string, decimal>();
 			foreach (Step step in Steps)
 			{
-				foreach (ItemCount itemCount in step.GetRecipe().Products.Values)
+				foreach (ItemCount itemCount in step.Recipe.Products.Values)
 				{
 					if (rates.ContainsKey(itemCount.ItemUID))
 					{
@@ -67,7 +62,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			};
 			foreach (Step step in Steps)
 			{
-				foreach (ItemCount itemCount in step.GetRecipe().Ingredients.Values)
+				foreach (ItemCount itemCount in step.Recipe.Ingredients.Values)
 				{
 					if (rates.ContainsKey(itemCount.ItemUID))
 					{
@@ -87,13 +82,13 @@ namespace VisualSatisfactoryCalculator.code.Production
 			Dictionary<string, int> totalMachines = new Dictionary<string, int>();
 			foreach (Step step in Steps)
 			{
-				if (!totalMachines.ContainsKey(step.GetRecipe().MachineUID))
+				if (!totalMachines.ContainsKey(step.Recipe.MachineUID))
 				{
-					totalMachines.Add(step.GetRecipe().MachineUID, step.CalculateMachineCount());
+					totalMachines.Add(step.Recipe.MachineUID, step.CalculateMachineCount());
 				}
 				else
 				{
-					totalMachines[step.GetRecipe().MachineUID] += step.CalculateMachineCount();
+					totalMachines[step.Recipe.MachineUID] += step.CalculateMachineCount();
 				}
 			}
 			return totalMachines;

@@ -39,17 +39,18 @@ namespace VisualSatisfactoryCalculator.controls.user
 			// 
 			// RateNumeric
 			// 
+			this.RateNumeric.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.RateNumeric.AutoSize = true;
-			this.RateNumeric.DecimalPlaces = Constants.DECIMALS;
+			this.RateNumeric.DecimalPlaces = 7;
 			this.RateNumeric.Font = new System.Drawing.Font("Microsoft Tai Le", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.RateNumeric.Location = new System.Drawing.Point(3, 3);
+			this.RateNumeric.Location = new System.Drawing.Point(3, 4);
 			this.RateNumeric.Maximum = new decimal(new int[] {
             100000000,
             0,
             0,
             0});
 			this.RateNumeric.Name = "RateNumeric";
-			this.RateNumeric.Size = new System.Drawing.Size(129, 24);
+			this.RateNumeric.Size = new System.Drawing.Size(161, 24);
 			this.RateNumeric.TabIndex = 1;
 			this.RateNumeric.ThousandsSeparator = true;
 			this.RateNumeric.ValueChanged += new System.EventHandler(this.RateNumeric_ValueChanged);
@@ -63,7 +64,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.MainPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.MainPanel.Name = "MainPanel";
-			this.MainPanel.Size = new System.Drawing.Size(240, 33);
+			this.MainPanel.Size = new System.Drawing.Size(272, 33);
 			this.MainPanel.TabIndex = 0;
 			// 
 			// ItemButton
@@ -72,7 +73,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.ItemButton.AutoSize = true;
 			this.ItemButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ItemButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.ItemButton.Location = new System.Drawing.Point(138, 3);
+			this.ItemButton.Location = new System.Drawing.Point(170, 3);
 			this.ItemButton.Name = "ItemButton";
 			this.ItemButton.Size = new System.Drawing.Size(99, 27);
 			this.ItemButton.TabIndex = 2;
@@ -88,7 +89,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.Controls.Add(this.MainPanel);
 			this.Name = "ItemRateControl";
-			this.Size = new System.Drawing.Size(240, 33);
+			this.Size = new System.Drawing.Size(272, 33);
 			((System.ComponentModel.ISupportInitialize)(this.RateNumeric)).EndInit();
 			this.MainPanel.ResumeLayout(false);
 			this.MainPanel.PerformLayout();

@@ -44,7 +44,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			HasNormalProductConnections.InvalidateIf(true);
 		}
 
-		private readonly IRecipe _recipe;
+		public readonly IRecipe Recipe;
 
 		public Step(IRecipe recipe, Step relatedStep, string itemUID, bool isProductOfRelated) : this(recipe)
 		{
@@ -61,7 +61,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		public Step(IRecipe recipe) : this()
 		{
-			_recipe = recipe;
+			Recipe = recipe;
 			_multiplier = 1m;
 			_control = default;
 		}
@@ -102,11 +102,6 @@ namespace VisualSatisfactoryCalculator.code.Production
 			});
 		}
 
-		public IRecipe GetRecipe()
-		{
-			return _recipe;
-		}
-
 		public int CalculateMachineCount()
 		{
 			return (int)Math.Ceiling(_multiplier);
@@ -142,7 +137,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		private decimal CalculateDefaultItemRate(string itemUID, bool isItemProduct)
 		{
-			return 60m / _recipe.CraftTime * _recipe.GetCountFor(itemUID, isItemProduct);
+			return 60m / Recipe.CraftTime * Recipe.GetCountFor(itemUID, isItemProduct);
 		}
 
 		public decimal CalculateMultiplierForRate(string itemUID, decimal rate, bool isItemProduct)
@@ -187,7 +182,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		public decimal GetPowerDraw(Encodings encodings)
 		{
-			return (encodings[_recipe.MachineUID] as IBuilding).PowerConsumption * (decimal)Math.Pow((double)(CalculateMachineClockPercentage() / 100m), (double)(encodings[_recipe.MachineUID] as IBuilding).PowerConsumptionExponent) * CalculateMachineCount();
+			return (encodings[Recipe.MachineUID] as IBuilding).PowerConsumption * (decimal)Math.Pow((double)(CalculateMachineClockPercentage() / 100m), (double)(encodings[Recipe.MachineUID] as IBuilding).PowerConsumptionExponent) * CalculateMachineCount();
 		}
 
 		public bool IsStepRelated(Step test)

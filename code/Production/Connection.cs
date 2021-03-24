@@ -61,7 +61,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		private Connection AddConsumer(Step consumer, ConnectionType connectionType)
 		{
-			if (!consumer.GetRecipe().Ingredients.Keys.Contains(ItemUID))
+			if (!consumer.Recipe.Ingredients.Keys.Contains(ItemUID))
 			{
 				throw new ArgumentException("Cannot add " + consumer + " as a consumer because it does not consume " + ItemUID);
 			}
@@ -73,7 +73,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		private Connection AddProducer(Step producer, ConnectionType connectionType)
 		{
-			if (!producer.GetRecipe().Products.Keys.Contains(ItemUID))
+			if (!producer.Recipe.Products.Keys.Contains(ItemUID))
 			{
 				throw new ArgumentException("Cannot add " + producer + " as a producer because it does not produce " + ItemUID);
 			}
