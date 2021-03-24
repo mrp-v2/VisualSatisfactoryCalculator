@@ -78,10 +78,25 @@ namespace VisualSatisfactoryCalculator.forms
 			{
 				Size size = PlanPanel.GetPreferredSize(new Size());
 				Bitmap map = new Bitmap(size.Width, size.Height);
+				ReverseControlOrder();
 				PlanPanel.DrawToBitmap(map, new Rectangle(0, 0, size.Width, size.Height));
+				ReverseControlOrder();
 				//saveLoad.Save(map, Plan);
 				map.Save(dialog.FileName, ImageFormat.Png);
 			}
+		}
+
+		private void ReverseControlOrder()
+		{
+			Control[] controls = new Control[PlanPanel.Controls.Count]; // TODO need to reverse array
+			PlanPanel.Controls.CopyTo(controls, 0);
+			PlanPanel.Controls.Clear();
+			Control[] reversedControls = new Control[controls.Length];
+			for (int i = 0; i < controls.Length; i++)
+			{
+				reversedControls[controls.Length - 1 - i] = controls[i];
+			}
+			PlanPanel.Controls.AddRange(reversedControls);
 		}
 
 		public void UpdateTotalView()

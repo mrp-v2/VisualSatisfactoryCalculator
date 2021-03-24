@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.controls.user
 {
@@ -12,6 +14,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 		public string ItemUID { get; }
 		private bool initialized;
 		public bool IsProduct { get; }
+
+		public Point GetTotalLocation()
+		{
+			return PlanLayoutMaker.AddParentPoints(this, 4);
+		}
 
 		public ItemRateControl(StepControl parentControl, string itemUID, decimal rate, bool isProduct)
 		{

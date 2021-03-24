@@ -16,54 +16,170 @@ namespace VisualSatisfactoryCalculator.code.Utility
 {
 	public class PlanLayoutMaker
 	{
+		private static PlanDrawingContext DrawingContext;
+
 		public static void LayoutSteps(MainForm mainForm, Panel panel, Plan plan)
 		{
+			DrawingContext = new PlanDrawingContext();
 			int yPosition = panel.GetPreferredSize(new Size()).Height, xPosition = 0;
-			Dictionary<Step, Tuple<StepControl, StepAndIngredientsLayout>> stepUIStuff = new Dictionary<Step, Tuple<StepControl, StepAndIngredientsLayout>>();
 			for (int currentTier = plan.ProcessedPlan.Get().Tiers - 1; currentTier >= 0; currentTier--)
 			{
 				foreach (Step step in plan.ProcessedPlan.Get().GetStepsInTier(currentTier))
 				{
 					StepControl stepControl = new StepControl(step, mainForm);
-					Dictionary<ILayoutControl, string> ingredientControls = new Dictionary<ILayoutControl, string>();
+					Dictionary<Step, string> ingredientControls = new Dictionary<Step, string>();
 					foreach (Connection connection in step.NormalIngredientConnections.Get())
 					{
 						foreach (Step ingredientStep in connection.GetProducerSteps())
 						{
-							if (stepUIStuff.ContainsKey(ingredientStep))
+							if (ingredientStep.Recipe.Products.Count > 1)
 							{
-								ingredientControls.Add(stepUIStuff[ingredientStep].Item2, connection.ItemUID);
+								foreach (string itemUID in ingredientStep.Recipe.Products.Keys)
+								{
+									if (connection.ItemUID == itemUID)
+									{
+										goto Add;
+									}
+									goto Continue;
+								}
 							}
+						Add:
+							ingredientControls.Add(ingredientStep, connection.ItemUID);
+						Continue:
+							continue;
 						}
 					}
-					StepAndIngredientsLayout layout = new StepAndIngredientsLayout(stepControl, ingredientControls);
-					stepUIStuff.Add(step, new Tuple<StepControl, StepAndIngredientsLayout>(stepControl, layout));
+					StepAndIngredientsLayout layout = new StepAndIngredientsLayout(step, ingredientControls);
+					DrawingContext.StepUIMap.Add(step, new Tuple<StepControl, StepAndIngredientsLayout>(stepControl, layout));
 				}
 			}
-			foreach (Step step in stepUIStuff.Keys)
+			foreach (Step step in DrawingContext.StepUIMap.Keys)
 			{
-				panel.Controls.Add(stepUIStuff[step].Item1);
+				DrawingContext.StepUIMap[step].Item2.PrePlace();
+			}
+			foreach (Step step in DrawingContext.StepUIMap.Keys)
+			{
+				panel.Controls.Add(DrawingContext.StepUIMap[step].Item1);
 			}
 			foreach (Step step in plan.ProcessedPlan.Get().GetStepsInTier(0))
 			{
-				StepAndIngredientsLayout layout = stepUIStuff[step].Item2;
+				StepAndIngredientsLayout layout = DrawingContext.StepUIMap[step].Item2;
 				layout.Place(xPosition, yPosition);
 				xPosition += layout.PreferredSize.Width;
+			}
+			DrawingContext = default;
+		}
+
+		private class PlanDrawingContext
+		{
+			public readonly Random Rand = new Random();
+			public readonly Dictionary<Step, Tuple<StepControl, StepAndIngredientsLayout>> StepUIMap = new Dictionary<Step, Tuple<StepControl, StepAndIngredientsLayout>>();
+			private readonly HashSet<Color> ingredientColors = new HashSet<Color>()
+			{
+				Color.FromArgb(255, 0, 0),
+				Color.FromArgb(0, 255, 0),
+				Color.FromArgb(0, 0, 255),
+				Color.FromArgb(255, 255, 0)
+			};
+			private readonly HashSet<Color> usedIngredientColors = new HashSet<Color>();
+			private readonly HashSet<Color> alternativeConnectionsColors = new HashSet<Color>()
+			{
+				Color.FromArgb(0, 255, 127),
+				Color.FromArgb(0, 127, 255),
+				Color.FromArgb(255, 127, 0)
+			};
+			private readonly HashSet<Color> usedAlternativeConnectionsColors = new HashSet<Color>();
+			private readonly HashSet<char> alternateConnectionLabels = new HashSet<char>()
+			{
+				'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+			};
+			private readonly HashSet<char> usedAlternatedConnectionLabels = new HashSet<char>();
+
+			public char GetAlternateConnectionLabel()
+			{
+				HashSet<char> availableLabels = new HashSet<char>(alternateConnectionLabels);
+				availableLabels.ExceptWith(usedAlternatedConnectionLabels);
+				int chosenLabelIndex = Rand.Next(0, availableLabels.Count), counter = 0;
+				foreach (char label in availableLabels)
+				{
+					if (counter++ == chosenLabelIndex)
+					{
+						usedAlternatedConnectionLabels.Add(label);
+						if (usedAlternatedConnectionLabels.Count == alternateConnectionLabels.Count)
+						{
+							usedAlternatedConnectionLabels.Clear();
+						}
+						return label;
+					}
+				}
+				throw new InvalidOperationException("This code should never be reached - something has gone wrong");
+			}
+
+			public Color GetNewAlternativeConnectionColor()
+			{
+				HashSet<Color> availableColors = new HashSet<Color>(alternativeConnectionsColors);
+				availableColors.ExceptWith(usedAlternativeConnectionsColors);
+				int chosenColorIndex = Rand.Next(0, availableColors.Count), counter = 0;
+				foreach (Color color in availableColors)
+				{
+					if (counter++ == chosenColorIndex)
+					{
+						usedAlternativeConnectionsColors.Add(color);
+						if (usedAlternativeConnectionsColors.Count == alternativeConnectionsColors.Count)
+						{
+							usedAlternativeConnectionsColors.Clear();
+						}
+						return color;
+					}
+				}
+				throw new InvalidOperationException("This code should never be reached - something has gone wrong");
+			}
+
+			public void StartNewIngredientColorGroup()
+			{
+				usedIngredientColors.Clear();
+			}
+
+			public Color GetNewIngredientConnectionColor()
+			{
+				HashSet<Color> availableColors = new HashSet<Color>(ingredientColors);
+				availableColors.ExceptWith(usedIngredientColors);
+				int chosenColorIndex = Rand.Next(0, availableColors.Count), counter = 0;
+				foreach (Color color in availableColors)
+				{
+					if (counter++ == chosenColorIndex)
+					{
+						usedIngredientColors.Add(color);
+						return color;
+					}
+				}
+				throw new InvalidOperationException("Ran out of ingredient colors");
 			}
 		}
 
 		private class StepAndIngredientsLayout : ILayoutControl
 		{
-			public StepControl TopControl { get; }
-			private readonly Dictionary<ILayoutControl, string> ingredientControls;
-			public Size PreferredSize { get; }
-			private readonly Size productPreferredSize;
+			private readonly Step productStep;
+			private readonly Dictionary<Step, string> ingredientSteps;
+			public StepControl TopControl { get; private set; }
+			private readonly Dictionary<ILayoutControl, string> ingredientControls = new Dictionary<ILayoutControl, string>();
+			public Size PreferredSize { get; private set; }
+			private Size productPreferredSize;
 			private bool placed = false;
 
-			public StepAndIngredientsLayout(StepControl productControl, Dictionary<ILayoutControl, string> ingredientControls)
+			public StepAndIngredientsLayout(Step productStep, Dictionary<Step, string> ingredientSteps)
 			{
-				TopControl = productControl;
-				this.ingredientControls = ingredientControls;
+				this.productStep = productStep;
+				this.ingredientSteps = ingredientSteps;
+			}
+
+			public void PrePlace()
+			{
+				TopControl = DrawingContext.StepUIMap[productStep].Item1;
+				foreach (Step step in ingredientSteps.Keys)
+				{
+					ingredientControls.Add(DrawingContext.StepUIMap[step].Item2, ingredientSteps[step]);
+				}
 				int width1 = 0, height = 0;
 				foreach (ILayoutControl ingredientControl in ingredientControls.Keys)
 				{
@@ -71,7 +187,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 					width1 += preferredSize.Width;
 					height = preferredSize.Height > height ? preferredSize.Height : height;
 				}
-				productPreferredSize = productControl.PreferredSize;
+				productPreferredSize = TopControl.PreferredSize;
 				int width2 = productPreferredSize.Width;
 				int width3 = width1 > width2 ? width1 : width2;
 				height += productPreferredSize.Height;
@@ -120,10 +236,10 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				{
 					string item = ingredientControls[control];
 					ItemRateControl productIRC = control.TopControl.ProductRateControls[item];
-					Point productIRCLoc = AddParentPoints(productIRC, 4);
+					Point productIRCLoc = productIRC.GetTotalLocation();
 					productIRCConnectionPoints.Add(item, new Point(productIRCLoc.X + (productIRC.Size.Width / 2), productIRCLoc.Y));
 					ItemRateControl ingredientIRC = TopControl.IngredientRateControls[item];
-					Point ingredientIRCLoc = AddParentPoints(ingredientIRC, 4);
+					Point ingredientIRCLoc = ingredientIRC.GetTotalLocation();
 					ingredientIRCConnectionPoints.Add(item, new Point(ingredientIRCLoc.X + (ingredientIRC.Size.Width / 2), ingredientIRCLoc.Y + ingredientIRC.Size.Height));
 				}
 				Dictionary<string, Range> itemLineRanges = new Dictionary<string, Range>();
@@ -136,8 +252,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 					int right3 = right1 > right2 ? right1 : right2;
 					itemLineRanges.Add(str, new Range(left3, right3));
 				}
-				int maxOverlaps = Range.MaxOverlaps(itemLineRanges.Values);
-				Random rand = new Random();
+				DrawingContext.StartNewIngredientColorGroup();
 				foreach (ILayoutControl control in orderedIngredients)
 				{
 					string str = ingredientControls[control];
@@ -146,7 +261,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 					line1.BringToFront();
 					line2.BringToFront();
 					line3.BringToFront();
-					Color color = Color.FromArgb((0xFF << 24) | (rand.Next(64, 197) << 16) | (rand.Next(64, 197) << 8) | (rand.Next(64, 197)));
+					Color color = DrawingContext.GetNewIngredientConnectionColor();
 					line1.BackColor = color;
 					line2.BackColor = color;
 					line3.BackColor = color;
@@ -158,6 +273,55 @@ namespace VisualSatisfactoryCalculator.code.Utility
 					line1.Size = new Size(line1.Size.Width, height - line1.Location.Y);
 					line3.Size = new Size(line3.Size.Width, line3.Location.Y - height + line3.Size.Height);
 					line3.Location = AddPoints(line3.Location, new Point(0, height - line3.Location.Y));
+				}
+				Dictionary<Step, string> ingredientSteps = new Dictionary<Step, string>();
+				foreach (Connection ingredientConnection in TopControl.BackingStep.NormalIngredientConnections.Get())
+				{
+					if (ingredientConnection.Type != Connection.OverallConnectionType.NORMAL)
+					{
+						continue;
+					}
+					foreach (Step step in ingredientConnection.GetProducerSteps())
+					{
+						ingredientSteps.Add(step, ingredientConnection.ItemUID);
+					}
+				}
+				Dictionary<Step, string> alternateConnectionIngredients = new Dictionary<Step, string>();
+				foreach (Step ingredientStep in ingredientSteps.Keys)
+				{
+					foreach (ILayoutControl ingredientLayout in ingredientControls.Keys)
+					{
+						if (ingredientLayout.TopControl.BackingStep == ingredientStep)
+						{
+							goto Continue;
+						}
+					}
+					alternateConnectionIngredients.Add(ingredientStep, ingredientSteps[ingredientStep]);
+				Continue:
+					continue;
+				}
+				foreach (Step alternateConnectionStep in alternateConnectionIngredients.Keys)
+				{
+					string str = alternateConnectionIngredients[alternateConnectionStep];
+					LineControl line1 = new LineControl(), line2 = new LineControl();
+					TopControl.Parent.Controls.AddRange(new Control[] { line1, line2 });
+					line1.BringToFront();
+					line2.BringToFront();
+					char label = DrawingContext.GetAlternateConnectionLabel();
+					line1.LineLabel.Text = new string(label, 1);
+					line2.LineLabel.Text = line1.LineLabel.Text;
+					line1.BackColor = DrawingContext.GetNewAlternativeConnectionColor();
+					line2.BackColor = line1.BackColor;
+					ItemRateControl ingredientIRC = TopControl.IngredientRateControls[str];
+					line1.Location = AddPoints(ingredientIRC.GetTotalLocation(), new Point((ingredientIRC.Size.Width / 2) - line1.Size.Width, ingredientIRC.Size.Height - (line1.Size.Height / 2)));
+					ItemRateControl irc = DrawingContext.StepUIMap[alternateConnectionStep].Item1.ProductRateControls[str];
+					line2.Location = AddPoints(irc.GetTotalLocation(), new Point((irc.Size.Width / 2) - line2.Size.Width, -line2.Size.Height * 5 / 2));
+					line1.Size = new Size(line1.Size.Width * 3, line1.Size.Height * 3);
+					line2.Size = line1.Size;
+					line1.LineLabel.Location = new Point(0, 0);
+					line2.LineLabel.Location = line1.LineLabel.Location;
+					line1.LineLabel.Size = line1.Size;
+					line2.LineLabel.Size = line2.Size;
 				}
 				placed = true;
 			}
@@ -244,7 +408,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			StepControl TopControl { get; }
 		}
 
-		private static Point AddParentPoints(Control child, int parentCount)
+		public static Point AddParentPoints(Control child, int parentCount)
 		{
 			if (parentCount == 0)
 			{
