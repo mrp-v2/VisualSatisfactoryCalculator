@@ -88,7 +88,7 @@ namespace VisualSatisfactoryCalculator.forms
 
 		private void ReverseControlOrder()
 		{
-			Control[] controls = new Control[PlanPanel.Controls.Count]; // TODO need to reverse array
+			Control[] controls = new Control[PlanPanel.Controls.Count];
 			PlanPanel.Controls.CopyTo(controls, 0);
 			PlanPanel.Controls.Clear();
 			Control[] reversedControls = new Control[controls.Length];

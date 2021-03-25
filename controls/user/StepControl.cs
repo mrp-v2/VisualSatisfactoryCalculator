@@ -47,9 +47,9 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				irc.UpdateRateValue(BackingStep.GetItemRate(irc.ItemUID, irc.IsProduct));
 			}
-			if (MultiplierNumeric.Value != BackingStep.GetMultiplier())
+			if (MultiplierNumeric.Value != BackingStep.Multiplier)
 			{
-				MultiplierNumeric.Value = BackingStep.GetMultiplier();
+				MultiplierNumeric.Value = BackingStep.Multiplier;
 			}
 			MachineCountLabel.Text = mainForm.Encoders[BackingStep.Recipe.MachineUID].DisplayName + ": " + BackingStep.CalculateMachineCount() + " x " + BackingStep.CalculateMachineClockPercentage() + "%";
 			PowerConsumptionLabel.Text = "Power Consumption: " + BackingStep.GetPowerDraw(mainForm.Encoders).ToPrettyString() + "MW";
@@ -60,30 +60,27 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			if (Math.Abs(BackingStep.GetItemRate(itemUID, isProduct)) != newRate)
 			{
-				// TODO
+				BackingStep.SetMultiplier(BackingStep.CalculateMultiplierForRate(itemUID, newRate, isProduct), true);
 			}
 		}
 
 		public void ItemClicked(string itemUID, bool isProduct)
 		{
-			if (!BackingStep.GetItemUIDsWithRelatedStep().Contains(itemUID))
+			SelectRecipePrompt srp;
+			if (isProduct)
 			{
-				SelectRecipePrompt srp;
-				if (isProduct)
-				{
-					srp = new SelectRecipePrompt(mainForm.Encoders.Recipes.GetRecipesThatConsume(itemUID));
-				}
-				else
-				{
-					srp = new SelectRecipePrompt(mainForm.Encoders.Recipes.GetRecipesThatProduce(itemUID));
-				}
-				if (srp.ShowDialog() == DialogResult.OK)
-				{
-					Step ps = new Step(srp.GetSelectedRecipe(), BackingStep, itemUID, isProduct);
-					mainForm.Plan.Steps.Add(ps);
-					mainForm.Plan.ProcessedPlan.Invalidate();
-					mainForm.PlanUpdated();
-				}
+				srp = new SelectRecipePrompt(mainForm.Encoders.Recipes.GetRecipesThatConsume(itemUID));
+			}
+			else
+			{
+				srp = new SelectRecipePrompt(mainForm.Encoders.Recipes.GetRecipesThatProduce(itemUID));
+			}
+			if (srp.ShowDialog() == DialogResult.OK)
+			{
+				Step ps = new Step(srp.GetSelectedRecipe(), BackingStep, itemUID, isProduct);
+				mainForm.Plan.Steps.Add(ps);
+				mainForm.Plan.ProcessedPlan.Invalidate();
+				mainForm.PlanUpdated();
 			}
 		}
 

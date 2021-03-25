@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.controls.user;
@@ -10,7 +11,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 {
 	public class Step
 	{
-		private decimal _multiplier;
+		public decimal Multiplier { get; private set; }
 		public readonly CachedValue<IEnumerable<Connection>> Connections;
 		public readonly CachedValue<bool> HasNormalProductConnections;
 		public readonly CachedValue<HashSet<Connection>> NormalIngredientConnections;
@@ -50,19 +51,18 @@ namespace VisualSatisfactoryCalculator.code.Production
 		{
 			if (isProductOfRelated)
 			{
-				new Connection(itemUID).AddNormalConsumer(this).AddNormalProducer(relatedStep);
+				new Connection(itemUID).AddProducer(relatedStep).AddConsumer(this);
 			}
 			else
 			{
-				new Connection(itemUID).AddNormalConsumer(relatedStep).AddNormalProducer(this);
+				new Connection(itemUID).AddConsumer(relatedStep).AddProducer(this);
 			}
-			SetMultiplier(CalculateMultiplierForRate(itemUID, relatedStep.GetItemRate(itemUID, isProductOfRelated), !isProductOfRelated));
 		}
 
 		public Step(IRecipe recipe) : this()
 		{
 			Recipe = recipe;
-			_multiplier = 1m;
+			Multiplier = 1m;
 			_control = default;
 		}
 
@@ -72,16 +72,16 @@ namespace VisualSatisfactoryCalculator.code.Production
 			ProductConnections = new HashSet<Connection>();
 			Connections = new CachedValue<IEnumerable<Connection>>(() =>
 			{
-				List<Connection> list = new List<Connection>();
-				list.AddRange(IngredientConnections);
-				list.AddRange(ProductConnections);
-				return list;
+				HashSet<Connection> connections = new HashSet<Connection>();
+				connections.AddRange(IngredientConnections);
+				connections.AddRange(ProductConnections);
+				return connections;
 			});
 			HasNormalProductConnections = new CachedValue<bool>(() =>
 			{
 				foreach (Connection connection in ProductConnections)
 				{
-					if (connection.Type == Connection.OverallConnectionType.NORMAL)
+					if (connection.Type.Get() == Connection.OverallConnectionType.NORMAL)
 					{
 						return true;
 					}
@@ -93,7 +93,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 				HashSet<Connection> normalIngredients = new HashSet<Connection>();
 				foreach (Connection connection in IngredientConnections)
 				{
-					if (connection.Type == Connection.OverallConnectionType.NORMAL)
+					if (connection.Type.Get() == Connection.OverallConnectionType.NORMAL)
 					{
 						normalIngredients.Add(connection);
 					}
@@ -104,32 +104,57 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		public int CalculateMachineCount()
 		{
-			return (int)Math.Ceiling(_multiplier);
+			return (int)Math.Ceiling(Multiplier);
 		}
 
 		public decimal CalculateMachineClockPercentage()
 		{
-			return Math.Ceiling(_multiplier * (int)Math.Pow(10, Constants.CLOCK_DECIMALS + 2) / CalculateMachineCount()) / (int)Math.Pow(10, Constants.CLOCK_DECIMALS);
+			return Math.Ceiling(Multiplier * (int)Math.Pow(10, Constants.CLOCK_DECIMALS + 2) / CalculateMachineCount()) / (int)Math.Pow(10, Constants.CLOCK_DECIMALS);
 		}
 
 		public void AddRelatedStep(Step related, string itemUID, bool isProductOfRelated)
 		{
 			if (isProductOfRelated)
 			{
-				new Connection(itemUID).AddNormalConsumer(this).AddNormalProducer(related);
+				new Connection(itemUID).AddConsumer(this).AddProducer(related);
 			}
 			else
 			{
-				new Connection(itemUID).AddNormalConsumer(related).AddNormalProducer(this);
+				new Connection(itemUID).AddConsumer(related).AddProducer(this);
+			}
+		}
+
+		public void SetMultiplier(decimal multiplier, HashSet<Connection> excludedConnections)
+		{
+			SetMultiplier(multiplier, false);
+			HashSet<Step> updated = new HashSet<Step>() { this };
+			foreach (Connection connection in Connections.Get())
+			{
+				if (!excludedConnections.Contains(connection))
+				{
+					connection.UpdateMultipliers(updated, this, excludedConnections);
+				}
 			}
 		}
 
 		public void SetMultiplier(decimal multiplier)
 		{
-			_multiplier = multiplier;
-			if (_control != default(StepControl))
+			SetMultiplier(multiplier, new HashSet<Connection>());
+		}
+
+		public void SetMultiplier(decimal multiplier, bool causeCascadingUpdates)
+		{
+			if (causeCascadingUpdates)
 			{
-				_control.UpdateNumerics();
+				SetMultiplier(multiplier);
+			}
+			else
+			{
+				Multiplier = multiplier;
+				if (_control != default(StepControl))
+				{
+					_control.UpdateNumerics();
+				}
 			}
 		}
 
@@ -145,7 +170,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		public decimal GetItemRate(string itemUID, bool isItemProduct)
 		{
-			return CalculateDefaultItemRate(itemUID, isItemProduct) * _multiplier;
+			return CalculateDefaultItemRate(itemUID, isItemProduct) * Multiplier;
 		}
 
 		public void SetControl(StepControl control)
@@ -161,11 +186,6 @@ namespace VisualSatisfactoryCalculator.code.Production
 				uids.Add(connection.ItemUID);
 			}
 			return uids;
-		}
-
-		public decimal GetMultiplier()
-		{
-			return _multiplier;
 		}
 
 		public void Delete(Plan plan)

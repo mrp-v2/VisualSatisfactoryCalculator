@@ -173,12 +173,6 @@
     <Compile Include="code\Utility\Encodings.cs" />
     <Compile Include="code\Utility\PlanLayoutMaker.cs" />
     <Compile Include="code\Utility\Util.cs" />
-    <Compile Include="controls\user\AddConnectionControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="controls\user\AddConnectionControl.Designer.cs">
-      <DependentUpon>AddConnectionControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="controls\user\LineControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -234,9 +228,6 @@
       <DependentUpon>SelectRecipePrompt.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="controls\user\AddConnectionControl.resx">
-      <DependentUpon>AddConnectionControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="controls\user\ItemRateControl.resx">
       <DependentUpon>ItemRateControl.cs</DependentUpon>
     </EmbeddedResource>
