@@ -24,5 +24,13 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			}
 			return items;
 		}
+
+		public class CompareByCount<T, V> : IComparer<T> where T : ICollection<V>
+		{
+			public int Compare(T x, T y)
+			{
+				return x.Count - y.Count;
+			}
+		}
 	}
 }

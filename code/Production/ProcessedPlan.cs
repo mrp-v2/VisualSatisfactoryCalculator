@@ -112,7 +112,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 							goto Continue;
 						}
 					}
-					if (connection.Type.Get() == Connection.OverallConnectionType.NORMAL)
+					if (connection.Type.Get() == Connection.ConnectionType.NORMAL)
 					{
 						foreach (HashSet<Connection> connections in normalConnectionGroups)
 						{

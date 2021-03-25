@@ -19,6 +19,30 @@ namespace VisualSatisfactoryCalculator.code.Production
 		private readonly HashSet<Connection> ProductConnections;
 		private StepControl _control;
 
+		public HashSet<Step> GetAllNormallyConnectedSteps()
+		{
+			return GetAllNormallyConnectedStepsRecursive(new HashSet<Step>());
+		}
+
+		private HashSet<Step> GetAllNormallyConnectedStepsRecursive(HashSet<Step> connected)
+		{
+			connected.Add(this);
+			foreach (Connection connection in Connections.Get())
+			{
+				if (connection.Type.Get() == Connection.ConnectionType.NORMAL)
+				{
+					foreach (Step step in connection.ConnectedSteps.Get())
+					{
+						if (!connected.Contains(step))
+						{
+							GetAllNormallyConnectedStepsRecursive(connected);
+						}
+					}
+				}
+			}
+			return connected;
+		}
+
 		public void AddIngredientConnection(Connection connection)
 		{
 			IngredientConnections.Add(connection);
@@ -81,7 +105,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				foreach (Connection connection in ProductConnections)
 				{
-					if (connection.Type.Get() == Connection.OverallConnectionType.NORMAL)
+					if (connection.Type.Get() == Connection.ConnectionType.NORMAL)
 					{
 						return true;
 					}
@@ -93,7 +117,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 				HashSet<Connection> normalIngredients = new HashSet<Connection>();
 				foreach (Connection connection in IngredientConnections)
 				{
-					if (connection.Type.Get() == Connection.OverallConnectionType.NORMAL)
+					if (connection.Type.Get() == Connection.ConnectionType.NORMAL)
 					{
 						normalIngredients.Add(connection);
 					}
@@ -190,9 +214,13 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		public void Delete(Plan plan)
 		{
-			foreach (Connection connection in Connections.Get())
+			foreach (Connection connection in IngredientConnections)
 			{
-				connection.Delete(); // TODO this won't work for multi-connections
+				connection.DeleteConsumer(this);
+			}
+			foreach (Connection connection in ProductConnections)
+			{
+				connection.DeleteProducer(this);
 			}
 			plan.Steps.Remove(this);
 			plan.ProcessedPlan.Invalidate();
@@ -201,18 +229,6 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public decimal GetPowerDraw(Encodings encodings)
 		{
 			return (encodings[Recipe.MachineUID] as IBuilding).PowerConsumption * (decimal)Math.Pow((double)(CalculateMachineClockPercentage() / 100m), (double)(encodings[Recipe.MachineUID] as IBuilding).PowerConsumptionExponent) * CalculateMachineCount();
-		}
-
-		public bool IsStepRelated(Step test)
-		{
-			foreach (Connection connection in Connections.Get())
-			{
-				if (connection.ContainsStep(test))
-				{
-					return true;
-				}
-			}
-			return false;
 		}
 	}
 }

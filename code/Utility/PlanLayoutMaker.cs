@@ -277,7 +277,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				Dictionary<Step, string> ingredientSteps = new Dictionary<Step, string>();
 				foreach (Connection ingredientConnection in TopControl.BackingStep.NormalIngredientConnections.Get())
 				{
-					if (ingredientConnection.Type.Get() != Connection.OverallConnectionType.NORMAL)
+					if (ingredientConnection.Type.Get() != Connection.ConnectionType.NORMAL)
 					{
 						continue;
 					}

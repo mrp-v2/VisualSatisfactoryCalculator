@@ -11,10 +11,17 @@ namespace VisualSatisfactoryCalculator.code.Production
 {
 	public class Connection
 	{
+		/// <summary>
+		/// Negative rates
+		/// </summary>
 		private Dictionary<Step, decimal> Consumers { get; }
+		/// <summary>
+		/// Positive Rates
+		/// </summary>
 		private Dictionary<Step, decimal> Producers { get; }
 		public string ItemUID { get; }
-		public CachedValue<OverallConnectionType> Type { get; }
+		public CachedValue<ConnectionType> Type { get; }
+		public CachedValue<IEnumerable<Step>> ConnectedSteps { get; }
 
 		public IEnumerable<Step> GetProducerSteps()
 		{
@@ -26,20 +33,19 @@ namespace VisualSatisfactoryCalculator.code.Production
 			Consumers = new Dictionary<Step, decimal>();
 			Producers = new Dictionary<Step, decimal>();
 			ItemUID = itemUID;
-			Type = new CachedValue<OverallConnectionType>(CalculateOverallConnectionType);
+			Type = new CachedValue<ConnectionType>(CalculateOverallConnectionType);
+			ConnectedSteps = new CachedValue<IEnumerable<Step>>(() =>
+			{
+				HashSet<Step> steps = new HashSet<Step>();
+				steps.AddRange(Consumers.Keys);
+				steps.AddRange(Producers.Keys);
+				return steps;
+			});
 		}
 
 		public bool ContainsStep(Step step)
 		{
 			return Consumers.ContainsKey(step) || Producers.ContainsKey(step);
-		}
-
-		public HashSet<Step> GetSteps()
-		{
-			HashSet<Step> steps = new HashSet<Step>();
-			steps.AddRange(Consumers.Keys);
-			steps.AddRange(Producers.Keys);
-			return steps;
 		}
 
 		public Connection AddConsumer(Step consumer)
@@ -48,165 +54,12 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				throw new ArgumentException("Cannot add " + consumer + " as a consumer because it does not consume " + ItemUID);
 			}
-			// how to calculate new rates
-			// are there any producers that aren't connected to any other producer or consumer? if so, adjust it/them equally
-			if (Producers.Count == 0)
-			{
-				Consumers.Add(consumer, consumer.GetItemRate(ItemUID, false));
-				consumer.AddIngredientConnection(this);
-				Type.Invalidate();
-				return this;
-			}
-			else
-			{
-				// There is at least 1 Producer
-				decimal consumerRate = -consumer.GetItemRate(ItemUID, false);
-				if (Consumers.Count == 0)
-				{
-					decimal totalRate = consumerRate;
-					decimal connectedRate = consumerRate;
-					HashSet<Step> unconnectedProducers = new HashSet<Step>();
-					foreach (Step step in Producers.Keys)
-					{
-						totalRate += Producers[step];
-						if (AreStepsConnectedWithoutThisConnection(step, consumer))
-						{
-							connectedRate += Producers[step];
-						}
-						else
-						{
-							unconnectedProducers.Add(step);
-						}
-					}
-					if (connectedRate == consumerRate)
-					{
-						decimal resultRate = 0;
-						foreach (decimal d in Producers.Values)
-						{
-							resultRate += d;
-						}
-						Consumers.Add(consumer, resultRate);
-						consumer.SetMultiplier(consumer.CalculateMultiplierForRate(ItemUID, resultRate, false));
-						consumer.AddIngredientConnection(this);
-						Type.Invalidate();
-						return this;
-					}
-					if (unconnectedProducers.Count == 0)
-					{
-						throw new InvalidOperationException("Couldn't add consumer because it was connected to all the producers");
-					}
-					if (totalRate > 0)
-					{
-						if (totalRate - connectedRate <= totalRate)
-						{
-							throw new InvalidOperationException("Couldn't add consumer because the producers it was not connected to coudn't be decreased enough");
-						}
-						decimal unconnectedMultiplierMultiplier = 1 - (totalRate / (totalRate - connectedRate));
-						foreach (Step step in unconnectedProducers)
-						{
-							step.SetMultiplier(step.Multiplier * unconnectedMultiplierMultiplier, new HashSet<Connection>() { this });
-						}
-						Consumers.Add(consumer, -consumerRate);
-						consumer.AddIngredientConnection(this);
-						Type.Invalidate();
-						return this;
-					}
-					else
-					{
-						decimal unconnectedMultiplierMultiplier = -totalRate / (totalRate - connectedRate);
-						foreach (Step step in unconnectedProducers)
-						{
-							step.SetMultiplier(step.Multiplier * unconnectedMultiplierMultiplier, new HashSet<Connection>() { this });
-						}
-						Consumers.Add(consumer, -consumerRate);
-						consumer.AddIngredientConnection(this);
-						Type.Invalidate();
-						return this;
-
-					}
-				}
-				else
-				{
-					// There is at least 1 Consumer and Producer
-					decimal totalRate = consumerRate;
-					decimal connectedRate = consumerRate;
-					HashSet<Step> unconnectedProducers = new HashSet<Step>();
-					HashSet<Step> hardStepsToAdjust = new HashSet<Step>();
-					foreach (Step step in Producers.Keys)
-					{
-						totalRate += Producers[step];
-						if (AreStepsConnectedWithoutThisConnection(step, consumer))
-						{
-							connectedRate += Producers[step];
-						}
-						else
-						{
-							unconnectedProducers.Add(step);
-						}
-						foreach (Step step2 in Consumers.Keys)
-						{
-							if (AreStepsConnectedWithoutThisConnection(step, step2))
-							{
-								hardStepsToAdjust.Add(step);
-								hardStepsToAdjust.Add(step2);
-							}
-						}
-					}
-					HashSet<Step> unconnectedConsumers = new HashSet<Step>();
-					foreach (Step step in Consumers.Keys)
-					{
-						totalRate += -Consumers[step];
-						if (AreStepsConnectedWithoutThisConnection(step, consumer))
-						{
-							connectedRate += -Consumers[step];
-						}
-						else
-						{
-							unconnectedConsumers.Add(step);
-						}
-					}
-					if (!hardStepsToAdjust.Overlaps(unconnectedProducers) || hardStepsToAdjust.IsSubsetOf(unconnectedProducers))
-					{
-						decimal unconnectedProducerRate = 0;
-						foreach (Step step in unconnectedProducers)
-						{
-							unconnectedProducerRate += Producers[step];
-						}
-						decimal unconnectedProducerMultiplierMultiplier = -totalRate / unconnectedProducerRate;
-						foreach (Step step in unconnectedProducers)
-						{
-							step.SetMultiplier(step.Multiplier * unconnectedProducerMultiplierMultiplier, new HashSet<Connection>() { this });
-						}
-						Consumers.Add(consumer, -consumerRate);
-						consumer.AddIngredientConnection(this);
-						Type.Invalidate();
-						return this;
-					}
-					if (!hardStepsToAdjust.Overlaps(unconnectedConsumers) || hardStepsToAdjust.IsSubsetOf(unconnectedConsumers))
-					{
-						decimal unconnectedConsumerRate = 0;
-						foreach (Step step in unconnectedConsumers)
-						{
-							unconnectedConsumerRate += Consumers[step];
-						}
-						decimal unconnectedConsumerMultiplierMultiplier = 1 - (-totalRate / unconnectedConsumerRate);
-						foreach (Step step in unconnectedConsumers)
-						{
-							step.SetMultiplier(step.Multiplier * unconnectedConsumerMultiplierMultiplier, new HashSet<Connection>() { this });
-							Consumers.Add(consumer, -consumerRate);
-							consumer.AddIngredientConnection(this);
-							Type.Invalidate();
-							return this;
-						}
-					}
-					// try to (increase any producers and decrease any consumers) that aren't connected
-					// could also try adjusting the hard to adjust groups
-					// this is the last section
-					throw new InvalidOperationException("Couldn't add consumer");
-				}
-			}
+			Consumers.Add(consumer, -consumer.GetItemRate(ItemUID, false));
+			consumer.AddIngredientConnection(this);
+			Type.InvalidateIf(ConnectionType.NORMAL);
+			ConnectedSteps.Invalidate();
+			return this;
 		}
-
 
 		public Connection AddProducer(Step producer)
 		{
@@ -214,50 +67,62 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				throw new ArgumentException("Cannot add " + producer + " as a producer because it does not produce " + ItemUID);
 			}
-			// how to calculate new rates
-			// are there any consumers that aren't connected to any other producer or consumer? if so, adjust it/them equally
-			if (Consumers.Count == 0)
-			{
-				Producers.Add(producer, producer.GetItemRate(ItemUID, true));
-			}
-			else
-			{
-				if (Producers.Count == 0)
-				{
-					decimal totalRate = 0;
-					foreach (decimal d in Consumers.Values)
-					{
-						totalRate += d;
-					}
-					Producers.Add(producer, totalRate);
-					producer.SetMultiplier(producer.CalculateMultiplierForRate(ItemUID, totalRate, true), false);
-				}
-				else
-				{
-
-				}
-			}
-			// TODO
+			Producers.Add(producer, producer.GetItemRate(ItemUID, true));
 			producer.AddProductConnection(this);
-			Type.Invalidate();
+			Type.InvalidateIf(ConnectionType.NORMAL);
+			ConnectedSteps.Invalidate();
 			return this;
 		}
 
-		public void Delete()
+		public void DeleteConsumer(Step step)
 		{
-			foreach (Step step in Consumers.Keys)
-			{
-				step.RemoveIngredientConnection(this);
-			}
-			foreach (Step step in Producers.Keys)
-			{
-				step.RemoveProductConnection(this);
-			}
+			Consumers.Remove(step);
+			StepDeleted();
 		}
 
-		public void Delete(Step step)
+		private void StepDeleted()
 		{
-			// recreate add connection logic but backwards
+			ConnectedSteps.Invalidate();
+			Type.Invalidate();
+			BalanceConnectionRates();
+		}
+
+		public void DeleteProducer(Step step)
+		{
+			Producers.Remove(step);
+			StepDeleted();
+		}
+
+		private void BalanceConnectionRates()
+		{
+			SortedSet<HashSet<Step>> stepGroups = new SortedSet<HashSet<Step>>(new Util.CompareByCount<HashSet<Step>, Step>());
+			foreach (Step step in ConnectedSteps.Get())
+			{
+				foreach (HashSet<Step> group in stepGroups)
+				{
+					if (group.Contains(step))
+					{
+						goto Continue;
+					}
+				}
+				stepGroups.Add(step.GetAllNormallyConnectedSteps());
+			Continue:
+				continue;
+			}
+			decimal totalRate = 0, producersRate = 0, consumersRate = 0;
+			foreach (decimal d in Producers.Values)
+			{
+				producersRate += d;
+				totalRate += d;
+			}
+			foreach (decimal d in Consumers.Values)
+			{
+				consumersRate += d;
+				totalRate += d;
+			}
+			if (totalRate != 0 && Type.Get() != ConnectionType.INCOMPLETE)
+			{
+			}
 		}
 
 		public void UpdateMultipliers(HashSet<Step> updated, Step from, HashSet<Connection> excludedConnections)
@@ -278,7 +143,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 				newRate = from.GetItemRate(ItemUID, true);
 			}
 			decimal multiplier = newRate / oldRate;
-			foreach (Step step in GetSteps())
+			foreach (Step step in ConnectedSteps.Get())
 			{
 				if (updated.Contains(step))
 				{
@@ -295,7 +160,6 @@ namespace VisualSatisfactoryCalculator.code.Production
 					connection.UpdateMultipliers(updated, step, excludedConnections);
 				}
 			}
-
 		}
 
 		private bool AreStepsConnectedWithoutThisConnection(Step a, Step b)
@@ -328,20 +192,20 @@ namespace VisualSatisfactoryCalculator.code.Production
 			return false;
 		}
 
-		private OverallConnectionType CalculateOverallConnectionType()
+		private ConnectionType CalculateOverallConnectionType()
 		{
 			if (Consumers.Count == 1 && Producers.Count == 1)
 			{
-				return OverallConnectionType.NORMAL;
+				return ConnectionType.NORMAL;
 			}
 			else if (Consumers.Count >= 1 && Producers.Count >= 1)
 			{
-				return OverallConnectionType.FIXED_RATIO;
+				return ConnectionType.FIXED_RATIO;
 			}
-			throw new InvalidOperationException("Unable to match this connection to an OverallConnectionType");
+			return ConnectionType.INCOMPLETE;
 		}
 
-		public enum OverallConnectionType
+		public enum ConnectionType
 		{
 			/// <summary>
 			/// The connection has 1 producer and 1 consumer
@@ -352,12 +216,16 @@ namespace VisualSatisfactoryCalculator.code.Production
 			/// <br></br>
 			/// and a fixed ratio between all the producers and consumers.
 			/// </summary>
-			FIXED_RATIO
+			FIXED_RATIO,
+			/// <summary>
+			/// The connection has no producers and/or no consumers
+			/// </summary>
+			INCOMPLETE
 		}
 
 		public bool IsConnectedNormallyTo(Connection other)
 		{
-			if (other.Type.Get() != OverallConnectionType.NORMAL)
+			if (other.Type.Get() != ConnectionType.NORMAL)
 			{
 				return false;
 			}
@@ -370,12 +238,12 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		private bool IsConnectedNormallyToRecursive(Connection other, HashSet<Connection> visited)
 		{
-			if (Type.Get() != OverallConnectionType.NORMAL)
+			if (Type.Get() != ConnectionType.NORMAL)
 			{
 				return false;
 			}
-			HashSet<Step> connectedNormallySteps = GetSteps();
-			foreach (Step step in GetSteps())
+			IEnumerable<Step> connectedNormallySteps = ConnectedSteps.Get();
+			foreach (Step step in ConnectedSteps.Get())
 			{
 				if (step.Connections.Get().Contains(other))
 				{

@@ -23,20 +23,27 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			if (!valid)
 			{
 				value = valueProvider();
+				valid = true;
 			}
 			return value;
 		}
 
 		public void Invalidate()
 		{
-			valid = false;
+			if (valid)
+			{
+				valid = false;
+			}
 		}
 
 		public void InvalidateIf(T invalidValue)
 		{
-			if (value.Equals(invalidValue))
+			if (valid)
 			{
-				Invalidate();
+				if (value.Equals(invalidValue))
+				{
+					Invalidate();
+				}
 			}
 		}
 	}
