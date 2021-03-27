@@ -24,6 +24,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public string ItemUID { get; }
 		public CachedValue<ConnectionType> Type { get; }
 		public CachedValue<IImmutableSet<Step>> ConnectedSteps { get; }
+		public CachedValue<List<HashSet<Step>>> ConnectedStepGroups { get; }
 		private SplitAndMergeControl control;
 
 		public IImmutableSet<Step> GetProducerSteps()
@@ -48,6 +49,24 @@ namespace VisualSatisfactoryCalculator.code.Production
 				steps.AddRange(Consumers.Keys);
 				steps.AddRange(Producers.Keys);
 				return ImmutableHashSet.CreateRange(steps);
+			});
+			ConnectedStepGroups = new CachedValue<List<HashSet<Step>>>(() =>
+			{
+				List<HashSet<Step>> groups = new List<HashSet<Step>>();
+				foreach (Step step in ConnectedSteps.Get())
+				{
+					foreach (HashSet<Step> group in groups)
+					{
+						if (group.Contains(step))
+						{
+							goto Continue;
+						}
+					}
+					groups.Add(step.GetAllConnectedSteps(this));
+				Continue:
+					continue;
+				}
+				return groups;
 			});
 		}
 
@@ -76,6 +95,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 				step.NormalIngredientConnections.Invalidate();
 			}
 			ConnectedSteps.Invalidate();
+			ConnectedStepGroups.Invalidate();
 			BalanceConnectionRates();
 		}
 
@@ -148,6 +168,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		private void StepDeleted()
 		{
 			ConnectedSteps.Invalidate();
+			ConnectedStepGroups.Invalidate();
 			Type.Invalidate();
 			foreach (Step step in Consumers.Keys)
 			{
@@ -175,24 +196,13 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		private void BalanceConnectionRates()
 		{
-			List<HashSet<Step>> stepGroups = new List<HashSet<Step>>();
+			List<HashSet<Step>> stepGroups = ConnectedStepGroups.Get();
 			Dictionary<HashSet<Step>, decimal> stepGroupRates = new Dictionary<HashSet<Step>, decimal>();
 			Dictionary<HashSet<Step>, HashSet<Step>> stepGroupsRelevantSteps = new Dictionary<HashSet<Step>, HashSet<Step>>();
-			foreach (Step step in ConnectedSteps.Get())
+			foreach (HashSet<Step> stepGroup in stepGroups)
 			{
-				foreach (HashSet<Step> group in stepGroups)
-				{
-					if (group.Contains(step))
-					{
-						goto Continue;
-					}
-				}
-				HashSet<Step> stepGroup = step.GetAllNormallyConnectedSteps(this);
-				stepGroups.Add(stepGroup);
 				stepGroupRates.Add(stepGroup, 0);
 				stepGroupsRelevantSteps.Add(stepGroup, new HashSet<Step>());
-			Continue:
-				continue;
 			}
 			stepGroups.Sort((x, y) => x.Count - y.Count);
 			decimal totalRate = 0, producersRate = 0, consumersRate = 0;
@@ -203,7 +213,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 					if (Producers.ContainsKey(step))
 					{
 						decimal rate = Producers[step];
-						stepGroupRates[group] += rate; // broke, modifies iterating collection
+						stepGroupRates[group] += rate;
 						totalRate += rate;
 						producersRate += rate;
 						stepGroupsRelevantSteps[group].Add(step);
@@ -323,22 +333,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 				}
 				excludedConnections.Add(this);
 				updated.AddRange(step.GetAllConnectedSteps(this));
-				/**if (Producers.ContainsKey(step))
-				{
-					if (Producers[step] * multiplier == step.GetItemRate(ItemUID, true))
-					{
-						goto Post;
-					}
-				}
-				if (Consumers.ContainsKey(step))
-				{
-					if (Consumers[step] * multiplier == step.GetItemRate(ItemUID, false))
-					{
-						goto Post;
-					}
-				}*/
 				step.SetMultiplier(step.Multiplier * multiplier, excludedConnections);
-			Post:
 				if (Producers.ContainsKey(step))
 				{
 					Producers[step] = step.GetItemRate(ItemUID, true);
