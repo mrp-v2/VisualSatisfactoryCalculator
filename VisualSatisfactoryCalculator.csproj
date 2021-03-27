@@ -173,6 +173,12 @@
     <Compile Include="code\Utility\Encodings.cs" />
     <Compile Include="code\Utility\PlanLayoutMaker.cs" />
     <Compile Include="code\Utility\Util.cs" />
+    <Compile Include="controls\user\BalancingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="controls\user\BalancingControl.Designer.cs">
+      <DependentUpon>BalancingControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="controls\user\LineControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -184,6 +190,12 @@
     </Compile>
     <Compile Include="controls\user\SplitAndMergeControl.Designer.cs">
       <DependentUpon>SplitAndMergeControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="forms\BalancingPrompt.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="forms\BalancingPrompt.Designer.cs">
+      <DependentUpon>BalancingPrompt.cs</DependentUpon>
     </Compile>
     <Compile Include="forms\UseSaveFilePrompt.cs">
       <SubType>Form</SubType>
@@ -228,6 +240,9 @@
       <DependentUpon>SelectRecipePrompt.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="controls\user\BalancingControl.resx">
+      <DependentUpon>BalancingControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="controls\user\ItemRateControl.resx">
       <DependentUpon>ItemRateControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -248,6 +263,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="forms\SelectRecipePrompt.resx">
       <DependentUpon>SelectRecipePrompt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="forms\BalancingPrompt.resx">
+      <DependentUpon>BalancingPrompt.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="forms\UseSaveFilePrompt.resx">
       <DependentUpon>UseSaveFilePrompt.cs</DependentUpon>

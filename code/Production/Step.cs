@@ -253,12 +253,18 @@ namespace VisualSatisfactoryCalculator.code.Production
 		{
 			SetMultiplier(multiplier, false);
 			HashSet<Step> updated = new HashSet<Step>() { this };
+			HashSet<Connection> nextRound = new HashSet<Connection>();
 			foreach (Connection connection in Connections.Get())
 			{
 				if (!excludedConnections.Contains(connection))
 				{
-					connection.UpdateMultipliers(updated, this, excludedConnections);
+					nextRound.Add(connection);
+					excludedConnections.Add(connection);
 				}
+			}
+			foreach (Connection connection in nextRound)
+			{
+				connection.UpdateMultipliers(updated, this, excludedConnections);
 			}
 		}
 
