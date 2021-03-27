@@ -22,6 +22,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 		{
 			DrawingContext = new PlanDrawingContext();
 			int yPosition = panel.GetPreferredSize(new Size()).Height, xPosition = 0;
+			// setup normal connections
 			for (int currentTier = plan.ProcessedPlan.Get().Tiers - 1; currentTier >= 0; currentTier--)
 			{
 				foreach (Step step in plan.ProcessedPlan.Get().GetStepsInTier(currentTier))
@@ -57,6 +58,12 @@ namespace VisualSatisfactoryCalculator.code.Utility
 					DrawingContext.StepUIMap.Add(step, new Tuple<StepControl, StepAndIngredientsLayout>(stepControl, layout));
 				}
 			}
+			// setup abnormal connections
+			foreach (Connection connection in plan.ProcessedPlan.Get().GetAbnormalConnections())
+			{
+				DrawingContext.AbnormalConnectionUIMap.Add(connection, new SplitAndMergeLayout(connection));
+			}
+			// start placing things
 			foreach (Step step in DrawingContext.StepUIMap.Keys)
 			{
 				DrawingContext.StepUIMap[step].Item2.PrePlace();
@@ -68,6 +75,12 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			foreach (Step step in plan.ProcessedPlan.Get().GetStepsInTier(0))
 			{
 				StepAndIngredientsLayout layout = DrawingContext.StepUIMap[step].Item2;
+				layout.Place(xPosition, yPosition);
+				xPosition += layout.PreferredSize.Width;
+			}
+			// TODO place split/merge connections
+			foreach (SplitAndMergeLayout layout in DrawingContext.AbnormalConnectionUIMap.Values)
+			{
 				layout.Place(xPosition, yPosition);
 				xPosition += layout.PreferredSize.Width;
 			}
@@ -118,6 +131,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			public readonly Random Rand = new Random();
 			public readonly Dictionary<Step, Tuple<StepControl, StepAndIngredientsLayout>> StepUIMap = new Dictionary<Step, Tuple<StepControl, StepAndIngredientsLayout>>();
 			public readonly HashSet<Tuple<ItemRateControl, ItemRateControl>> ScheduledAlternateConnections = new HashSet<Tuple<ItemRateControl, ItemRateControl>>();
+			public readonly Dictionary<Connection, SplitAndMergeLayout> AbnormalConnectionUIMap = new Dictionary<Connection, SplitAndMergeLayout>();
 			private readonly HashSet<Color> ingredientColors = new HashSet<Color>()
 			{
 				Color.FromArgb(255, 0, 0),
@@ -201,6 +215,24 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			}
 		}
 
+		private class SplitAndMergeLayout : StepAndIngredientsLayout
+		{
+			public SplitAndMergeLayout(Connection connection) : base(null, null)
+			{
+				// TODO
+			}
+
+			public override void Place(int xStart, int yStart)
+			{
+				// TODO
+			}
+
+			public override void PrePlace()
+			{
+				// TODO
+			}
+		}
+
 		private class StepAndIngredientsLayout : ILayoutControl
 		{
 			private readonly Step productStep;
@@ -217,7 +249,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				this.ingredientSteps = ingredientSteps;
 			}
 
-			public void PrePlace()
+			public virtual void PrePlace()
 			{
 				TopControl = DrawingContext.StepUIMap[productStep].Item1;
 				foreach (Step step in ingredientSteps.Keys)
@@ -238,7 +270,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				PreferredSize = new Size(width3, height);
 			}
 
-			public void Place(int xStart, int yStart)
+			public virtual void Place(int xStart, int yStart)
 			{
 				if (placed)
 				{

@@ -23,6 +23,11 @@ namespace VisualSatisfactoryCalculator.code.Production
 			CalculateStepTiers();
 		}
 
+		public IEnumerable<Connection> GetAbnormalConnections()
+		{
+			return abnormalConnections;
+		}
+
 		public int Tiers
 		{
 			get
@@ -67,6 +72,13 @@ namespace VisualSatisfactoryCalculator.code.Production
 				foreach (Step step in previousTier)
 				{
 					foreach (Connection connection in step.NormalIngredientConnections.Get())
+					{
+						ingredientSteps.UnionWith(connection.GetProducerSteps());
+					}
+				}
+				if (currentTier == 1)
+				{
+					foreach (Connection connection in abnormalConnections)
 					{
 						ingredientSteps.UnionWith(connection.GetProducerSteps());
 					}
