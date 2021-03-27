@@ -46,5 +46,16 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				}
 			}
 		}
+
+		public void InvalidateIf(ICollection<T> invalidValues)
+		{
+			if (valid)
+			{
+				if (invalidValues.Contains(value))
+				{
+					Invalidate();
+				}
+			}
+		}
 	}
 }

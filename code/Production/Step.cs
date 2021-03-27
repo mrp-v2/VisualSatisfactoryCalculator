@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 using VisualSatisfactoryCalculator.code.Extensions;
@@ -12,30 +13,82 @@ namespace VisualSatisfactoryCalculator.code.Production
 	public class Step
 	{
 		public decimal Multiplier { get; private set; }
-		public readonly CachedValue<IEnumerable<Connection>> Connections;
+		public readonly CachedValue<IImmutableSet<Connection>> Connections;
 		public readonly CachedValue<bool> HasNormalProductConnections;
-		public readonly CachedValue<HashSet<Connection>> NormalIngredientConnections;
+		public readonly CachedValue<IImmutableSet<Connection>> NormalIngredientConnections;
 		private readonly HashSet<Connection> IngredientConnections;
 		private readonly HashSet<Connection> ProductConnections;
 		private StepControl _control;
 
-		public HashSet<Step> GetAllNormallyConnectedSteps()
+		public bool HasProductConnectionFor(string itemUID)
 		{
-			return GetAllNormallyConnectedStepsRecursive(new HashSet<Step>());
+			foreach (Connection connection in ProductConnections)
+			{
+				if (connection.ItemUID == itemUID)
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 
-		private HashSet<Step> GetAllNormallyConnectedStepsRecursive(HashSet<Step> connected)
+		public bool HasIngredientConnectionFor(string itemUID)
+		{
+			foreach (Connection connection in IngredientConnections)
+			{
+				if (connection.ItemUID == itemUID)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public Connection GetProductConnection(string itemUID)
+		{
+			foreach (Connection connection in ProductConnections)
+			{
+				if (connection.ItemUID == itemUID)
+				{
+					return connection;
+				}
+			}
+			throw new ArgumentException("This step has no product connection for item '" + itemUID + "'");
+		}
+
+		public Connection GetIngredientConnection(string itemUID)
+		{
+			foreach (Connection connection in IngredientConnections)
+			{
+				if (connection.ItemUID == itemUID)
+				{
+					return connection;
+				}
+			}
+			throw new ArgumentException("This step has no ingredient connection for item '" + itemUID + "'");
+		}
+
+		public HashSet<Step> GetAllNormallyConnectedSteps(Connection exclude)
+		{
+			return GetAllNormallyConnectedStepsRecursive(new HashSet<Step>(), exclude);
+		}
+
+		private HashSet<Step> GetAllNormallyConnectedStepsRecursive(HashSet<Step> connected, Connection exclude)
 		{
 			connected.Add(this);
 			foreach (Connection connection in Connections.Get())
 			{
+				if (connection == exclude)
+				{
+					continue;
+				}
 				if (connection.Type.Get() == Connection.ConnectionType.NORMAL)
 				{
 					foreach (Step step in connection.ConnectedSteps.Get())
 					{
 						if (!connected.Contains(step))
 						{
-							GetAllNormallyConnectedStepsRecursive(connected);
+							step.GetAllNormallyConnectedStepsRecursive(connected, exclude);
 						}
 					}
 				}
@@ -47,6 +100,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		{
 			IngredientConnections.Add(connection);
 			Connections.Invalidate();
+			NormalIngredientConnections.Invalidate();
 		}
 
 		public void AddProductConnection(Connection connection)
@@ -60,6 +114,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		{
 			IngredientConnections.Remove(connection);
 			Connections.Invalidate();
+			NormalIngredientConnections.Invalidate();
 		}
 
 		public void RemoveProductConnection(Connection connection)
@@ -75,11 +130,27 @@ namespace VisualSatisfactoryCalculator.code.Production
 		{
 			if (isProductOfRelated)
 			{
-				new Connection(itemUID).AddProducer(relatedStep).AddConsumer(this);
+				if (relatedStep.HasProductConnectionFor(itemUID))
+				{
+					relatedStep.GetProductConnection(itemUID).AddConsumer(this);
+				}
+				else
+				{
+					Multiplier = CalculateMultiplierForRate(itemUID, relatedStep.GetItemRate(itemUID, isProductOfRelated), !isProductOfRelated);
+					new Connection(itemUID).AddProducer(relatedStep).AddConsumer(this);
+				}
 			}
 			else
 			{
-				new Connection(itemUID).AddConsumer(relatedStep).AddProducer(this);
+				if (relatedStep.HasIngredientConnectionFor(itemUID))
+				{
+					relatedStep.GetIngredientConnection(itemUID).AddProducer(this);
+				}
+				else
+				{
+					Multiplier = CalculateMultiplierForRate(itemUID, relatedStep.GetItemRate(itemUID, isProductOfRelated), !isProductOfRelated);
+					new Connection(itemUID).AddConsumer(relatedStep).AddProducer(this);
+				}
 			}
 		}
 
@@ -94,12 +165,12 @@ namespace VisualSatisfactoryCalculator.code.Production
 		{
 			IngredientConnections = new HashSet<Connection>();
 			ProductConnections = new HashSet<Connection>();
-			Connections = new CachedValue<IEnumerable<Connection>>(() =>
+			Connections = new CachedValue<IImmutableSet<Connection>>(() =>
 			{
 				HashSet<Connection> connections = new HashSet<Connection>();
 				connections.AddRange(IngredientConnections);
 				connections.AddRange(ProductConnections);
-				return connections;
+				return ImmutableHashSet.CreateRange(connections);
 			});
 			HasNormalProductConnections = new CachedValue<bool>(() =>
 			{
@@ -112,7 +183,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 				}
 				return false;
 			});
-			NormalIngredientConnections = new CachedValue<HashSet<Connection>>(() =>
+			NormalIngredientConnections = new CachedValue<IImmutableSet<Connection>>(() =>
 			{
 				HashSet<Connection> normalIngredients = new HashSet<Connection>();
 				foreach (Connection connection in IngredientConnections)
@@ -122,7 +193,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 						normalIngredients.Add(connection);
 					}
 				}
-				return normalIngredients;
+				return ImmutableHashSet.CreateRange(normalIngredients);
 			});
 		}
 
@@ -200,16 +271,6 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public void SetControl(StepControl control)
 		{
 			_control = control;
-		}
-
-		public List<string> GetItemUIDsWithRelatedStep()
-		{
-			List<string> uids = new List<string>();
-			foreach (Connection connection in Connections.Get())
-			{
-				uids.Add(connection.ItemUID);
-			}
-			return uids;
 		}
 
 		public void Delete(Plan plan)

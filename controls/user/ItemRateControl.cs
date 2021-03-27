@@ -54,7 +54,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 				{
 					parentControl.RateChanged(ItemUID, RateNumeric.Value, IsProduct);
 				}
-
 				parentControl.mainForm.UpdateTotalView();
 			}
 		}

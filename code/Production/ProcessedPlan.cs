@@ -79,6 +79,10 @@ namespace VisualSatisfactoryCalculator.code.Production
 					}
 					stepTiers.Add(step, currentTier);
 				}
+				if (ingredientSteps.Count == 0)
+				{
+					throw new InvalidOperationException();
+				}
 				previousTier = ingredientSteps;
 				currentTier++;
 				remainingSteps.ExceptWith(ingredientSteps);

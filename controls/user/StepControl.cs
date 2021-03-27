@@ -60,7 +60,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			if (Math.Abs(BackingStep.GetItemRate(itemUID, isProduct)) != newRate)
 			{
-				BackingStep.SetMultiplier(BackingStep.CalculateMultiplierForRate(itemUID, newRate, isProduct), true);
+				BackingStep.SetMultiplier(BackingStep.CalculateMultiplierForRate(itemUID, newRate, isProduct));
 			}
 		}
 
@@ -118,6 +118,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			if (Enabled && initialized)
 			{
 				BackingStep.SetMultiplier(MultiplierNumeric.Value);
+				mainForm.UpdateTotalView();
 			}
 		}
 
