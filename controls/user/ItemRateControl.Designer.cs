@@ -41,7 +41,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			// 
 			this.RateNumeric.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.RateNumeric.AutoSize = true;
-			this.RateNumeric.DecimalPlaces = 7;
+			this.RateNumeric.DecimalPlaces = Constants.DECIMALS;
 			this.RateNumeric.Font = new System.Drawing.Font("Microsoft Tai Le", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.RateNumeric.Location = new System.Drawing.Point(3, 4);
 			this.RateNumeric.Maximum = new decimal(new int[] {
@@ -102,6 +102,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		private System.Windows.Forms.NumericUpDown RateNumeric;
 		private System.Windows.Forms.FlowLayoutPanel MainPanel;
-		private System.Windows.Forms.Button ItemButton;
+		public System.Windows.Forms.Button ItemButton;
 	}
 }

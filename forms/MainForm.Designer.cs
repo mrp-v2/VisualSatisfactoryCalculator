@@ -135,6 +135,7 @@
 			this.ClientSize = new System.Drawing.Size(1184, 636);
 			this.Controls.Add(this.MainPanel);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.KeyPreview = true;
 			this.Name = "MainForm";
 			this.ShowIcon = false;
 			this.Text = "Visual Satisfactory Calculator";

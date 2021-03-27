@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.controls.user;
 
 namespace VisualSatisfactoryCalculator.code.Production
 {
@@ -23,10 +24,16 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public string ItemUID { get; }
 		public CachedValue<ConnectionType> Type { get; }
 		public CachedValue<IImmutableSet<Step>> ConnectedSteps { get; }
+		private SplitAndMergeControl control;
 
-		public IEnumerable<Step> GetProducerSteps()
+		public IImmutableSet<Step> GetProducerSteps()
 		{
-			return Producers.Keys;
+			return ImmutableHashSet.CreateRange(Producers.Keys);
+		}
+
+		public void SetControl(SplitAndMergeControl control)
+		{
+			this.control = control;
 		}
 
 		public Connection(string itemUID)
@@ -72,6 +79,21 @@ namespace VisualSatisfactoryCalculator.code.Production
 			BalanceConnectionRates();
 		}
 
+		public IImmutableSet<Step> GetConsumerSteps()
+		{
+			return ImmutableHashSet.CreateRange(Consumers.Keys);
+		}
+
+		public decimal GetProducerRate(Step producer)
+		{
+			return Producers[producer];
+		}
+
+		public decimal GetConsumerRate(Step consumer)
+		{
+			return -Consumers[consumer];
+		}
+
 		public Connection AddProducer(Step producer)
 		{
 			if (!producer.Recipe.Products.Keys.Contains(ItemUID))
@@ -98,6 +120,31 @@ namespace VisualSatisfactoryCalculator.code.Production
 			StepDeleted();
 		}
 
+		public void MergeWith(Connection other)
+		{
+			if (this == other)
+			{
+				return;
+			}
+			if (other.ItemUID != ItemUID)
+			{
+				throw new ArgumentException("Cannot merge connections with different items");
+			}
+			foreach (Step step in other.Producers.Keys)
+			{
+				Producers.Add(step, other.Producers[step]);
+				step.RemoveProductConnection(other);
+				step.AddProductConnection(this);
+			}
+			foreach (Step step in other.Consumers.Keys)
+			{
+				Consumers.Add(step, other.Consumers[step]);
+				step.RemoveIngredientConnection(other);
+				step.AddIngredientConnection(this);
+			}
+			StepAdded();
+		}
+
 		private void StepDeleted()
 		{
 			ConnectedSteps.Invalidate();
@@ -105,6 +152,10 @@ namespace VisualSatisfactoryCalculator.code.Production
 			foreach (Step step in Consumers.Keys)
 			{
 				step.NormalIngredientConnections.Invalidate();
+			}
+			foreach (Step step in Producers.Keys)
+			{
+				step.HasNormalProductConnections.Invalidate();
 			}
 			BalanceConnectionRates();
 		}
@@ -190,6 +241,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 										Producers[step2] = step2.GetItemRate(ItemUID, true);
 									}
 								}
+								UpdateControl();
 								return;
 							}
 						}
@@ -217,13 +269,21 @@ namespace VisualSatisfactoryCalculator.code.Production
 										Producers[step2] = step2.GetItemRate(ItemUID, true);
 									}
 								}
-
+								UpdateControl();
 								return;
 							}
 						}
 					}
 					throw new InvalidOperationException("Unable to decrease a producing step group");
 				}
+			}
+		}
+
+		private void UpdateControl()
+		{
+			if (control != null)
+			{
+				control.UpdateNumerics();
 			}
 		}
 
@@ -251,12 +311,30 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				if (updated.Contains(step))
 				{
+					if (Producers.ContainsKey(step))
+					{
+						Producers[step] = step.GetItemRate(ItemUID, true);
+					}
+					if (Consumers.ContainsKey(step))
+					{
+						Consumers[step] = -step.GetItemRate(ItemUID, false);
+					}
 					continue;
 				}
 				excludedConnections.Add(this);
-				updated.Add(step);
+				updated.AddRange(step.GetAllConnectedSteps(this));
 				step.SetMultiplier(step.Multiplier * multiplier, excludedConnections);
+				if (Producers.ContainsKey(step))
+				{
+					Producers[step] = step.GetItemRate(ItemUID, true);
+				}
+				if (Consumers.ContainsKey(step))
+				{
+					Consumers[step] = -step.GetItemRate(ItemUID, false);
+				}
+
 			}
+			UpdateControl();
 		}
 
 		private ConnectionType CalculateOverallConnectionType()

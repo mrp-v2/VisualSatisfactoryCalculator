@@ -4,31 +4,42 @@ using System.Windows.Forms;
 
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.Production;
 using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.forms;
 
 namespace VisualSatisfactoryCalculator.controls.user
 {
 	public partial class ItemRateControl : UserControl
 	{
-		private readonly StepControl parentControl;
+		public delegate void RateChanged(string itemUID, decimal newRate, bool isProduct);
+		public delegate void ItemClicked(string itemUID, bool isProduct);
+
 		public string ItemUID { get; }
 		private bool initialized;
 		public bool IsProduct { get; }
+		private readonly MainForm mainForm;
+		private readonly RateChanged rateChanged;
+		private readonly ItemClicked itemClicked;
+		private readonly int panelDepth;
 
 		public Point GetTotalLocation()
 		{
-			return PlanLayoutMaker.AddParentPoints(this, 4);
+			return PlanLayoutMaker.AddParentPoints(this, panelDepth);
 		}
 
-		public ItemRateControl(StepControl parentControl, string itemUID, decimal rate, bool isProduct)
+		public ItemRateControl(MainForm mainForm, string itemUID, decimal rate, bool isProduct, int panelDepth, RateChanged rateChanged, ItemClicked itemClicked)
 		{
 			initialized = false;
 			InitializeComponent();
-			this.parentControl = parentControl;
+			this.mainForm = mainForm;
+			this.rateChanged = rateChanged;
+			this.itemClicked = itemClicked;
+			this.panelDepth = panelDepth;
 			ItemUID = itemUID;
 			IsProduct = isProduct;
-			ItemButton.Text = parentControl.mainForm.Encoders[itemUID].DisplayName;
-			if ((parentControl.mainForm.Encoders[itemUID] as IItem).IsFluid)
+			ItemButton.Text = mainForm.Encoders[itemUID].DisplayName;
+			if ((mainForm.Encoders[itemUID] as IItem).IsFluid)
 			{
 				RateNumeric.Value = rate.Abs() / 1000;
 			}
@@ -46,28 +57,28 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 			if (Enabled && initialized)
 			{
-				if ((parentControl.mainForm.Encoders[ItemUID] as IItem).IsFluid)
+				if ((mainForm.Encoders[ItemUID] as IItem).IsFluid)
 				{
-					parentControl.RateChanged(ItemUID, RateNumeric.Value * 1000, IsProduct);
+					rateChanged(ItemUID, RateNumeric.Value * 1000, IsProduct);
 				}
 				else
 				{
-					parentControl.RateChanged(ItemUID, RateNumeric.Value, IsProduct);
+					rateChanged(ItemUID, RateNumeric.Value, IsProduct);
 				}
-				parentControl.mainForm.UpdateTotalView();
+				mainForm.UpdateTotalView();
 			}
 		}
 
 		private void ItemButton_Click(object sender, EventArgs e)
 		{
-			parentControl.ItemClicked(ItemUID, IsProduct);
+			itemClicked(ItemUID, IsProduct);
 		}
 
 		public void UpdateRateValue(decimal newRate)
 		{
 			if (newRate != RateNumeric.Value)
 			{
-				if ((parentControl.mainForm.Encoders[ItemUID] as IItem).IsFluid)
+				if ((mainForm.Encoders[ItemUID] as IItem).IsFluid)
 				{
 					RateNumeric.Value = newRate.Abs() / 1000;
 				}

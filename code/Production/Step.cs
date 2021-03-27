@@ -20,6 +20,11 @@ namespace VisualSatisfactoryCalculator.code.Production
 		private readonly HashSet<Connection> ProductConnections;
 		private StepControl _control;
 
+		public IEnumerable<Connection> GetIngredientConnections()
+		{
+			return IngredientConnections;
+		}
+
 		public bool HasProductConnectionFor(string itemUID)
 		{
 			foreach (Connection connection in ProductConnections)
@@ -66,6 +71,31 @@ namespace VisualSatisfactoryCalculator.code.Production
 				}
 			}
 			throw new ArgumentException("This step has no ingredient connection for item '" + itemUID + "'");
+		}
+
+		public HashSet<Step> GetAllConnectedSteps(Connection exclude)
+		{
+			return GetAllConnectedStepsRecursive(new HashSet<Step>(), exclude);
+		}
+
+		private HashSet<Step> GetAllConnectedStepsRecursive(HashSet<Step> connected, Connection exclude)
+		{
+			connected.Add(this);
+			foreach (Connection connection in Connections.Get())
+			{
+				if (connection == exclude)
+				{
+					continue;
+				}
+				foreach (Step step in connection.ConnectedSteps.Get())
+				{
+					if (!connected.Contains(step))
+					{
+						step.GetAllConnectedStepsRecursive(connected, exclude);
+					}
+				}
+			}
+			return connected;
 		}
 
 		public HashSet<Step> GetAllNormallyConnectedSteps(Connection exclude)

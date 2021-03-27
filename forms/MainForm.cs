@@ -29,12 +29,17 @@ namespace VisualSatisfactoryCalculator.forms
 
 		public readonly Plan Plan;
 		private PlanTotalViewControl PPTVC;
+		public bool ControlKeyPressed { get; private set; }
+		public ItemRateControl CurrentConnectionIRC;
+		public Func<Connection> CurrentConnectionFunc;
 
 		private readonly DigitalStenographySaveLoad saveLoad;
 
 		private MainForm(Encodings encoders)
 		{
 			InitializeComponent();
+			KeyDown += MainForm_KeyDown;
+			KeyUp += MainForm_KeyUp;
 			Encoders = encoders;
 			saveLoad = new DigitalStenographySaveLoad();
 			Plan = new Plan();
@@ -126,6 +131,31 @@ namespace VisualSatisfactoryCalculator.forms
 						// TODO
 					}
 				}
+			}
+		}
+
+		void MainForm_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.ControlKey)
+			{
+				ControlKeyPressed = true;
+			}
+			if (e.KeyCode == Keys.Escape)
+			{
+				if (CurrentConnectionIRC != null)
+				{
+					CurrentConnectionIRC.ItemButton.Enabled = true;
+					CurrentConnectionIRC = null;
+					CurrentConnectionFunc = null;
+				}
+			}
+		}
+
+		void MainForm_KeyUp(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.ControlKey)
+			{
+				ControlKeyPressed = false;
 			}
 		}
 

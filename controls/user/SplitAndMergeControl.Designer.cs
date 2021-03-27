@@ -45,8 +45,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.MainPanel.Controls.Add(this.SplitMergeLabel);
 			this.MainPanel.Controls.Add(this.InPanel);
 			this.MainPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-			this.MainPanel.Location = new System.Drawing.Point(0, 0);
-			this.MainPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.MainPanel.Location = new System.Drawing.Point(3, 3);
 			this.MainPanel.Name = "MainPanel";
 			this.MainPanel.Size = new System.Drawing.Size(100, 31);
 			this.MainPanel.TabIndex = 0;
@@ -89,7 +88,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.Controls.Add(this.MainPanel);
 			this.Name = "SplitAndMergeControl";
-			this.Size = new System.Drawing.Size(100, 31);
+			this.Size = new System.Drawing.Size(106, 37);
 			this.MainPanel.ResumeLayout(false);
 			this.MainPanel.PerformLayout();
 			this.ResumeLayout(false);

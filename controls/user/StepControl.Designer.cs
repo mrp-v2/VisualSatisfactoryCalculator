@@ -37,9 +37,9 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.MultiplierLable = new System.Windows.Forms.Label();
 			this.MultiplierNumeric = new System.Windows.Forms.NumericUpDown();
 			this.DeleteStepButton = new System.Windows.Forms.Button();
-			this.PowerConsumptionLabel = new System.Windows.Forms.Label();
 			this.RecipeLabel = new System.Windows.Forms.Label();
 			this.MachineCountLabel = new System.Windows.Forms.Label();
+			this.PowerConsumptionLabel = new System.Windows.Forms.Label();
 			this.MainPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.MainLayout = new System.Windows.Forms.FlowLayoutPanel();
 			this.InfoPanel.SuspendLayout();
@@ -138,16 +138,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.DeleteStepButton.UseVisualStyleBackColor = true;
 			this.DeleteStepButton.Click += new System.EventHandler(this.DeleteStepButton_Click);
 			// 
-			// PowerConsumptionLabel
-			// 
-			this.PowerConsumptionLabel.AutoSize = true;
-			this.PowerConsumptionLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.PowerConsumptionLabel.Location = new System.Drawing.Point(3, 67);
-			this.PowerConsumptionLabel.Name = "PowerConsumptionLabel";
-			this.PowerConsumptionLabel.Size = new System.Drawing.Size(157, 17);
-			this.PowerConsumptionLabel.TabIndex = 3;
-			this.PowerConsumptionLabel.Text = "Power Consumption: <>";
-			// 
 			// RecipeLabel
 			// 
 			this.RecipeLabel.AutoSize = true;
@@ -168,6 +158,16 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.MachineCountLabel.TabIndex = 2;
 			this.MachineCountLabel.Text = "<machine>s: <multiplier rounded up>";
 			// 
+			// PowerConsumptionLabel
+			// 
+			this.PowerConsumptionLabel.AutoSize = true;
+			this.PowerConsumptionLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.PowerConsumptionLabel.Location = new System.Drawing.Point(3, 67);
+			this.PowerConsumptionLabel.Name = "PowerConsumptionLabel";
+			this.PowerConsumptionLabel.Size = new System.Drawing.Size(157, 17);
+			this.PowerConsumptionLabel.TabIndex = 3;
+			this.PowerConsumptionLabel.Text = "Power Consumption: <>";
+			// 
 			// MainPanel
 			// 
 			this.MainPanel.AutoSize = true;
@@ -177,8 +177,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.MainPanel.Controls.Add(this.InfoPanel);
 			this.MainPanel.Controls.Add(this.IngredientsPanel);
 			this.MainPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-			this.MainPanel.Location = new System.Drawing.Point(0, 0);
-			this.MainPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.MainPanel.Location = new System.Drawing.Point(3, 3);
 			this.MainPanel.Name = "MainPanel";
 			this.MainPanel.Size = new System.Drawing.Size(459, 104);
 			this.MainPanel.TabIndex = 2;
@@ -189,19 +188,20 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.MainLayout.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.MainLayout.Controls.Add(this.MainPanel);
 			this.MainLayout.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-			this.MainLayout.Location = new System.Drawing.Point(3, 3);
+			this.MainLayout.Location = new System.Drawing.Point(0, 0);
+			this.MainLayout.Margin = new System.Windows.Forms.Padding(0);
 			this.MainLayout.Name = "MainLayout";
-			this.MainLayout.Size = new System.Drawing.Size(459, 104);
+			this.MainLayout.Size = new System.Drawing.Size(465, 110);
 			this.MainLayout.TabIndex = 4;
 			// 
-			// ProductionStepControl
+			// StepControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.Controls.Add(this.MainLayout);
-			this.Name = "ProductionStepControl";
+			this.Name = "StepControl";
 			this.Size = new System.Drawing.Size(465, 110);
 			this.InfoPanel.ResumeLayout(false);
 			this.InfoPanel.PerformLayout();
