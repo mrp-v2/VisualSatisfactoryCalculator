@@ -30,14 +30,14 @@ namespace VisualSatisfactoryCalculator.controls.user
 			backingConnection.SetControl(this);
 			foreach (Step step in backingConnection.GetProducerSteps())
 			{
-				ItemRateControl irc = new ItemRateControl(mainForm, BackingConnection.ItemUID, backingConnection.GetProducerRate(step), true, 3, RateChanged, ItemClicked);
+				ItemRateControl irc = new ItemRateControl(mainForm, BackingConnection.ItemUID, backingConnection.GetProducerRate(step), false, 3, RateChanged, ItemClicked);
 				irc.ItemButton.Enabled = false;
 				InPanel.Controls.Add(irc);
 				InControls.Add(step, irc);
 			}
 			foreach (Step step in backingConnection.GetConsumerSteps())
 			{
-				ItemRateControl irc = new ItemRateControl(mainForm, BackingConnection.ItemUID, BackingConnection.GetConsumerRate(step), false, 3, RateChanged, ItemClicked);
+				ItemRateControl irc = new ItemRateControl(mainForm, BackingConnection.ItemUID, BackingConnection.GetConsumerRate(step), true, 3, RateChanged, ItemClicked);
 				irc.ItemButton.Enabled = false;
 				irc.Anchor = AnchorStyles.Bottom;
 				OutPanel.Controls.Add(irc);

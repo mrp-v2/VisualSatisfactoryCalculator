@@ -353,7 +353,29 @@ namespace VisualSatisfactoryCalculator.code.Utility
 					line3.Size = new Size(line3.Size.Width, line3.Location.Y - height + line3.Size.Height);
 					line3.Location = AddPoints(line3.Location, new Point(0, height - line3.Location.Y));
 				}
-				// TODO
+				if (connection.GetConsumerSteps().Count > 1)
+				{
+					foreach (Step step in connection.GetConsumerSteps())
+					{
+						ItemRateControl a = DrawingContext.StepUIMap[step].Item1.IngredientRateControls[connection.ItemUID];
+						ItemRateControl b = DrawingContext.AbnormalConnectionUIMap[connection].Item1.OutControls[step];
+						DrawingContext.ScheduledAlternateConnections.Add(new Tuple<ItemRateControl, ItemRateControl>(a, b));
+					}
+				}
+				if (connection.GetProducerSteps().Count > inputs.Count)
+				{
+					foreach (Step step in connection.GetProducerSteps())
+					{
+						if (inputs.Contains(step))
+						{
+							continue;
+						}
+						ItemRateControl a = DrawingContext.StepUIMap[step].Item1.ProductRateControls[connection.ItemUID];
+						ItemRateControl b = DrawingContext.AbnormalConnectionUIMap[connection].Item1.InControls[step];
+						DrawingContext.ScheduledAlternateConnections.Add(new Tuple<ItemRateControl, ItemRateControl>(a, b));
+					}
+				}
+				// TODO alternate connections
 				placed = true;
 			}
 		}
