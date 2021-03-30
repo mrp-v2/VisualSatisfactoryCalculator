@@ -120,8 +120,9 @@ namespace VisualSatisfactoryCalculator.forms
 
 		private void BalanceRates(BalancingControl changed)
 		{
-			decimal outputTotal = 0, inputTotal = 0;
+			decimal outputTotal = totalRate, inputTotal = totalRate;
 			List<HashSet<Step>> changableGroups = new List<HashSet<Step>>();
+			List<HashSet<Step>> unchangableGroups = new List<HashSet<Step>>();
 			Dictionary<HashSet<Step>, (decimal, decimal)> groupRates = new Dictionary<HashSet<Step>, (decimal, decimal)>();
 			foreach (HashSet<Step> group in Connection.RelevantConnectedStepGroups.Get())
 			{
@@ -132,7 +133,7 @@ namespace VisualSatisfactoryCalculator.forms
 						BalancingControl bc = ConsumingStepMap[step];
 						if (bc.Locked || bc == changed)
 						{
-							goto Continue;
+							goto Unchangeable;
 						}
 					}
 					if (ProducingStepMap.ContainsKey(step))
@@ -140,14 +141,33 @@ namespace VisualSatisfactoryCalculator.forms
 						BalancingControl bc = ProducingStepMap[step];
 						if (bc.Locked || bc == changed)
 						{
-							goto Continue;
+							goto Unchangeable;
 						}
 					}
 				}
 				changableGroups.Add(group);
 				groupRates.Add(group, (0, 0));
+				goto Continue;
+			Unchangeable:
+				unchangableGroups.Add(group);
 			Continue:
 				continue;
+			}
+			foreach (HashSet<Step> group in unchangableGroups)
+			{
+				foreach (Step step in group)
+				{
+					if (ConsumingStepMap.ContainsKey(step))
+					{
+						BalancingControl bc = ConsumingStepMap[step];
+						outputTotal -= bc.Rate;
+					}
+					if (ProducingStepMap.ContainsKey(step))
+					{
+						BalancingControl bc = ProducingStepMap[step];
+						inputTotal -= bc.Rate;
+					}
+				}
 			}
 			foreach (HashSet<Step> group in changableGroups)
 			{
@@ -156,20 +176,18 @@ namespace VisualSatisfactoryCalculator.forms
 					if (ConsumingStepMap.ContainsKey(step))
 					{
 						BalancingControl bc = ConsumingStepMap[step];
-						outputTotal += bc.Rate;
 						(decimal, decimal) tuple = groupRates[group];
 						groupRates[group] = (tuple.Item1, tuple.Item2 + bc.Rate);
 					}
 					if (ProducingStepMap.ContainsKey(step))
 					{
 						BalancingControl bc = ProducingStepMap[step];
-						inputTotal += bc.Rate;
 						(decimal, decimal) tuple = groupRates[group];
 						groupRates[group] = (tuple.Item1 + bc.Rate, tuple.Item2);
 					}
 				}
 			}
-			(decimal, decimal, decimal) multipliers = BalanceRates(groupRates, inputTotal, outputTotal);
+			(decimal, decimal, decimal) multipliers = Util.BalanceRates(groupRates, inputTotal, outputTotal);
 			foreach (HashSet<Step> group in changableGroups)
 			{
 				foreach (Step step in group)
@@ -199,84 +217,6 @@ namespace VisualSatisfactoryCalculator.forms
 					}
 				}
 			}
-		}
-
-		public static (decimal, decimal, decimal) BalanceRates<T>(Dictionary<T, (decimal, decimal)> rates, decimal inputTotal, decimal outputTotal)
-		{
-			decimal isolatedInputRate = 0, isolatedOutputRate = 0, pairedInputRate = 0, pairedOutputRate = 0;
-			foreach ((decimal, decimal) tuple in rates.Values)
-			{
-				if (tuple.Item1 == 0 || tuple.Item2 == 0)
-				{
-					isolatedInputRate += tuple.Item1;
-					isolatedOutputRate += tuple.Item2;
-				}
-				else
-				{
-					pairedInputRate += tuple.Item1;
-					pairedOutputRate += tuple.Item2;
-				}
-			}
-			decimal a = 3 * pairedInputRate * pairedOutputRate, b = -2 * ((pairedInputRate * outputTotal) + (inputTotal * pairedOutputRate)), c = inputTotal * outputTotal;
-			decimal discriminate = (b * b) - (4 * a * c);
-			decimal discriminateSqrt = discriminate.Sqrt();
-			decimal pairedMultiplierA = (-b + discriminateSqrt) / (2 * a), pairedMultiplierB = discriminate > 0 ? (-b - discriminateSqrt) / (2 * a) : pairedMultiplierA;
-			if (pairedMultiplierA < 0 && pairedMultiplierB < 0)
-			{
-				throw new ArgumentException("Unable to find a valid multiplier");
-			}
-			else if (pairedMultiplierB < 0)
-			{
-				pairedMultiplierB = pairedMultiplierA;
-			}
-			else if (pairedMultiplierA < 0)
-			{
-				pairedMultiplierA = pairedMultiplierB;
-			}
-			else if (pairedMultiplierA > pairedMultiplierB)
-			{
-				decimal temp = pairedMultiplierA;
-				pairedMultiplierA = pairedMultiplierB;
-				pairedMultiplierB = temp;
-			}
-			bool isMultiplierProductIncreasingAt(decimal point)
-			{
-				return (3 * point * point * pairedInputRate * pairedOutputRate) - (2 * point * ((pairedInputRate * outputTotal) + (inputTotal * pairedOutputRate))) + (inputTotal * outputTotal) > 0;
-			}
-			decimal pairedMultiplier;
-			if (pairedMultiplierA == pairedMultiplierB)
-			{
-				pairedMultiplier = pairedMultiplierA;
-			}
-			else
-			{
-				bool increasingBeforeA = isMultiplierProductIncreasingAt(pairedMultiplierA - 1);
-				if (!increasingBeforeA)
-				{
-					throw new ArgumentException("Cannot maximize product");
-				}
-				bool increasingBetweenAAndB = isMultiplierProductIncreasingAt(pairedMultiplierA + ((pairedMultiplierB - pairedMultiplierA) / 2));
-				bool increasingAfterB = isMultiplierProductIncreasingAt(pairedMultiplierB + 1);
-				if (increasingAfterB)
-				{
-					throw new ArgumentException("Cannot maximize products");
-				}
-				else if (!increasingAfterB && increasingBetweenAAndB)
-				{
-					pairedMultiplier = pairedMultiplierB;
-				}
-				else if (!increasingBetweenAAndB && !increasingAfterB)
-				{
-					pairedMultiplier = pairedMultiplierA;
-				}
-				else
-				{
-					throw new ArgumentException("Cannot maximize products");
-				}
-			}
-			decimal inputMultiplier = (inputTotal - (pairedMultiplier * pairedInputRate)) / isolatedInputRate;
-			decimal outputMultiplier = (outputTotal - (pairedMultiplier * pairedOutputRate)) / isolatedOutputRate;
-			return (inputMultiplier, outputMultiplier, pairedMultiplier);
 		}
 	}
 }
