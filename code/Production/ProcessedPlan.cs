@@ -109,6 +109,17 @@ namespace VisualSatisfactoryCalculator.code.Production
 				}
 				tierSteps[stepTier].Add(step);
 			}
+			while (!tierSteps.ContainsKey(0) && tierSteps.Count > 0)
+			{
+				for (int i = 0; i < currentTier; i++)
+				{
+					if (tierSteps.ContainsKey(i + 1))
+					{
+						tierSteps.Add(i, tierSteps[i + 1]);
+						tierSteps.Remove(i + 1);
+					}
+				}
+			}
 		}
 
 		private void CalculateConnectionGroups()

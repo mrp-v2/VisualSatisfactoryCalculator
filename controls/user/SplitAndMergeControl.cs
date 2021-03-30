@@ -104,5 +104,14 @@ namespace VisualSatisfactoryCalculator.controls.user
 			Location = new Point(xStart, yStart);
 			placed = true;
 		}
+
+		private void PromptButton_Click(object sender, EventArgs e)
+		{
+			BalancingPrompt prompt = new BalancingPrompt(BackingConnection);
+			if (prompt.ShowDialog() == DialogResult.OK)
+			{
+				// set rates
+			}
+		}
 	}
 }

@@ -16,20 +16,21 @@ namespace VisualSatisfactoryCalculator.code.Production
 		/// <summary>
 		/// Negative rates
 		/// </summary>
-		private Dictionary<Step, decimal> Consumers { get; }
+		private readonly Dictionary<Step, decimal> consumers;
 		/// <summary>
 		/// Positive Rates
 		/// </summary>
-		private Dictionary<Step, decimal> Producers { get; }
+		private readonly Dictionary<Step, decimal> producers;
 		public string ItemUID { get; }
-		public CachedValue<ConnectionType> Type { get; }
-		public CachedValue<IImmutableSet<Step>> ConnectedSteps { get; }
-		public CachedValue<List<HashSet<Step>>> ConnectedStepGroups { get; }
+		public readonly CachedValue<ConnectionType> Type;
+		public readonly CachedValue<IImmutableSet<Step>> ConnectedSteps;
+		public readonly CachedValue<List<HashSet<Step>>> ConnectedStepGroups;
+		public readonly CachedValue<List<HashSet<Step>>> RelevantConnectedStepGroups;
 		private SplitAndMergeControl control;
 
 		public IImmutableSet<Step> GetProducerSteps()
 		{
-			return ImmutableHashSet.CreateRange(Producers.Keys);
+			return ImmutableHashSet.CreateRange(producers.Keys);
 		}
 
 		public void SetControl(SplitAndMergeControl control)
@@ -39,15 +40,15 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		public Connection(string itemUID)
 		{
-			Consumers = new Dictionary<Step, decimal>();
-			Producers = new Dictionary<Step, decimal>();
+			consumers = new Dictionary<Step, decimal>();
+			producers = new Dictionary<Step, decimal>();
 			ItemUID = itemUID;
 			Type = new CachedValue<ConnectionType>(CalculateOverallConnectionType);
 			ConnectedSteps = new CachedValue<IImmutableSet<Step>>(() =>
 			{
 				HashSet<Step> steps = new HashSet<Step>();
-				steps.AddRange(Consumers.Keys);
-				steps.AddRange(Producers.Keys);
+				steps.AddRange(consumers.Keys);
+				steps.AddRange(producers.Keys);
 				return ImmutableHashSet.CreateRange(steps);
 			});
 			ConnectedStepGroups = new CachedValue<List<HashSet<Step>>>(() =>
@@ -68,11 +69,17 @@ namespace VisualSatisfactoryCalculator.code.Production
 				}
 				return groups;
 			});
+			RelevantConnectedStepGroups = new CachedValue<List<HashSet<Step>>>(() =>
+			{
+				List<HashSet<Step>> groups = ConnectedStepGroups.Get();
+				// TODO
+				return groups;
+			});
 		}
 
 		public bool ContainsStep(Step step)
 		{
-			return Consumers.ContainsKey(step) || Producers.ContainsKey(step);
+			return consumers.ContainsKey(step) || producers.ContainsKey(step);
 		}
 
 		public Connection AddConsumer(Step consumer)
@@ -81,7 +88,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				throw new ArgumentException("Cannot add " + consumer + " as a consumer because it does not consume " + ItemUID);
 			}
-			Consumers.Add(consumer, -consumer.GetItemRate(ItemUID, false));
+			consumers.Add(consumer, -consumer.GetItemRate(ItemUID, false));
 			consumer.AddIngredientConnection(this);
 			StepAdded();
 			return this;
@@ -90,7 +97,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		private void StepAdded()
 		{
 			Type.InvalidateIf(new ConnectionType[] { ConnectionType.NORMAL, ConnectionType.INCOMPLETE });
-			foreach (Step step in Consumers.Keys)
+			foreach (Step step in consumers.Keys)
 			{
 				step.NormalIngredientConnections.Invalidate();
 			}
@@ -101,17 +108,17 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		public IImmutableSet<Step> GetConsumerSteps()
 		{
-			return ImmutableHashSet.CreateRange(Consumers.Keys);
+			return ImmutableHashSet.CreateRange(consumers.Keys);
 		}
 
 		public decimal GetProducerRate(Step producer)
 		{
-			return Producers[producer];
+			return producers[producer];
 		}
 
 		public decimal GetConsumerRate(Step consumer)
 		{
-			return -Consumers[consumer];
+			return -consumers[consumer];
 		}
 
 		public Connection AddProducer(Step producer)
@@ -120,7 +127,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				throw new ArgumentException("Cannot add " + producer + " as a producer because it does not produce " + ItemUID);
 			}
-			Producers.Add(producer, producer.GetItemRate(ItemUID, true));
+			producers.Add(producer, producer.GetItemRate(ItemUID, true));
 			producer.AddProductConnection(this);
 			StepAdded();
 			return this;
@@ -128,10 +135,10 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		public void DeleteConsumer(Step step)
 		{
-			Consumers.Remove(step);
-			if (Consumers.Count == 0)
+			consumers.Remove(step);
+			if (consumers.Count == 0)
 			{
-				foreach (Step producer in Producers.Keys)
+				foreach (Step producer in producers.Keys)
 				{
 					producer.RemoveProductConnection(this);
 				}
@@ -150,15 +157,15 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				throw new ArgumentException("Cannot merge connections with different items");
 			}
-			foreach (Step step in other.Producers.Keys)
+			foreach (Step step in other.producers.Keys)
 			{
-				Producers.Add(step, other.Producers[step]);
+				producers.Add(step, other.producers[step]);
 				step.RemoveProductConnection(other);
 				step.AddProductConnection(this);
 			}
-			foreach (Step step in other.Consumers.Keys)
+			foreach (Step step in other.consumers.Keys)
 			{
-				Consumers.Add(step, other.Consumers[step]);
+				consumers.Add(step, other.consumers[step]);
 				step.RemoveIngredientConnection(other);
 				step.AddIngredientConnection(this);
 			}
@@ -170,11 +177,11 @@ namespace VisualSatisfactoryCalculator.code.Production
 			ConnectedSteps.Invalidate();
 			ConnectedStepGroups.Invalidate();
 			Type.Invalidate();
-			foreach (Step step in Consumers.Keys)
+			foreach (Step step in consumers.Keys)
 			{
 				step.NormalIngredientConnections.Invalidate();
 			}
-			foreach (Step step in Producers.Keys)
+			foreach (Step step in producers.Keys)
 			{
 				step.HasNormalProductConnections.Invalidate();
 			}
@@ -183,10 +190,10 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		public void DeleteProducer(Step step)
 		{
-			Producers.Remove(step);
-			if (Producers.Count == 0)
+			producers.Remove(step);
+			if (producers.Count == 0)
 			{
-				foreach (Step consumer in Consumers.Keys)
+				foreach (Step consumer in consumers.Keys)
 				{
 					consumer.RemoveIngredientConnection(this);
 				}
@@ -196,95 +203,94 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		private void BalanceConnectionRates()
 		{
-			List<HashSet<Step>> stepGroups = ConnectedStepGroups.Get();
-			Dictionary<HashSet<Step>, decimal> stepGroupRates = new Dictionary<HashSet<Step>, decimal>();
-			Dictionary<HashSet<Step>, HashSet<Step>> stepGroupsRelevantSteps = new Dictionary<HashSet<Step>, HashSet<Step>>();
-			foreach (HashSet<Step> stepGroup in stepGroups)
+			if (Type.Get() != ConnectionType.INCOMPLETE)
 			{
-				stepGroupRates.Add(stepGroup, 0);
-				stepGroupsRelevantSteps.Add(stepGroup, new HashSet<Step>());
-			}
-			stepGroups.Sort((x, y) => x.Count - y.Count);
-			decimal totalRate = 0, producersRate = 0, consumersRate = 0;
-			foreach (HashSet<Step> group in stepGroups)
-			{
-				foreach (Step step in group)
+				List<HashSet<Step>> stepGroups = RelevantConnectedStepGroups.Get();
+				Dictionary<HashSet<Step>, decimal> stepGroupRates = new Dictionary<HashSet<Step>, decimal>();
+				foreach (HashSet<Step> stepGroup in stepGroups)
 				{
-					if (Producers.ContainsKey(step))
-					{
-						decimal rate = Producers[step];
-						stepGroupRates[group] += rate;
-						totalRate += rate;
-						producersRate += rate;
-						stepGroupsRelevantSteps[group].Add(step);
-					}
-					if (Consumers.ContainsKey(step))
-					{
-						decimal rate = Consumers[step];
-						stepGroupRates[group] += rate;
-						totalRate += rate;
-						consumersRate += rate;
-						stepGroupsRelevantSteps[group].Add(step);
-					}
+					stepGroupRates.Add(stepGroup, 0);
 				}
-			}
-			if (totalRate != 0 && Type.Get() != ConnectionType.INCOMPLETE)
-			{
-				if (totalRate < 0)
+				stepGroups.Sort((x, y) => x.Count - y.Count);
+				decimal totalRate = 0, producersRate = 0, consumersRate = 0;
+				foreach (HashSet<Step> group in stepGroups)
 				{
-					for (int i = 0; i < stepGroups.Count; i++)
+					foreach (Step step in group)
 					{
-						if (stepGroupRates[stepGroups[i]] > 0)
+						if (producers.ContainsKey(step))
 						{
-							decimal multiplier = 1 + (-totalRate / stepGroupRates[stepGroups[i]]);
-							foreach (Step step in stepGroupsRelevantSteps[stepGroups[i]])
-							{
-								step.SetMultiplier(step.Multiplier * multiplier, new HashSet<Connection>() { this });
-								foreach (Step step2 in stepGroupsRelevantSteps[stepGroups[i]])
-								{
-									if (Consumers.ContainsKey(step2))
-									{
-										Consumers[step2] = step2.GetItemRate(ItemUID, false);
-									}
-									if (Producers.ContainsKey(step2))
-									{
-										Producers[step2] = step2.GetItemRate(ItemUID, true);
-									}
-								}
-								UpdateControl();
-								return;
-							}
+							decimal rate = producers[step];
+							stepGroupRates[group] += rate;
+							totalRate += rate;
+							producersRate += rate;
+						}
+						if (consumers.ContainsKey(step))
+						{
+							decimal rate = consumers[step];
+							stepGroupRates[group] += rate;
+							totalRate += rate;
+							consumersRate += rate;
 						}
 					}
-					throw new InvalidOperationException("Unable to increase a producing step group");
 				}
-				else
+				if (totalRate != 0)
 				{
-					for (int i = 0; i < stepGroups.Count; i++)
+					if (totalRate < 0)
 					{
-						if (stepGroupRates[stepGroups[i]] > 0 && stepGroupRates[stepGroups[i]] > totalRate)
+						for (int i = 0; i < stepGroups.Count; i++)
 						{
-							decimal multiplier = 1 - (totalRate / stepGroupRates[stepGroups[i]]);
-							foreach (Step step in stepGroupsRelevantSteps[stepGroups[i]])
+							if (stepGroupRates[stepGroups[i]] > 0)
 							{
-								step.SetMultiplier(step.Multiplier * multiplier, new HashSet<Connection>() { this });
-								foreach (Step step2 in stepGroupsRelevantSteps[stepGroups[i]])
+								decimal multiplier = 1 + (-totalRate / stepGroupRates[stepGroups[i]]);
+								foreach (Step step in stepGroups[i])
 								{
-									if (Consumers.ContainsKey(step2))
+									step.SetMultiplier(step.Multiplier * multiplier, new HashSet<Connection>() { this });
+									foreach (Step step2 in stepGroups[i])
 									{
-										Consumers[step2] = step2.GetItemRate(ItemUID, false);
+										if (consumers.ContainsKey(step2))
+										{
+											consumers[step2] = step2.GetItemRate(ItemUID, false);
+										}
+										if (producers.ContainsKey(step2))
+										{
+											producers[step2] = step2.GetItemRate(ItemUID, true);
+										}
 									}
-									if (Producers.ContainsKey(step2))
-									{
-										Producers[step2] = step2.GetItemRate(ItemUID, true);
-									}
+									UpdateControl();
+									return;
 								}
-								UpdateControl();
-								return;
 							}
 						}
+						throw new InvalidOperationException("Unable to increase a producing step group");
 					}
-					throw new InvalidOperationException("Unable to decrease a producing step group");
+					else
+					{
+						for (int i = 0; i < stepGroups.Count; i++)
+						{
+							if (stepGroupRates[stepGroups[i]] > 0 && stepGroupRates[stepGroups[i]] > totalRate)
+							{
+								decimal multiplier = 1 - (totalRate / stepGroupRates[stepGroups[i]]);
+								foreach (Step step in stepGroups[i])
+								{
+									step.SetMultiplier(step.Multiplier * multiplier, new HashSet<Connection>() { this });
+									foreach (Step step2 in stepGroups[i])
+									{
+										if (consumers.ContainsKey(step2))
+										{
+											consumers[step2] = step2.GetItemRate(ItemUID, false);
+										}
+										if (producers.ContainsKey(step2))
+										{
+											producers[step2] = step2.GetItemRate(ItemUID, true);
+										}
+									}
+									UpdateControl();
+									return;
+								}
+							}
+						}
+						throw new InvalidOperationException("Unable to decrease a producing step group");
+					}
 				}
 			}
 		}
@@ -304,43 +310,43 @@ namespace VisualSatisfactoryCalculator.code.Production
 				throw new ArgumentException("Cannot update from a step that itself isn't updated");
 			}
 			decimal oldRate = 0, newRate = 0;
-			if (Consumers.ContainsKey(from))
+			if (consumers.ContainsKey(from))
 			{
-				oldRate = Consumers[from];
+				oldRate = consumers[from];
 				newRate = -from.GetItemRate(ItemUID, false);
-				Consumers[from] = newRate;
+				consumers[from] = newRate;
 			}
-			if (Producers.ContainsKey(from))
+			if (producers.ContainsKey(from))
 			{
-				oldRate = Producers[from];
+				oldRate = producers[from];
 				newRate = from.GetItemRate(ItemUID, true);
-				Producers[from] = newRate;
+				producers[from] = newRate;
 			}
 			decimal multiplier = newRate / oldRate;
 			foreach (Step step in ConnectedSteps.Get())
 			{
 				if (updated.Contains(step))
 				{
-					if (Producers.ContainsKey(step))
+					if (producers.ContainsKey(step))
 					{
-						Producers[step] = step.GetItemRate(ItemUID, true);
+						producers[step] = step.GetItemRate(ItemUID, true);
 					}
-					if (Consumers.ContainsKey(step))
+					if (consumers.ContainsKey(step))
 					{
-						Consumers[step] = -step.GetItemRate(ItemUID, false);
+						consumers[step] = -step.GetItemRate(ItemUID, false);
 					}
 					continue;
 				}
 				excludedConnections.Add(this);
 				updated.AddRange(step.GetAllConnectedSteps(this));
 				step.SetMultiplier(step.Multiplier * multiplier, excludedConnections);
-				if (Producers.ContainsKey(step))
+				if (producers.ContainsKey(step))
 				{
-					Producers[step] = step.GetItemRate(ItemUID, true);
+					producers[step] = step.GetItemRate(ItemUID, true);
 				}
-				if (Consumers.ContainsKey(step))
+				if (consumers.ContainsKey(step))
 				{
-					Consumers[step] = -step.GetItemRate(ItemUID, false);
+					consumers[step] = -step.GetItemRate(ItemUID, false);
 				}
 
 			}
@@ -349,11 +355,11 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		private ConnectionType CalculateOverallConnectionType()
 		{
-			if (Consumers.Count == 1 && Producers.Count == 1)
+			if (consumers.Count == 1 && producers.Count == 1)
 			{
 				return ConnectionType.NORMAL;
 			}
-			else if (Consumers.Count >= 1 && Producers.Count >= 1)
+			else if (consumers.Count >= 1 && producers.Count >= 1)
 			{
 				return ConnectionType.FIXED_RATIO;
 			}
@@ -402,11 +408,11 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				if (step.Connections.Get().Contains(other))
 				{
-					if (other.Consumers.ContainsKey(step))
+					if (other.consumers.ContainsKey(step))
 					{
 						return true;
 					}
-					if (other.Producers.ContainsKey(step))
+					if (other.producers.ContainsKey(step))
 					{
 						return true;
 					}

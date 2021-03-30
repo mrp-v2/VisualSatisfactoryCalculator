@@ -18,6 +18,21 @@ namespace VisualSatisfactoryCalculator.controls.user
 		private readonly BalancingPrompt balancingPrompt;
 		public readonly Step Step;
 		public readonly bool IsOutput;
+		public readonly decimal OriginalRate;
+
+		public decimal Rate
+		{
+			get
+			{
+				return Numeric.Value;
+			}
+			set
+			{
+				Enabled = false;
+				Numeric.Value = value;
+				Enabled = true;
+			}
+		}
 
 		public bool Locked
 		{
@@ -25,9 +40,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				return LockBox.Checked;
 			}
-			private set
+			set
 			{
+				Enabled = false;
 				LockBox.Checked = value;
+				Enabled = true;
 			}
 		}
 
@@ -37,16 +54,24 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.balancingPrompt = balancingPrompt;
 			Step = step;
 			IsOutput = isOutput;
+			OriginalRate = step.GetItemRate(balancingPrompt.Connection.ItemUID, !isOutput);
+			Rate = OriginalRate;
 		}
 
 		private void Numeric_ValueChanged(object sender, EventArgs e)
 		{
-
+			if (Enabled)
+			{
+				balancingPrompt.NumericValueChanged(this);
+			}
 		}
 
 		private void LockBox_CheckedChanged(object sender, EventArgs e)
 		{
-
+			if (Enabled)
+			{
+				balancingPrompt.LockChanged(this);
+			}
 		}
 	}
 }

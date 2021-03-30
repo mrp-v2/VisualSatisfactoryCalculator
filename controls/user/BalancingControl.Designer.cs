@@ -1,4 +1,6 @@
 ﻿
+using VisualSatisfactoryCalculator.code.Utility;
+
 namespace VisualSatisfactoryCalculator.controls.user
 {
 	partial class BalancingControl
@@ -40,11 +42,17 @@ namespace VisualSatisfactoryCalculator.controls.user
 			// 
 			this.Numeric.Anchor = System.Windows.Forms.AnchorStyles.Top;
 			this.Numeric.AutoSize = true;
+			this.Numeric.DecimalPlaces = Constants.DECIMALS;
 			this.Numeric.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-			this.Numeric.Location = new System.Drawing.Point(10, 23);
+			this.Numeric.Location = new System.Drawing.Point(0, 23);
 			this.Numeric.Margin = new System.Windows.Forms.Padding(0);
+			this.Numeric.Maximum = new decimal(new int[] {
+			100000000,
+			0,
+			0,
+			0});
 			this.Numeric.Name = "Numeric";
-			this.Numeric.Size = new System.Drawing.Size(48, 23);
+			this.Numeric.Size = new System.Drawing.Size(84, 23);
 			this.Numeric.TabIndex = 0;
 			this.Numeric.ValueChanged += new System.EventHandler(this.Numeric_ValueChanged);
 			// 
@@ -52,7 +60,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			// 
 			this.LockBox.Anchor = System.Windows.Forms.AnchorStyles.Top;
 			this.LockBox.AutoSize = true;
-			this.LockBox.Location = new System.Drawing.Point(3, 3);
+			this.LockBox.Location = new System.Drawing.Point(11, 3);
 			this.LockBox.Name = "LockBox";
 			this.LockBox.Size = new System.Drawing.Size(62, 17);
 			this.LockBox.TabIndex = 1;
@@ -70,7 +78,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.MainLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.MainLayoutPanel.Name = "MainLayoutPanel";
-			this.MainLayoutPanel.Size = new System.Drawing.Size(68, 46);
+			this.MainLayoutPanel.Size = new System.Drawing.Size(84, 46);
 			this.MainLayoutPanel.TabIndex = 2;
 			// 
 			// BalancingControl
@@ -81,7 +89,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.Controls.Add(this.MainLayoutPanel);
 			this.Name = "BalancingControl";
-			this.Size = new System.Drawing.Size(68, 46);
+			this.Size = new System.Drawing.Size(84, 46);
 			((System.ComponentModel.ISupportInitialize)(this.Numeric)).EndInit();
 			this.MainLayoutPanel.ResumeLayout(false);
 			this.MainLayoutPanel.PerformLayout();
