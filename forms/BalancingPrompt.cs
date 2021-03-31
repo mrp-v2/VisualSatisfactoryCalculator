@@ -19,8 +19,8 @@ namespace VisualSatisfactoryCalculator.forms
 	{
 		public readonly Connection Connection;
 		private readonly Dictionary<BalancingControl, HashSet<BalancingControl>> relatedControlsMap = new Dictionary<BalancingControl, HashSet<BalancingControl>>();
-		private readonly Dictionary<Step, BalancingControl> ConsumingStepMap = new Dictionary<Step, BalancingControl>();
-		private readonly Dictionary<Step, BalancingControl> ProducingStepMap = new Dictionary<Step, BalancingControl>();
+		public readonly Dictionary<Step, BalancingControl> ConsumingStepMap = new Dictionary<Step, BalancingControl>();
+		public readonly Dictionary<Step, BalancingControl> ProducingStepMap = new Dictionary<Step, BalancingControl>();
 		public readonly CachedValue<decimal> outputRate;
 		public readonly CachedValue<decimal> inputRate;
 		private readonly decimal totalRate;
@@ -83,7 +83,7 @@ namespace VisualSatisfactoryCalculator.forms
 
 		private void DoneButton_Click(object sender, EventArgs e)
 		{
-			// TODO
+			Connection.UpdateRates(this);
 			DialogResult = DialogResult.OK;
 			Close();
 		}

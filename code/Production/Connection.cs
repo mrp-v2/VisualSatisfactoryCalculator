@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.controls.user;
+using VisualSatisfactoryCalculator.forms;
 
 namespace VisualSatisfactoryCalculator.code.Production
 {
@@ -37,6 +38,27 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public void SetControl(SplitAndMergeControl control)
 		{
 			this.control = control;
+		}
+
+		public void UpdateRates(BalancingPrompt prompt)
+		{
+			foreach (Step step in prompt.ConsumingStepMap.Keys)
+			{
+				if (step.GetItemRate(ItemUID, false) != prompt.ConsumingStepMap[step].Rate)
+				{
+					step.SetMultiplier(step.CalculateMultiplierForRate(ItemUID, prompt.ConsumingStepMap[step].Rate, false), new HashSet<Connection>() { this });
+				}
+				consumers[step] = step.GetItemRate(ItemUID, false);
+			}
+			foreach (Step step in prompt.ProducingStepMap.Keys)
+			{
+				if (step.GetItemRate(ItemUID, true) != prompt.ProducingStepMap[step].Rate)
+				{
+					step.SetMultiplier(step.CalculateMultiplierForRate(ItemUID, prompt.ProducingStepMap[step].Rate, true), new HashSet<Connection>() { this });
+				}
+				producers[step] = step.GetItemRate(ItemUID, true);
+			}
+			UpdateControl();
 		}
 
 		public Connection(string itemUID)

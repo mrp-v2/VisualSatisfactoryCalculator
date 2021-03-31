@@ -108,10 +108,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 		private void PromptButton_Click(object sender, EventArgs e)
 		{
 			BalancingPrompt prompt = new BalancingPrompt(BackingConnection);
-			if (prompt.ShowDialog() == DialogResult.OK)
-			{
-				// set rates
-			}
+			prompt.ShowDialog();
 		}
 	}
 }
