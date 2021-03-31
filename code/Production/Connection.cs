@@ -24,9 +24,10 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public string ItemUID { get; }
 		public readonly CachedValue<ConnectionType> Type;
 		public readonly CachedValue<IImmutableSet<Step>> ConnectedSteps;
-		public readonly CachedValue<List<HashSet<Step>>> ConnectedStepGroups;
-		public readonly CachedValue<List<HashSet<Step>>> RelevantConnectedStepGroups;
+		public readonly CachedValue<IImmutableList<HashSet<Step>>> ConnectedStepGroups;
+		public readonly CachedValue<IImmutableList<HashSet<Step>>> RelevantConnectedStepGroups;
 		private SplitAndMergeControl control;
+		private decimal totalRate = 0;
 
 		public IImmutableSet<Step> GetProducerSteps()
 		{
@@ -51,7 +52,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 				steps.AddRange(producers.Keys);
 				return ImmutableHashSet.CreateRange(steps);
 			});
-			ConnectedStepGroups = new CachedValue<List<HashSet<Step>>>(() =>
+			ConnectedStepGroups = new CachedValue<IImmutableList<HashSet<Step>>>(() =>
 			{
 				List<HashSet<Step>> groups = new List<HashSet<Step>>();
 				foreach (Step step in ConnectedSteps.Get())
@@ -67,13 +68,25 @@ namespace VisualSatisfactoryCalculator.code.Production
 				Continue:
 					continue;
 				}
-				return groups;
+				return ImmutableList.CreateRange(groups);
 			});
-			RelevantConnectedStepGroups = new CachedValue<List<HashSet<Step>>>(() =>
+			RelevantConnectedStepGroups = new CachedValue<IImmutableList<HashSet<Step>>>(() =>
 			{
-				List<HashSet<Step>> groups = ConnectedStepGroups.Get();
-				// TODO
-				return groups;
+				ConnectedStepGroups.Get();
+				List<HashSet<Step>> relevantStepGroups = new List<HashSet<Step>>();
+				foreach (HashSet<Step> group in ConnectedStepGroups.Get())
+				{
+					HashSet<Step> relevantGroup = new HashSet<Step>();
+					relevantStepGroups.Add(relevantGroup);
+					foreach (Step step in group)
+					{
+						if (consumers.ContainsKey(step) || producers.ContainsKey(step))
+						{
+							relevantGroup.Add(step);
+						}
+					}
+				}
+				return ImmutableList.CreateRange(relevantStepGroups);
 			});
 		}
 
@@ -101,9 +114,27 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				step.NormalIngredientConnections.Invalidate();
 			}
+			StepsChanged();
+		}
+
+		private void StepsChanged()
+		{
 			ConnectedSteps.Invalidate();
 			ConnectedStepGroups.Invalidate();
 			BalanceConnectionRates();
+			if (Type.Get() == ConnectionType.NORMAL)
+			{
+				RecalculateTotalRateFromProducers();
+			}
+		}
+
+		private void RecalculateTotalRateFromProducers()
+		{
+			totalRate = 0;
+			foreach (decimal d in producers.Values)
+			{
+				totalRate += d;
+			}
 		}
 
 		public IImmutableSet<Step> GetConsumerSteps()
@@ -174,8 +205,6 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		private void StepDeleted()
 		{
-			ConnectedSteps.Invalidate();
-			ConnectedStepGroups.Invalidate();
 			Type.Invalidate();
 			foreach (Step step in consumers.Keys)
 			{
@@ -185,7 +214,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				step.HasNormalProductConnections.Invalidate();
 			}
-			BalanceConnectionRates();
+			StepsChanged();
 		}
 
 		public void DeleteProducer(Step step)
@@ -205,93 +234,77 @@ namespace VisualSatisfactoryCalculator.code.Production
 		{
 			if (Type.Get() != ConnectionType.INCOMPLETE)
 			{
-				List<HashSet<Step>> stepGroups = RelevantConnectedStepGroups.Get();
-				Dictionary<HashSet<Step>, decimal> stepGroupRates = new Dictionary<HashSet<Step>, decimal>();
-				foreach (HashSet<Step> stepGroup in stepGroups)
+				if (Type.Get() == ConnectionType.NORMAL)
 				{
-					stepGroupRates.Add(stepGroup, 0);
+					// do nothing, should already match	
 				}
-				stepGroups.Sort((x, y) => x.Count - y.Count);
-				decimal totalRate = 0, producersRate = 0, consumersRate = 0;
-				foreach (HashSet<Step> group in stepGroups)
+				else
 				{
-					foreach (Step step in group)
+					Dictionary<HashSet<Step>, (decimal, decimal)> stepGroupRates = new Dictionary<HashSet<Step>, (decimal, decimal)>();
+					decimal producersRate = 0, consumersRate = 0;
+					foreach (HashSet<Step> stepGroup in RelevantConnectedStepGroups.Get())
 					{
-						if (producers.ContainsKey(step))
+						stepGroupRates.Add(stepGroup, (0, 0));
+						foreach (Step step in stepGroup)
 						{
-							decimal rate = producers[step];
-							stepGroupRates[group] += rate;
-							totalRate += rate;
-							producersRate += rate;
-						}
-						if (consumers.ContainsKey(step))
-						{
-							decimal rate = consumers[step];
-							stepGroupRates[group] += rate;
-							totalRate += rate;
-							consumersRate += rate;
-						}
-					}
-				}
-				if (totalRate != 0)
-				{
-					if (totalRate < 0)
-					{
-						for (int i = 0; i < stepGroups.Count; i++)
-						{
-							if (stepGroupRates[stepGroups[i]] > 0)
+							if (consumers.ContainsKey(step))
 							{
-								decimal multiplier = 1 + (-totalRate / stepGroupRates[stepGroups[i]]);
-								foreach (Step step in stepGroups[i])
-								{
-									step.SetMultiplier(step.Multiplier * multiplier, new HashSet<Connection>() { this });
-									foreach (Step step2 in stepGroups[i])
-									{
-										if (consumers.ContainsKey(step2))
-										{
-											consumers[step2] = step2.GetItemRate(ItemUID, false);
-										}
-										if (producers.ContainsKey(step2))
-										{
-											producers[step2] = step2.GetItemRate(ItemUID, true);
-										}
-									}
-									UpdateControl();
-									return;
-								}
+								consumersRate -= consumers[step];
+								stepGroupRates[stepGroup] = (stepGroupRates[stepGroup].Item1, stepGroupRates[stepGroup].Item2 - consumers[step]);
+							}
+							if (producers.ContainsKey(step))
+							{
+								producersRate += producers[step];
+								stepGroupRates[stepGroup] = (stepGroupRates[stepGroup].Item1 + producers[step], stepGroupRates[stepGroup].Item2);
 							}
 						}
-						throw new InvalidOperationException("Unable to increase a producing step group");
 					}
-					else
+					(decimal, decimal, decimal) multipliers = Util.BalanceRates(stepGroupRates, totalRate, totalRate);
+					foreach (HashSet<Step> group in stepGroupRates.Keys)
 					{
-						for (int i = 0; i < stepGroups.Count; i++)
+						foreach (Step step in group)
 						{
-							if (stepGroupRates[stepGroups[i]] > 0 && stepGroupRates[stepGroups[i]] > totalRate)
+							(decimal, decimal) rates = stepGroupRates[group];
+							if (rates.Item1 == 0 || rates.Item2 == 0)
 							{
-								decimal multiplier = 1 - (totalRate / stepGroupRates[stepGroups[i]]);
-								foreach (Step step in stepGroups[i])
+								if (consumers.ContainsKey(step))
 								{
-									step.SetMultiplier(step.Multiplier * multiplier, new HashSet<Connection>() { this });
-									foreach (Step step2 in stepGroups[i])
-									{
-										if (consumers.ContainsKey(step2))
-										{
-											consumers[step2] = step2.GetItemRate(ItemUID, false);
-										}
-										if (producers.ContainsKey(step2))
-										{
-											producers[step2] = step2.GetItemRate(ItemUID, true);
-										}
-									}
-									UpdateControl();
-									return;
+									step.SetMultiplier(step.Multiplier * multipliers.Item2, new HashSet<Connection>() { this });
+									goto Continue;
+								}
+								else
+								{
+									step.SetMultiplier(step.Multiplier * multipliers.Item1, new HashSet<Connection>() { this });
+									goto Continue;
 								}
 							}
+							else
+							{
+								step.SetMultiplier(step.Multiplier * multipliers.Item3, new HashSet<Connection>() { this });
+								goto Continue;
+							}
 						}
-						throw new InvalidOperationException("Unable to decrease a producing step group");
+					Continue:
+						continue;
 					}
+					UpdateRatesFromSteps();
 				}
+			}
+		}
+
+		private void UpdateRatesFromSteps()
+		{
+			foreach (Step step in GetConsumerSteps())
+			{
+				consumers[step] = step.GetItemRate(ItemUID, false);
+			}
+			foreach (Step step in GetProducerSteps())
+			{
+				producers[step] = step.GetItemRate(ItemUID, true);
+			}
+			if (Type.Get() != ConnectionType.INCOMPLETE)
+			{
+				RecalculateTotalRateFromProducers();
 			}
 		}
 

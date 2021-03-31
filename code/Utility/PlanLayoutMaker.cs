@@ -304,7 +304,6 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				}
 				TopControl.Place(xStart + (PreferredSize.Width / 2) - (topSize.Width / 2), yStart);
 				int currentX = xStart, y = yStart + topSize.Height;
-				// TODO order inputs
 				y += 10;
 				foreach (ILayoutControl control in inputControls.Values)
 				{
@@ -375,7 +374,6 @@ namespace VisualSatisfactoryCalculator.code.Utility
 						DrawingContext.ScheduledAlternateConnections.Add(new Tuple<ItemRateControl, ItemRateControl>(a, b));
 					}
 				}
-				// TODO alternate connections
 				placed = true;
 			}
 		}

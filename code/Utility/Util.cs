@@ -144,7 +144,9 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			}
 			else
 			{
-				return (inputTotal / isolatedInputRate, outputTotal / isolatedOutputRate, 1);
+				decimal inputMultiplier = isolatedInputRate == 0 ? 1 : inputTotal / isolatedInputRate;
+				decimal outputMultiplier = isolatedOutputRate == 0 ? 1 : outputTotal / isolatedOutputRate;
+				return (inputMultiplier, outputMultiplier, 1);
 			}
 		}
 	}

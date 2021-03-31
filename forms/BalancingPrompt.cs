@@ -30,7 +30,6 @@ namespace VisualSatisfactoryCalculator.forms
 		{
 			InitializeComponent();
 			Connection = connection;
-			List<HashSet<Step>> stepGroups = connection.RelevantConnectedStepGroups.Get();
 			foreach (Step step in connection.GetProducerSteps())
 			{
 				BalancingControl bc = new BalancingControl(this, step, false);
@@ -47,7 +46,7 @@ namespace VisualSatisfactoryCalculator.forms
 			}
 			foreach (BalancingControl bc in relatedControlsMap.Keys)
 			{
-				foreach (HashSet<Step> stepGroup in stepGroups)
+				foreach (HashSet<Step> stepGroup in connection.RelevantConnectedStepGroups.Get())
 				{
 					if (stepGroup.Contains(bc.Step))
 					{
