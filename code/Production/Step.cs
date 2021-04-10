@@ -25,11 +25,16 @@ namespace VisualSatisfactoryCalculator.code.Production
 			return IngredientConnections;
 		}
 
+		public IEnumerable<Connection> GetProductConnections()
+		{
+			return ProductConnections;
+		}
+
 		public bool HasProductConnectionFor(string itemUID)
 		{
 			foreach (Connection connection in ProductConnections)
 			{
-				if (connection.ItemUID == itemUID)
+				if (connection.ItemID == itemUID)
 				{
 					return true;
 				}
@@ -41,7 +46,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		{
 			foreach (Connection connection in IngredientConnections)
 			{
-				if (connection.ItemUID == itemUID)
+				if (connection.ItemID == itemUID)
 				{
 					return true;
 				}
@@ -53,7 +58,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		{
 			foreach (Connection connection in ProductConnections)
 			{
-				if (connection.ItemUID == itemUID)
+				if (connection.ItemID == itemUID)
 				{
 					return connection;
 				}
@@ -65,7 +70,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		{
 			foreach (Connection connection in IngredientConnections)
 			{
-				if (connection.ItemUID == itemUID)
+				if (connection.ItemID == itemUID)
 				{
 					return connection;
 				}

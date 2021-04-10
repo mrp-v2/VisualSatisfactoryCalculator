@@ -149,6 +149,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="code\Production\CondensedPlan.cs" />
     <Compile Include="code\Production\Connection.cs" />
     <Compile Include="code\DataStorage\SimpleCustomItem.cs" />
     <Compile Include="code\DataStorage\BasicRecipe.cs" />
@@ -156,7 +157,7 @@
     <Compile Include="code\Interfaces\IBuilding.cs" />
     <Compile Include="code\Interfaces\IEncoder.cs" />
     <Compile Include="code\Interfaces\IFromJson.cs" />
-    <Compile Include="code\Interfaces\IHasUID.cs" />
+    <Compile Include="code\Interfaces\IHasID.cs" />
     <Compile Include="code\Interfaces\IItem.cs" />
     <Compile Include="code\Interfaces\IRecipe.cs" />
     <Compile Include="code\Interfaces\IHasDisplayName.cs" />

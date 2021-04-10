@@ -7,7 +7,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
 	internal class JSONBuilding : IBuilding, IFromJson
 	{
-		public string UID { get; }
+		public string ID { get; }
 		public decimal PowerConsumption { get; }
 		public decimal PowerConsumptionExponent { get; }
 		public string DisplayName { get; }
@@ -16,7 +16,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		[JsonConstructor]
 		public JSONBuilding(string ClassName, string mPowerConsumption, string mPowerConsumptionExponent, string mDisplayName)
 		{
-			UID = ClassName;
+			ID = ClassName;
 			PowerConsumption = decimal.Parse(mPowerConsumption);
 			PowerConsumptionExponent = decimal.Parse(mPowerConsumptionExponent);
 			DisplayName = mDisplayName;
@@ -25,12 +25,12 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 
 		public bool EqualID(string id)
 		{
-			return UID.Equals(id);
+			return ID.Equals(id);
 		}
 
-		public bool EqualID(IHasUID obj)
+		public bool EqualID(IHasID obj)
 		{
-			return obj.EqualID(UID);
+			return obj.EqualID(ID);
 		}
 	}
 }

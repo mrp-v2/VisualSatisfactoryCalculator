@@ -12,7 +12,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 
 		public static readonly IItem MWItem = new SimpleCustomItem("FillerEnergyItemMW", "MW");
 
-		public static readonly Dictionary<string, IEncoder> AllConstantEncoders = new Dictionary<string, IEncoder>() { { MWItem.UID, MWItem } };
+		public static readonly Dictionary<string, IEncoder> AllConstantEncoders = new Dictionary<string, IEncoder>() { { MWItem.ID, MWItem } };
 
 		public static Encodings LastResortEncoderList = new Encodings();
 

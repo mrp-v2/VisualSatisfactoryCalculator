@@ -12,6 +12,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		private readonly HashSet<Connection> abnormalConnections;
 		private readonly HashSet<Step> steps;
 		private readonly Dictionary<int, HashSet<Step>> tierSteps;
+		private readonly HashSet<Connection> allConnections;
 
 		public ProcessedPlan(Plan plan)
 		{
@@ -19,6 +20,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			normalConnectionGroups = new HashSet<HashSet<Connection>>();
 			abnormalConnections = new HashSet<Connection>();
 			tierSteps = new Dictionary<int, HashSet<Step>>();
+			allConnections = new HashSet<Connection>();
 			CalculateConnectionGroups();
 			CalculateStepTiers();
 		}
@@ -26,6 +28,11 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public IEnumerable<Connection> GetAbnormalConnections()
 		{
 			return abnormalConnections;
+		}
+
+		public IEnumerable<Connection> GetAllConnections()
+		{
+			return allConnections;
 		}
 
 		public int Tiers
@@ -128,6 +135,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				foreach (Connection connection in step.Connections.Get())
 				{
+					allConnections.Add(connection);
 					if (abnormalConnections.Contains(connection))
 					{
 						continue;

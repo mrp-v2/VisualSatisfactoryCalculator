@@ -22,7 +22,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		/// Positive Rates
 		/// </summary>
 		private readonly Dictionary<Step, decimal> producers;
-		public string ItemUID { get; }
+		public string ItemID { get; }
 		public readonly CachedValue<ConnectionType> Type;
 		public readonly CachedValue<IImmutableSet<Step>> ConnectedSteps;
 		public readonly CachedValue<IImmutableList<HashSet<Step>>> ConnectedStepGroups;
@@ -43,19 +43,19 @@ namespace VisualSatisfactoryCalculator.code.Production
 		{
 			foreach (Step step in prompt.ConsumingStepMap.Keys)
 			{
-				if (step.GetItemRate(ItemUID, false) != prompt.ConsumingStepMap[step].Rate)
+				if (step.GetItemRate(ItemID, false) != prompt.ConsumingStepMap[step].Rate)
 				{
-					step.SetMultiplier(step.CalculateMultiplierForRate(ItemUID, prompt.ConsumingStepMap[step].Rate, false), new HashSet<Connection>() { this });
+					step.SetMultiplier(step.CalculateMultiplierForRate(ItemID, prompt.ConsumingStepMap[step].Rate, false), new HashSet<Connection>() { this });
 				}
-				consumers[step] = step.GetItemRate(ItemUID, false);
+				consumers[step] = step.GetItemRate(ItemID, false);
 			}
 			foreach (Step step in prompt.ProducingStepMap.Keys)
 			{
-				if (step.GetItemRate(ItemUID, true) != prompt.ProducingStepMap[step].Rate)
+				if (step.GetItemRate(ItemID, true) != prompt.ProducingStepMap[step].Rate)
 				{
-					step.SetMultiplier(step.CalculateMultiplierForRate(ItemUID, prompt.ProducingStepMap[step].Rate, true), new HashSet<Connection>() { this });
+					step.SetMultiplier(step.CalculateMultiplierForRate(ItemID, prompt.ProducingStepMap[step].Rate, true), new HashSet<Connection>() { this });
 				}
-				producers[step] = step.GetItemRate(ItemUID, true);
+				producers[step] = step.GetItemRate(ItemID, true);
 			}
 			UpdateControl();
 		}
@@ -64,7 +64,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		{
 			consumers = new Dictionary<Step, decimal>();
 			producers = new Dictionary<Step, decimal>();
-			ItemUID = itemUID;
+			ItemID = itemUID;
 			Type = new CachedValue<ConnectionType>(CalculateOverallConnectionType);
 			ConnectedSteps = new CachedValue<IImmutableSet<Step>>(() =>
 			{
@@ -111,6 +111,25 @@ namespace VisualSatisfactoryCalculator.code.Production
 			});
 		}
 
+		public Connection(CondensedPlan.CondensedConnection condensedConnection, CondensedPlan.ExpandingContext context, HashSet<CondensedPlan.CondensedStep> condensedSteps) : this(condensedConnection.ItemID)
+		{
+			foreach (CondensedPlan.CondensedStep condensedStep in condensedSteps)
+			{
+				if (condensedConnection.Consumers.ContainsKey(condensedStep.ID))
+				{
+					Step step = context.stepIDs[condensedStep.ID];
+					step.AddIngredientConnection(this);
+					consumers.Add(step, -condensedConnection.Consumers[condensedStep.ID]);
+				}
+				if (condensedConnection.Producers.ContainsKey(condensedStep.ID))
+				{
+					Step step = context.stepIDs[condensedStep.ID];
+					step.AddProductConnection(this);
+					producers.Add(step, condensedConnection.Producers[condensedStep.ID]);
+				}
+			}
+		}
+
 		public bool ContainsStep(Step step)
 		{
 			return consumers.ContainsKey(step) || producers.ContainsKey(step);
@@ -118,11 +137,11 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		public Connection AddConsumer(Step consumer)
 		{
-			if (!consumer.Recipe.Ingredients.Keys.Contains(ItemUID))
+			if (!consumer.Recipe.Ingredients.Keys.Contains(ItemID))
 			{
-				throw new ArgumentException("Cannot add " + consumer + " as a consumer because it does not consume " + ItemUID);
+				throw new ArgumentException("Cannot add " + consumer + " as a consumer because it does not consume " + ItemID);
 			}
-			consumers.Add(consumer, -consumer.GetItemRate(ItemUID, false));
+			consumers.Add(consumer, -consumer.GetItemRate(ItemID, false));
 			consumer.AddIngredientConnection(this);
 			StepAdded();
 			return this;
@@ -162,11 +181,11 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		public Connection AddProducer(Step producer)
 		{
-			if (!producer.Recipe.Products.Keys.Contains(ItemUID))
+			if (!producer.Recipe.Products.Keys.Contains(ItemID))
 			{
-				throw new ArgumentException("Cannot add " + producer + " as a producer because it does not produce " + ItemUID);
+				throw new ArgumentException("Cannot add " + producer + " as a producer because it does not produce " + ItemID);
 			}
-			producers.Add(producer, producer.GetItemRate(ItemUID, true));
+			producers.Add(producer, producer.GetItemRate(ItemID, true));
 			producer.AddProductConnection(this);
 			StepAdded();
 			return this;
@@ -192,7 +211,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				return;
 			}
-			if (other.ItemUID != ItemUID)
+			if (other.ItemID != ItemID)
 			{
 				throw new ArgumentException("Cannot merge connections with different items");
 			}
@@ -314,11 +333,11 @@ namespace VisualSatisfactoryCalculator.code.Production
 		{
 			foreach (Step step in GetConsumerSteps())
 			{
-				consumers[step] = -step.GetItemRate(ItemUID, false);
+				consumers[step] = -step.GetItemRate(ItemID, false);
 			}
 			foreach (Step step in GetProducerSteps())
 			{
-				producers[step] = step.GetItemRate(ItemUID, true);
+				producers[step] = step.GetItemRate(ItemID, true);
 			}
 		}
 
@@ -351,7 +370,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			if (consumers.ContainsKey(from))
 			{
 				oldRate = consumers[from];
-				newRate = -from.GetItemRate(ItemUID, false);
+				newRate = -from.GetItemRate(ItemID, false);
 				if (!oldRate.AreSignsEqual(newRate))
 				{
 					throw new UpdateException();
@@ -360,7 +379,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			if (producers.ContainsKey(from))
 			{
 				oldRate = producers[from];
-				newRate = from.GetItemRate(ItemUID, true);
+				newRate = from.GetItemRate(ItemID, true);
 				if (!oldRate.AreSignsEqual(newRate))
 				{
 					throw new UpdateException();
@@ -373,11 +392,11 @@ namespace VisualSatisfactoryCalculator.code.Production
 				{
 					if (producers.ContainsKey(step))
 					{
-						producers[step] = step.GetItemRate(ItemUID, true);
+						producers[step] = step.GetItemRate(ItemID, true);
 					}
 					if (consumers.ContainsKey(step))
 					{
-						consumers[step] = -step.GetItemRate(ItemUID, false);
+						consumers[step] = -step.GetItemRate(ItemID, false);
 					}
 					continue;
 				}
@@ -385,11 +404,11 @@ namespace VisualSatisfactoryCalculator.code.Production
 				step.SetMultiplier(step.Multiplier * multiplier, excludedConnections, updated);
 				if (producers.ContainsKey(step))
 				{
-					producers[step] = step.GetItemRate(ItemUID, true);
+					producers[step] = step.GetItemRate(ItemID, true);
 				}
 				if (consumers.ContainsKey(step))
 				{
-					consumers[step] = -step.GetItemRate(ItemUID, false);
+					consumers[step] = -step.GetItemRate(ItemID, false);
 				}
 			}
 			UpdateControl();

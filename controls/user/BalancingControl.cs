@@ -54,7 +54,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.balancingPrompt = balancingPrompt;
 			Step = step;
 			IsOutput = isOutput;
-			OriginalRate = step.GetItemRate(balancingPrompt.Connection.ItemUID, !isOutput);
+			OriginalRate = step.GetItemRate(balancingPrompt.Connection.ItemID, !isOutput);
 			Rate = OriginalRate;
 		}
 

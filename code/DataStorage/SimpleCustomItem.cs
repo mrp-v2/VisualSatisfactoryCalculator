@@ -5,13 +5,13 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 {
 	public class SimpleCustomItem : IItem
 	{
-		public string UID { get; }
+		public string ID { get; }
 		public string DisplayName { get; }
 		public bool IsFluid { get { return false; } }
 
-		public SimpleCustomItem(string UID, string displayName)
+		public SimpleCustomItem(string ID, string displayName)
 		{
-			this.UID = UID;
+			this.ID = ID;
 			DisplayName = displayName;
 		}
 
@@ -22,12 +22,12 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public override int GetHashCode()
 		{
-			return UID.GetHashCode();
+			return ID.GetHashCode();
 		}
 
 		public bool EqualID(string id)
 		{
-			return UID.Equals(id);
+			return ID.Equals(id);
 		}
 
 		public bool Equals(IItem other)
@@ -37,12 +37,12 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 				return false;
 			}
 
-			return UID.Equals((other as SimpleCustomItem).UID);
+			return ID.Equals((other as SimpleCustomItem).ID);
 		}
 
-		public bool EqualID(IHasUID obj)
+		public bool EqualID(IHasID obj)
 		{
-			return obj.EqualID(UID);
+			return obj.EqualID(ID);
 		}
 
 		public string ToString(decimal rate)

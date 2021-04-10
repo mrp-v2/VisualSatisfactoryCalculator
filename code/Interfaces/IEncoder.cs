@@ -1,6 +1,6 @@
 ﻿namespace VisualSatisfactoryCalculator.code.Interfaces
 {
-	public interface IEncoder : IHasUID, IHasDisplayName
+	public interface IEncoder : IHasID, IHasDisplayName
 	{
 
 	}

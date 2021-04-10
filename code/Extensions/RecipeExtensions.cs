@@ -14,7 +14,7 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			{
 				if (rec.Products.Keys.Contains(productUID))
 				{
-					recs.Add(rec.UID, rec);
+					recs.Add(rec.ID, rec);
 				}
 			}
 			return recs;
@@ -27,7 +27,7 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			{
 				if (rec.Ingredients.Keys.Contains(ingredientUID))
 				{
-					recs.Add(rec.UID, rec);
+					recs.Add(rec.ID, rec);
 				}
 			}
 			return recs;

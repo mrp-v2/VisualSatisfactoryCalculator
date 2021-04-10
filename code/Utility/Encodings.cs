@@ -34,7 +34,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			else if (value is IRecipe)
 			{
 				IRecipe recipe = value as IRecipe;
-				Recipes.Add(recipe.UID, recipe);
+				Recipes.Add(recipe.ID, recipe);
 			}
 		}
 

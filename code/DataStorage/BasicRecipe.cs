@@ -9,16 +9,16 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 {
 	public class BasicRecipe : IRecipe
 	{
-		public string UID { get; }
+		public string ID { get; }
 		public decimal CraftTime { get; }
 		public string MachineUID { get; }
 		public Dictionary<string, ItemCount> Ingredients { get; }
 		public Dictionary<string, ItemCount> Products { get; }
 		public string DisplayName { get; }
 
-		public BasicRecipe(string UID, decimal craftTime, string machineUID, List<ItemCount> ingredients, List<ItemCount> products, string displayName)
+		public BasicRecipe(string ID, decimal craftTime, string machineUID, List<ItemCount> ingredients, List<ItemCount> products, string displayName)
 		{
-			this.UID = UID;
+			this.ID = ID;
 			CraftTime = craftTime;
 			MachineUID = machineUID;
 			Ingredients = new Dictionary<string, ItemCount>();
@@ -36,7 +36,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public bool EqualID(string id)
 		{
-			return UID.Equals(id);
+			return ID.Equals(id);
 		}
 
 		public bool Equals(IRecipe other)
@@ -56,7 +56,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 
 		public override int GetHashCode()
 		{
-			return UID.GetHashCode();
+			return ID.GetHashCode();
 		}
 
 		protected virtual string GetConversionString(Encodings encodings)
@@ -100,9 +100,9 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return str;
 		}
 
-		public bool EqualID(IHasUID obj)
+		public bool EqualID(IHasID obj)
 		{
-			return obj.EqualID(UID);
+			return obj.EqualID(ID);
 		}
 
 		public override string ToString()

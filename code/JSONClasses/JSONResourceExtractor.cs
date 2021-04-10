@@ -41,7 +41,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 				{
 					if (OnlySpecificResources)
 					{
-						if (!AllowedResources.Contains(item.UID))
+						if (!AllowedResources.Contains(item.ID))
 						{
 							continue;
 						}
@@ -50,10 +50,10 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 					{
 						List<ItemCount> products = new List<ItemCount>
 						{
-							new ItemCount(item.UID, ItemsPerCycle)
+							new ItemCount(item.ID, ItemsPerCycle)
 						};
-						IRecipe recipe = new JSONResourceExtractorRecipe(UID + resourceNodeType + item.UID, CycleTime / NODE_CYCLE_TIME_DIVISORS[resourceNodeType], UID, new List<ItemCount>(), products, resourceNodeType + " " + item.DisplayName);
-						recipes.Add(recipe.UID, recipe);
+						IRecipe recipe = new JSONResourceExtractorRecipe(ID + resourceNodeType + item.ID, CycleTime / NODE_CYCLE_TIME_DIVISORS[resourceNodeType], ID, new List<ItemCount>(), products, resourceNodeType + " " + item.DisplayName);
+						recipes.Add(recipe.ID, recipe);
 					}
 				}
 			}
@@ -75,17 +75,17 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 					{
 						if (OnlySpecificResources)
 						{
-							if (!AllowedResources.Contains(item.UID))
+							if (!AllowedResources.Contains(item.ID))
 							{
 								continue;
 							}
 						}
 						List<ItemCount> products = new List<ItemCount>
 						{
-							new ItemCount(item.UID, ItemsPerCycle)
+							new ItemCount(item.ID, ItemsPerCycle)
 						};
-						IRecipe recipe = new JSONResourceExtractorRecipe(UID + item.UID, CycleTime, UID, new List<ItemCount>(), products, item.DisplayName);
-						recipes.Add(recipe.UID, recipe);
+						IRecipe recipe = new JSONResourceExtractorRecipe(ID + item.ID, CycleTime, ID, new List<ItemCount>(), products, item.DisplayName);
+						recipes.Add(recipe.ID, recipe);
 					}
 				}
 				return recipes;

@@ -40,7 +40,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 								{
 									foreach (string itemUID in ingredientStep.Recipe.Products.Keys)
 									{
-										if (connection.ItemUID == itemUID)
+										if (connection.ItemID == itemUID)
 										{
 											goto Add;
 										}
@@ -52,14 +52,14 @@ namespace VisualSatisfactoryCalculator.code.Utility
 									}
 								}
 							Add:
-								ingredientControls.Add(ingredientStep, connection.ItemUID);
+								ingredientControls.Add(ingredientStep, connection.ItemID);
 							Continue:
 								continue;
 							}
 						}
 						if (connection.Type.Get() == Connection.ConnectionType.FIXED_RATIO && connection.GetConsumerSteps().Count == 1)
 						{
-							abnormalConnectionIngredients.Add(connection.ItemUID, connection);
+							abnormalConnectionIngredients.Add(connection.ItemID, connection);
 						}
 					}
 					StepAndIngredientsLayout layout = new StepAndIngredientsLayout(step, ingredientControls, abnormalConnectionIngredients);
@@ -250,7 +250,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 					{
 						foreach (string str in step.Recipe.Products.Keys)
 						{
-							if (str == connection.ItemUID)
+							if (str == connection.ItemID)
 							{
 								goto Add;
 							}
@@ -315,7 +315,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				foreach (Step step in inputControls.Keys)
 				{
 					ILayoutControl control = inputControls[step];
-					ItemRateControl productIRC = control.TopControl.ProductRateControls[connection.ItemUID];
+					ItemRateControl productIRC = control.TopControl.ProductRateControls[connection.ItemID];
 					Point productIRCLoc = productIRC.GetTotalLocation();
 					productIRCConnectionPoints.Add(step, new Point(productIRCLoc.X + (productIRC.Size.Width / 2), productIRCLoc.Y));
 					ItemRateControl ingredientIRC = TopControl.InControls[step];
@@ -356,7 +356,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				{
 					foreach (Step step in connection.GetConsumerSteps())
 					{
-						ItemRateControl a = DrawingContext.StepUIMap[step].Item1.IngredientRateControls[connection.ItemUID];
+						ItemRateControl a = DrawingContext.StepUIMap[step].Item1.IngredientRateControls[connection.ItemID];
 						ItemRateControl b = DrawingContext.AbnormalConnectionUIMap[connection].Item1.OutControls[step];
 						DrawingContext.ScheduledAlternateConnections.Add(new Tuple<ItemRateControl, ItemRateControl>(a, b));
 					}
@@ -369,7 +369,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 						{
 							continue;
 						}
-						ItemRateControl a = DrawingContext.StepUIMap[step].Item1.ProductRateControls[connection.ItemUID];
+						ItemRateControl a = DrawingContext.StepUIMap[step].Item1.ProductRateControls[connection.ItemID];
 						ItemRateControl b = DrawingContext.AbnormalConnectionUIMap[connection].Item1.InControls[step];
 						DrawingContext.ScheduledAlternateConnections.Add(new Tuple<ItemRateControl, ItemRateControl>(a, b));
 					}
@@ -515,7 +515,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				{
 					foreach (Step step in ingredientConnection.GetProducerSteps())
 					{
-						ingredientSteps.Add(step, ingredientConnection.ItemUID);
+						ingredientSteps.Add(step, ingredientConnection.ItemID);
 					}
 				}
 				Dictionary<Step, string> alternateConnectionIngredients = new Dictionary<Step, string>();

@@ -50,19 +50,19 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			GetSection<JSONItem, JSONItem>("FGItemDescriptorNuclearFuel", items);
 			foreach (JSONItem item in items)
 			{
-				totalResults.Add(item.UID, item);
+				totalResults.Add(item.ID, item);
 			}
 			//JSONBuildings
 			foreach (JSONBuilding building in GetSection<JSONBuilding>("FGBuildableManufacturer"))
 			{
-				totalResults.Add(building.UID, building);
+				totalResults.Add(building.ID, building);
 			}
 			//JSONRecipes -- must go after all buildings, uses buildings to decide what produces this recipe
 			foreach (JSONRecipe recipe in GetSection<JSONRecipe>("FGRecipe"))
 			{
 				if (recipe.MachineUID != default)
 				{
-					totalResults.Add(recipe.UID, recipe);
+					totalResults.Add(recipe.ID, recipe);
 				}
 			}
 			//JSONResourceExtractors
@@ -72,7 +72,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			GetSection<JSONResourceExtractor, JSONResourceExtractor>("FGBuildableFrackingExtractor", resourceExtractors);
 			foreach (JSONResourceExtractor resourceExtractor in resourceExtractors)
 			{
-				totalResults.Add(resourceExtractor.UID, resourceExtractor);
+				totalResults.Add(resourceExtractor.ID, resourceExtractor);
 			}
 			//JSONGenerators
 			List<JSONGenerator> generators = new List<JSONGenerator>();
@@ -84,7 +84,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				{
 					continue;
 				}
-				totalResults.Add(generator.UID, generator);
+				totalResults.Add(generator.ID, generator);
 			}
 			//Constants
 			totalResults.AddRange(Constants.AllConstantEncoders);

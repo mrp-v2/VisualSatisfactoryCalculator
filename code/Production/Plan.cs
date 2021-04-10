@@ -58,7 +58,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		{
 			Dictionary<string, decimal> rates = new Dictionary<string, decimal>()
 			{
-				{ Constants.MWItem.UID, GetPowerDraw(encodings) }
+				{ Constants.MWItem.ID, GetPowerDraw(encodings) }
 			};
 			foreach (Step step in Steps)
 			{

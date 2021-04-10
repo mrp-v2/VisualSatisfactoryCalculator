@@ -27,7 +27,7 @@ namespace VisualSatisfactoryCalculator.forms
 
 		public Encodings Encoders { get; }
 
-		public readonly Plan Plan;
+		public Plan Plan;
 		private PlanTotalViewControl PPTVC;
 		public bool ControlKeyPressed { get; private set; }
 		public ItemRateControl CurrentConnectionIRC;
@@ -86,7 +86,7 @@ namespace VisualSatisfactoryCalculator.forms
 				ReverseControlOrder();
 				PlanPanel.DrawToBitmap(map, new Rectangle(0, 0, size.Width, size.Height));
 				ReverseControlOrder();
-				//saveLoad.Save(map, Plan);
+				saveLoad.Save(map, new CondensedPlan(Plan));
 				map.Save(dialog.FileName, ImageFormat.Png);
 			}
 		}
@@ -122,13 +122,12 @@ namespace VisualSatisfactoryCalculator.forms
 			};
 			if (dialog.ShowDialog() == DialogResult.OK)
 			{
-				if (saveLoad.TryLoad(dialog.FileName, out ProcessedPlan loadedPlan))
+				if (saveLoad.TryLoad(dialog.FileName, out CondensedPlan loadedPlan))
 				{
 					if (loadedPlan != null)
 					{
-						//_plan = loadedPlan.ToProductionPlan(Encoders.Recipes);
-						//PlanUpdated();
-						// TODO
+						Plan = loadedPlan.ToPlan(Encoders);
+						PlanUpdated();
 					}
 				}
 			}

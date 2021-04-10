@@ -13,7 +13,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
 	internal class JSONGenerator : IBuilding, IFromJson
 	{
-		public string UID { get; }
+		public string ID { get; }
 		private readonly string[] fuelItemIDs;
 		private readonly decimal powerProduction;
 		public string DisplayName { get; }
@@ -27,7 +27,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		[JsonConstructor]
 		public JSONGenerator(string ClassName, string mDefaultFuelClasses, bool mRequiresSupplementalResource, decimal mSupplementalToPowerRatio, string mPowerProduction, string mPowerProductionExponent, string mDisplayName)
 		{
-			UID = ClassName;
+			ID = ClassName;
 			fuelItemIDs = Util.ParseUIDList(mDefaultFuelClasses);
 			powerProduction = decimal.Parse(mPowerProduction);
 			PowerConsumptionExponent = decimal.Parse(mPowerProductionExponent);
@@ -56,20 +56,20 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 				{
 					ingredients.Add(new ItemCount(Constants.WaterID, powerProduction * supplementalToPowerRatio * SupplementalResourceFactor));
 				}
-				IRecipe recipe = new JSONGeneratorRecipe(UID + fuelItemID, 60, UID, ingredients, new List<ItemCount>(), jItem.DisplayName + " to Power", powerProduction);
-				recipes.Add(recipe.UID, recipe);
+				IRecipe recipe = new JSONGeneratorRecipe(ID + fuelItemID, 60, ID, ingredients, new List<ItemCount>(), jItem.DisplayName + " to Power", powerProduction);
+				recipes.Add(recipe.ID, recipe);
 			}
 			return recipes;
 		}
 
 		public bool EqualID(string id)
 		{
-			return UID.Equals(id);
+			return ID.Equals(id);
 		}
 
-		public bool EqualID(IHasUID obj)
+		public bool EqualID(IHasID obj)
 		{
-			return obj.EqualID(UID);
+			return obj.EqualID(ID);
 		}
 
 		private class JSONGeneratorRecipe : BasicRecipe

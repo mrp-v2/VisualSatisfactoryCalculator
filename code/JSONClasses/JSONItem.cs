@@ -8,7 +8,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
 	public class JSONItem : IItem, IFromJson
 	{
-		public string UID { get; }
+		public string ID { get; }
 		public string DisplayName { get; }
 		public string Form { get; }
 		public decimal EnergyValue { get; }
@@ -18,23 +18,23 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		[JsonConstructor]
 		public JSONItem(string ClassName, string mDisplayName, string mForm, string mEnergyValue)
 		{
-			UID = ClassName;
+			ID = ClassName;
 			DisplayName = mDisplayName;
 			Form = mForm;
 			EnergyValue = decimal.Parse(mEnergyValue);
 			NativeClass = FileInteractor.ActiveNativeClass;
 		}
 
-		public JSONItem(JSONItem item) : this(item.UID, item.DisplayName, item.Form, item.EnergyValue.ToString()) { }
+		public JSONItem(JSONItem item) : this(item.ID, item.DisplayName, item.Form, item.EnergyValue.ToString()) { }
 
 		public override int GetHashCode()
 		{
-			return UID.GetHashCode();
+			return ID.GetHashCode();
 		}
 
 		public bool EqualID(string id)
 		{
-			return UID.Equals(id);
+			return ID.Equals(id);
 		}
 
 		public bool Equals(IItem other)
@@ -50,9 +50,9 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			return EqualID(other);
 		}
 
-		public bool EqualID(IHasUID obj)
+		public bool EqualID(IHasID obj)
 		{
-			return obj.EqualID(UID);
+			return obj.EqualID(ID);
 		}
 
 		public string ToString(decimal rate)
