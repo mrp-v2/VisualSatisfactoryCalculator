@@ -13,13 +13,12 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 
 		public static string ToPrettyString(this decimal m)
 		{
-			string str1 = m.ToString();
-			if (str1.Contains("."))
+			string str = Math.Round(m, Constants.DECIMALS).ToString();
+			if (str.Contains("."))
 			{
-				str1 = str1.TrimEnd('0').TrimEnd('.');
+				str = str.TrimEnd('0').TrimEnd('.');
 			}
-			string str2 = Math.Round(m, Constants.DECIMALS).ToString();
-			return str1.Length < str2.Length ? str1 : str2;
+			return str;
 		}
 
 		public static decimal Sqrt(this decimal x, decimal epsilon = 0.0M)
@@ -40,6 +39,14 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			}
 			while (Math.Abs(previous - current) > epsilon);
 			return current;
+		}
+
+		/// <summary>
+		/// Checks if two decimals are both greater than zero or both less than zero
+		/// </summary>
+		public static bool AreSignsEqual(this decimal a, decimal b)
+		{
+			return (a < 0 && b < 0) || (a > 0 && b > 0);
 		}
 	}
 }

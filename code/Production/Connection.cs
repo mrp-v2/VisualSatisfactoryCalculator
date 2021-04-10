@@ -28,7 +28,6 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public readonly CachedValue<IImmutableList<HashSet<Step>>> ConnectedStepGroups;
 		public readonly CachedValue<IImmutableList<HashSet<Step>>> RelevantConnectedStepGroups;
 		private SplitAndMergeControl control;
-		private decimal totalRate = 0;
 
 		public IImmutableSet<Step> GetProducerSteps()
 		{
@@ -144,19 +143,6 @@ namespace VisualSatisfactoryCalculator.code.Production
 			ConnectedSteps.Invalidate();
 			ConnectedStepGroups.Invalidate();
 			BalanceConnectionRates();
-			if (Type.Get() == ConnectionType.NORMAL)
-			{
-				RecalculateTotalRateFromProducers();
-			}
-		}
-
-		private void RecalculateTotalRateFromProducers()
-		{
-			totalRate = 0;
-			foreach (decimal d in producers.Values)
-			{
-				totalRate += d;
-			}
 		}
 
 		public IImmutableSet<Step> GetConsumerSteps()
@@ -281,7 +267,17 @@ namespace VisualSatisfactoryCalculator.code.Production
 							}
 						}
 					}
-					(decimal, decimal, decimal) multipliers = Util.BalanceRates(stepGroupRates, totalRate, totalRate);
+					decimal producersBasedTotalRate = 0;
+					foreach (decimal d in producers.Values)
+					{
+						producersBasedTotalRate += d;
+					}
+					decimal consumersBasedTotalRate = 0;
+					foreach (decimal d in consumers.Values)
+					{
+						consumersBasedTotalRate -= d;
+					}
+					(decimal, decimal, decimal) multipliers = Util.TryBalanceRates(stepGroupRates, consumersBasedTotalRate, consumersBasedTotalRate, out (decimal, decimal, decimal) temp) ? temp : Util.BalanceRates(stepGroupRates, producersBasedTotalRate, producersBasedTotalRate);
 					foreach (HashSet<Step> group in stepGroupRates.Keys)
 					{
 						foreach (Step step in group)
@@ -318,15 +314,11 @@ namespace VisualSatisfactoryCalculator.code.Production
 		{
 			foreach (Step step in GetConsumerSteps())
 			{
-				consumers[step] = step.GetItemRate(ItemUID, false);
+				consumers[step] = -step.GetItemRate(ItemUID, false);
 			}
 			foreach (Step step in GetProducerSteps())
 			{
 				producers[step] = step.GetItemRate(ItemUID, true);
-			}
-			if (Type.Get() != ConnectionType.INCOMPLETE)
-			{
-				RecalculateTotalRateFromProducers();
 			}
 		}
 
@@ -335,6 +327,17 @@ namespace VisualSatisfactoryCalculator.code.Production
 			if (control != null)
 			{
 				control.UpdateNumerics();
+			}
+		}
+
+		public class UpdateException : InvalidOperationException
+		{
+			public UpdateException()
+			{
+			}
+
+			public UpdateException(string message) : base(message)
+			{
 			}
 		}
 
@@ -349,13 +352,19 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				oldRate = consumers[from];
 				newRate = -from.GetItemRate(ItemUID, false);
-				consumers[from] = newRate;
+				if (!oldRate.AreSignsEqual(newRate))
+				{
+					throw new UpdateException();
+				}
 			}
 			if (producers.ContainsKey(from))
 			{
 				oldRate = producers[from];
 				newRate = from.GetItemRate(ItemUID, true);
-				producers[from] = newRate;
+				if (!oldRate.AreSignsEqual(newRate))
+				{
+					throw new UpdateException();
+				}
 			}
 			decimal multiplier = newRate / oldRate;
 			foreach (Step step in ConnectedSteps.Get())
@@ -383,7 +392,6 @@ namespace VisualSatisfactoryCalculator.code.Production
 				{
 					consumers[step] = -step.GetItemRate(ItemUID, false);
 				}
-
 			}
 			UpdateControl();
 		}

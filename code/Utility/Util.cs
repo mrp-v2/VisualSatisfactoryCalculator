@@ -27,6 +27,20 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			return items;
 		}
 
+		public static bool TryBalanceRates<T>(Dictionary<T, (decimal, decimal)> rates, decimal inputTotal, decimal outputTotal, out (decimal, decimal, decimal) multipliers)
+		{
+			try
+			{
+				multipliers = BalanceRates(rates, inputTotal, outputTotal);
+				return true;
+			}
+			catch (BalancingException)
+			{
+				multipliers = (1, 1, 1);
+				return false;
+			}
+		}
+
 		/// <summary>
 		/// Calculates multipliers that can be used to balance rates
 		/// </summary>
@@ -62,7 +76,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				{
 					if (pairedInputRate / pairedOutputRate != inputTotal / outputTotal)
 					{
-						throw new ArgumentException("Cannot balance only paired rates that don't have the same ratio as the desired input and output");
+						throw new BalancingException("Cannot balance only paired rates that don't have the same ratio as the desired input and output");
 					}
 					return (1, 1, inputTotal / pairedInputRate);
 				}
@@ -86,7 +100,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 					decimal pairedMultiplierA = (-b + discriminateSqrt) / (2 * a), pairedMultiplierB = discriminate > 0 ? (-b - discriminateSqrt) / (2 * a) : pairedMultiplierA;
 					if (pairedMultiplierA < 0 && pairedMultiplierB < 0)
 					{
-						throw new ArgumentException("Unable to find a valid multiplier");
+						throw new BalancingException("Unable to find a valid multiplier");
 					}
 					else if (pairedMultiplierB < 0)
 					{
@@ -116,13 +130,13 @@ namespace VisualSatisfactoryCalculator.code.Utility
 						bool increasingBeforeA = isMultiplierProductIncreasingAt(pairedMultiplierA - 1);
 						if (!increasingBeforeA)
 						{
-							throw new ArgumentException("Cannot maximize product");
+							throw new BalancingException("Cannot maximize product");
 						}
 						bool increasingBetweenAAndB = isMultiplierProductIncreasingAt(pairedMultiplierA + ((pairedMultiplierB - pairedMultiplierA) / 2));
 						bool increasingAfterB = isMultiplierProductIncreasingAt(pairedMultiplierB + 1);
 						if (increasingAfterB)
 						{
-							throw new ArgumentException("Cannot maximize products");
+							throw new BalancingException("Cannot maximize products");
 						}
 						else if (!increasingAfterB && increasingBetweenAAndB)
 						{
@@ -134,7 +148,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 						}
 						else
 						{
-							throw new ArgumentException("Cannot maximize products");
+							throw new BalancingException("Cannot maximize products");
 						}
 					}
 					decimal inputMultiplier = isolatedInputRate != 0 ? (inputTotal - (pairedMultiplier * pairedInputRate)) / isolatedInputRate : 1;
@@ -147,6 +161,13 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				decimal inputMultiplier = isolatedInputRate == 0 ? 1 : inputTotal / isolatedInputRate;
 				decimal outputMultiplier = isolatedOutputRate == 0 ? 1 : outputTotal / isolatedOutputRate;
 				return (inputMultiplier, outputMultiplier, 1);
+			}
+		}
+
+		public class BalancingException : ArgumentException
+		{
+			public BalancingException(string message) : base(message)
+			{
 			}
 		}
 	}

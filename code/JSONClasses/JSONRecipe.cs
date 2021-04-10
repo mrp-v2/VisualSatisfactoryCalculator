@@ -42,7 +42,6 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			{
 				ingredientsList.Add(ParseItemCount(ingredientsArray[i], ingredientsArray[i + 1]));
 			}
-
 			return ingredientsList;
 		}
 
@@ -55,7 +54,6 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			{
 				productsList.Add(ParseItemCount(productsArray[i], productsArray[i + 1]));
 			}
-
 			return productsList;
 		}
 

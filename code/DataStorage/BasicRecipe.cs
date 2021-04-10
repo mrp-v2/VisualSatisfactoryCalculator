@@ -110,6 +110,9 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			return ToString(Constants.LastResortEncoderList);
 		}
 
+		/// <summary>
+		/// Always positive
+		/// </summary>
 		public decimal GetCountFor(string itemUID, bool isProduct)
 		{
 			if (isProduct)

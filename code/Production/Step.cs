@@ -259,7 +259,6 @@ namespace VisualSatisfactoryCalculator.code.Production
 				if (!excludedConnections.Contains(connection))
 				{
 					nextRound.Add(connection);
-					excludedConnections.Add(connection);
 				}
 			}
 			foreach (Connection connection in nextRound)
@@ -289,16 +288,25 @@ namespace VisualSatisfactoryCalculator.code.Production
 			}
 		}
 
+		/// <summary>
+		/// Always positive
+		/// </summary>
 		private decimal CalculateDefaultItemRate(string itemUID, bool isItemProduct)
 		{
 			return 60m / Recipe.CraftTime * Recipe.GetCountFor(itemUID, isItemProduct);
 		}
 
+		/// <summary>
+		/// Always positive
+		/// </summary>
 		public decimal CalculateMultiplierForRate(string itemUID, decimal rate, bool isItemProduct)
 		{
 			return Math.Abs(rate / CalculateDefaultItemRate(itemUID, isItemProduct));
 		}
 
+		/// <summary>
+		/// Always positive
+		/// </summary>
 		public decimal GetItemRate(string itemUID, bool isItemProduct)
 		{
 			return CalculateDefaultItemRate(itemUID, isItemProduct) * Multiplier;
