@@ -249,10 +249,10 @@ namespace VisualSatisfactoryCalculator.code.Production
 			}
 		}
 
-		public void SetMultiplier(decimal multiplier, HashSet<Connection> excludedConnections)
+		public void SetMultiplier(decimal multiplier, HashSet<Connection> excludedConnections, HashSet<Step> updated)
 		{
 			SetMultiplier(multiplier, false);
-			HashSet<Step> updated = new HashSet<Step>() { this };
+			updated.Add(this);
 			HashSet<Connection> nextRound = new HashSet<Connection>();
 			foreach (Connection connection in Connections.Get())
 			{
@@ -265,6 +265,11 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				connection.UpdateMultipliers(updated, this, excludedConnections);
 			}
+		}
+
+		public void SetMultiplier(decimal multiplier, HashSet<Connection> excludedConnections)
+		{
+			SetMultiplier(multiplier, excludedConnections, new HashSet<Step>());
 		}
 
 		public void SetMultiplier(decimal multiplier)

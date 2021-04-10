@@ -382,8 +382,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 					continue;
 				}
 				excludedConnections.Add(this);
-				updated.AddRange(step.GetAllConnectedSteps(this));
-				step.SetMultiplier(step.Multiplier * multiplier, excludedConnections);
+				step.SetMultiplier(step.Multiplier * multiplier, excludedConnections, updated);
 				if (producers.ContainsKey(step))
 				{
 					producers[step] = step.GetItemRate(ItemUID, true);
