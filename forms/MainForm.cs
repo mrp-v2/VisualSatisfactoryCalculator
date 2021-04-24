@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 using MrpV2.GenericLibrary.code.persistance.classes;
@@ -16,6 +17,21 @@ namespace VisualSatisfactoryCalculator.forms
 {
 	public partial class MainForm : Form
 	{
+		[DllImport("user32.dll")]
+		public static extern int SendMessage(IntPtr hWnd, int wMsg, bool wParam, int lParam);
+		private const int WM_SETREDRAW = 11;
+
+		public void SuspendDrawing()
+		{
+			SendMessage(Handle, WM_SETREDRAW, false, 0);
+		}
+
+		public void ResumeDrawing()
+		{
+			SendMessage(Handle, WM_SETREDRAW, true, 0);
+			Refresh();
+		}
+
 		[STAThread]
 		public static void Main()
 		{
@@ -59,6 +75,7 @@ namespace VisualSatisfactoryCalculator.forms
 
 		public void PlanUpdated()
 		{
+			SuspendDrawing();
 			foreach (Control c in PlanPanel.Controls)
 			{
 				c.Dispose();
@@ -68,6 +85,7 @@ namespace VisualSatisfactoryCalculator.forms
 			UpdateTotalView();
 			PlanPanel.Controls.Add(PPTVC);
 			PlanLayoutMaker.LayoutSteps(this, PlanPanel, Plan);
+			ResumeDrawing();
 		}
 
 		private void SaveChartButton_Click(object sender, EventArgs e)

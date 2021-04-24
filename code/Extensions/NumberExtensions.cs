@@ -48,5 +48,15 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 		{
 			return (a < 0 && b < 0) || (a > 0 && b > 0);
 		}
+
+		/// <summary>
+		/// Whether two decimals are equals within <see cref="Constants.DECIMALS"/> decimal places.
+		/// </summary>
+		public static bool ApproximatelyEqual(this decimal a, decimal b)
+		{
+			a = Math.Round(a, Constants.DECIMALS);
+			b = Math.Round(b, Constants.DECIMALS);
+			return a == b;
+		}
 	}
 }

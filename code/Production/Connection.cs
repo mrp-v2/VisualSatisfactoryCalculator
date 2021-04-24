@@ -159,7 +159,6 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		public void VerifyConnection()
 		{
-			// TODO
 			decimal producersTotal = 0, consumersTotal = 0;
 			foreach (decimal d in producers.Values)
 			{
@@ -169,7 +168,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				consumersTotal += d;
 			}
-			if (producersTotal + consumersTotal != 0)
+			if (!(producersTotal + consumersTotal).ApproximatelyEqual(0))
 			{
 				throw new InvalidOperationException("This connection is invalid!");
 			}
