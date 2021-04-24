@@ -157,10 +157,29 @@ namespace VisualSatisfactoryCalculator.code.Production
 			StepsChanged();
 		}
 
+		public void VerifyConnection()
+		{
+			// TODO
+			decimal producersTotal = 0, consumersTotal = 0;
+			foreach (decimal d in producers.Values)
+			{
+				producersTotal += d;
+			}
+			foreach (decimal d in consumers.Values)
+			{
+				consumersTotal += d;
+			}
+			if (producersTotal + consumersTotal != 0)
+			{
+				throw new InvalidOperationException("This connection is invalid!");
+			}
+		}
+
 		private void StepsChanged()
 		{
 			ConnectedSteps.Invalidate();
 			ConnectedStepGroups.Invalidate();
+			RelevantConnectedStepGroups.Invalidate();
 			BalanceConnectionRates();
 		}
 
@@ -296,7 +315,12 @@ namespace VisualSatisfactoryCalculator.code.Production
 					{
 						consumersBasedTotalRate -= d;
 					}
-					(decimal, decimal, decimal) multipliers = Util.TryBalanceRates(stepGroupRates, consumersBasedTotalRate, consumersBasedTotalRate, out (decimal, decimal, decimal) temp) ? temp : Util.BalanceRates(stepGroupRates, producersBasedTotalRate, producersBasedTotalRate);
+					if (Util.TryBalanceRates(stepGroupRates, consumersBasedTotalRate, consumersBasedTotalRate, out (decimal, decimal, decimal) multipliers)) { }
+					else if (Util.TryBalanceRates(stepGroupRates, producersBasedTotalRate, producersBasedTotalRate, out multipliers)) { }
+					else
+					{
+						throw new InvalidOperationException("Could not balance the rates");
+					}
 					foreach (HashSet<Step> group in stepGroupRates.Keys)
 					{
 						foreach (Step step in group)

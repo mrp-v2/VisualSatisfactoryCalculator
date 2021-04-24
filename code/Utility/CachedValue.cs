@@ -11,11 +11,14 @@ namespace VisualSatisfactoryCalculator.code.Utility
 		private bool valid;
 		private readonly Func<T> valueProvider;
 		private T value;
+		private EventHandler invalidationCallback;
+		private EventHandler valueCalculatedCallback;
 
 		public CachedValue(Func<T> valueProvider)
 		{
 			this.valueProvider = valueProvider;
 			valid = false;
+			invalidationCallback = default;
 		}
 
 		public T Get()
@@ -24,6 +27,10 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			{
 				value = valueProvider();
 				valid = true;
+				if (valueCalculatedCallback != null)
+				{
+					valueCalculatedCallback(this, EventArgs.Empty);
+				}
 			}
 			return value;
 		}
@@ -33,6 +40,10 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			if (valid)
 			{
 				valid = false;
+				if (invalidationCallback != null)
+				{
+					invalidationCallback(this, EventArgs.Empty);
+				}
 			}
 		}
 
@@ -55,6 +66,30 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				{
 					Invalidate();
 				}
+			}
+		}
+
+		public void AddInvalidationCallback(EventHandler e)
+		{
+			if (invalidationCallback == null)
+			{
+				invalidationCallback = e;
+			}
+			else
+			{
+				invalidationCallback += e;
+			}
+		}
+
+		public void AddValueCalculatedCallback(EventHandler e)
+		{
+			if (valueCalculatedCallback == null)
+			{
+				valueCalculatedCallback = e;
+			}
+			else
+			{
+				valueCalculatedCallback += e;
 			}
 		}
 	}

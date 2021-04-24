@@ -53,7 +53,10 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				totalResults.Add(item.ID, item);
 			}
 			//JSONBuildings
-			foreach (JSONBuilding building in GetSection<JSONBuilding>("FGBuildableManufacturer"))
+			List<JSONBuilding> buildings = new List<JSONBuilding>();
+			GetSection<JSONBuilding, JSONBuilding>("FGBuildableManufacturer", buildings);
+			GetSection<JSONBuilding, JSONBuilding>("FGBuildableManufacturerVariablePower", buildings);
+			foreach (JSONBuilding building in buildings)
 			{
 				totalResults.Add(building.ID, building);
 			}

@@ -14,7 +14,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		public string NativeClass { get; }
 
 		[JsonConstructor]
-		public JSONRecipe(string ClassName, string mDisplayName, string mIngredients, string mProduct, string mManufactoringDuration, string mProducedIn)
+		public JSONRecipe(string ClassName, string mDisplayName, string mIngredients, string mProduct, string mManufactoringDuration, string mProducedIn, string mVariablePowerConsumptionConstant, string mVariablePowerConsumptionFactor)
 			: base(ClassName, decimal.Parse(mManufactoringDuration), GetMachineUID(mProducedIn), GetIngredients(mIngredients), GetProducts(mProduct), mDisplayName)
 		{
 			NativeClass = FileInteractor.ActiveNativeClass;
