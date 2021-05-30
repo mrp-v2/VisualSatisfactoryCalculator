@@ -149,6 +149,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="code\DataStorage\ItemRate.cs" />
     <Compile Include="code\Numbers\PrimeNumberHandler.cs" />
     <Compile Include="code\Production\CondensedPlan.cs" />
     <Compile Include="code\Production\Connection.cs" />
@@ -209,7 +210,6 @@
     </Compile>
     <Compile Include="code\Production\Plan.cs" />
     <Compile Include="code\Production\Step.cs" />
-    <Compile Include="code\DataStorage\ItemCount.cs" />
     <Compile Include="code\Extensions\RecipeExtensions.cs" />
     <Compile Include="code\Extensions\NumberExtensions.cs" />
     <Compile Include="code\Utility\FileInteractor.cs" />

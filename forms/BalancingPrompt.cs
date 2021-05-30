@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using VisualSatisfactoryCalculator.code.Extensions;
+using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Production;
 using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.controls.user;
@@ -21,9 +22,9 @@ namespace VisualSatisfactoryCalculator.forms
 		private readonly Dictionary<BalancingControl, HashSet<BalancingControl>> relatedControlsMap = new Dictionary<BalancingControl, HashSet<BalancingControl>>();
 		public readonly Dictionary<Step, BalancingControl> ConsumingStepMap = new Dictionary<Step, BalancingControl>();
 		public readonly Dictionary<Step, BalancingControl> ProducingStepMap = new Dictionary<Step, BalancingControl>();
-		public readonly CachedValue<decimal> outputRate;
-		public readonly CachedValue<decimal> inputRate;
-		private readonly decimal totalRate;
+		public readonly CachedValue<RationalNumber> outputRate;
+		public readonly CachedValue<RationalNumber> inputRate;
+		private readonly RationalNumber totalRate;
 		public readonly Dictionary<Step, decimal> finalRates = new Dictionary<Step, decimal>();
 
 		public BalancingPrompt(Connection connection)
@@ -60,18 +61,18 @@ namespace VisualSatisfactoryCalculator.forms
 					}
 				}
 			}
-			outputRate = new CachedValue<decimal>(() =>
+			outputRate = new CachedValue<RationalNumber>(() =>
 			{
-				decimal total = 0;
+				RationalNumber total = 0;
 				foreach (BalancingControl bc in ConsumingStepMap.Values)
 				{
 					total += bc.Rate;
 				}
 				return total;
 			});
-			inputRate = new CachedValue<decimal>(() =>
+			inputRate = new CachedValue<RationalNumber>(() =>
 			{
-				decimal total = 0;
+				RationalNumber total = 0;
 				foreach (BalancingControl bc in ProducingStepMap.Values)
 				{
 					total += bc.Rate;
@@ -104,7 +105,7 @@ namespace VisualSatisfactoryCalculator.forms
 
 		public void NumericValueChanged(BalancingControl piece)
 		{
-			decimal multiplier = piece.Rate / piece.OriginalRate;
+			RationalNumber multiplier = piece.Rate / piece.OriginalRate;
 			foreach (BalancingControl bc in relatedControlsMap[piece])
 			{
 				bc.Rate = bc.OriginalRate * multiplier;
@@ -119,10 +120,10 @@ namespace VisualSatisfactoryCalculator.forms
 
 		private void BalanceRates(BalancingControl changed)
 		{
-			decimal outputTotal = totalRate, inputTotal = totalRate;
+			RationalNumber outputTotal = totalRate, inputTotal = totalRate;
 			List<HashSet<Step>> changableGroups = new List<HashSet<Step>>();
 			List<HashSet<Step>> unchangableGroups = new List<HashSet<Step>>();
-			Dictionary<HashSet<Step>, (decimal, decimal)> groupRates = new Dictionary<HashSet<Step>, (decimal, decimal)>();
+			Dictionary<HashSet<Step>, (RationalNumber, RationalNumber)> groupRates = new Dictionary<HashSet<Step>, (RationalNumber, RationalNumber)>();
 			foreach (HashSet<Step> group in Connection.RelevantConnectedStepGroups.Get())
 			{
 				foreach (Step step in group)
@@ -175,23 +176,23 @@ namespace VisualSatisfactoryCalculator.forms
 					if (ConsumingStepMap.ContainsKey(step))
 					{
 						BalancingControl bc = ConsumingStepMap[step];
-						(decimal, decimal) tuple = groupRates[group];
+						(RationalNumber, RationalNumber) tuple = groupRates[group];
 						groupRates[group] = (tuple.Item1, tuple.Item2 + bc.Rate);
 					}
 					if (ProducingStepMap.ContainsKey(step))
 					{
 						BalancingControl bc = ProducingStepMap[step];
-						(decimal, decimal) tuple = groupRates[group];
+						(RationalNumber, RationalNumber) tuple = groupRates[group];
 						groupRates[group] = (tuple.Item1 + bc.Rate, tuple.Item2);
 					}
 				}
 			}
-			(decimal, decimal, decimal) multipliers = Util.BalanceRates(groupRates, inputTotal, outputTotal);
+			(RationalNumber, RationalNumber, RationalNumber) multipliers = Util.BalanceRates(groupRates, inputTotal, outputTotal);
 			foreach (HashSet<Step> group in changableGroups)
 			{
 				foreach (Step step in group)
 				{
-					(decimal, decimal) tuple = groupRates[group];
+					(RationalNumber, RationalNumber) tuple = groupRates[group];
 					if (tuple.Item1 == 0 || tuple.Item2 == 0)
 					{
 						if (ConsumingStepMap.ContainsKey(step))

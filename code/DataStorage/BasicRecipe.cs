@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.DataStorage
@@ -12,22 +13,22 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		public string ID { get; }
 		public decimal CraftTime { get; }
 		public string MachineUID { get; }
-		public Dictionary<string, ItemCount> Ingredients { get; }
-		public Dictionary<string, ItemCount> Products { get; }
+		public Dictionary<string, ItemRate> Ingredients { get; }
+		public Dictionary<string, ItemRate> Products { get; }
 		public string DisplayName { get; }
 
-		public BasicRecipe(string ID, decimal craftTime, string machineUID, List<ItemCount> ingredients, List<ItemCount> products, string displayName)
+		public BasicRecipe(string ID, decimal craftTime, string machineUID, List<ItemRate> ingredients, List<ItemRate> products, string displayName)
 		{
 			this.ID = ID;
 			CraftTime = craftTime;
 			MachineUID = machineUID;
-			Ingredients = new Dictionary<string, ItemCount>();
-			foreach (ItemCount itemCount in ingredients)
+			Ingredients = new Dictionary<string, ItemRate>();
+			foreach (ItemRate itemCount in ingredients)
 			{
 				Ingredients.Add(itemCount.ItemUID, itemCount);
 			}
-			Products = new Dictionary<string, ItemCount>();
-			foreach (ItemCount itemCount in products)
+			Products = new Dictionary<string, ItemRate>();
+			foreach (ItemRate itemCount in products)
 			{
 				Products.Add(itemCount.ItemUID, itemCount);
 			}
@@ -113,15 +114,15 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		/// <summary>
 		/// Always positive
 		/// </summary>
-		public decimal GetCountFor(string itemUID, bool isProduct)
+		public RationalNumber GetCountFor(string itemUID, bool isProduct)
 		{
 			if (isProduct)
 			{
-				return Products[itemUID].Count;
+				return Products[itemUID].Rate;
 			}
 			else
 			{
-				return Ingredients[itemUID].Count;
+				return Ingredients[itemUID].Rate;
 			}
 		}
 

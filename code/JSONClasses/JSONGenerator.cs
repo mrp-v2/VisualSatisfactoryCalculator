@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.JSONClasses
@@ -15,10 +16,10 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 	{
 		public string ID { get; }
 		private readonly string[] fuelItemIDs;
-		private readonly decimal powerProduction;
+		private readonly RationalNumber powerProduction;
 		public string DisplayName { get; }
-		public decimal PowerConsumption { get { return -powerProduction; } }
-		public decimal PowerConsumptionExponent { get; }
+		public RationalNumber PowerConsumption { get { return -powerProduction; } }
+		public RationalNumber PowerConsumptionExponent { get; }
 		public string NativeClass { get; }
 
 		private readonly bool requiresSupplementalResource;
@@ -37,7 +38,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			NativeClass = FileInteractor.ActiveNativeClass;
 		}
 
-		public static readonly decimal EnergyDivisor = 16m + (2m / 3m);
+		public static readonly RationalNumber EnergyDivisor = new RationalNumber(50, 3);
 		public static readonly decimal SupplementalResourceFactor = 60m;
 
 		public Dictionary<string, IRecipe> GetRecipes(Encodings encodings)
@@ -48,15 +49,15 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 				IEncoder encodingItem = encodings[fuelItemID];
 				Trace.Assert(encodingItem is JSONItem);
 				JSONItem jItem = encodingItem as JSONItem;
-				List<ItemCount> ingredients = new List<ItemCount>
+				List<ItemRate> ingredients = new List<ItemRate>
 				{
-					new ItemCount(fuelItemID, powerProduction / (jItem.EnergyValue / 1000) / EnergyDivisor)
+					new ItemRate(fuelItemID, powerProduction / (jItem.EnergyValue / 1000) / EnergyDivisor)
 				};
 				if (requiresSupplementalResource)
 				{
-					ingredients.Add(new ItemCount(Constants.WaterID, powerProduction * supplementalToPowerRatio * SupplementalResourceFactor));
+					ingredients.Add(new ItemRate(Constants.WaterID, powerProduction * supplementalToPowerRatio * SupplementalResourceFactor));
 				}
-				IRecipe recipe = new JSONGeneratorRecipe(ID + fuelItemID, 60, ID, ingredients, new List<ItemCount>(), jItem.DisplayName + " to Power", powerProduction);
+				IRecipe recipe = new JSONGeneratorRecipe(ID + fuelItemID, 60, ID, ingredients, new List<ItemRate>(), jItem.DisplayName + " to Power", powerProduction);
 				recipes.Add(recipe.ID, recipe);
 			}
 			return recipes;
@@ -74,9 +75,9 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 
 		private class JSONGeneratorRecipe : BasicRecipe
 		{
-			private readonly decimal powerProduction;
+			private readonly RationalNumber powerProduction;
 
-			public JSONGeneratorRecipe(string UID, decimal craftTime, string machineUID, List<ItemCount> ingredients, List<ItemCount> products, string displayName, decimal powerProduction) : base(UID, craftTime, machineUID, ingredients, products, displayName)
+			public JSONGeneratorRecipe(string UID, decimal craftTime, string machineUID, List<ItemRate> ingredients, List<ItemRate> products, string displayName, RationalNumber powerProduction) : base(UID, craftTime, machineUID, ingredients, products, displayName)
 			{
 				this.powerProduction = powerProduction;
 			}
@@ -97,7 +98,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 					}
 					str += Ingredients[key].ToString(encodings);
 				}
-				str += " -> " + powerProduction.ToPrettyString() + " MW";
+				str += " -> " + powerProduction.ToDecimal().ToPrettyString() + " MW";
 				return str;
 			}
 		}

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 
 using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.JSONClasses
@@ -8,8 +9,8 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 	internal class JSONBuilding : IBuilding, IFromJson
 	{
 		public string ID { get; }
-		public decimal PowerConsumption { get; }
-		public decimal PowerConsumptionExponent { get; }
+		public RationalNumber PowerConsumption { get; }
+		public RationalNumber PowerConsumptionExponent { get; }
 		public string DisplayName { get; }
 		public string NativeClass { get; }
 

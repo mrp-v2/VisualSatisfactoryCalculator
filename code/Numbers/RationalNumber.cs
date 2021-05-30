@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace VisualSatisfactoryCalculator.code.Numbers
 {
-	readonly struct RationalNumber
+	[Serializable]
+	public readonly struct RationalNumber
 	{
 		private readonly long numerator, denominator;
 
@@ -19,6 +20,11 @@ namespace VisualSatisfactoryCalculator.code.Numbers
 			(long, long) fraction = Simplify(numerator, denominator);
 			this.numerator = fraction.Item1;
 			this.denominator = fraction.Item2;
+		}
+
+		public bool AreSignsEqual(RationalNumber other)
+		{
+			return (denominator > 0) == (other.denominator > 0) == ((numerator > 0) == (other.numerator > 0));
 		}
 
 		private RationalNumber(long numerator, long denominator, bool simplify)
@@ -58,23 +64,102 @@ namespace VisualSatisfactoryCalculator.code.Numbers
 			return (numerator, denominator);
 		}
 
-		public static RationalNumber operator +(RationalNumber a) => a;
-		public static RationalNumber operator -(RationalNumber a) => new RationalNumber(-a.numerator, a.denominator, false);
-
-		public static RationalNumber operator +(RationalNumber a, RationalNumber b) => new RationalNumber(a.numerator * b.denominator + b.numerator * a.denominator, a.denominator * b.denominator);
-		public static RationalNumber operator -(RationalNumber a, RationalNumber b) => a + (-b);
-
-		public static RationalNumber operator *(RationalNumber a, RationalNumber b) => new RationalNumber(a.numerator * b.numerator, a.denominator * b.denominator);
-		public static RationalNumber operator /(RationalNumber a, RationalNumber b) => new RationalNumber(a.numerator * b.denominator, b.numerator * a.denominator);
-
-		public override string ToString() => $"{numerator} / {denominator}";
-
-		public float ToFloat()
+		public static RationalNumber operator +(RationalNumber a)
 		{
-			return numerator / (float)denominator;
+			return a;
 		}
 
-		public static RationalNumber From(decimal d)
+		public static RationalNumber operator -(RationalNumber a)
+		{
+			return new RationalNumber(-a.numerator, a.denominator, false);
+		}
+
+		public static RationalNumber operator +(RationalNumber a, RationalNumber b)
+		{
+			return new RationalNumber((a.numerator * b.denominator) + (b.numerator * a.denominator), a.denominator * b.denominator);
+		}
+
+		public static RationalNumber operator -(RationalNumber a, RationalNumber b)
+		{
+			return a + (-b);
+		}
+
+		public static RationalNumber operator *(RationalNumber a, RationalNumber b)
+		{
+			return new RationalNumber(a.numerator * b.numerator, a.denominator * b.denominator);
+		}
+
+		public static RationalNumber operator /(RationalNumber a, RationalNumber b)
+		{
+			return new RationalNumber(a.numerator * b.denominator, b.numerator * a.denominator);
+		}
+
+		public static bool operator ==(RationalNumber a, RationalNumber b)
+		{
+			return !(a != b);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is RationalNumber other)
+			{
+				return other == this;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		public override int GetHashCode()
+		{
+			return ToDecimal().GetHashCode();
+		}
+
+		public RationalNumber Abs()
+		{
+			return new RationalNumber(Math.Abs(numerator), Math.Abs(denominator));
+		}
+
+		public static bool operator !=(RationalNumber a, RationalNumber b)
+		{
+			if (a.numerator != b.numerator)
+			{
+				return true;
+			}
+			if (a.denominator != b.denominator)
+			{
+				return true;
+			}
+			return false;
+		}
+
+		public static implicit operator RationalNumber(int i)
+		{
+			return new RationalNumber(i, 1);
+		}
+
+		public static bool operator <(RationalNumber a, RationalNumber b)
+		{
+			return a.numerator * b.denominator < b.numerator * a.denominator;
+		}
+
+		public static bool operator >(RationalNumber a, RationalNumber b)
+		{
+			return b < a;
+		}
+
+		public override string ToString()
+		{
+			return $"{numerator} / {denominator}";
+		}
+
+		public decimal ToDecimal()
+		{
+			return numerator / (decimal)denominator;
+		}
+
+		public static implicit operator RationalNumber(decimal d)
 		{
 			long denominator = 1;
 			while (d - Math.Round(d) != 0)

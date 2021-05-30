@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Production;
 using VisualSatisfactoryCalculator.forms;
 
@@ -75,7 +76,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			Enabled = on;
 		}
 
-		private void RateChanged(string itemUID, decimal newRate, bool isProduct)
+		private void RateChanged(string itemUID, RationalNumber newRate, bool isProduct)
 		{
 
 		}

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using VisualSatisfactoryCalculator.code.Numbers;
+
 namespace VisualSatisfactoryCalculator.code.Extensions
 {
 	internal static class GenericExtensions
@@ -44,9 +46,9 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			return newMe;
 		}
 
-		public static Dictionary<T, decimal> Subtract<T>(this Dictionary<T, decimal> me, Dictionary<T, decimal> other)
+		public static Dictionary<T, RationalNumber> Subtract<T>(this Dictionary<T, RationalNumber> me, Dictionary<T, RationalNumber> other)
 		{
-			Dictionary<T, decimal> merged = new Dictionary<T, decimal>();
+			Dictionary<T, RationalNumber> merged = new Dictionary<T, RationalNumber>();
 			foreach (T key in me.Keys)
 			{
 				if (merged.ContainsKey(key))

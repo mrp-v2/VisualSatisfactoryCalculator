@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using VisualSatisfactoryCalculator.code.Extensions;
+using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.controls.user;
 using VisualSatisfactoryCalculator.forms;
@@ -17,11 +18,11 @@ namespace VisualSatisfactoryCalculator.code.Production
 		/// <summary>
 		/// Negative rates
 		/// </summary>
-		private readonly Dictionary<Step, decimal> consumers;
+		private readonly Dictionary<Step, RationalNumber> consumers;
 		/// <summary>
 		/// Positive Rates
 		/// </summary>
-		private readonly Dictionary<Step, decimal> producers;
+		private readonly Dictionary<Step, RationalNumber> producers;
 		public string ItemID { get; }
 		public readonly CachedValue<ConnectionType> Type;
 		public readonly CachedValue<IImmutableSet<Step>> ConnectedSteps;
@@ -62,8 +63,8 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		public Connection(string itemUID)
 		{
-			consumers = new Dictionary<Step, decimal>();
-			producers = new Dictionary<Step, decimal>();
+			consumers = new Dictionary<Step, RationalNumber>();
+			producers = new Dictionary<Step, RationalNumber>();
 			ItemID = itemUID;
 			Type = new CachedValue<ConnectionType>(CalculateOverallConnectionType);
 			ConnectedSteps = new CachedValue<IImmutableSet<Step>>(() =>
@@ -159,16 +160,16 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		public void VerifyConnection()
 		{
-			decimal producersTotal = 0, consumersTotal = 0;
-			foreach (decimal d in producers.Values)
+			RationalNumber producersTotal = 0, consumersTotal = 0;
+			foreach (RationalNumber d in producers.Values)
 			{
 				producersTotal += d;
 			}
-			foreach (decimal d in consumers.Values)
+			foreach (RationalNumber d in consumers.Values)
 			{
 				consumersTotal += d;
 			}
-			if (!(producersTotal + consumersTotal).ApproximatelyEqual(0))
+			if (producersTotal + consumersTotal != 0)
 			{
 				throw new InvalidOperationException("This connection is invalid!");
 			}
@@ -187,12 +188,12 @@ namespace VisualSatisfactoryCalculator.code.Production
 			return ImmutableHashSet.CreateRange(consumers.Keys);
 		}
 
-		public decimal GetProducerRate(Step producer)
+		public RationalNumber GetProducerRate(Step producer)
 		{
 			return producers[producer];
 		}
 
-		public decimal GetConsumerRate(Step consumer)
+		public RationalNumber GetConsumerRate(Step consumer)
 		{
 			return -consumers[consumer];
 		}
@@ -285,8 +286,8 @@ namespace VisualSatisfactoryCalculator.code.Production
 				}
 				else
 				{
-					Dictionary<HashSet<Step>, (decimal, decimal)> stepGroupRates = new Dictionary<HashSet<Step>, (decimal, decimal)>();
-					decimal producersRate = 0, consumersRate = 0;
+					Dictionary<HashSet<Step>, (RationalNumber, RationalNumber)> stepGroupRates = new Dictionary<HashSet<Step>, (RationalNumber, RationalNumber)>();
+					RationalNumber producersRate = 0, consumersRate = 0;
 					foreach (HashSet<Step> stepGroup in RelevantConnectedStepGroups.Get())
 					{
 						stepGroupRates.Add(stepGroup, (0, 0));
@@ -304,17 +305,17 @@ namespace VisualSatisfactoryCalculator.code.Production
 							}
 						}
 					}
-					decimal producersBasedTotalRate = 0;
-					foreach (decimal d in producers.Values)
+					RationalNumber producersBasedTotalRate = 0;
+					foreach (RationalNumber d in producers.Values)
 					{
 						producersBasedTotalRate += d;
 					}
-					decimal consumersBasedTotalRate = 0;
-					foreach (decimal d in consumers.Values)
+					RationalNumber consumersBasedTotalRate = 0;
+					foreach (RationalNumber d in consumers.Values)
 					{
 						consumersBasedTotalRate -= d;
 					}
-					if (Util.TryBalanceRates(stepGroupRates, consumersBasedTotalRate, consumersBasedTotalRate, out (decimal, decimal, decimal) multipliers)) { }
+					if (Util.TryBalanceRates(stepGroupRates, consumersBasedTotalRate, consumersBasedTotalRate, out (RationalNumber, RationalNumber, RationalNumber) multipliers)) { }
 					else if (Util.TryBalanceRates(stepGroupRates, producersBasedTotalRate, producersBasedTotalRate, out multipliers)) { }
 					else
 					{
@@ -324,7 +325,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 					{
 						foreach (Step step in group)
 						{
-							(decimal, decimal) rates = stepGroupRates[group];
+							(RationalNumber, RationalNumber) rates = stepGroupRates[group];
 							if (rates.Item1 == 0 || rates.Item2 == 0)
 							{
 								if (consumers.ContainsKey(step))
@@ -389,7 +390,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				throw new ArgumentException("Cannot update from a step that itself isn't updated");
 			}
-			decimal oldRate = 0, newRate = 0;
+			RationalNumber oldRate = new RationalNumber(0, 1), newRate = new RationalNumber(0, 1);
 			if (consumers.ContainsKey(from))
 			{
 				oldRate = consumers[from];
@@ -408,7 +409,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 					throw new UpdateException();
 				}
 			}
-			decimal multiplier = newRate / oldRate;
+			RationalNumber multiplier = newRate / oldRate;
 			foreach (Step step in ConnectedSteps.Get())
 			{
 				if (updated.Contains(step))

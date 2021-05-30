@@ -1,5 +1,6 @@
 ﻿using System;
 
+using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.Extensions
@@ -21,23 +22,28 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			return str;
 		}
 
-		public static decimal Sqrt(this decimal x, decimal epsilon = 0.0M)
+		public static RationalNumber Sqrt(this RationalNumber x)
+		{
+			return x.Sqrt(0);
+		}
+
+		public static RationalNumber Sqrt(this RationalNumber x, RationalNumber epsilon)
 		{
 			if (x < 0)
 			{
 				throw new OverflowException("Cannot calculate square root from a negative number");
 			}
-			decimal current = (decimal)Math.Sqrt((double)x), previous;
+			RationalNumber current = (decimal)Math.Sqrt((double)x.ToDecimal()), previous;
 			do
 			{
 				previous = current;
-				if (previous == 0.0M)
+				if (previous == 0)
 				{
 					return 0;
 				}
 				current = (previous + (x / previous)) / 2;
 			}
-			while (Math.Abs(previous - current) > epsilon);
+			while ((previous - current).Abs() > epsilon);
 			return current;
 		}
 

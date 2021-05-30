@@ -1,8 +1,10 @@
-﻿namespace VisualSatisfactoryCalculator.code.Interfaces
+﻿using VisualSatisfactoryCalculator.code.Numbers;
+
+namespace VisualSatisfactoryCalculator.code.Interfaces
 {
 	public interface IBuilding : IEncoder
 	{
-		decimal PowerConsumption { get; }
-		decimal PowerConsumptionExponent { get; }
+		RationalNumber PowerConsumption { get; }
+		RationalNumber PowerConsumptionExponent { get; }
 	}
 }

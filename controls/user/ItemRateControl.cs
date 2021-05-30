@@ -4,6 +4,7 @@ using System.Windows.Forms;
 
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Production;
 using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.forms;
@@ -12,7 +13,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 {
 	public partial class ItemRateControl : UserControl
 	{
-		public delegate void RateChanged(string itemUID, decimal newRate, bool isProduct);
+		public delegate void RateChanged(string itemUID, RationalNumber newRate, bool isProduct);
 		public delegate void ItemClicked(string itemUID, bool isProduct);
 
 		public string ItemUID { get; }
@@ -28,7 +29,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			return PlanLayoutMaker.AddParentPoints(this, panelDepth);
 		}
 
-		public ItemRateControl(MainForm mainForm, string itemUID, decimal rate, bool isProduct, int panelDepth, RateChanged rateChanged, ItemClicked itemClicked)
+		public ItemRateControl(MainForm mainForm, string itemUID, RationalNumber rate, bool isProduct, int panelDepth, RateChanged rateChanged, ItemClicked itemClicked)
 		{
 			initialized = false;
 			InitializeComponent();
@@ -41,11 +42,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 			ItemButton.Text = mainForm.Encoders[itemUID].DisplayName;
 			if ((mainForm.Encoders[itemUID] as IItem).IsFluid)
 			{
-				RateNumeric.Value = rate.Abs() / 1000;
+				RateNumeric.Value = (rate.Abs() / 1000).ToDecimal();
 			}
 			else
 			{
-				RateNumeric.Value = rate.Abs();
+				RateNumeric.Value = rate.Abs().ToDecimal();
 			}
 		}
 
@@ -74,17 +75,17 @@ namespace VisualSatisfactoryCalculator.controls.user
 			itemClicked(ItemUID, IsProduct);
 		}
 
-		public void UpdateRateValue(decimal newRate)
+		public void UpdateRateValue(RationalNumber newRate)
 		{
 			if (newRate != RateNumeric.Value)
 			{
 				if ((mainForm.Encoders[ItemUID] as IItem).IsFluid)
 				{
-					RateNumeric.Value = newRate.Abs() / 1000;
+					RateNumeric.Value = (newRate.Abs() / 1000).ToDecimal();
 				}
 				else
 				{
-					RateNumeric.Value = newRate.Abs();
+					RateNumeric.Value = newRate.Abs().ToDecimal();
 				}
 			}
 		}

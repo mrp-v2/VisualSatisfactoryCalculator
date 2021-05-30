@@ -6,6 +6,7 @@ using System.Windows.Forms;
 
 using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Extensions;
+using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Production;
 using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.forms;
@@ -27,11 +28,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 			BackingStep = backingStep;
 			MainForm = mainForm;
 			backingStep.SetControl(this);
-			foreach (ItemCount ic in backingStep.Recipe.Products.Values)
+			foreach (ItemRate ic in backingStep.Recipe.Products.Values)
 			{
 				AddItemRateControl(ic.ItemUID, true);
 			}
-			foreach (ItemCount ic in backingStep.Recipe.Ingredients.Values)
+			foreach (ItemRate ic in backingStep.Recipe.Ingredients.Values)
 			{
 				AddItemRateControl(ic.ItemUID, false);
 			}
@@ -55,16 +56,16 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 			if (MultiplierNumeric.Value != BackingStep.Multiplier)
 			{
-				MultiplierNumeric.Value = BackingStep.Multiplier;
+				MultiplierNumeric.Value = BackingStep.Multiplier.ToDecimal();
 			}
 			MachineCountLabel.Text = MainForm.Encoders[BackingStep.Recipe.MachineUID].DisplayName + ": " + BackingStep.CalculateMachineCount() + " x " + BackingStep.CalculateMachineClockPercentage() + "%";
 			PowerConsumptionLabel.Text = "Power Consumption: " + BackingStep.GetPowerDraw(MainForm.Encoders).ToPrettyString() + "MW";
 			ToggleInput(true);
 		}
 
-		private void RateChanged(string itemUID, decimal newRate, bool isProduct)
+		private void RateChanged(string itemUID, RationalNumber newRate, bool isProduct)
 		{
-			if (Math.Abs(BackingStep.GetItemRate(itemUID, isProduct)) != newRate)
+			if (BackingStep.GetItemRate(itemUID, isProduct).Abs() != newRate)
 			{
 				BackingStep.SetMultiplier(BackingStep.CalculateMultiplierForRate(itemUID, newRate, isProduct));
 			}

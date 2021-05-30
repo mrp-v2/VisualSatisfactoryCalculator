@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.JSONClasses
@@ -18,7 +19,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		};
 
 		public decimal CycleTime { get; }
-		public decimal ItemsPerCycle { get; }
+		public RationalNumber ItemsPerCycle { get; }
 		public string AllowedResourceForms { get; }
 		public bool OnlySpecificResources { get; }
 		public string[] AllowedResources { get; }
@@ -48,11 +49,11 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 					}
 					foreach (string resourceNodeType in NODE_CYCLE_TIME_DIVISORS.Keys)
 					{
-						List<ItemCount> products = new List<ItemCount>
+						List<ItemRate> products = new List<ItemRate>
 						{
-							new ItemCount(item.ID, ItemsPerCycle)
+							new ItemRate(item.ID, ItemsPerCycle)
 						};
-						IRecipe recipe = new JSONResourceExtractorRecipe(ID + resourceNodeType + item.ID, CycleTime / NODE_CYCLE_TIME_DIVISORS[resourceNodeType], ID, new List<ItemCount>(), products, resourceNodeType + " " + item.DisplayName);
+						IRecipe recipe = new JSONResourceExtractorRecipe(ID + resourceNodeType + item.ID, CycleTime / NODE_CYCLE_TIME_DIVISORS[resourceNodeType], ID, new List<ItemRate>(), products, resourceNodeType + " " + item.DisplayName);
 						recipes.Add(recipe.ID, recipe);
 					}
 				}
@@ -80,11 +81,11 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 								continue;
 							}
 						}
-						List<ItemCount> products = new List<ItemCount>
+						List<ItemRate> products = new List<ItemRate>
 						{
-							new ItemCount(item.ID, ItemsPerCycle)
+							new ItemRate(item.ID, ItemsPerCycle)
 						};
-						IRecipe recipe = new JSONResourceExtractorRecipe(ID + item.ID, CycleTime, ID, new List<ItemCount>(), products, item.DisplayName);
+						IRecipe recipe = new JSONResourceExtractorRecipe(ID + item.ID, CycleTime, ID, new List<ItemRate>(), products, item.DisplayName);
 						recipes.Add(recipe.ID, recipe);
 					}
 				}
@@ -94,7 +95,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 
 		public class JSONResourceExtractorRecipe : BasicRecipe
 		{
-			public JSONResourceExtractorRecipe(string UID, decimal craftTime, string machineUID, List<ItemCount> ingredients, List<ItemCount> products, string displayName) : base(UID, craftTime, machineUID, ingredients, products, displayName)
+			public JSONResourceExtractorRecipe(string UID, decimal craftTime, string machineUID, List<ItemRate> ingredients, List<ItemRate> products, string displayName) : base(UID, craftTime, machineUID, ingredients, products, displayName)
 			{
 			}
 

@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.Production
@@ -72,7 +74,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		{
 			internal readonly int ID;
 			internal readonly string RecipeID;
-			internal readonly decimal multiplier;
+			internal readonly RationalNumber multiplier;
 
 			internal CondensedStep(Step step, CondensingContext context)
 			{
@@ -86,8 +88,8 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public class CondensedConnection
 		{
 			internal readonly int ID;
-			public readonly Dictionary<int, decimal> Consumers = new Dictionary<int, decimal>();
-			public readonly Dictionary<int, decimal> Producers = new Dictionary<int, decimal>();
+			public readonly Dictionary<int, RationalNumber> Consumers = new Dictionary<int, RationalNumber>();
+			public readonly Dictionary<int, RationalNumber> Producers = new Dictionary<int, RationalNumber>();
 			internal readonly string ItemID;
 
 			internal CondensedConnection(Connection connection, CondensingContext context)

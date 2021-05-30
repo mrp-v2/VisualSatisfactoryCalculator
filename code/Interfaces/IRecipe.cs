@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using VisualSatisfactoryCalculator.code.DataStorage;
+using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.Interfaces
@@ -25,8 +26,8 @@ namespace VisualSatisfactoryCalculator.code.Interfaces
 		/// </param>
 		/// <returns></returns>
 		string ToString(Encodings encodings, string format);
-		Dictionary<string, ItemCount> Ingredients { get; }
-		Dictionary<string, ItemCount> Products { get; }
-		decimal GetCountFor(string itemUID, bool isProduct);
+		Dictionary<string, ItemRate> Ingredients { get; }
+		Dictionary<string, ItemRate> Products { get; }
+		RationalNumber GetCountFor(string itemUID, bool isProduct);
 	}
 }

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Production;
 using VisualSatisfactoryCalculator.forms;
 
@@ -18,9 +19,9 @@ namespace VisualSatisfactoryCalculator.controls.user
 		private readonly BalancingPrompt balancingPrompt;
 		public readonly Step Step;
 		public readonly bool IsOutput;
-		public readonly decimal OriginalRate;
+		public readonly RationalNumber OriginalRate;
 
-		public decimal Rate
+		public RationalNumber Rate
 		{
 			get
 			{
@@ -29,7 +30,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			set
 			{
 				Enabled = false;
-				Numeric.Value = value;
+				Numeric.Value = value.ToDecimal();
 				Enabled = true;
 			}
 		}

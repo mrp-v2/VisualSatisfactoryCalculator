@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.JSONClasses
@@ -33,9 +34,9 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			return default;
 		}
 
-		private static List<ItemCount> GetIngredients(string mIngredients)
+		private static List<ItemRate> GetIngredients(string mIngredients)
 		{
-			List<ItemCount> ingredientsList = new List<ItemCount>();
+			List<ItemRate> ingredientsList = new List<ItemRate>();
 			string[] ingredientsArray = mIngredients.Split(',');
 			Trace.Assert(ingredientsArray.Length % 2 == 0);
 			for (int i = 0; i < ingredientsArray.Length; i += 2)
@@ -45,9 +46,9 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			return ingredientsList;
 		}
 
-		private static List<ItemCount> GetProducts(string mProduct)
+		private static List<ItemRate> GetProducts(string mProduct)
 		{
-			List<ItemCount> productsList = new List<ItemCount>();
+			List<ItemRate> productsList = new List<ItemRate>();
 			string[] productsArray = mProduct.Split(',');
 			Trace.Assert(productsArray.Length % 2 == 0);
 			for (int i = 0; i < productsArray.Length; i += 2)
@@ -57,14 +58,14 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			return productsList;
 		}
 
-		private static ItemCount ParseItemCount(string itemString, string countString)
+		private static ItemRate ParseItemCount(string itemString, string countString)
 		{
 			itemString = itemString.Substring(itemString.IndexOf(".") + 1);
 			itemString = itemString.Substring(0, itemString.LastIndexOf("\""));
 			countString = countString.Replace(")", "");
 			countString = countString.Remove(0, "Amount=".Length);
-			int itemCount = int.Parse(countString);
-			return new ItemCount(itemString, itemCount);
+			RationalNumber itemCount = new RationalNumber(int.Parse(countString), 1);
+			return new ItemRate(itemString, itemCount);
 		}
 	}
 }

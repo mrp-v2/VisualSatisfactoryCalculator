@@ -5,6 +5,7 @@ using System.Linq;
 
 using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.controls.user;
 
@@ -12,7 +13,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 {
 	public class Step
 	{
-		public decimal Multiplier { get; private set; }
+		public RationalNumber Multiplier { get; private set; }
 		public readonly CachedValue<IImmutableSet<Connection>> Connections;
 		public readonly CachedValue<bool> HasNormalProductConnections;
 		public readonly CachedValue<IImmutableSet<Connection>> NormalIngredientConnections;
@@ -192,7 +193,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public Step(IRecipe recipe) : this()
 		{
 			Recipe = recipe;
-			Multiplier = 1m;
+			Multiplier = new RationalNumber(1, 1);
 			_control = default;
 		}
 
@@ -234,12 +235,12 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		public int CalculateMachineCount()
 		{
-			return (int)Math.Ceiling(Multiplier);
+			return (int)Math.Ceiling(Multiplier.ToDecimal());
 		}
 
 		public decimal CalculateMachineClockPercentage()
 		{
-			return Math.Ceiling(Multiplier * (int)Math.Pow(10, Constants.CLOCK_DECIMALS + 2) / CalculateMachineCount()) / (int)Math.Pow(10, Constants.CLOCK_DECIMALS);
+			return Math.Ceiling(Multiplier.ToDecimal() * (int)Math.Pow(10, Constants.CLOCK_DECIMALS + 2) / CalculateMachineCount()) / (int)Math.Pow(10, Constants.CLOCK_DECIMALS);
 		}
 
 		public void AddRelatedStep(Step related, string itemUID, bool isProductOfRelated)
@@ -254,7 +255,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			}
 		}
 
-		public void SetMultiplier(decimal multiplier, HashSet<Connection> excludedConnections, HashSet<Step> updated)
+		public void SetMultiplier(RationalNumber multiplier, HashSet<Connection> excludedConnections, HashSet<Step> updated)
 		{
 			SetMultiplier(multiplier, false);
 			updated.Add(this);
@@ -272,17 +273,17 @@ namespace VisualSatisfactoryCalculator.code.Production
 			}
 		}
 
-		public void SetMultiplier(decimal multiplier, HashSet<Connection> excludedConnections)
+		public void SetMultiplier(RationalNumber multiplier, HashSet<Connection> excludedConnections)
 		{
 			SetMultiplier(multiplier, excludedConnections, new HashSet<Step>());
 		}
 
-		public void SetMultiplier(decimal multiplier)
+		public void SetMultiplier(RationalNumber multiplier)
 		{
 			SetMultiplier(multiplier, new HashSet<Connection>());
 		}
 
-		public void SetMultiplier(decimal multiplier, bool causeCascadingUpdates)
+		public void SetMultiplier(RationalNumber multiplier, bool causeCascadingUpdates)
 		{
 			if (causeCascadingUpdates)
 			{
@@ -301,7 +302,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		/// <summary>
 		/// Always positive
 		/// </summary>
-		private decimal CalculateDefaultItemRate(string itemUID, bool isItemProduct)
+		private RationalNumber CalculateDefaultItemRate(string itemUID, bool isItemProduct)
 		{
 			return 60m / Recipe.CraftTime * Recipe.GetCountFor(itemUID, isItemProduct);
 		}
@@ -309,15 +310,15 @@ namespace VisualSatisfactoryCalculator.code.Production
 		/// <summary>
 		/// Always positive
 		/// </summary>
-		public decimal CalculateMultiplierForRate(string itemUID, decimal rate, bool isItemProduct)
+		public RationalNumber CalculateMultiplierForRate(string itemUID, RationalNumber rate, bool isItemProduct)
 		{
-			return Math.Abs(rate / CalculateDefaultItemRate(itemUID, isItemProduct));
+			return (rate / CalculateDefaultItemRate(itemUID, isItemProduct)).Abs();
 		}
 
 		/// <summary>
 		/// Always positive
 		/// </summary>
-		public decimal GetItemRate(string itemUID, bool isItemProduct)
+		public RationalNumber GetItemRate(string itemUID, bool isItemProduct)
 		{
 			return CalculateDefaultItemRate(itemUID, isItemProduct) * Multiplier;
 		}
@@ -343,7 +344,8 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		public decimal GetPowerDraw(Encodings encodings)
 		{
-			return (encodings[Recipe.MachineUID] as IBuilding).PowerConsumption * (decimal)Math.Pow((double)(CalculateMachineClockPercentage() / 100m), (double)(encodings[Recipe.MachineUID] as IBuilding).PowerConsumptionExponent) * CalculateMachineCount();
+			IBuilding building = encodings[Recipe.MachineUID] as IBuilding;
+			return building.PowerConsumption.ToDecimal() * (decimal)Math.Pow((double)(CalculateMachineClockPercentage() / 100m), (double)building.PowerConsumptionExponent.ToDecimal() * CalculateMachineCount());
 		}
 	}
 }
