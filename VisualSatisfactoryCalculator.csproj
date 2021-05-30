@@ -149,6 +149,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="code\Numbers\PrimeNumberHandler.cs" />
     <Compile Include="code\Production\CondensedPlan.cs" />
     <Compile Include="code\Production\Connection.cs" />
     <Compile Include="code\DataStorage\SimpleCustomItem.cs" />
@@ -168,11 +169,13 @@
     <Compile Include="code\JSONClasses\JSONRecipe.cs" />
     <Compile Include="code\JSONClasses\JSONResourceExtractor.cs" />
     <Compile Include="code\Production\ProcessedPlan.cs" />
+    <Compile Include="code\Numbers\RationalNumberUtil.cs" />
     <Compile Include="code\Utility\BitmapSerializer.cs" />
     <Compile Include="code\Utility\CachedValue.cs" />
     <Compile Include="code\Utility\Constants.cs" />
     <Compile Include="code\Utility\Encodings.cs" />
     <Compile Include="code\Utility\PlanLayoutMaker.cs" />
+    <Compile Include="code\Numbers\RationalNumber.cs" />
     <Compile Include="code\Utility\Util.cs" />
     <Compile Include="controls\user\BalancingControl.cs">
       <SubType>UserControl</SubType>
