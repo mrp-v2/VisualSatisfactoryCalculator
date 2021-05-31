@@ -11,9 +11,9 @@ namespace VisualSatisfactoryCalculator.code.Numbers
 		public static long GreatestCommonFactor(long a, long b)
 		{
 			PrimeNumberHandler.PrimeNumberAccesor primeNumberAccesor = new PrimeNumberHandler.PrimeNumberAccesor();
-			long currentPrime = primeNumberAccesor.GetNextPrimeNumber();
+			uint currentPrime = primeNumberAccesor.GetNextPrimeNumber();
 			long gcf = 1;
-			long smallerSQRT = (long)Math.Min(Math.Sqrt(a), Math.Sqrt(b)) + 1;
+			uint smallerSQRT = (uint)(Math.Min(Math.Sqrt(a), Math.Sqrt(b)) + 0.5);
 			while (currentPrime <= smallerSQRT)
 			{
 				if (a % currentPrime == 0 && b % currentPrime == 0)
