@@ -49,17 +49,19 @@ namespace VisualSatisfactoryCalculator.code.Numbers
 
 		private static (long, long) Simplify(long numerator, long denominator)
 		{
-			if (denominator > 1)
+			if (numerator < 0 && denominator < 0)
 			{
-				if (numerator % denominator == 0)
-				{
-					return (numerator / denominator, 1);
-				}
-				long gcf = RationalNumberUtil.GreatestCommonFactor(numerator, denominator);
-				if (gcf != 1)
-				{
-					return (numerator / gcf, denominator / gcf);
-				}
+				numerator = -numerator;
+				denominator = -denominator;
+			}
+			if (numerator % denominator == 0)
+			{
+				return (numerator / denominator, 1);
+			}
+			long gcf = RationalNumberUtil.GreatestCommonFactor(numerator, denominator);
+			if (gcf != 1)
+			{
+				return (numerator / gcf, denominator / gcf);
 			}
 			return (numerator, denominator);
 		}
@@ -118,7 +120,7 @@ namespace VisualSatisfactoryCalculator.code.Numbers
 
 		public RationalNumber Abs()
 		{
-			return new RationalNumber(Math.Abs(numerator), Math.Abs(denominator));
+			return new RationalNumber(Math.Abs(numerator), Math.Abs(denominator), false);
 		}
 
 		public static bool operator !=(RationalNumber a, RationalNumber b)
@@ -136,7 +138,7 @@ namespace VisualSatisfactoryCalculator.code.Numbers
 
 		public static implicit operator RationalNumber(int i)
 		{
-			return new RationalNumber(i, 1);
+			return new RationalNumber(i, 1, false);
 		}
 
 		public static bool operator <(RationalNumber a, RationalNumber b)

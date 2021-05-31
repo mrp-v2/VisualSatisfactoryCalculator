@@ -22,6 +22,11 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			return str;
 		}
 
+		public static decimal Round(this decimal m)
+		{
+			return Math.Round(m, Constants.DECIMALS);
+		}
+
 		public static RationalNumber Sqrt(this RationalNumber x)
 		{
 			return x.Sqrt(0);

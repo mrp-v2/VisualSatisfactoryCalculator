@@ -390,7 +390,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				throw new ArgumentException("Cannot update from a step that itself isn't updated");
 			}
-			RationalNumber oldRate = new RationalNumber(0, 1), newRate = new RationalNumber(0, 1);
+			RationalNumber oldRate = 0, newRate = 0;
 			if (consumers.ContainsKey(from))
 			{
 				oldRate = consumers[from];

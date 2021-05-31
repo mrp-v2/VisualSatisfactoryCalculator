@@ -23,6 +23,10 @@ namespace VisualSatisfactoryCalculator.controls.user
 		private readonly RateChanged rateChanged;
 		private readonly ItemClicked itemClicked;
 		private readonly int panelDepth;
+		private readonly bool isItemFluid;
+
+		private decimal oldDValue;
+		private RationalNumber oldRNValue;
 
 		public Point GetTotalLocation()
 		{
@@ -40,14 +44,8 @@ namespace VisualSatisfactoryCalculator.controls.user
 			ItemUID = itemUID;
 			IsProduct = isProduct;
 			ItemButton.Text = mainForm.Encoders[itemUID].DisplayName;
-			if ((mainForm.Encoders[itemUID] as IItem).IsFluid)
-			{
-				RateNumeric.Value = (rate.Abs() / 1000).ToDecimal();
-			}
-			else
-			{
-				RateNumeric.Value = rate.Abs().ToDecimal();
-			}
+			isItemFluid = (mainForm.Encoders[itemUID] as IItem).IsFluid;
+			UpdateRateValue(rate);
 		}
 
 		private void RateNumeric_ValueChanged(object sender, EventArgs e)
@@ -58,15 +56,16 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 			if (Enabled && initialized)
 			{
-				if ((mainForm.Encoders[ItemUID] as IItem).IsFluid)
+				mainForm.SuspendDrawing();
+				decimal difference = (RateNumeric.Value - oldDValue) * 1000;
+				if (isItemFluid)
 				{
-					rateChanged(ItemUID, RateNumeric.Value * 1000, IsProduct);
+					difference *= 1000;
 				}
-				else
-				{
-					rateChanged(ItemUID, RateNumeric.Value, IsProduct);
-				}
+				RationalNumber newRN = oldRNValue + difference;
+				rateChanged(ItemUID, newRN, IsProduct);
 				mainForm.UpdateTotalView();
+				mainForm.ResumeDrawing();
 			}
 		}
 
@@ -77,16 +76,18 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		public void UpdateRateValue(RationalNumber newRate)
 		{
-			if (newRate != RateNumeric.Value)
+			if (newRate.ToDecimal().Round() != RateNumeric.Value)
 			{
-				if ((mainForm.Encoders[ItemUID] as IItem).IsFluid)
+				if (isItemFluid)
 				{
-					RateNumeric.Value = (newRate.Abs() / 1000).ToDecimal();
+					RateNumeric.Value = (newRate.Abs() / 1000).ToDecimal().Round();
 				}
 				else
 				{
-					RateNumeric.Value = newRate.Abs().ToDecimal();
+					RateNumeric.Value = newRate.Abs().ToDecimal().Round();
 				}
+				oldDValue = RateNumeric.Value;
+				oldRNValue = newRate;
 			}
 		}
 

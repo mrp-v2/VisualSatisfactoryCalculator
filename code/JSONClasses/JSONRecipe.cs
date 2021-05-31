@@ -64,7 +64,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 			itemString = itemString.Substring(0, itemString.LastIndexOf("\""));
 			countString = countString.Replace(")", "");
 			countString = countString.Remove(0, "Amount=".Length);
-			RationalNumber itemCount = new RationalNumber(int.Parse(countString), 1);
+			RationalNumber itemCount = int.Parse(countString);
 			return new ItemRate(itemString, itemCount);
 		}
 	}

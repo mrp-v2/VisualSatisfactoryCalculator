@@ -38,6 +38,7 @@ namespace VisualSatisfactoryCalculator.forms
 			Application.EnableVisualStyles();
 			FileInteractor sfi = new FileInteractor();
 			Encodings encoders = sfi.GetEncoders();
+			sfi = default;
 			Application.Run(new MainForm(encoders));
 		}
 

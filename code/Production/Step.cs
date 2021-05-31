@@ -193,7 +193,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public Step(IRecipe recipe) : this()
 		{
 			Recipe = recipe;
-			Multiplier = new RationalNumber(1, 1);
+			Multiplier = 1;
 			_control = default;
 		}
 
