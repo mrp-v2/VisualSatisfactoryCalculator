@@ -10,11 +10,21 @@ namespace VisualSatisfactoryCalculator.code.Numbers
 	internal static class PrimeNumberHandler
 	{
 		// The maximum square root of a long fits into a uint, and we know the number of prime numbers
-		private static readonly uint[] primeNumbers = new uint[203280221];
+		private static uint[] primeNumbers = new uint[203280221];
 		private static bool primeNumbersFound = false;
+		private const string primeNumbersPath = "../../data/prime_numbers.pn";
 
 		private static void FindPrimeNumbers()
 		{
+			MrpV2.GenericLibrary.code.persistance.classes.SerializationSaveLoad fileInteractor = new MrpV2.GenericLibrary.code.persistance.classes.SerializationSaveLoad();
+			if (fileInteractor.FileExists(primeNumbersPath))
+			{
+				if (fileInteractor.TryLoad(primeNumbersPath, out primeNumbers))
+				{
+					primeNumbersFound = true;
+					return;
+				}
+			}
 			uint arraySize = uint.MaxValue / 4;
 			uint b0a = 2, b0b = 3, b1a = arraySize, b1b = arraySize + 1, b2a = b1a + arraySize, b2b = b1b + arraySize, b3a = b2a + arraySize, b3b = b2b + arraySize;
 			// b0b | b1a
@@ -100,6 +110,7 @@ namespace VisualSatisfactoryCalculator.code.Numbers
 			}
 			primeNumbersFound = true;
 			// Found primes in bounds: 54,400,028 | 50,697,536 | 49,472,952 | 48,709,705
+			fileInteractor.Save(primeNumbersPath, primeNumbers);
 		}
 
 		internal class PrimeNumberAccesor

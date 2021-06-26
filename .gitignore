@@ -355,3 +355,9 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+## Custom Ignores ##
+
+# Ignore the prime numbers file because its too big
+/data/prime_numbers.pn
+/data/prime_numbers.zip

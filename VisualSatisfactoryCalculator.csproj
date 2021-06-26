@@ -290,6 +290,7 @@
     </Content>
     <Content Include="notes.txt" />
     <None Include=".editorconfig" />
+    <Content Include="data\prime_numbers.pn" />
     <None Include="Properties\app.manifest" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -324,6 +325,16 @@
   </ItemGroup>
   <ItemGroup>
     <PublishFile Include="data\Docs.json">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>DataFile</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="data\prime_numbers.pn">
       <Visible>False</Visible>
       <Group>
       </Group>
