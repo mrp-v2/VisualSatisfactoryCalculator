@@ -22,9 +22,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 		public readonly Dictionary<string, ItemRateControl> IngredientRateControls = new Dictionary<string, ItemRateControl>();
 		public StepControl TopControl { get { return this; } }
 
-		private decimal oldDValue;
-		private RationalNumber oldRNValue;
-
 		public StepControl(Step backingStep, MainForm mainForm)
 		{
 			InitializeComponent();
@@ -40,9 +37,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 				AddItemRateControl(ic.ItemUID, false);
 			}
 			RecipeLabel.Text = backingStep.Recipe.ToString(mainForm.Encoders, "{name} | {conversion} | {time} seconds");
+			MultiplierNumberControl.SetNumber(BackingStep.Multiplier);
 			UpdateNumerics();
 			FinishInitialization();
 			Disposed += OnDisposed;
+			MultiplierNumberControl.AddNumberChangedListener(MultiplierValueChanged);
 		}
 
 		private void OnDisposed(object sender, EventArgs e)
@@ -57,20 +56,18 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				irc.UpdateRateValue(BackingStep.GetItemRate(irc.ItemUID, irc.IsProduct));
 			}
-			if (MultiplierNumeric.Value != BackingStep.Multiplier.ToDecimal().Round())
+			if (MultiplierNumberControl.GetNumber() != BackingStep.Multiplier)
 			{
-				MultiplierNumeric.Value = BackingStep.Multiplier.ToDecimal().Round();
-				oldDValue = MultiplierNumeric.Value;
-				oldRNValue = BackingStep.Multiplier;
+				MultiplierNumberControl.SetNumber(BackingStep.Multiplier);
 			}
 			MachineCountLabel.Text = MainForm.Encoders[BackingStep.Recipe.MachineUID].DisplayName + ": " + BackingStep.CalculateMachineCount() + " x " + BackingStep.CalculateMachineClockPercentage() + "%";
-			PowerConsumptionLabel.Text = "Power Consumption: " + BackingStep.GetPowerDraw(MainForm.Encoders).ToPrettyString() + "MW";
+			PowerConsumptionLabel.Text = "Power Consumption: " + BackingStep.GetPowerDraw(MainForm.Encoders).ToString() + "MW";
 			ToggleInput(true);
 		}
 
 		private void RateChanged(string itemUID, RationalNumber newRate, bool isProduct)
 		{
-			if (BackingStep.GetItemRate(itemUID, isProduct).Abs() != newRate)
+			if (BackingStep.GetItemRate(itemUID, isProduct).AbsoluteValue() != newRate)
 			{
 				BackingStep.SetMultiplier(BackingStep.CalculateMultiplierForRate(itemUID, newRate, isProduct));
 			}
@@ -154,17 +151,15 @@ namespace VisualSatisfactoryCalculator.controls.user
 			return list;
 		}
 
-		private void MultiplierNumeric_ValueChanged(object sender, EventArgs e)
+		private void MultiplierValueChanged()
 		{
-			if (MultiplierNumeric.Value == 0)
+			if (!MultiplierNumberControl.GetNumber().IsNonZero)
 			{
 				return;
 			}
 			if (Enabled && initialized)
 			{
-				decimal difference = MultiplierNumeric.Value - oldDValue;
-				RationalNumber newRN = oldRNValue + difference;
-				BackingStep.SetMultiplier(newRN);
+				BackingStep.SetMultiplier(MultiplierNumberControl.GetNumber());
 				MainForm.UpdateTotalView();
 			}
 		}

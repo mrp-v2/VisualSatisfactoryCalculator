@@ -8,7 +8,6 @@ namespace VisualSatisfactoryCalculator.code.Utility
 	public static class Constants
 	{
 		public const int CLOCK_DECIMALS = 4;
-		public const int DECIMALS = CLOCK_DECIMALS + 3;
 
 		public static readonly IItem MWItem = new SimpleCustomItem("FillerEnergyItemMW", "MW");
 

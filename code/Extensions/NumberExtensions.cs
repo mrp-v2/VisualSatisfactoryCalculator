@@ -12,21 +12,6 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			return Math.Abs(m);
 		}
 
-		public static string ToPrettyString(this decimal m)
-		{
-			string str = Math.Round(m, Constants.DECIMALS).ToString();
-			if (str.Contains("."))
-			{
-				str = str.TrimEnd('0').TrimEnd('.');
-			}
-			return str;
-		}
-
-		public static decimal Round(this decimal m)
-		{
-			return Math.Round(m, Constants.DECIMALS);
-		}
-
 		public static RationalNumber Sqrt(this RationalNumber x)
 		{
 			return x.Sqrt(0);
@@ -38,7 +23,7 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 			{
 				throw new OverflowException("Cannot calculate square root from a negative number");
 			}
-			RationalNumber current = (decimal)Math.Sqrt((double)x.ToDecimal()), previous;
+			RationalNumber current = (decimal)Math.Sqrt((double)x.ToDecimalT()), previous;
 			do
 			{
 				previous = current;
@@ -48,26 +33,8 @@ namespace VisualSatisfactoryCalculator.code.Extensions
 				}
 				current = (previous + (x / previous)) / 2;
 			}
-			while ((previous - current).Abs() > epsilon);
+			while ((previous - current).AbsoluteValue() > epsilon);
 			return current;
-		}
-
-		/// <summary>
-		/// Checks if two decimals are both greater than zero or both less than zero
-		/// </summary>
-		public static bool AreSignsEqual(this decimal a, decimal b)
-		{
-			return (a < 0 && b < 0) || (a > 0 && b > 0);
-		}
-
-		/// <summary>
-		/// Whether two decimals are equals within <see cref="Constants.DECIMALS"/> decimal places.
-		/// </summary>
-		public static bool ApproximatelyEqual(this decimal a, decimal b)
-		{
-			a = Math.Round(a, Constants.DECIMALS);
-			b = Math.Round(b, Constants.DECIMALS);
-			return a == b;
 		}
 	}
 }

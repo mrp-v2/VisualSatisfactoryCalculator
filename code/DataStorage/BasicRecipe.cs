@@ -11,13 +11,13 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 	public class BasicRecipe : IRecipe
 	{
 		public string ID { get; }
-		public decimal CraftTime { get; }
+		public RationalNumber CraftTime { get; }
 		public string MachineUID { get; }
 		public Dictionary<string, ItemRate> Ingredients { get; }
 		public Dictionary<string, ItemRate> Products { get; }
 		public string DisplayName { get; }
 
-		public BasicRecipe(string ID, decimal craftTime, string machineUID, List<ItemRate> ingredients, List<ItemRate> products, string displayName)
+		public BasicRecipe(string ID, RationalNumber craftTime, string machineUID, List<ItemRate> ingredients, List<ItemRate> products, string displayName)
 		{
 			this.ID = ID;
 			CraftTime = craftTime;
@@ -97,7 +97,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		{
 			string str = DisplayName + ": ";
 			str += GetConversionString(encodings);
-			str += " in " + CraftTime.ToPrettyString() + " seconds using a " + encodings[MachineUID].DisplayName;
+			str += " in " + CraftTime.ToString() + " seconds using a " + encodings[MachineUID].DisplayName;
 			return str;
 		}
 
@@ -130,7 +130,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		{
 			format = format.Replace("{name}", DisplayName);
 			format = format.Replace("{conversion}", GetConversionString(encodings));
-			format = format.Replace("{time}", CraftTime.ToPrettyString());
+			format = format.Replace("{time}", CraftTime.ToString());
 			format = format.Replace("{machine}", encodings[MachineUID].DisplayName);
 			return format;
 		}

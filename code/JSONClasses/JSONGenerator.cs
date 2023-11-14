@@ -26,19 +26,19 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		private readonly decimal supplementalToPowerRatio;
 
 		[JsonConstructor]
-		public JSONGenerator(string ClassName, string mDefaultFuelClasses, bool mRequiresSupplementalResource, decimal mSupplementalToPowerRatio, string mPowerProduction, string mPowerProductionExponent, string mDisplayName)
+		public JSONGenerator(string ClassName, string mDefaultFuelClasses, bool mRequiresSupplementalResource, decimal mSupplementalToPowerRatio, string mPowerProduction, string mDisplayName)
 		{
 			ID = ClassName;
 			fuelItemIDs = Util.ParseUIDList(mDefaultFuelClasses);
 			powerProduction = decimal.Parse(mPowerProduction);
-			PowerConsumptionExponent = decimal.Parse(mPowerProductionExponent);
+			PowerConsumptionExponent = 1;
 			DisplayName = mDisplayName;
 			requiresSupplementalResource = mRequiresSupplementalResource;
 			supplementalToPowerRatio = mSupplementalToPowerRatio;
 			NativeClass = FileInteractor.ActiveNativeClass;
 		}
 
-		public static readonly RationalNumber EnergyDivisor = new RationalNumber(50, 3);
+		public static readonly RationalNumber EnergyDivisor = new RationalNumber(50, 3, true);
 		public static readonly decimal SupplementalResourceFactor = 60m;
 
 		public Dictionary<string, IRecipe> GetRecipes(Encodings encodings)
@@ -49,9 +49,10 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 				IEncoder encodingItem = encodings[fuelItemID];
 				Trace.Assert(encodingItem is JSONItem);
 				JSONItem jItem = encodingItem as JSONItem;
+				decimal d = jItem.EnergyValue / 1000;
 				List<ItemRate> ingredients = new List<ItemRate>
 				{
-					new ItemRate(fuelItemID, powerProduction / (jItem.EnergyValue / 1000) / EnergyDivisor)
+					new ItemRate(fuelItemID, powerProduction / d / EnergyDivisor)
 				};
 				if (requiresSupplementalResource)
 				{
@@ -98,7 +99,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 					}
 					str += Ingredients[key].ToString(encodings);
 				}
-				str += " -> " + powerProduction.ToDecimal().ToPrettyString() + " MW";
+				str += " -> " + powerProduction.ToString() + " MW";
 				return str;
 			}
 		}

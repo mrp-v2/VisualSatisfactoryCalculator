@@ -25,7 +25,7 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		public string ToString(Encodings encodings)
 		{
 			IItem item = encodings[ItemUID] as IItem;
-			return item.ToString(Rate.ToDecimal()) + " " + item.DisplayName;
+			return Rate + " " + item.DisplayName;
 		}
 
 		public override int GetHashCode()

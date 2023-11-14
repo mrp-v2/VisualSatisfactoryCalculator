@@ -23,10 +23,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 		private readonly RateChanged rateChanged;
 		private readonly ItemClicked itemClicked;
 		private readonly int panelDepth;
-		private readonly bool isItemFluid;
-
-		private decimal oldDValue;
-		private RationalNumber oldRNValue;
 
 		public Point GetTotalLocation()
 		{
@@ -44,26 +40,16 @@ namespace VisualSatisfactoryCalculator.controls.user
 			ItemUID = itemUID;
 			IsProduct = isProduct;
 			ItemButton.Text = mainForm.Encoders[itemUID].DisplayName;
-			isItemFluid = (mainForm.Encoders[itemUID] as IItem).IsFluid;
 			UpdateRateValue(rate);
+			NumberControl.AddNumberChangedListener(NumberChanged);
 		}
 
-		private void RateNumeric_ValueChanged(object sender, EventArgs e)
+		private void NumberChanged()
 		{
-			if (RateNumeric.Value == 0)
-			{
-				return;
-			}
 			if (Enabled && initialized)
 			{
 				mainForm.SuspendDrawing();
-				decimal difference = (RateNumeric.Value - oldDValue) * 1000;
-				if (isItemFluid)
-				{
-					difference *= 1000;
-				}
-				RationalNumber newRN = oldRNValue + difference;
-				rateChanged(ItemUID, newRN, IsProduct);
+				rateChanged(ItemUID, NumberControl.GetNumber(), IsProduct);
 				mainForm.UpdateTotalView();
 				mainForm.ResumeDrawing();
 			}
@@ -76,24 +62,12 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		public void UpdateRateValue(RationalNumber newRate)
 		{
-			if (newRate.ToDecimal().Round() != RateNumeric.Value)
-			{
-				if (isItemFluid)
-				{
-					RateNumeric.Value = (newRate.Abs() / 1000).ToDecimal().Round();
-				}
-				else
-				{
-					RateNumeric.Value = newRate.Abs().ToDecimal().Round();
-				}
-				oldDValue = RateNumeric.Value;
-				oldRNValue = newRate;
-			}
+			NumberControl.SetNumber(newRate);
 		}
 
 		public void ToggleInput(bool on)
 		{
-			if (RateNumeric.Value == 0 && Enabled)
+			if (!NumberControl.GetNumber().IsNonZero && Enabled)
 			{
 				Enabled = false;
 				return;

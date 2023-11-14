@@ -31,30 +31,19 @@ namespace VisualSatisfactoryCalculator.controls.user
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.Numeric = new System.Windows.Forms.NumericUpDown();
+			this.NumberControl = new RationalNumberControl();
 			this.LockBox = new System.Windows.Forms.CheckBox();
 			this.MainLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
-			((System.ComponentModel.ISupportInitialize)(this.Numeric)).BeginInit();
 			this.MainLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// Numeric
+			// NumberControl
 			// 
-			this.Numeric.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.Numeric.AutoSize = true;
-			this.Numeric.DecimalPlaces = Constants.DECIMALS;
-			this.Numeric.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-			this.Numeric.Location = new System.Drawing.Point(0, 23);
-			this.Numeric.Margin = new System.Windows.Forms.Padding(0);
-			this.Numeric.Maximum = new decimal(new int[] {
-			100000000,
-			0,
-			0,
-			0});
-			this.Numeric.Name = "Numeric";
-			this.Numeric.Size = new System.Drawing.Size(84, 23);
-			this.Numeric.TabIndex = 0;
-			this.Numeric.ValueChanged += new System.EventHandler(this.Numeric_ValueChanged);
+			this.NumberControl.Anchor = System.Windows.Forms.AnchorStyles.Top;
+			this.NumberControl.Location = new System.Drawing.Point(0, 23);
+			this.NumberControl.Margin = new System.Windows.Forms.Padding(0);
+			this.NumberControl.Name = "NumberControl";
+			this.NumberControl.TabIndex = 0;
 			// 
 			// LockBox
 			// 
@@ -73,7 +62,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.MainLayoutPanel.AutoSize = true;
 			this.MainLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.MainLayoutPanel.Controls.Add(this.LockBox);
-			this.MainLayoutPanel.Controls.Add(this.Numeric);
+			this.MainLayoutPanel.Controls.Add(this.NumberControl);
 			this.MainLayoutPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.MainLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
@@ -90,7 +79,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.Controls.Add(this.MainLayoutPanel);
 			this.Name = "BalancingControl";
 			this.Size = new System.Drawing.Size(84, 46);
-			((System.ComponentModel.ISupportInitialize)(this.Numeric)).EndInit();
 			this.MainLayoutPanel.ResumeLayout(false);
 			this.MainLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
@@ -100,7 +88,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		#endregion
 
-		private System.Windows.Forms.NumericUpDown Numeric;
+		private RationalNumberControl NumberControl;
 		private System.Windows.Forms.CheckBox LockBox;
 		private System.Windows.Forms.FlowLayoutPanel MainLayoutPanel;
 	}

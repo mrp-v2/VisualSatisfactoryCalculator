@@ -10,7 +10,7 @@ namespace VisualSatisfactoryCalculator.code.Interfaces
 {
 	interface IResourceExtractor : IBuilding
 	{
-		decimal CycleTime { get; }
+		RationalNumber CycleTime { get; }
 		RationalNumber ItemsPerCycle { get; }
 		string AllowedResourceForms { get; }
 		bool OnlySpecificResources { get; }

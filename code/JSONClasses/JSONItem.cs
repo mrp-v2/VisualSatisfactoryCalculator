@@ -54,10 +54,5 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		{
 			return obj.EqualID(ID);
 		}
-
-		public string ToString(decimal rate)
-		{
-			return (IsFluid ? rate / 1000 : rate).ToPrettyString();
-		}
 	}
 }

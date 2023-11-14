@@ -10,7 +10,7 @@ namespace VisualSatisfactoryCalculator.code.Interfaces
 	public interface IRecipe : IEquatable<IRecipe>, IEncoder
 	{
 		string MachineUID { get; }
-		decimal CraftTime { get; }
+		RationalNumber CraftTime { get; }
 		string ToString(Encodings encodings);
 		/// <summary>
 		/// Creates a formatted string representation of this recipe.

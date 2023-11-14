@@ -120,6 +120,11 @@
     <Reference Include="System.Collections.Immutable, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Collections.Immutable.5.0.0\lib\net461\System.Collections.Immutable.dll</HintPath>
     </Reference>
+    <Reference Include="System.Collections.NonGeneric, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Collections.NonGeneric.4.3.0\lib\net46\System.Collections.NonGeneric.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing.Common, Version=4.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Drawing.Common.4.7.0\lib\net461\System.Drawing.Common.dll</HintPath>
@@ -150,6 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="code\DataStorage\ItemRate.cs" />
+    <Compile Include="code\Numbers\RationalNumber.cs" />
     <Compile Include="code\Numbers\PrimeNumberHandler.cs" />
     <Compile Include="code\Production\CondensedPlan.cs" />
     <Compile Include="code\Production\Connection.cs" />
@@ -170,13 +176,12 @@
     <Compile Include="code\JSONClasses\JSONRecipe.cs" />
     <Compile Include="code\JSONClasses\JSONResourceExtractor.cs" />
     <Compile Include="code\Production\ProcessedPlan.cs" />
-    <Compile Include="code\Numbers\RationalNumberUtil.cs" />
+    <Compile Include="code\Production\RateCollection.cs" />
     <Compile Include="code\Utility\BitmapSerializer.cs" />
     <Compile Include="code\Utility\CachedValue.cs" />
     <Compile Include="code\Utility\Constants.cs" />
     <Compile Include="code\Utility\Encodings.cs" />
     <Compile Include="code\Utility\PlanLayoutMaker.cs" />
-    <Compile Include="code\Numbers\RationalNumber.cs" />
     <Compile Include="code\Utility\Util.cs" />
     <Compile Include="controls\user\BalancingControl.cs">
       <SubType>UserControl</SubType>
@@ -189,6 +194,12 @@
     </Compile>
     <Compile Include="controls\user\LineControl.Designer.cs">
       <DependentUpon>LineControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="controls\user\RationalNumberControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="controls\user\RationalNumberControl.Designer.cs">
+      <DependentUpon>RationalNumberControl.cs</DependentUpon>
     </Compile>
     <Compile Include="controls\user\SplitAndMergeControl.cs">
       <SubType>UserControl</SubType>
@@ -256,6 +267,9 @@
     <EmbeddedResource Include="controls\user\PlanTotalViewControl.resx">
       <DependentUpon>PlanTotalViewControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="controls\user\RationalNumberControl.resx">
+      <DependentUpon>RationalNumberControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="controls\user\SplitAndMergeControl.resx">
       <DependentUpon>SplitAndMergeControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -290,7 +304,6 @@
     </Content>
     <Content Include="notes.txt" />
     <None Include=".editorconfig" />
-    <Content Include="data\prime_numbers.pn" />
     <None Include="Properties\app.manifest" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

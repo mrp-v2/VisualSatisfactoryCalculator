@@ -44,10 +44,5 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 		{
 			return obj.EqualID(ID);
 		}
-
-		public string ToString(decimal rate)
-		{
-			return rate.ToPrettyString();
-		}
 	}
 }

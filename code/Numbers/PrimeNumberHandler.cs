@@ -4,133 +4,57 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace VisualSatisfactoryCalculator.code.Numbers
 {
 	internal static class PrimeNumberHandler
 	{
-		// The maximum square root of a long fits into a uint, and we know the number of prime numbers
-		private static uint[] primeNumbers = new uint[203280221];
-		private static bool primeNumbersFound = false;
-		private const string primeNumbersPath = "../../data/prime_numbers.pn";
+		// start with all the prime numbers less than 100
+		private static readonly List<int> primeNumbers = new List<int>() { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97 };
+		private static readonly int PrimeFindingWarningLevel = (int)Math.Round(int.MaxValue * 0.99f);
 
-		private static void FindPrimeNumbers()
+		private static void FindNextPrime()
 		{
-			MrpV2.GenericLibrary.code.persistance.classes.SerializationSaveLoad fileInteractor = new MrpV2.GenericLibrary.code.persistance.classes.SerializationSaveLoad();
-			if (fileInteractor.FileExists(primeNumbersPath))
+			// start testing just above the last found prime
+			int test = primeNumbers[primeNumbers.Count - 1] + 2;
+			if (test > PrimeFindingWarningLevel)
 			{
-				if (fileInteractor.TryLoad(primeNumbersPath, out primeNumbers))
+				Console.WriteLine("WARNING: Prime number finding is approaching the integer limit!!");
+			}
+		MainLoop:
+			foreach (int prime in primeNumbers)
+			{
+				if (test % prime == 0)
 				{
-					primeNumbersFound = true;
-					return;
+					// if our test fails, increment by 2 and start over
+					test += 2;
+					goto MainLoop;
 				}
 			}
-			uint arraySize = uint.MaxValue / 4;
-			uint b0a = 2, b0b = 3, b1a = arraySize, b1b = arraySize + 1, b2a = b1a + arraySize, b2b = b1b + arraySize, b3a = b2a + arraySize, b3b = b2b + arraySize;
-			// b0b | b1a
-			BitArray seive1 = new BitArray((int)(b1a - b0a));
-			// b1b | b2a
-			BitArray seive2 = new BitArray((int)(b2a - b1a));
-			// b2b | b3a
-			BitArray seive3 = new BitArray((int)(b3a - b2a));
-			// b3b | uint.MaxValue
-			BitArray seive4 = new BitArray((int)(uint.MaxValue - b3a));
-			bool isPrime(uint number)
-			{
-				if (number <= b1a)
-				{
-					return !seive1.Get((int)(number - b0b));
-				}
-				else if (number <= b2a)
-				{
-					return !seive2.Get((int)(number - b1b));
-				}
-				else if (number <= b3a)
-				{
-					return !seive3.Get((int)(number - b2b));
-				}
-				else
-				{
-					return !seive4.Get((int)(number - b3b));
-				}
-			}
-			void setComposite(uint number)
-			{
-				if (number <= b1a)
-				{
-					seive1.Set((int)(number - b0b), true);
-				}
-				else if (number <= b2a)
-				{
-					seive2.Set((int)(number - b1b), true);
-				}
-				else if (number <= b3a)
-				{
-					seive3.Set((int)(number - b2b), true);
-				}
-				else
-				{
-					seive4.Set((int)(number - b3b), true);
-				}
-			}
-			// 2 is the starting prime number
-			int primeArrayIndex = 0;
-			primeNumbers[primeArrayIndex++] = 2;
-			for (uint compositeNumber = 4; compositeNumber >= 4; compositeNumber += 2)
-			{
-				setComposite(compositeNumber);
-			}
-			uint currentPrime = 1;
-			while (currentPrime <= uint.MaxValue)
-			{
-				bool shouldStop = true;
-				for (uint primeTest = currentPrime + 2; primeTest < uint.MaxValue; primeTest += 2)
-				{
-					if (isPrime(primeTest))
-					{
-						primeNumbers[primeArrayIndex++] = primeTest;
-						currentPrime = primeTest;
-						if (currentPrime < uint.MaxValue / 3)
-						{
-							uint twiceCurrentPrime = currentPrime + currentPrime;
-							uint thriceCurrentPrive = twiceCurrentPrime + currentPrime;
-							for (uint compositeNumber = thriceCurrentPrive; compositeNumber >= thriceCurrentPrive; compositeNumber += twiceCurrentPrime)
-							{
-								setComposite(compositeNumber);
-							}
-						}
-						shouldStop = false;
-						break;
-					}
-				}
-				if (shouldStop)
-				{
-					break;
-				}
-			}
-			primeNumbersFound = true;
-			// Found primes in bounds: 54,400,028 | 50,697,536 | 49,472,952 | 48,709,705
-			fileInteractor.Save(primeNumbersPath, primeNumbers);
+			primeNumbers.Add(test);
+			return;
 		}
 
 		internal class PrimeNumberAccesor
 		{
-			private int index = 0;
+			private int index;
 
 			public PrimeNumberAccesor()
 			{
-				if (!primeNumbersFound)
-				{
-					FindPrimeNumbers();
-				}
+				index = 0;
 			}
 
-			public uint GetNextPrimeNumber()
+			public int PeekNextPrimeNumber()
 			{
 				EnsureIndexExists();
-				uint num = primeNumbers[index];
-				index++;
-				return num;
+				return primeNumbers[index];
+			}
+
+			public int GetNextPrimeNumber()
+			{
+				EnsureIndexExists();
+				return primeNumbers[index++];
 			}
 
 			public void Reset()
@@ -140,11 +64,38 @@ namespace VisualSatisfactoryCalculator.code.Numbers
 
 			private void EnsureIndexExists()
 			{
-				if (primeNumbers.Length == index)
+				if (primeNumbers.Count == index)
 				{
-					throw new InvalidOperationException("Ran out of prime numbers");
+					FindNextPrime();
 				}
 			}
+		}
+
+		public static List<int> PrimeFactors(int number)
+		{
+			if (number == 1)
+			{
+				Console.WriteLine("WARNING: Tried to prime factor 1! Something might be amiss...");
+				return new List<int>();
+			}
+			if (number < 1)
+			{
+				throw new ArgumentException("Can't find the prime factors of a number less than 1!");
+			}
+			List<int> primeFactors = new List<int>();
+			PrimeNumberAccesor primeSupplier = new PrimeNumberAccesor();
+			while (number > 1)
+			{
+				int test = primeSupplier.GetNextPrimeNumber();
+				while (number % test != 0)
+				{
+					test = primeSupplier.GetNextPrimeNumber();
+				}
+				primeSupplier.Reset();
+				primeFactors.Add(test);
+				number /= test;
+			}
+			return primeFactors;
 		}
 	}
 }

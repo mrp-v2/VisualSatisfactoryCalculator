@@ -99,15 +99,15 @@ namespace VisualSatisfactoryCalculator.code.Utility
 					RationalNumber discriminate = (b * b) - (4 * a * c);
 					RationalNumber discriminateSqrt = discriminate.Sqrt();
 					RationalNumber pairedMultiplierA = (-b + discriminateSqrt) / (2 * a), pairedMultiplierB = discriminate > 0 ? (-b - discriminateSqrt) / (2 * a) : pairedMultiplierA;
-					if (pairedMultiplierA < 0 && pairedMultiplierB < 0)
+					if (!pairedMultiplierA.IsPositive && !pairedMultiplierB.IsPositive)
 					{
 						throw new BalancingException("Unable to find a valid multiplier");
 					}
-					else if (pairedMultiplierB < 0)
+					else if (!pairedMultiplierB.IsPositive)
 					{
 						pairedMultiplierB = pairedMultiplierA;
 					}
-					else if (pairedMultiplierA < 0)
+					else if (!pairedMultiplierA.IsPositive)
 					{
 						pairedMultiplierA = pairedMultiplierB;
 					}
@@ -131,7 +131,7 @@ namespace VisualSatisfactoryCalculator.code.Utility
 						bool increasingBeforeA = isMultiplierProductIncreasingAt(pairedMultiplierA - 1);
 						if (!increasingBeforeA)
 						{
-							throw new BalancingException("Cannot maximize product");
+							throw new BalancingException("Cannot maximize products");
 						}
 						bool increasingBetweenAAndB = isMultiplierProductIncreasingAt(pairedMultiplierA + ((pairedMultiplierB - pairedMultiplierA) / 2));
 						bool increasingAfterB = isMultiplierProductIncreasingAt(pairedMultiplierB + 1);

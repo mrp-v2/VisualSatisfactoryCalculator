@@ -35,7 +35,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.InfoPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.MultiplierPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.MultiplierLable = new System.Windows.Forms.Label();
-			this.MultiplierNumeric = new System.Windows.Forms.NumericUpDown();
+			this.MultiplierNumberControl = new RationalNumberControl();
 			this.DeleteStepButton = new System.Windows.Forms.Button();
 			this.RecipeLabel = new System.Windows.Forms.Label();
 			this.MachineCountLabel = new System.Windows.Forms.Label();
@@ -44,7 +44,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.MainLayout = new System.Windows.Forms.FlowLayoutPanel();
 			this.InfoPanel.SuspendLayout();
 			this.MultiplierPanel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.MultiplierNumeric)).BeginInit();
 			this.MainPanel.SuspendLayout();
 			this.MainLayout.SuspendLayout();
 			this.SuspendLayout();
@@ -87,7 +86,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.MultiplierPanel.AutoSize = true;
 			this.MultiplierPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.MultiplierPanel.Controls.Add(this.MultiplierLable);
-			this.MultiplierPanel.Controls.Add(this.MultiplierNumeric);
+			this.MultiplierPanel.Controls.Add(this.MultiplierNumberControl);
 			this.MultiplierPanel.Controls.Add(this.DeleteStepButton);
 			this.MultiplierPanel.Location = new System.Drawing.Point(0, 0);
 			this.MultiplierPanel.Margin = new System.Windows.Forms.Padding(0);
@@ -108,21 +107,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 			// 
 			// MultiplierNumeric
 			// 
-			this.MultiplierNumeric.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.MultiplierNumeric.AutoSize = true;
-			this.MultiplierNumeric.DecimalPlaces = Constants.DECIMALS;
-			this.MultiplierNumeric.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.MultiplierNumeric.Location = new System.Drawing.Point(77, 5);
-			this.MultiplierNumeric.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-			this.MultiplierNumeric.Name = "MultiplierNumeric";
-			this.MultiplierNumeric.Size = new System.Drawing.Size(136, 23);
-			this.MultiplierNumeric.TabIndex = 1;
-			this.MultiplierNumeric.ThousandsSeparator = true;
-			this.MultiplierNumeric.ValueChanged += new System.EventHandler(this.MultiplierNumeric_ValueChanged);
+			this.MultiplierNumberControl.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.MultiplierNumberControl.AutoSize = true;
+			this.MultiplierNumberControl.Location = new System.Drawing.Point(77, 5);
+			this.MultiplierNumberControl.Name = "MultiplierNumeric";
+			this.MultiplierNumberControl.TabIndex = 1;
 			// 
 			// DeleteStepButton
 			// 
@@ -207,7 +196,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.InfoPanel.PerformLayout();
 			this.MultiplierPanel.ResumeLayout(false);
 			this.MultiplierPanel.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.MultiplierNumeric)).EndInit();
 			this.MainPanel.ResumeLayout(false);
 			this.MainPanel.PerformLayout();
 			this.MainLayout.ResumeLayout(false);
@@ -227,7 +215,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 		private System.Windows.Forms.Label MachineCountLabel;
 		public System.Windows.Forms.FlowLayoutPanel MainPanel;
 		private System.Windows.Forms.FlowLayoutPanel MultiplierPanel;
-		private System.Windows.Forms.NumericUpDown MultiplierNumeric;
+		private RationalNumberControl MultiplierNumberControl;
 		private System.Windows.Forms.Button DeleteStepButton;
 		private System.Windows.Forms.FlowLayoutPanel MainLayout;
 		private System.Windows.Forms.Label PowerConsumptionLabel;

@@ -25,12 +25,12 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			get
 			{
-				return Numeric.Value;
+				return NumberControl.GetNumber();
 			}
 			set
 			{
 				Enabled = false;
-				Numeric.Value = value.ToDecimal();
+				NumberControl.SetNumber(value);
 				Enabled = true;
 			}
 		}
@@ -56,10 +56,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 			Step = step;
 			IsOutput = isOutput;
 			OriginalRate = step.GetItemRate(balancingPrompt.Connection.ItemID, !isOutput);
+			NumberControl.AddNumberChangedListener(ValueChanged);
 			Rate = OriginalRate;
 		}
 
-		private void Numeric_ValueChanged(object sender, EventArgs e)
+		private void ValueChanged()
 		{
 			if (Enabled)
 			{

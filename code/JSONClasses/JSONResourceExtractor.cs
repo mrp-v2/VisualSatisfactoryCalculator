@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,12 +14,12 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 {
 	class JSONResourceExtractor : JSONBuilding, IResourceExtractor, IFromJson
 	{
-		public static Dictionary<string, decimal> NODE_CYCLE_TIME_DIVISORS = new Dictionary<string, decimal>
+		public static Dictionary<string, RationalNumber> NODE_CYCLE_TIME_DIVISORS = new Dictionary<string, RationalNumber>
 		{
-			{"Impure", 0.5m }, { "Normal", 1.0m }, { "Pure", 2.0m }
+			{"Impure", new RationalNumber(1, 2, true) }, { "Normal", 1 }, { "Pure", 2 }
 		};
 
-		public decimal CycleTime { get; }
+		public RationalNumber CycleTime { get; }
 		public RationalNumber ItemsPerCycle { get; }
 		public string AllowedResourceForms { get; }
 		public bool OnlySpecificResources { get; }
@@ -26,8 +27,8 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 
 		public JSONResourceExtractor(string ClassName, string mPowerConsumption, string mPowerConsumptionExponent, string mDisplayName, string mExtractCycleTime, string mItemsPerCycle, string mAllowedResourceForms, string mOnlyAllowCertainResources, string mAllowedResources) : base(ClassName, mPowerConsumption, mPowerConsumptionExponent, mDisplayName)
 		{
-			CycleTime = decimal.Parse(mExtractCycleTime);
-			ItemsPerCycle = decimal.Parse(mItemsPerCycle);
+			CycleTime = RationalNumber.FromDecimalString(mExtractCycleTime);
+			ItemsPerCycle = RationalNumber.FromDecimalString(mItemsPerCycle);
 			AllowedResourceForms = mAllowedResourceForms;
 			OnlySpecificResources = bool.Parse(mOnlyAllowCertainResources);
 			AllowedResources = Util.ParseUIDList(mAllowedResources);
@@ -95,7 +96,7 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 
 		public class JSONResourceExtractorRecipe : BasicRecipe
 		{
-			public JSONResourceExtractorRecipe(string UID, decimal craftTime, string machineUID, List<ItemRate> ingredients, List<ItemRate> products, string displayName) : base(UID, craftTime, machineUID, ingredients, products, displayName)
+			public JSONResourceExtractorRecipe(string UID, RationalNumber craftTime, string machineUID, List<ItemRate> ingredients, List<ItemRate> products, string displayName) : base(UID, craftTime, machineUID, ingredients, products, displayName)
 			{
 			}
 

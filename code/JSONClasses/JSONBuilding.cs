@@ -18,8 +18,8 @@ namespace VisualSatisfactoryCalculator.code.JSONClasses
 		public JSONBuilding(string ClassName, string mPowerConsumption, string mPowerConsumptionExponent, string mDisplayName)
 		{
 			ID = ClassName;
-			PowerConsumption = decimal.Parse(mPowerConsumption);
-			PowerConsumptionExponent = decimal.Parse(mPowerConsumptionExponent);
+			PowerConsumption = RationalNumber.FromDecimalString(mPowerConsumption);
+			PowerConsumptionExponent = RationalNumber.FromDecimalString(mPowerConsumptionExponent);
 			DisplayName = mDisplayName;
 			NativeClass = FileInteractor.ActiveNativeClass;
 		}

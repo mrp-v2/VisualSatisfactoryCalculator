@@ -26,7 +26,6 @@ namespace VisualSatisfactoryCalculator.code.Utility
 				Culture = System.Globalization.CultureInfo.GetCultureInfo(1033),
 			};
 			_docGroups = new Dictionary<string, JArray>();
-			//
 			List<JToken> groups = JArray.Parse(_jsonFile).Children().ToList();
 			foreach (JToken token in groups)
 			{
@@ -48,6 +47,9 @@ namespace VisualSatisfactoryCalculator.code.Utility
 			GetSection<JSONItem, JSONItem>("FGResourceDescriptor", items);
 			GetSection<JSONItem, JSONItem>("FGConsumableDescriptor", items);
 			GetSection<JSONItem, JSONItem>("FGItemDescriptorNuclearFuel", items);
+			GetSection<JSONItem, JSONItem>("FGAmmoTypeProjectile", items);
+			GetSection<JSONItem, JSONItem>("FGAmmoTypeSpreadshot", items);
+			GetSection<JSONItem, JSONItem>("FGAmmoTypeInstantHit", items);
 			foreach (JSONItem item in items)
 			{
 				totalResults.Add(item.ID, item);

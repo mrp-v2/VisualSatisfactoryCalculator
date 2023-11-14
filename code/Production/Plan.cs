@@ -29,34 +29,27 @@ namespace VisualSatisfactoryCalculator.code.Production
 			}
 		}
 
-		public Dictionary<string, RationalNumber> GetNetRates(Encodings encodings)
+		public RateCollection GetNetRates(Encodings encodings)
 		{
 			return GetProductRates().Subtract(GetIngredientRates(encodings));
 		}
 
-		public Dictionary<string, RationalNumber> GetProductRates()
+		public RateCollection GetProductRates()
 		{
-			Dictionary<string, RationalNumber> rates = new Dictionary<string, RationalNumber>();
+			RateCollection rates = new RateCollection(0);
 			foreach (Step step in Steps)
 			{
 				foreach (ItemRate itemCount in step.Recipe.Products.Values)
 				{
-					if (rates.ContainsKey(itemCount.ItemUID))
-					{
-						rates[itemCount.ItemUID] += step.GetItemRate(itemCount.ItemUID, true);
-					}
-					else
-					{
-						rates.Add(itemCount.ItemUID, step.GetItemRate(itemCount.ItemUID, true));
-					}
+					rates.Add(itemCount.ItemUID, step.GetItemRate(itemCount.ItemUID, true));
 				}
 			}
 			return rates;
 		}
 
-		public RationalNumber GetPowerDraw(Encodings encodings)
+		public double GetPowerDraw(Encodings encodings)
 		{
-			decimal powerDraw = 0;
+			double powerDraw = 0;
 			foreach (Step step in Steps)
 			{
 				powerDraw += step.GetPowerDraw(encodings);
@@ -64,24 +57,14 @@ namespace VisualSatisfactoryCalculator.code.Production
 			return powerDraw;
 		}
 
-		public Dictionary<string, RationalNumber> GetIngredientRates(Encodings encodings)
+		public RateCollection GetIngredientRates(Encodings encodings)
 		{
-			Dictionary<string, RationalNumber> rates = new Dictionary<string, RationalNumber>()
-			{
-				{ Constants.MWItem.ID, GetPowerDraw(encodings) }
-			};
+			RateCollection rates = new RateCollection(GetPowerDraw(encodings));
 			foreach (Step step in Steps)
 			{
 				foreach (ItemRate itemCount in step.Recipe.Ingredients.Values)
 				{
-					if (rates.ContainsKey(itemCount.ItemUID))
-					{
-						rates[itemCount.ItemUID] += step.GetItemRate(itemCount.ItemUID, false);
-					}
-					else
-					{
-						rates.Add(itemCount.ItemUID, step.GetItemRate(itemCount.ItemUID, false));
-					}
+					rates.Add(itemCount.ItemUID, step.GetItemRate(itemCount.ItemUID, false));
 				}
 			}
 			return rates;
@@ -118,14 +101,14 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public string GetProductsString(Encodings encodings)
 		{
 			string str = "Net Products: ";
-			Dictionary<string, RationalNumber> netRates = GetNetRates(encodings);
+			RateCollection netRates = GetNetRates(encodings);
 			bool first = true;
-			foreach (string itemUID in netRates.Keys)
+			foreach (string itemUID in netRates.ItemUIDs)
 			{
 				RationalNumber rate = netRates[itemUID];
 				IItem item = encodings[itemUID] as IItem;
-				string rateStr = item.ToString(rate.ToDecimal());
-				if (rate > 0 && decimal.Parse(rateStr) != 0)
+				string rateStr = rate.ToString();
+				if (rate.IsPositive && rate.IsNonZero)
 				{
 					if (first)
 					{
@@ -139,9 +122,9 @@ namespace VisualSatisfactoryCalculator.code.Production
 				}
 			}
 			str += "\nAll Products: ";
-			Dictionary<string, RationalNumber> rates = GetProductRates();
+			RateCollection rates = GetProductRates();
 			first = true;
-			foreach (string itemUID in rates.Keys)
+			foreach (string itemUID in rates.ItemUIDs)
 			{
 				IItem item = encodings[itemUID] as IItem;
 				if (first)
@@ -152,7 +135,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 				{
 					str += ", ";
 				}
-				str += item.ToString(rates[itemUID].ToDecimal()) + " " + item.DisplayName;
+				str += rates[itemUID].ToString() + " " + item.DisplayName;
 			}
 			return str;
 		}
@@ -160,9 +143,9 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public string GetIngredientsString(Encodings encodings)
 		{
 			string str = "All Ingredients: ";
-			Dictionary<string, RationalNumber> rates = GetIngredientRates(encodings);
+			RateCollection rates = GetIngredientRates(encodings);
 			bool first = true;
-			foreach (string itemUID in rates.Keys)
+			foreach (string itemUID in rates.ItemUIDs)
 			{
 				IItem item = encodings[itemUID] as IItem;
 				if (first)
@@ -173,17 +156,17 @@ namespace VisualSatisfactoryCalculator.code.Production
 				{
 					str += ", ";
 				}
-				str += item.ToString(rates[itemUID].ToDecimal()) + " " + item.DisplayName;
+				str += rates[itemUID].ToString() + " " + item.DisplayName;
 			}
 			str += "\nNet Ingredients: ";
-			Dictionary<string, RationalNumber> netRates = GetNetRates(encodings);
+			RateCollection netRates = GetNetRates(encodings);
 			first = true;
-			foreach (string itemUID in netRates.Keys)
+			foreach (string itemUID in netRates.ItemUIDs)
 			{
 				RationalNumber rate = netRates[itemUID];
 				IItem item = encodings[itemUID] as IItem;
-				string rateStr = item.ToString(-rate.ToDecimal());
-				if (rate < 0 && decimal.Parse(rateStr) != 0)
+				string rateStr = (-rate).ToString();
+				if (!rate.IsPositive && rate.IsNonZero)
 				{
 					if (first)
 					{

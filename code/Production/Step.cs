@@ -235,12 +235,12 @@ namespace VisualSatisfactoryCalculator.code.Production
 
 		public int CalculateMachineCount()
 		{
-			return (int)Math.Ceiling(Multiplier.ToDecimal());
+			return Multiplier.Ceiling();
 		}
 
-		public decimal CalculateMachineClockPercentage()
+		public RationalNumber CalculateMachineClockPercentage()
 		{
-			return Math.Ceiling(Multiplier.ToDecimal() * (int)Math.Pow(10, Constants.CLOCK_DECIMALS + 2) / CalculateMachineCount()) / (int)Math.Pow(10, Constants.CLOCK_DECIMALS);
+			return (Multiplier * RationalNumber.Pow(Constants.CLOCK_DECIMALS + 2) / CalculateMachineCount()).Ceiling() / RationalNumber.Pow(Constants.CLOCK_DECIMALS);
 		}
 
 		public void AddRelatedStep(Step related, string itemUID, bool isProductOfRelated)
@@ -304,7 +304,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		/// </summary>
 		private RationalNumber CalculateDefaultItemRate(string itemUID, bool isItemProduct)
 		{
-			return 60m / Recipe.CraftTime * Recipe.GetCountFor(itemUID, isItemProduct);
+			return 60 / Recipe.CraftTime * Recipe.GetCountFor(itemUID, isItemProduct);
 		}
 
 		/// <summary>
@@ -312,7 +312,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		/// </summary>
 		public RationalNumber CalculateMultiplierForRate(string itemUID, RationalNumber rate, bool isItemProduct)
 		{
-			return (rate / CalculateDefaultItemRate(itemUID, isItemProduct)).Abs();
+			return (rate / CalculateDefaultItemRate(itemUID, isItemProduct)).AbsoluteValue();
 		}
 
 		/// <summary>
@@ -342,10 +342,10 @@ namespace VisualSatisfactoryCalculator.code.Production
 			plan.ProcessedPlan.Invalidate();
 		}
 
-		public decimal GetPowerDraw(Encodings encodings)
+		public double GetPowerDraw(Encodings encodings)
 		{
 			IBuilding building = encodings[Recipe.MachineUID] as IBuilding;
-			return building.PowerConsumption.ToDecimal() * (decimal)Math.Pow((double)(CalculateMachineClockPercentage() / 100m), (double)building.PowerConsumptionExponent.ToDecimal() * CalculateMachineCount());
+			return building.PowerConsumption.ToDouble() * Math.Pow(CalculateMachineClockPercentage().ToDouble() / 100, building.PowerConsumptionExponent.ToDouble() * CalculateMachineCount());
 		}
 	}
 }
