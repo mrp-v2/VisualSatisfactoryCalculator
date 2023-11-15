@@ -61,7 +61,8 @@ namespace VisualSatisfactoryCalculator.controls.user
 				MultiplierNumberControl.SetNumber(BackingStep.Multiplier);
 			}
 			MachineCountLabel.Text = MainForm.Encoders[BackingStep.Recipe.MachineUID].DisplayName + ": " + BackingStep.CalculateMachineCount() + " x " + BackingStep.CalculateMachineClockPercentage() + "%";
-			PowerConsumptionLabel.Text = "Power Consumption: " + BackingStep.GetPowerDraw(MainForm.Encoders).ToString() + "MW";
+			double powerDraw = BackingStep.GetPowerDraw(MainForm.Encoders);
+			PowerConsumptionLabel.Text = powerDraw > 0 ? $"Power Consumption: {powerDraw} MW" : $"Power Production: {-powerDraw} MW";
 			ToggleInput(true);
 		}
 

@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.forms;
+
 namespace VisualSatisfactoryCalculator.code.Production
 {
 	public class ProcessedPlan

@@ -126,6 +126,8 @@ namespace VisualSatisfactoryCalculator.forms
 		public void UpdateTotalView()
 		{
 			PPTVC.ProductsLabel.Text = Plan.GetProductsString(Encoders);
+			double powerDraw = Plan.GetPowerDraw(Encoders);
+			PPTVC.PowerDrawLabel.Text = powerDraw > 0 ? $"Power Draw: {powerDraw} MW" : $"Power Production: {-powerDraw} MW";
 			PPTVC.MachinesLabel.Text = Plan.GetMachinesString(Encoders);
 			PPTVC.IngredientsLabel.Text = Plan.GetIngredientsString(Encoders);
 		}

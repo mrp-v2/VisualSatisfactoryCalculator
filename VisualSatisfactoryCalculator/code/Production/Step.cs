@@ -345,7 +345,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 		public double GetPowerDraw(Encodings encodings)
 		{
 			IBuilding building = encodings[Recipe.MachineUID] as IBuilding;
-			return building.PowerConsumption.ToDouble() * Math.Pow(CalculateMachineClockPercentage().ToDouble() / 100, building.PowerConsumptionExponent.ToDouble() * CalculateMachineCount());
+			return building.PowerConsumption.ToDouble() * Math.Pow(CalculateMachineClockPercentage().ToDouble() / 100, building.PowerConsumptionExponent.ToDouble()) * CalculateMachineCount();
 		}
 	}
 }
