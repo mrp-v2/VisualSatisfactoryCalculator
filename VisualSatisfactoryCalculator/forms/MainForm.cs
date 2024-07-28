@@ -39,7 +39,6 @@ namespace VisualSatisfactoryCalculator.forms
 			FileInteractor sfi = new FileInteractor();
 			Encodings encoders = sfi.GetEncoders();
 			Application.Run(new MainForm(encoders));
-			Console.WriteLine("Hello");
 		}
 
 		public Encodings Encoders { get; }

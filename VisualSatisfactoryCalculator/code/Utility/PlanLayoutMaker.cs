@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-
-using MrpV2.GenericLibrary.code.dictionary.bidirectional.classes;
 
 using VisualSatisfactoryCalculator.code.Production;
 using VisualSatisfactoryCalculator.controls.user;
