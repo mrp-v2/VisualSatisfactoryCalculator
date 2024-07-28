@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 
@@ -7,7 +6,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using VisualSatisfactoryCalculator.code.Extensions;
-using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.JSONClasses;
 
 namespace VisualSatisfactoryCalculator.code.Utility

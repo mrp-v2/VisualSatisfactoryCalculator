@@ -1,7 +1,6 @@
 ﻿using System;
 
 using VisualSatisfactoryCalculator.code.Numbers;
-using VisualSatisfactoryCalculator.code.Utility;
 
 namespace VisualSatisfactoryCalculator.code.Extensions
 {

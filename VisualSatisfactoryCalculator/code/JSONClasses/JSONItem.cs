@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 
-using VisualSatisfactoryCalculator.code.Extensions;
 using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.Utility;
 

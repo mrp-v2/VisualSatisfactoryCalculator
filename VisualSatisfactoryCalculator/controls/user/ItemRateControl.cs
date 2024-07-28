@@ -2,10 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-using VisualSatisfactoryCalculator.code.Extensions;
-using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.Numbers;
-using VisualSatisfactoryCalculator.code.Production;
 using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.forms;
 
