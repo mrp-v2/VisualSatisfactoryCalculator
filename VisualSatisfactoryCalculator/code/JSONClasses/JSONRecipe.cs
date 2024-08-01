@@ -7,6 +7,7 @@ using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.model.production;
 
 namespace VisualSatisfactoryCalculator.code.JSONClasses
 {

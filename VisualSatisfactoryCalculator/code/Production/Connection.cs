@@ -8,6 +8,7 @@ using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.controls.user;
 using VisualSatisfactoryCalculator.forms;
+using VisualSatisfactoryCalculator.model.production;
 
 namespace VisualSatisfactoryCalculator.code.Production
 {
@@ -257,6 +258,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			StepDeleted();
 		}
 
+		[Obsolete("Use SetMultiplierFromRate instead")]
 		private void BalanceConnectionRates()
 		{
 			if (Type.Get() != ConnectionType.INCOMPLETE)
@@ -334,6 +336,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			}
 		}
 
+		[Obsolete("Use SetMultiplierFromRate instead")]
 		private void UpdateRatesFromSteps()
 		{
 			foreach (Step step in GetConsumerSteps())
@@ -365,6 +368,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			}
 		}
 
+		[Obsolete("Use SetMultiplierFromRate instead")]
 		public void UpdateMultipliers(HashSet<Step> updated, Step from, HashSet<Connection> excludedConnections)
 		{
 			if (!updated.Contains(from))
@@ -506,6 +510,11 @@ namespace VisualSatisfactoryCalculator.code.Production
 				}
 			}
 			return false;
+		}
+
+		internal void UpdateFromRate(ItemRate rate, bool isItemOutgoing, Step updateSource)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

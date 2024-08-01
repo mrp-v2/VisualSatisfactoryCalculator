@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 
-using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.model.production;
 
 namespace VisualSatisfactoryCalculator.code.Production
 {
@@ -28,7 +28,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			RateCollection rates = new RateCollection(0);
 			foreach (Step step in Steps)
 			{
-				foreach (ItemRate itemCount in step.Recipe.Products.Values)
+				foreach (ItemRate itemCount in step.ProductionRates.Get())
 				{
 					rates.Add(itemCount.ItemUID, step.GetItemRate(itemCount.ItemUID, true));
 				}
@@ -51,7 +51,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			RateCollection rates = new RateCollection(GetPowerDraw(encodings));
 			foreach (Step step in Steps)
 			{
-				foreach (ItemRate itemCount in step.Recipe.Ingredients.Values)
+				foreach (ItemRate itemCount in step.ConsumptionRates.Get())
 				{
 					rates.Add(itemCount.ItemUID, step.GetItemRate(itemCount.ItemUID, false));
 				}

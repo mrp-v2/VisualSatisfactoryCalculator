@@ -7,15 +7,19 @@ using VisualSatisfactoryCalculator.code.Interfaces;
 using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.controls.user;
+using VisualSatisfactoryCalculator.model.production;
 
 namespace VisualSatisfactoryCalculator.code.Production
 {
 	public class Step
 	{
+		[Obsolete("Use SetMultiplierFromRate instead")]
 		public RationalNumber Multiplier { get; private set; }
 		public readonly CachedValue<IImmutableSet<Connection>> Connections;
 		public readonly CachedValue<bool> HasNormalProductConnections;
 		public readonly CachedValue<IImmutableSet<Connection>> NormalIngredientConnections;
+		public readonly CachedValue<IEnumerable<ItemRate>> ProductionRates;
+		public readonly CachedValue<IEnumerable<ItemRate>> ConsumptionRates;
 		private readonly HashSet<Connection> IngredientConnections;
 		private readonly HashSet<Connection> ProductConnections;
 		private StepControl _control;
@@ -136,6 +140,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			IngredientConnections.Add(connection);
 			Connections.Invalidate();
 			NormalIngredientConnections.Invalidate();
+			ConsumptionRates.Invalidate();
 		}
 
 		public void AddProductConnection(Connection connection)
@@ -143,6 +148,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			ProductConnections.Add(connection);
 			Connections.Invalidate();
 			HasNormalProductConnections.InvalidateIf(false);
+			ProductionRates.Invalidate();
 		}
 
 		public void RemoveIngredientConnection(Connection connection)
@@ -150,6 +156,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			IngredientConnections.Remove(connection);
 			Connections.Invalidate();
 			NormalIngredientConnections.Invalidate();
+			ConsumptionRates.Invalidate();
 		}
 
 		public void RemoveProductConnection(Connection connection)
@@ -157,6 +164,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			ProductConnections.Remove(connection);
 			Connections.Invalidate();
 			HasNormalProductConnections.InvalidateIf(true);
+			ProductionRates.Invalidate();
 		}
 
 		public readonly IRecipe Recipe;
@@ -230,6 +238,24 @@ namespace VisualSatisfactoryCalculator.code.Production
 				}
 				return ImmutableHashSet.CreateRange(normalIngredients);
 			});
+			ProductionRates = new CachedValue<IEnumerable<ItemRate>>(() =>
+			{
+				HashSet<ItemRate> rates = new HashSet<ItemRate>();
+				foreach (Connection connection in ProductConnections)
+				{
+					rates.Add(new ItemRate(connection.ItemID, GetItemRate(connection.ItemID, true)));
+				}
+				return rates;
+			});
+			ConsumptionRates = new CachedValue<IEnumerable<ItemRate>>(() =>
+			{
+				HashSet<ItemRate> rates = new HashSet<ItemRate>();
+				foreach (Connection connection in IngredientConnections)
+				{
+					rates.Add(new ItemRate(connection.ItemID, GetItemRate(connection.ItemID, false)));
+				}
+				return rates;
+			});
 		}
 
 		public int CalculateMachineCount()
@@ -254,11 +280,40 @@ namespace VisualSatisfactoryCalculator.code.Production
 			}
 		}
 
+		public void UpdateFromRate(ItemRate rate, bool isProduct)
+		{
+			// TODO update self properties somehow
+		}
+
+		private void UpdateFromRateCascading(ItemRate rate, bool isProduct, HashSet<Connection> excludedConnextions, HashSet<Step> updated)
+		{
+			UpdateFromRate(rate, isProduct);
+			updated.Add(this);
+			foreach (Connection connection in Connections.Get())
+			{
+				if (!excludedConnextions.Contains(connection))
+				{
+					ItemRate connectionRate = null; // TODO get rate for connection
+					bool connectionIsProduct = ProductConnections.Contains(connection);
+					connection.UpdateFromRate(rate, !connectionIsProduct, this);
+				}
+			}
+
+			// TODO cascade updates
+		}
+
+		public void UpdateFromRateCascading(ItemRate rate, bool isProduct)
+		{
+			UpdateFromRateCascading(rate, isProduct, new HashSet<Connection>(), new HashSet<Step>());
+		}
+
+		[Obsolete("Use SetMultiplierFromRate instead")]
 		internal void SetMultiplierFromRate(RationalNumber newRate, string itemID, bool isProduct, HashSet<Connection> excludedConnections, HashSet<Step> updated)
 		{
 			SetMultiplier(CalculateMultiplierForRate(itemID, newRate, isProduct), false);
 		}
 
+		[Obsolete("Use SetMultiplierFromRate instead")]
 		public void SetMultiplier(RationalNumber multiplier, HashSet<Connection> excludedConnections, HashSet<Step> updated)
 		{
 			SetMultiplier(multiplier, false);
@@ -277,16 +332,19 @@ namespace VisualSatisfactoryCalculator.code.Production
 			}
 		}
 
+		[Obsolete("Use SetMultiplierFromRate instead")]
 		public void SetMultiplier(RationalNumber multiplier, HashSet<Connection> excludedConnections)
 		{
 			SetMultiplier(multiplier, excludedConnections, new HashSet<Step>());
 		}
 
+		[Obsolete("Use SetMultiplierFromRate instead")]
 		public void SetMultiplier(RationalNumber multiplier)
 		{
 			SetMultiplier(multiplier, new HashSet<Connection>());
 		}
 
+		[Obsolete("Use SetMultiplierFromRate instead")]
 		public void SetMultiplier(RationalNumber multiplier, bool causeCascadingUpdates)
 		{
 			if (causeCascadingUpdates)
@@ -296,6 +354,8 @@ namespace VisualSatisfactoryCalculator.code.Production
 			else
 			{
 				Multiplier = multiplier;
+				ProductionRates.Invalidate();
+				ConsumptionRates.Invalidate();
 				if (_control != default(StepControl))
 				{
 					_control.UpdateNumerics();

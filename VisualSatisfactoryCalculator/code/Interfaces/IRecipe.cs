@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using VisualSatisfactoryCalculator.code.DataStorage;
 using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.model.production;
 
 namespace VisualSatisfactoryCalculator.code.Interfaces
 {

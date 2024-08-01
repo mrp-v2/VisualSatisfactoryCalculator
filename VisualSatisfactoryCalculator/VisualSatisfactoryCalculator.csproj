@@ -106,7 +106,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="code\DataStorage\ItemRate.cs" />
+    <Compile Include="model\production\Connection.cs" />
+    <Compile Include="model\production\ItemRate.cs" />
     <Compile Include="code\Numbers\RationalNumber.cs" />
     <Compile Include="code\Numbers\PrimeNumberHandler.cs" />
     <Compile Include="code\Production\CondensedPlan.cs" />
@@ -206,6 +207,8 @@
     <Compile Include="forms\SelectRecipePrompt.Designer.cs">
       <DependentUpon>SelectRecipePrompt.cs</DependentUpon>
     </Compile>
+    <Compile Include="model\production\AbstractStep.cs" />
+    <Compile Include="model\production\ItemRateCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="controls\user\BalancingControl.resx">
       <DependentUpon>BalancingControl.cs</DependentUpon>
@@ -254,7 +257,6 @@
     <Content Include="data\Docs.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="notes.txt" />
     <None Include=".editorconfig" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
@@ -266,6 +268,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="TODO.md" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -305,16 +308,6 @@
       <TargetPath>
       </TargetPath>
       <PublishState>DataFile</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="notes.txt">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Exclude</PublishState>
       <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
