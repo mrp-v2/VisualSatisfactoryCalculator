@@ -7,26 +7,25 @@ using VisualSatisfactoryCalculator.code.Utility;
 namespace VisualSatisfactoryCalculator.model.production
 {
 	[Serializable]
-	public class ItemRate
+	public class ItemRate<ItemType> where ItemType : AbstractItem
 	{
 		public RationalNumber Rate { get; }
-		public string ItemUID { get; }
+		public ItemType Item { get; }
 
-		public ItemRate(string itemUID, RationalNumber rate)
+		public ItemRate(ItemType itemUID, RationalNumber rate)
 		{
-			ItemUID = itemUID;
+			this.Item = itemUID;
 			Rate = rate;
 		}
 
-		public string ToString(Encodings encodings)
+		public override string ToString()
 		{
-			IItem item = encodings[ItemUID] as IItem;
-			return Rate + " " + item.DisplayName;
+			return Rate + " " + this.Item.ToString();
 		}
 
 		public override int GetHashCode()
 		{
-			return ItemUID.GetHashCode() * Rate.GetHashCode();
+			return this.Item.GetHashCode() * Rate.GetHashCode();
 		}
 
 		public override bool Equals(object obj)
@@ -35,9 +34,9 @@ namespace VisualSatisfactoryCalculator.model.production
 			{
 				return false;
 			}
-			if (obj is ItemRate other)
+			if (obj is ItemRate<ItemType> other)
 			{
-				return ItemUID.Equals(other.ItemUID) && Rate == other.Rate;
+				return this.Item.Equals(other.Item) && Rate == other.Rate;
 			}
 			else
 			{

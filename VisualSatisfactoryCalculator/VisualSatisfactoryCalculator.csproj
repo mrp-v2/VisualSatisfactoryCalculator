@@ -106,6 +106,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="model\production\AbstractItem.cs" />
+    <Compile Include="model\production\AbstractPlan.cs" />
+    <Compile Include="model\production\CascadingUpdateHandler.cs" />
     <Compile Include="model\production\Connection.cs" />
     <Compile Include="model\production\ItemRate.cs" />
     <Compile Include="code\Numbers\RationalNumber.cs" />
@@ -208,7 +211,9 @@
       <DependentUpon>SelectRecipePrompt.cs</DependentUpon>
     </Compile>
     <Compile Include="model\production\AbstractStep.cs" />
+    <Compile Include="model\production\ItemRateAndConnectionCollection.cs" />
     <Compile Include="model\production\ItemRateCollection.cs" />
+    <Compile Include="model\production\Recipe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="controls\user\BalancingControl.resx">
       <DependentUpon>BalancingControl.cs</DependentUpon>

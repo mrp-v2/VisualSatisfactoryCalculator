@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace VisualSatisfactoryCalculator.model.production
 {
-	public class ItemRateCollection<ItemType> : Dictionary<ItemType, ItemRate<ItemType>> where ItemType : AbstractItem
+	public class AbstractPlan<StepType, ItemType> where StepType : AbstractStep<ItemType> where ItemType : AbstractItem
 	{
-
+		protected readonly HashSet<StepType> steps;
 	}
 }

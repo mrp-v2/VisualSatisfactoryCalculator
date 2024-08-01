@@ -30,7 +30,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				foreach (ItemRate itemCount in step.ProductionRates.Get())
 				{
-					rates.Add(itemCount.ItemUID, step.GetItemRate(itemCount.ItemUID, true));
+					rates.Add(itemCount.Item, step.GetItemRate(itemCount.Item, true));
 				}
 			}
 			return rates;
@@ -53,7 +53,7 @@ namespace VisualSatisfactoryCalculator.code.Production
 			{
 				foreach (ItemRate itemCount in step.ConsumptionRates.Get())
 				{
-					rates.Add(itemCount.ItemUID, step.GetItemRate(itemCount.ItemUID, false));
+					rates.Add(itemCount.Item, step.GetItemRate(itemCount.Item, false));
 				}
 			}
 			return rates;

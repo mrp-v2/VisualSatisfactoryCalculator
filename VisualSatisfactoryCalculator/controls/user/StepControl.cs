@@ -30,11 +30,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 			backingStep.SetControl(this);
 			foreach (ItemRate ic in backingStep.Recipe.Products.Values)
 			{
-				AddItemRateControl(ic.ItemUID, true);
+				AddItemRateControl(ic.Item, true);
 			}
 			foreach (ItemRate ic in backingStep.Recipe.Ingredients.Values)
 			{
-				AddItemRateControl(ic.ItemUID, false);
+				AddItemRateControl(ic.Item, false);
 			}
 			RecipeLabel.Text = backingStep.Recipe.ToString(mainForm.Encoders, "{name} | {conversion} | {time} seconds");
 			MultiplierNumberControl.SetNumber(BackingStep.Multiplier);

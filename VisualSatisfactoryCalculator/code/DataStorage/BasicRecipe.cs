@@ -26,12 +26,12 @@ namespace VisualSatisfactoryCalculator.code.DataStorage
 			Ingredients = new Dictionary<string, ItemRate>();
 			foreach (ItemRate itemCount in ingredients)
 			{
-				Ingredients.Add(itemCount.ItemUID, itemCount);
+				Ingredients.Add(itemCount.Item, itemCount);
 			}
 			Products = new Dictionary<string, ItemRate>();
 			foreach (ItemRate itemCount in products)
 			{
-				Products.Add(itemCount.ItemUID, itemCount);
+				Products.Add(itemCount.Item, itemCount);
 			}
 			DisplayName = displayName;
 		}
