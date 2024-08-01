@@ -156,23 +156,6 @@ namespace VisualSatisfactoryCalculator.code.Production
 			StepsChanged();
 		}
 
-		public void VerifyConnection()
-		{
-			RationalNumber producersTotal = 0, consumersTotal = 0;
-			foreach (RationalNumber d in producers.Values)
-			{
-				producersTotal += d;
-			}
-			foreach (RationalNumber d in consumers.Values)
-			{
-				consumersTotal += d;
-			}
-			if (producersTotal + consumersTotal != 0)
-			{
-				throw new InvalidOperationException("This connection is invalid!");
-			}
-		}
-
 		private void StepsChanged()
 		{
 			ConnectedSteps.Invalidate();
@@ -423,7 +406,14 @@ namespace VisualSatisfactoryCalculator.code.Production
 					continue;
 				}
 				excludedConnections.Add(this);
-				step.SetMultiplier(step.Multiplier * multiplier, excludedConnections, updated);
+				if (producers.Count == 1 && consumers.Count == 1)
+				{
+					step.SetMultiplierFromRate(newRate, ItemID, consumers.ContainsKey(from), excludedConnections, updated);
+				}
+				else
+				{
+					step.SetMultiplier(step.Multiplier * multiplier, excludedConnections, updated);
+				}
 				if (producers.ContainsKey(step))
 				{
 					producers[step] = step.GetItemRate(ItemID, true);

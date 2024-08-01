@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace VisualSatisfactoryCalculator.code.Numbers.Tests
 {
-	[TestClass()]
+	[TestClass]
 	public class RationalNumberTests
 	{
-		[TestMethod()]
+		[TestMethod]
 		public void AddTest()
 		{
 			// Whole Numbers
@@ -54,6 +54,12 @@ namespace VisualSatisfactoryCalculator.code.Numbers.Tests
 			Assert.AreEqual(b + c, a);
 			Assert.AreEqual(d + a, b);
 			Assert.AreEqual(a + d, b);
+		}
+
+		[TestMethod]
+		public void CeilingTest()
+		{
+			Assert.AreEqual(new RationalNumber(0.1234).Ceiling(3), new RationalNumber(0.124));
 		}
 	}
 }

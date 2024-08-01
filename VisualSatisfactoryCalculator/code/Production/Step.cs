@@ -254,6 +254,11 @@ namespace VisualSatisfactoryCalculator.code.Production
 			}
 		}
 
+		internal void SetMultiplierFromRate(RationalNumber newRate, string itemID, bool isProduct, HashSet<Connection> excludedConnections, HashSet<Step> updated)
+		{
+			SetMultiplier(CalculateMultiplierForRate(itemID, newRate, isProduct), false);
+		}
+
 		public void SetMultiplier(RationalNumber multiplier, HashSet<Connection> excludedConnections, HashSet<Step> updated)
 		{
 			SetMultiplier(multiplier, false);
@@ -307,11 +312,12 @@ namespace VisualSatisfactoryCalculator.code.Production
 		}
 
 		/// <summary>
-		/// Always positive
+		/// Always positive.
+		/// Calculates the multiplier required to produce/consume the specified rate.
 		/// </summary>
 		public RationalNumber CalculateMultiplierForRate(string itemUID, RationalNumber rate, bool isItemProduct)
 		{
-			return (rate / CalculateDefaultItemRate(itemUID, isItemProduct)).AbsoluteValue();
+			return (rate / CalculateDefaultItemRate(itemUID, isItemProduct)).AbsoluteValue().Ceiling(3);
 		}
 
 		/// <summary>

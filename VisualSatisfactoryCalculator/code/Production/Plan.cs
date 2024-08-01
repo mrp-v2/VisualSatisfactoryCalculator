@@ -16,15 +16,6 @@ namespace VisualSatisfactoryCalculator.code.Production
 		{
 			Steps = new HashSet<Step>();
 			ProcessedPlan = new CachedValue<ProcessedPlan>(() => new ProcessedPlan(this));
-			ProcessedPlan.AddValueCalculatedCallback((sender, args) => VerifyPlan());
-		}
-
-		private void VerifyPlan()
-		{
-			foreach (Connection connection in ProcessedPlan.Get().GetAllConnections())
-			{
-				connection.VerifyConnection();
-			}
 		}
 
 		public RateCollection GetNetRates(Encodings encodings)

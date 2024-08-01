@@ -171,6 +171,16 @@ namespace VisualSatisfactoryCalculator.code.Numbers
 			return (int)Math.Ceiling(ToDecimalT());
 		}
 
+		public RationalNumber Ceiling(int decimals)
+		{
+			int numerator = GetNumerator(), denominator = GetDenominator();
+			int multiplier = (int)Math.Pow(10, decimals);
+			numerator *= multiplier;
+			numerator += denominator - (numerator % denominator);
+			denominator *= multiplier;
+			return new RationalNumber(numerator, denominator);
+		}
+
 		public RationalNumber AbsoluteValue()
 		{
 			return new RationalNumber(PrimeFactoredNumerator, PrimeFactoredDenominator, true);
