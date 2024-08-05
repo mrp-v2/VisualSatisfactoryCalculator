@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Policy;
@@ -89,7 +90,7 @@ namespace VisualSatisfactoryCalculator.model.production
 
 			protected abstract void Visit(CurrentType obj, HashSet<object> visited, HashSet<Connection<ItemType>> multiconnectionsToVisit);
 
-			protected abstract Round<NextType, CurrentType> NextRound(HashSet<Connection<ItemType>> multiconnectionsToVisit);
+			protected abstract Round<NextType, CurrentType> NextRound(HashSet<object> visited, HashSet<Connection<ItemType>> multiconnectionsToVisit);
 
 			public IRound Execute(HashSet<object> visited, HashSet<Connection<ItemType>> multiconnectionsToVisit)
 			{
@@ -101,7 +102,7 @@ namespace VisualSatisfactoryCalculator.model.production
 						visited.Add(obj);
 					}
 				}
-				return NextRound(multiconnectionsToVisit);
+				return NextRound(visited, multiconnectionsToVisit);
 			}
 		}
 
@@ -115,7 +116,7 @@ namespace VisualSatisfactoryCalculator.model.production
 		{
 			public ConnectionRound(HashSet<Connection<ItemType>> connections) : base(connections) { }
 
-			protected override Round<AbstractStep<ItemType>, Connection<ItemType>> NextRound(HashSet<Connection<ItemType>> multiconnectionsToVisit)
+			protected override Round<AbstractStep<ItemType>, Connection<ItemType>> NextRound(HashSet<object> visited, HashSet<Connection<ItemType>> multiconnectionsToVisit)
 			{
 				return new StepRound(nextRound);
 			}
@@ -130,7 +131,7 @@ namespace VisualSatisfactoryCalculator.model.production
 		{
 			public StepRound(HashSet<AbstractStep<ItemType>> steps) : base(steps) { }
 
-			protected override Round<Connection<ItemType>, AbstractStep<ItemType>> NextRound(HashSet<Connection<ItemType>> multiconnectionsToVisit)
+			protected override Round<Connection<ItemType>, AbstractStep<ItemType>> NextRound(HashSet<object> visited, HashSet<Connection<ItemType>> multiconnectionsToVisit)
 			{
 				if (nextRound.Count > 0)
 				{
@@ -138,7 +139,23 @@ namespace VisualSatisfactoryCalculator.model.production
 				}
 				else
 				{
-					return new ConnectionRound(multiconnectionsToVisit);
+					HashSet<Connection<ItemType>> fewestRemainingStepMulticonnections = new HashSet<Connection<ItemType>>();
+					uint fewestRemainingSteps = uint.MaxValue;
+					foreach (Connection<ItemType> multiconnection in multiconnectionsToVisit)
+					{
+						uint remaining = multiconnection.GetNonUpdatedStepCount(visited);
+						if (remaining < fewestRemainingSteps)
+						{
+							fewestRemainingStepMulticonnections.Clear();
+							fewestRemainingSteps = remaining;
+							fewestRemainingStepMulticonnections.Add(multiconnection);
+						}
+						else if (remaining == fewestRemainingSteps)
+						{
+							fewestRemainingStepMulticonnections.Add(multiconnection);
+						}
+					}
+					return new ConnectionRound(fewestRemainingStepMulticonnections);
 				}
 			}
 

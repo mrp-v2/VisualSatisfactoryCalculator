@@ -12,20 +12,20 @@ namespace VisualSatisfactoryCalculator.model.production
 		public RationalNumber Rate { get; }
 		public ItemType Item { get; }
 
-		public ItemRate(ItemType itemUID, RationalNumber rate)
+		public ItemRate(ItemType item, RationalNumber rate)
 		{
-			this.Item = itemUID;
+			Item = item;
 			Rate = rate;
 		}
 
 		public override string ToString()
 		{
-			return Rate + " " + this.Item.ToString();
+			return Rate + " " + Item.ToString();
 		}
 
 		public override int GetHashCode()
 		{
-			return this.Item.GetHashCode() * Rate.GetHashCode();
+			return Item.GetHashCode() * Rate.GetHashCode();
 		}
 
 		public override bool Equals(object obj)
@@ -36,7 +36,7 @@ namespace VisualSatisfactoryCalculator.model.production
 			}
 			if (obj is ItemRate<ItemType> other)
 			{
-				return this.Item.Equals(other.Item) && Rate == other.Rate;
+				return Item.Equals(other.Item) && Rate == other.Rate;
 			}
 			else
 			{

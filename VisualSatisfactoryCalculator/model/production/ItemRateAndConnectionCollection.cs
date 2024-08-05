@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using VisualSatisfactoryCalculator.code.Numbers;
+
 namespace VisualSatisfactoryCalculator.model.production
 {
 	public class ItemRateAndConnectionCollection<ItemType> where ItemType : AbstractItem
@@ -14,7 +16,7 @@ namespace VisualSatisfactoryCalculator.model.production
 		public ItemRateAndConnectionCollection()
 		{
 			rates = new ItemRateCollection<ItemType>();
-			connections = new Dictionary<ItemType, Connection<ItemType>();
+			connections = new Dictionary<ItemType, Connection<ItemType>>();
 		}
 
 		public IEnumerable<ItemType> ItemsWithConnections
@@ -31,6 +33,16 @@ namespace VisualSatisfactoryCalculator.model.production
 			{
 				return connections.Values;
 			}
+		}
+
+		public ItemRate<ItemType> GetRate(ItemType item)
+		{
+			return rates[item];
+		}
+
+		public void SetRate(ItemType item, ItemRate<ItemType> rate)
+		{
+			rates[item] = rate;
 		}
 
 		public Connection<ItemType> GetConnection(ItemType item)

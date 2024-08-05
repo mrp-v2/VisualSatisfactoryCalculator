@@ -3,8 +3,18 @@
     - [ ] Fixed Rate connections
         - might need to change how multi-connections work
         - try delaying abnormal connection processing until after processing all reachable normal connections, then see which attached nodes haven't been updated and work from there
+            - do multi-connections that have only one non-updated step first, to see if that fills in other multi-connections
         - maybe have a popup happen to let the user decide what happens if there are multiple options the program could do
         - process multi-connections in order of complexity (how many nodes are connected), and in order of which ones are easy to adjust
+        - cases
+            - [ ] All consumers updated, and remaining producers to be updated, or vice versa
+                - if multiple remaining to be updated, prompt user for distribution 
+            - [ ] Remaining producers and consumers to be updates
+                - reduce/increase either overall consumption or production or both
+                    - probably ask the user, and give them some button to press for only evenly distributing change to either producers or consumer. otherwise let them adjust sliders or something manually
+            - [ ] All producers and consumers updated
+                - verify rates are equal, if not, add a orphaned consumer/producer and prompt user about extra/deficient rate
+            - when prompting user, add a 'remember this decision for this connection' checkbox for buttons / simple actions?
 2. Convert to Factorio
     - [ ] user inputs
         - [ ] machine tier

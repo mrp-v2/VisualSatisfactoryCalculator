@@ -36,9 +36,49 @@ namespace VisualSatisfactoryCalculator.model.production
 			});
 		}
 
-		public abstract void UpdateRatesFrom(ItemRate<ItemType> rate, bool isProduct);
+		public ItemRate<ItemType> GetRate(ItemType item, bool isProduct)
+		{
+			if (isProduct)
+			{
+				return products.GetRate(item);
+			}
+			else
+			{
+				return ingredients.GetRate(item);
+			}
+		}
 
-		public abstract void UpdateRatesFrom(HashSet<object> visited);
+		protected abstract void UpdateRatesFrom(ItemRate<ItemType> rate, bool isProduct);
+
+		/// <summary>
+		/// Updates the rates using the given rates.
+		/// Should throw an error if the given rates have a conflict.
+		/// </summary>
+		/// <param name="rates">The rates to consider, mapped to if they are a product</param>
+		protected abstract void UpdateRatesFrom(Dictionary<ItemRate<ItemType>, bool> rates);
+
+		public void UpdateRatesFrom(HashSet<object> visited)
+		{
+			/// <summary>
+			/// Tracks relevant rates, and if they are a product
+			/// </summary>
+			Dictionary<ItemRate<ItemType>, bool> relevantRates = new Dictionary<ItemRate<ItemType>, bool>();
+			foreach (Connection<ItemType> connection in products.Connections)
+			{
+				if (visited.Contains(connection))
+				{
+					relevantRates.Add(connection.GetRate(this, false), true);
+				}
+			}
+			foreach (Connection<ItemType> connection in ingredients.Connections)
+			{
+				if (visited.Contains(connection))
+				{
+					relevantRates.Add(connection.GetRate(this, true), false);
+				}
+			}
+			UpdateRatesFrom(relevantRates);
+		}
 
 		public void CascadingUpdateRatesFrom(ItemRate<ItemType> rate, bool isProduct)
 		{
