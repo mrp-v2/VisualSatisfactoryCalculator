@@ -108,7 +108,7 @@
   <ItemGroup>
     <Compile Include="model\production\AbstractItem.cs" />
     <Compile Include="model\production\AbstractPlan.cs" />
-    <Compile Include="model\production\CascadingUpdateHandler.cs" />
+    <Compile Include="model\production\BreadthFirstSearchHandler.cs" />
     <Compile Include="model\production\Connection.cs" />
     <Compile Include="model\production\ItemRate.cs" />
     <Compile Include="code\Numbers\RationalNumber.cs" />

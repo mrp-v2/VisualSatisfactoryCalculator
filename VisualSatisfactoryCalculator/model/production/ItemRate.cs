@@ -43,5 +43,10 @@ namespace VisualSatisfactoryCalculator.model.production
 				return false;
 			}
 		}
+
+		public static ItemRate<ItemType> operator *(ItemRate<ItemType> rate, RationalNumber multiplier)
+		{
+			return new ItemRate<ItemType>(rate.Item, rate.Rate * multiplier);
+		}
 	}
 }

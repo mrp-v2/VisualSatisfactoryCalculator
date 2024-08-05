@@ -1,7 +1,9 @@
 ﻿
+using VisualSatisfactoryCalculator.model.production;
+
 namespace VisualSatisfactoryCalculator.forms
 {
-	partial class BalancingPrompt
+	partial class BalancingPrompt<ItemType> where ItemType : AbstractItem
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -37,7 +39,6 @@ namespace VisualSatisfactoryCalculator.forms
 			this.ButtonPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.DoneButton = new System.Windows.Forms.Button();
 			this.CancelButton = new System.Windows.Forms.Button();
-			this.TotalRateLock = new System.Windows.Forms.CheckBox();
 			this.MainLayoutPanel.SuspendLayout();
 			this.OutGroup.SuspendLayout();
 			this.InGroup.SuspendLayout();
@@ -52,9 +53,10 @@ namespace VisualSatisfactoryCalculator.forms
 			this.MainLayoutPanel.Controls.Add(this.InGroup);
 			this.MainLayoutPanel.Controls.Add(this.ButtonPanel);
 			this.MainLayoutPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-			this.MainLayoutPanel.Location = new System.Drawing.Point(12, 12);
+			this.MainLayoutPanel.Location = new System.Drawing.Point(16, 15);
+			this.MainLayoutPanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
 			this.MainLayoutPanel.Name = "MainLayoutPanel";
-			this.MainLayoutPanel.Size = new System.Drawing.Size(264, 127);
+			this.MainLayoutPanel.Size = new System.Drawing.Size(154, 154);
 			this.MainLayoutPanel.TabIndex = 0;
 			// 
 			// OutGroup
@@ -62,9 +64,11 @@ namespace VisualSatisfactoryCalculator.forms
 			this.OutGroup.AutoSize = true;
 			this.OutGroup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.OutGroup.Controls.Add(this.OutFlowPanel);
-			this.OutGroup.Location = new System.Drawing.Point(3, 3);
+			this.OutGroup.Location = new System.Drawing.Point(4, 4);
+			this.OutGroup.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
 			this.OutGroup.Name = "OutGroup";
-			this.OutGroup.Size = new System.Drawing.Size(12, 38);
+			this.OutGroup.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.OutGroup.Size = new System.Drawing.Size(16, 46);
 			this.OutGroup.TabIndex = 1;
 			this.OutGroup.TabStop = false;
 			this.OutGroup.Text = "Outputs";
@@ -73,7 +77,8 @@ namespace VisualSatisfactoryCalculator.forms
 			// 
 			this.OutFlowPanel.AutoSize = true;
 			this.OutFlowPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.OutFlowPanel.Location = new System.Drawing.Point(6, 19);
+			this.OutFlowPanel.Location = new System.Drawing.Point(8, 23);
+			this.OutFlowPanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
 			this.OutFlowPanel.Name = "OutFlowPanel";
 			this.OutFlowPanel.Size = new System.Drawing.Size(0, 0);
 			this.OutFlowPanel.TabIndex = 2;
@@ -83,9 +88,11 @@ namespace VisualSatisfactoryCalculator.forms
 			this.InGroup.AutoSize = true;
 			this.InGroup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.InGroup.Controls.Add(this.InFlowPanel);
-			this.InGroup.Location = new System.Drawing.Point(3, 47);
+			this.InGroup.Location = new System.Drawing.Point(4, 58);
+			this.InGroup.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
 			this.InGroup.Name = "InGroup";
-			this.InGroup.Size = new System.Drawing.Size(12, 38);
+			this.InGroup.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.InGroup.Size = new System.Drawing.Size(16, 46);
 			this.InGroup.TabIndex = 2;
 			this.InGroup.TabStop = false;
 			this.InGroup.Text = "Inputs";
@@ -94,7 +101,8 @@ namespace VisualSatisfactoryCalculator.forms
 			// 
 			this.InFlowPanel.AutoSize = true;
 			this.InFlowPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.InFlowPanel.Location = new System.Drawing.Point(6, 19);
+			this.InFlowPanel.Location = new System.Drawing.Point(8, 23);
+			this.InFlowPanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
 			this.InFlowPanel.Name = "InFlowPanel";
 			this.InFlowPanel.Size = new System.Drawing.Size(0, 0);
 			this.InFlowPanel.TabIndex = 1;
@@ -105,10 +113,10 @@ namespace VisualSatisfactoryCalculator.forms
 			this.ButtonPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ButtonPanel.Controls.Add(this.DoneButton);
 			this.ButtonPanel.Controls.Add(this.CancelButton);
-			this.ButtonPanel.Controls.Add(this.TotalRateLock);
-			this.ButtonPanel.Location = new System.Drawing.Point(3, 91);
+			this.ButtonPanel.Location = new System.Drawing.Point(4, 112);
+			this.ButtonPanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
 			this.ButtonPanel.Name = "ButtonPanel";
-			this.ButtonPanel.Size = new System.Drawing.Size(258, 33);
+			this.ButtonPanel.Size = new System.Drawing.Size(146, 38);
 			this.ButtonPanel.TabIndex = 3;
 			// 
 			// DoneButton
@@ -116,9 +124,10 @@ namespace VisualSatisfactoryCalculator.forms
 			this.DoneButton.AutoSize = true;
 			this.DoneButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.DoneButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-			this.DoneButton.Location = new System.Drawing.Point(3, 3);
+			this.DoneButton.Location = new System.Drawing.Point(4, 4);
+			this.DoneButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
 			this.DoneButton.Name = "DoneButton";
-			this.DoneButton.Size = new System.Drawing.Size(52, 27);
+			this.DoneButton.Size = new System.Drawing.Size(59, 30);
 			this.DoneButton.TabIndex = 0;
 			this.DoneButton.Text = "Done";
 			this.DoneButton.UseVisualStyleBackColor = true;
@@ -129,36 +138,24 @@ namespace VisualSatisfactoryCalculator.forms
 			this.CancelButton.AutoSize = true;
 			this.CancelButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.CancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-			this.CancelButton.Location = new System.Drawing.Point(61, 3);
+			this.CancelButton.Location = new System.Drawing.Point(71, 4);
+			this.CancelButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
 			this.CancelButton.Name = "CancelButton";
-			this.CancelButton.Size = new System.Drawing.Size(61, 27);
+			this.CancelButton.Size = new System.Drawing.Size(71, 30);
 			this.CancelButton.TabIndex = 1;
 			this.CancelButton.Text = "Cancel";
 			this.CancelButton.UseVisualStyleBackColor = true;
 			this.CancelButton.Click += new System.EventHandler(this.CancelButton_Click);
 			// 
-			// TotalRateLock
-			// 
-			this.TotalRateLock.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.TotalRateLock.AutoSize = true;
-			this.TotalRateLock.Checked = true;
-			this.TotalRateLock.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.TotalRateLock.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-			this.TotalRateLock.Location = new System.Drawing.Point(128, 6);
-			this.TotalRateLock.Name = "TotalRateLock";
-			this.TotalRateLock.Size = new System.Drawing.Size(127, 21);
-			this.TotalRateLock.TabIndex = 2;
-			this.TotalRateLock.Text = "Lock Total Rate";
-			this.TotalRateLock.UseVisualStyleBackColor = true;
-			// 
 			// BalancingPrompt
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ClientSize = new System.Drawing.Size(462, 205);
+			this.ClientSize = new System.Drawing.Size(616, 252);
 			this.Controls.Add(this.MainLayoutPanel);
+			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
 			this.Name = "BalancingPrompt";
 			this.ShowIcon = false;
 			this.Text = "Balancing";
@@ -185,6 +182,5 @@ namespace VisualSatisfactoryCalculator.forms
 		private System.Windows.Forms.FlowLayoutPanel ButtonPanel;
 		private System.Windows.Forms.Button DoneButton;
 		new private System.Windows.Forms.Button CancelButton;
-		private System.Windows.Forms.CheckBox TotalRateLock;
 	}
 }

@@ -4,13 +4,14 @@ using System.Windows.Forms;
 using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Production;
 using VisualSatisfactoryCalculator.forms;
+using VisualSatisfactoryCalculator.model.production;
 
 namespace VisualSatisfactoryCalculator.controls.user
 {
-	public partial class BalancingControl : UserControl
+	public partial class BalancingControl<ItemType> : UserControl where ItemType : AbstractItem
 	{
 		private readonly BalancingPrompt balancingPrompt;
-		public readonly Step Step;
+		public readonly AbstractStep<ItemType> Step;
 		public readonly bool IsOutput;
 		public readonly RationalNumber OriginalRate;
 
@@ -28,27 +29,13 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 		}
 
-		public bool Locked
-		{
-			get
-			{
-				return LockBox.Checked;
-			}
-			set
-			{
-				Enabled = false;
-				LockBox.Checked = value;
-				Enabled = true;
-			}
-		}
-
-		public BalancingControl(BalancingPrompt balancingPrompt, Step step, bool isOutput)
+		public BalancingControl(BalancingPrompt balancingPrompt, AbstractStep<ItemType> step, bool isOutput, bool locked)
 		{
 			InitializeComponent();
 			this.balancingPrompt = balancingPrompt;
 			Step = step;
 			IsOutput = isOutput;
-			OriginalRate = step.GetItemRate(balancingPrompt.Connection.ItemID, !isOutput);
+			OriginalRate = step.GetRate(balancingPrompt.Connection.ItemID, !isOutput);
 			NumberControl.AddNumberChangedListener(ValueChanged);
 			Rate = OriginalRate;
 		}
@@ -58,14 +45,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 			if (Enabled)
 			{
 				balancingPrompt.NumericValueChanged(this);
-			}
-		}
-
-		private void LockBox_CheckedChanged(object sender, EventArgs e)
-		{
-			if (Enabled)
-			{
-				balancingPrompt.LockChanged(this);
 			}
 		}
 	}

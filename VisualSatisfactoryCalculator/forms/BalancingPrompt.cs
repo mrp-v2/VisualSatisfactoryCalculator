@@ -6,15 +6,16 @@ using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Production;
 using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.controls.user;
+using VisualSatisfactoryCalculator.model.production;
 
 namespace VisualSatisfactoryCalculator.forms
 {
-	public partial class BalancingPrompt : Form
+	public partial class BalancingPrompt<ItemType> : Form where ItemType : AbstractItem
 	{
 		public readonly Connection Connection;
-		private readonly Dictionary<BalancingControl, HashSet<BalancingControl>> relatedControlsMap = new Dictionary<BalancingControl, HashSet<BalancingControl>>();
-		public readonly Dictionary<Step, BalancingControl> ConsumingStepMap = new Dictionary<Step, BalancingControl>();
-		public readonly Dictionary<Step, BalancingControl> ProducingStepMap = new Dictionary<Step, BalancingControl>();
+		private readonly Dictionary<BalancingControl<ItemType>, HashSet<BalancingControl<ItemType>>> relatedControlsMap = new Dictionary<BalancingControl<ItemType>, HashSet<BalancingControl<ItemType>>>();
+		public readonly Dictionary<Step, BalancingControl<ItemType>> ConsumingStepMap = new Dictionary<Step, BalancingControl<ItemType>>();
+		public readonly Dictionary<Step, BalancingControl<ItemType>> ProducingStepMap = new Dictionary<Step, BalancingControl<ItemType>>();
 		public readonly CachedValue<RationalNumber> outputRate;
 		public readonly CachedValue<RationalNumber> inputRate;
 		private readonly RationalNumber totalRate;
@@ -26,19 +27,19 @@ namespace VisualSatisfactoryCalculator.forms
 			Connection = connection;
 			foreach (Step step in connection.GetProducerSteps())
 			{
-				BalancingControl bc = new BalancingControl(this, step, false);
+				BalancingControl<ItemType> bc = new BalancingControl<ItemType>(this, step, false);
 				InFlowPanel.Controls.Add(bc);
-				relatedControlsMap.Add(bc, new HashSet<BalancingControl>());
+				relatedControlsMap.Add(bc, new HashSet<BalancingControl<ItemType>>());
 				ProducingStepMap.Add(step, bc);
 			}
 			foreach (Step step in connection.GetConsumerSteps())
 			{
-				BalancingControl bc = new BalancingControl(this, step, true);
+				BalancingControl<ItemType> bc = new BalancingControl<ItemType>(this, step, true);
 				OutFlowPanel.Controls.Add(bc);
-				relatedControlsMap.Add(bc, new HashSet<BalancingControl>());
+				relatedControlsMap.Add(bc, new HashSet<BalancingControl<ItemType>>());
 				ConsumingStepMap.Add(step, bc);
 			}
-			foreach (BalancingControl bc in relatedControlsMap.Keys)
+			foreach (BalancingControl<ItemType> bc in relatedControlsMap.Keys)
 			{
 				foreach (HashSet<Step> stepGroup in connection.RelevantConnectedStepGroups.Get())
 				{
@@ -57,7 +58,7 @@ namespace VisualSatisfactoryCalculator.forms
 			outputRate = new CachedValue<RationalNumber>(() =>
 			{
 				RationalNumber total = 0;
-				foreach (BalancingControl bc in ConsumingStepMap.Values)
+				foreach (BalancingControl<ItemType> bc in ConsumingStepMap.Values)
 				{
 					total += bc.Rate;
 				}
@@ -66,7 +67,7 @@ namespace VisualSatisfactoryCalculator.forms
 			inputRate = new CachedValue<RationalNumber>(() =>
 			{
 				RationalNumber total = 0;
-				foreach (BalancingControl bc in ProducingStepMap.Values)
+				foreach (BalancingControl<ItemType> bc in ProducingStepMap.Values)
 				{
 					total += bc.Rate;
 				}
@@ -88,18 +89,10 @@ namespace VisualSatisfactoryCalculator.forms
 			Close();
 		}
 
-		public void LockChanged(BalancingControl piece)
-		{
-			foreach (BalancingControl bc in relatedControlsMap[piece])
-			{
-				bc.Locked = piece.Locked;
-			}
-		}
-
-		public void NumericValueChanged(BalancingControl piece)
+		public void NumericValueChanged(BalancingControl<ItemType> piece)
 		{
 			RationalNumber multiplier = piece.Rate / piece.OriginalRate;
-			foreach (BalancingControl bc in relatedControlsMap[piece])
+			foreach (BalancingControl<ItemType> bc in relatedControlsMap[piece])
 			{
 				bc.Rate = bc.OriginalRate * multiplier;
 			}
@@ -111,7 +104,7 @@ namespace VisualSatisfactoryCalculator.forms
 			}
 		}
 
-		private void BalanceRates(BalancingControl changed)
+		private void BalanceRates(BalancingControl<ItemType> changed)
 		{
 			RationalNumber outputTotal = totalRate, inputTotal = totalRate;
 			List<HashSet<Step>> changableGroups = new List<HashSet<Step>>();
@@ -123,7 +116,7 @@ namespace VisualSatisfactoryCalculator.forms
 				{
 					if (ConsumingStepMap.ContainsKey(step))
 					{
-						BalancingControl bc = ConsumingStepMap[step];
+						BalancingControl<ItemType> bc = ConsumingStepMap[step];
 						if (bc.Locked || bc == changed)
 						{
 							goto Unchangeable;
@@ -131,7 +124,7 @@ namespace VisualSatisfactoryCalculator.forms
 					}
 					if (ProducingStepMap.ContainsKey(step))
 					{
-						BalancingControl bc = ProducingStepMap[step];
+						BalancingControl<ItemType> bc = ProducingStepMap[step];
 						if (bc.Locked || bc == changed)
 						{
 							goto Unchangeable;
@@ -152,12 +145,12 @@ namespace VisualSatisfactoryCalculator.forms
 				{
 					if (ConsumingStepMap.ContainsKey(step))
 					{
-						BalancingControl bc = ConsumingStepMap[step];
+						BalancingControl<ItemType> bc = ConsumingStepMap[step];
 						outputTotal -= bc.Rate;
 					}
 					if (ProducingStepMap.ContainsKey(step))
 					{
-						BalancingControl bc = ProducingStepMap[step];
+						BalancingControl<ItemType> bc = ProducingStepMap[step];
 						inputTotal -= bc.Rate;
 					}
 				}
@@ -168,13 +161,13 @@ namespace VisualSatisfactoryCalculator.forms
 				{
 					if (ConsumingStepMap.ContainsKey(step))
 					{
-						BalancingControl bc = ConsumingStepMap[step];
+						BalancingControl<ItemType> bc = ConsumingStepMap[step];
 						(RationalNumber, RationalNumber) tuple = groupRates[group];
 						groupRates[group] = (tuple.Item1, tuple.Item2 + bc.Rate);
 					}
 					if (ProducingStepMap.ContainsKey(step))
 					{
-						BalancingControl bc = ProducingStepMap[step];
+						BalancingControl<ItemType> bc = ProducingStepMap[step];
 						(RationalNumber, RationalNumber) tuple = groupRates[group];
 						groupRates[group] = (tuple.Item1 + bc.Rate, tuple.Item2);
 					}

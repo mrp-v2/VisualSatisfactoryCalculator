@@ -1,9 +1,12 @@
 ﻿
+using System.Windows.Forms;
+
 using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.model.production;
 
 namespace VisualSatisfactoryCalculator.controls.user
 {
-	partial class BalancingControl
+	partial class BalancingControl<ItemType> : UserControl where ItemType : AbstractItem
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -31,8 +34,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.NumberControl = new RationalNumberControl();
-			this.LockBox = new System.Windows.Forms.CheckBox();
+			this.NumberControl = new VisualSatisfactoryCalculator.controls.user.RationalNumberControl();
 			this.MainLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.MainLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -40,45 +42,36 @@ namespace VisualSatisfactoryCalculator.controls.user
 			// NumberControl
 			// 
 			this.NumberControl.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.NumberControl.Location = new System.Drawing.Point(0, 23);
+			this.NumberControl.AutoSize = true;
+			this.NumberControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.NumberControl.Location = new System.Drawing.Point(0, 0);
 			this.NumberControl.Margin = new System.Windows.Forms.Padding(0);
 			this.NumberControl.Name = "NumberControl";
+			this.NumberControl.Size = new System.Drawing.Size(356, 34);
 			this.NumberControl.TabIndex = 0;
-			// 
-			// LockBox
-			// 
-			this.LockBox.Anchor = System.Windows.Forms.AnchorStyles.Top;
-			this.LockBox.AutoSize = true;
-			this.LockBox.Location = new System.Drawing.Point(11, 3);
-			this.LockBox.Name = "LockBox";
-			this.LockBox.Size = new System.Drawing.Size(62, 17);
-			this.LockBox.TabIndex = 1;
-			this.LockBox.Text = "Locked";
-			this.LockBox.UseVisualStyleBackColor = true;
-			this.LockBox.CheckedChanged += new System.EventHandler(this.LockBox_CheckedChanged);
 			// 
 			// MainLayoutPanel
 			// 
 			this.MainLayoutPanel.AutoSize = true;
 			this.MainLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.MainLayoutPanel.Controls.Add(this.LockBox);
 			this.MainLayoutPanel.Controls.Add(this.NumberControl);
 			this.MainLayoutPanel.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.MainLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.MainLayoutPanel.Name = "MainLayoutPanel";
-			this.MainLayoutPanel.Size = new System.Drawing.Size(84, 46);
+			this.MainLayoutPanel.Size = new System.Drawing.Size(356, 34);
 			this.MainLayoutPanel.TabIndex = 2;
 			// 
 			// BalancingControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.Controls.Add(this.MainLayoutPanel);
+			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
 			this.Name = "BalancingControl";
-			this.Size = new System.Drawing.Size(84, 46);
+			this.Size = new System.Drawing.Size(356, 34);
 			this.MainLayoutPanel.ResumeLayout(false);
 			this.MainLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
@@ -89,7 +82,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 		#endregion
 
 		private RationalNumberControl NumberControl;
-		private System.Windows.Forms.CheckBox LockBox;
 		private System.Windows.Forms.FlowLayoutPanel MainLayoutPanel;
 	}
 }

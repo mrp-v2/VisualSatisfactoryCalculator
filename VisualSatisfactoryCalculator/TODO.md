@@ -12,6 +12,7 @@
             - [ ] Remaining producers and consumers to be updates
                 - reduce/increase either overall consumption or production or both
                     - probably ask the user, and give them some button to press for only evenly distributing change to either producers or consumer. otherwise let them adjust sliders or something manually
+            - [ ] All remaining steps to be updated are connected with single connections 
             - [ ] All producers and consumers updated
                 - verify rates are equal, if not, add a orphaned consumer/producer and prompt user about extra/deficient rate
             - when prompting user, add a 'remember this decision for this connection' checkbox for buttons / simple actions?

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Newtonsoft.Json.Bson;
+
 using VisualSatisfactoryCalculator.code.Numbers;
 using VisualSatisfactoryCalculator.code.Utility;
 
@@ -147,7 +149,7 @@ namespace VisualSatisfactoryCalculator.model.production
 									toVisit,
 									out HashSet<AbstractStep<ItemType>> notUpdatedConsumers,
 									out HashSet<AbstractStep<ItemType>> notUpdatedProducers,
-									out RationalNumber lockedRate);
+									out RationalNumber netLockedRate);
 				if (notUpdatedConsumers.Count == consumers.Count && notUpdatedProducers.Count == producers.Count)
 				{
 					throw new InvalidOperationException(NO_VISITED_NEIGHBORS);
@@ -160,44 +162,141 @@ namespace VisualSatisfactoryCalculator.model.production
 				{
 					if (notUpdatedConsumers.Count == 1)
 					{
-						if (lockedRate < 0)
+						if (netLockedRate < 0)
 						{
 							throw new InvalidOperationException("Unable to update consumer with deficient rate");
 						}
 						AbstractStep<ItemType> remaining = notUpdatedConsumers.First();
-						consumers[remaining] = new ItemRate<ItemType>(Item, lockedRate);
+						consumers[remaining] = new ItemRate<ItemType>(Item, netLockedRate);
 						toVisit.Add(remaining);
 					}
 					else
 					{
-						throw new NotImplementedException();
-						// TODO distribute between consumers
+						HashSet<HashSet<AbstractStep<ItemType>>> singleConnectedConsumers = GetSingleConnectedStepGroups(notUpdatedConsumers);
+						if (singleConnectedConsumers.Count == 1)
+						{
+							RationalNumber groupRate = 0;
+							foreach (AbstractStep<ItemType> step in notUpdatedConsumers)
+							{
+								groupRate -= step.GetRate(Item, false).Rate;
+							}
+							if (netLockedRate < 0)
+							{
+								throw new InvalidOperationException("Cannot update single connected consumer group when the net locked rates has deficiency");
+							}
+							RationalNumber multiplier = netLockedRate / groupRate.AbsoluteValue();
+							foreach (AbstractStep<ItemType> step in notUpdatedConsumers)
+							{
+								consumers[step] *= multiplier;
+								toVisit.Add(step);
+							}
+						}
+						else
+						{
+							throw new NotImplementedException();
+							// TODO prompt user on how to distribute between consumers
+						}
 					}
 				}
 				else if (notUpdatedConsumers.Count == 0)
 				{
 					if (notUpdatedProducers.Count == 1)
 					{
-						if (lockedRate > 0)
+						if (netLockedRate > 0)
 						{
 							throw new InvalidOperationException("Unable to update producer with excess rate");
 						}
 						AbstractStep<ItemType> remaining = notUpdatedProducers.First();
-						producers[remaining] = new ItemRate<ItemType>(Item, lockedRate);
+						producers[remaining] = new ItemRate<ItemType>(Item, netLockedRate);
 						toVisit.Add(remaining);
 					}
 					else
 					{
-						throw new NotImplementedException();
-						// TODO distribute between producers
+						HashSet<HashSet<AbstractStep<ItemType>>> singleConnectedProducers = GetSingleConnectedStepGroups(notUpdatedProducers);
+						if (singleConnectedProducers.Count == 1)
+						{
+							RationalNumber groupRate = 0;
+							foreach (AbstractStep<ItemType> step in notUpdatedProducers)
+							{
+								groupRate += step.GetRate(Item, true).Rate;
+							}
+							if (netLockedRate > 0)
+							{
+								throw new InvalidOperationException("Cannot update single connected producer group when the net locked rates has excess");
+							}
+							RationalNumber multiplier = netLockedRate.AbsoluteValue() / groupRate;
+							foreach (AbstractStep<ItemType> step in notUpdatedProducers)
+							{
+								producers[step] *= multiplier;
+								toVisit.Add(step);
+							}
+						}
+						else
+						{
+							throw new NotImplementedException();
+							// TODO prompt user on how to distribute between producers
+						}
 					}
 				}
 				else
 				{
-					throw new NotImplementedException();
-					// oh dear, what will we do
+					HashSet<HashSet<AbstractStep<ItemType>>> singleConnectedStepGroups = GetSingleConnectedStepGroups(new HashSet<AbstractStep<ItemType>>(notUpdatedProducers.Concat(notUpdatedConsumers)));
+					if (singleConnectedStepGroups.Count == 1)
+					{
+						RationalNumber groupRate = 0;
+						foreach (AbstractStep<ItemType> step in notUpdatedProducers)
+						{
+							groupRate += step.GetRate(Item, true).Rate;
+						}
+						foreach (AbstractStep<ItemType> step in notUpdatedConsumers)
+						{
+							groupRate -= step.GetRate(Item, false).Rate;
+						}
+						if (groupRate.AreSignsEqual(netLockedRate))
+						{
+							throw new InvalidOperationException("Cannot adjust single connected step group when group sign and net locked rate sign are equal");
+						}
+						RationalNumber multiplier = netLockedRate.AbsoluteValue() / groupRate.AbsoluteValue();
+						AbstractStep<ItemType> singleConsumer = notUpdatedConsumers.First();
+						foreach (AbstractStep<ItemType> step in notUpdatedProducers)
+						{
+							producers[step] *= multiplier;
+							toVisit.Add(step);
+						}
+						foreach (AbstractStep<ItemType> step in notUpdatedConsumers)
+						{
+							consumers[step] *= multiplier;
+							toVisit.Add(step);
+						}
+						BreadthFirstSearchHandler<ItemType>.CascadeUpdates(singleConsumer, false);
+					}
+					else
+					{
+						throw new NotImplementedException();
+						// oh dear, what will we do
+						// TODO prompt user for what to do
+					}
 				}
 			}
+		}
+
+		private HashSet<HashSet<AbstractStep<ItemType>>> GetSingleConnectedStepGroups(IEnumerable<AbstractStep<ItemType>> steps)
+		{
+			HashSet<HashSet<AbstractStep<ItemType>>> groups = new HashSet<HashSet<AbstractStep<ItemType>>>();
+			foreach (AbstractStep<ItemType> step in steps)
+			{
+				foreach (HashSet<AbstractStep<ItemType>> group in groups)
+				{
+					if (group.Contains(step))
+					{
+						goto OuterContinue;
+					}
+				}
+				groups.Add(BreadthFirstSearchHandler<ItemType>.GetSingleConnectedSteps(step));
+			OuterContinue:
+				continue;
+			}
+			return groups;
 		}
 
 		private void VerifyEqualRates()
@@ -235,7 +334,7 @@ namespace VisualSatisfactoryCalculator.model.production
 			{
 				this.consumers[consumer.Key] = consumer.Value;
 			}
-			CascadingUpdateHandler<ItemType>.CascadeUpdates(this);
+			BreadthFirstSearchHandler<ItemType>.CascadeUpdates(this);
 		}
 	}
 

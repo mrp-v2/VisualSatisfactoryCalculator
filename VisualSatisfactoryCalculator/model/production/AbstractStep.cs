@@ -83,7 +83,7 @@ namespace VisualSatisfactoryCalculator.model.production
 		public void CascadingUpdateRatesFrom(ItemRate<ItemType> rate, bool isProduct)
 		{
 			UpdateRatesFrom(rate, isProduct);
-			CascadingUpdateHandler<ItemType>.CascadeUpdates(this);
+			BreadthFirstSearchHandler<ItemType>.CascadeUpdates(this);
 		}
 	}
 }
