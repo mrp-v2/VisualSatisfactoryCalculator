@@ -89,6 +89,16 @@ namespace VisualSatisfactoryCalculator.model.production
 			}
 		}
 
+		public bool IsStepProducer(AbstractStep<ItemType> step)
+		{
+			return producers.ContainsKey(step);
+		}
+
+		public bool IsStepConsumer(AbstractStep<ItemType> step)
+		{
+			return consumers.ContainsKey(step);
+		}
+
 		public uint GetNonUpdatedStepCount(HashSet<object> visited)
 		{
 			uint notVisited = 0;

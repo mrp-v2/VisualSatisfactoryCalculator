@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 
 using VisualSatisfactoryCalculator.code.Numbers;
-using VisualSatisfactoryCalculator.code.Production;
 using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.controls.user;
 using VisualSatisfactoryCalculator.model.production;
@@ -12,27 +11,27 @@ namespace VisualSatisfactoryCalculator.forms
 {
 	public partial class BalancingPrompt<ItemType> : Form where ItemType : AbstractItem
 	{
-		public readonly Connection Connection;
-		private readonly Dictionary<BalancingControl<ItemType>, HashSet<BalancingControl<ItemType>>> relatedControlsMap = new Dictionary<BalancingControl<ItemType>, HashSet<BalancingControl<ItemType>>>();
-		public readonly Dictionary<Step, BalancingControl<ItemType>> ConsumingStepMap = new Dictionary<Step, BalancingControl<ItemType>>();
-		public readonly Dictionary<Step, BalancingControl<ItemType>> ProducingStepMap = new Dictionary<Step, BalancingControl<ItemType>>();
+		public readonly Connection<ItemType> Connection;
+		private readonly Dictionary<RationalNumberControl, HashSet<RationalNumberControl>> relatedControlsMap = new Dictionary<RationalNumberControl, HashSet<RationalNumberControl>>> ();
+		public readonly Dictionary<AbstractStep<ItemType>, RationalNumberControl> ConsumingStepMap = new Dictionary<AbstractStep<ItemType>, RationalNumberControl>();
+		public readonly Dictionary<AbstractStep<ItemType>, RationalNumberControl> ProducingStepMap = new Dictionary<AbstractStep<ItemType>, RationalNumberControl>();
 		public readonly CachedValue<RationalNumber> outputRate;
 		public readonly CachedValue<RationalNumber> inputRate;
 		private readonly RationalNumber totalRate;
-		public readonly Dictionary<Step, decimal> finalRates = new Dictionary<Step, decimal>();
+		public readonly Dictionary<AbstractStep<ItemType>, decimal> finalRates = new Dictionary<AbstractStep<ItemType>, decimal>();
 
-		public BalancingPrompt(Connection connection)
+		public BalancingPrompt(Connection<ItemType> connection, HashSet<HashSet<AbstractStep<ItemType>>> singleConnectedStepGroups)
 		{
 			InitializeComponent();
 			Connection = connection;
-			foreach (Step step in connection.GetProducerSteps())
+			foreach (AbstractStep<ItemType> step in connection.GetProducerSteps())
 			{
-				BalancingControl<ItemType> bc = new BalancingControl<ItemType>(this, step, false);
+				RationalNumberControl bc = new RationalNumberControl();
 				InFlowPanel.Controls.Add(bc);
-				relatedControlsMap.Add(bc, new HashSet<BalancingControl<ItemType>>());
+				relatedControlsMap.Add(bc, new HashSet<RationalNumberControl>());
 				ProducingStepMap.Add(step, bc);
 			}
-			foreach (Step step in connection.GetConsumerSteps())
+			foreach (AbstractStep<ItemType> step in connection.GetConsumerSteps())
 			{
 				BalancingControl<ItemType> bc = new BalancingControl<ItemType>(this, step, true);
 				OutFlowPanel.Controls.Add(bc);
@@ -41,11 +40,11 @@ namespace VisualSatisfactoryCalculator.forms
 			}
 			foreach (BalancingControl<ItemType> bc in relatedControlsMap.Keys)
 			{
-				foreach (HashSet<Step> stepGroup in connection.RelevantConnectedStepGroups.Get())
+				foreach (HashSet<AbstractStep<ItemType>> stepGroup in connection.RelevantConnectedStepGroups.Get())
 				{
 					if (stepGroup.Contains(bc.Step))
 					{
-						foreach (Step step in stepGroup)
+						foreach (AbstractStep<ItemType> step in stepGroup)
 						{
 							if (step != bc.Step)
 							{
@@ -107,12 +106,12 @@ namespace VisualSatisfactoryCalculator.forms
 		private void BalanceRates(BalancingControl<ItemType> changed)
 		{
 			RationalNumber outputTotal = totalRate, inputTotal = totalRate;
-			List<HashSet<Step>> changableGroups = new List<HashSet<Step>>();
-			List<HashSet<Step>> unchangableGroups = new List<HashSet<Step>>();
-			Dictionary<HashSet<Step>, (RationalNumber, RationalNumber)> groupRates = new Dictionary<HashSet<Step>, (RationalNumber, RationalNumber)>();
-			foreach (HashSet<Step> group in Connection.RelevantConnectedStepGroups.Get())
+			List<HashSet<AbstractStep<ItemType>>> changableGroups = new List<HashSet<AbstractStep<ItemType>>>();
+			List<HashSet<AbstractStep<ItemType>>> unchangableGroups = new List<HashSet<AbstractStep<ItemType>>>();
+			Dictionary<HashSet<AbstractStep<ItemType>>, (RationalNumber, RationalNumber)> groupRates = new Dictionary<HashSet<AbstractStep<ItemType>>, (RationalNumber, RationalNumber)>();
+			foreach (HashSet<AbstractStep<ItemType>> group in Connection.RelevantConnectedStepGroups.Get())
 			{
-				foreach (Step step in group)
+				foreach (AbstractStep<ItemType> step in group)
 				{
 					if (ConsumingStepMap.ContainsKey(step))
 					{
@@ -139,9 +138,9 @@ namespace VisualSatisfactoryCalculator.forms
 			Continue:
 				continue;
 			}
-			foreach (HashSet<Step> group in unchangableGroups)
+			foreach (HashSet<AbstractStep<ItemType>> group in unchangableGroups)
 			{
-				foreach (Step step in group)
+				foreach (AbstractStep<ItemType> step in group)
 				{
 					if (ConsumingStepMap.ContainsKey(step))
 					{
@@ -155,9 +154,9 @@ namespace VisualSatisfactoryCalculator.forms
 					}
 				}
 			}
-			foreach (HashSet<Step> group in changableGroups)
+			foreach (HashSet<AbstractStep<ItemType>> group in changableGroups)
 			{
-				foreach (Step step in group)
+				foreach (AbstractStep<ItemType> step in group)
 				{
 					if (ConsumingStepMap.ContainsKey(step))
 					{
@@ -174,9 +173,9 @@ namespace VisualSatisfactoryCalculator.forms
 				}
 			}
 			(RationalNumber, RationalNumber, RationalNumber) multipliers = Util.BalanceRates(groupRates, inputTotal, outputTotal);
-			foreach (HashSet<Step> group in changableGroups)
+			foreach (HashSet<AbstractStep<ItemType>> group in changableGroups)
 			{
-				foreach (Step step in group)
+				foreach (AbstractStep<ItemType> step in group)
 				{
 					(RationalNumber, RationalNumber) tuple = groupRates[group];
 					if (tuple.Item1 == 0 || tuple.Item2 == 0)

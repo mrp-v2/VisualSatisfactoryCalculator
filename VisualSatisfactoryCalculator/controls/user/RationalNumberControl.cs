@@ -24,6 +24,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 			oldValue = NumberTextBox.Text;
 		}
 
+		public RationalNumberControl(bool enabled) : this()
+		{
+			NumberTextBox.Enabled = enabled;
+		}
+
 		private void ValueChanged()
 		{
 			if (NumberTextBox.Text != oldValue)
