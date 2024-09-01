@@ -8,7 +8,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 {
 	public partial class RationalNumberControl : UserControl
 	{
-		public delegate void NumberChanged();
+		public delegate void NumberChanged(RationalNumber oldValue, RationalNumber newValue);
 
 		private NumberChanged numberChanged;
 		private string oldValue;
@@ -34,7 +34,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			if (NumberTextBox.Text != oldValue)
 			{
 				oldValue = NumberTextBox.Text;
-				numberChanged();
+				numberChanged(GetNumber(oldValue), GetNumber());
 			}
 		}
 
@@ -61,24 +61,29 @@ namespace VisualSatisfactoryCalculator.controls.user
 		private RationalNumber cachedRationalNumber;
 		private bool cachedRationalNumberIsValid = false;
 
+		private RationalNumber GetNumber(string source)
+		{
+			if (source.Contains('/'))
+			{
+				string numerator, denominator;
+				int divideIndex = source.IndexOf('/');
+				numerator = source.Substring(0, divideIndex);
+				denominator = source.Substring(divideIndex + 1);
+				return new RationalNumber(int.Parse(numerator), int.Parse(denominator), true);
+			}
+			else
+			{
+				return new RationalNumber(int.Parse(source), 1, true);
+			}
+		}
+
 		public RationalNumber GetNumber()
 		{
 			if (cachedRationalNumberIsValid)
 			{
 				return cachedRationalNumber;
 			}
-			if (NumberTextBox.Text.Contains('/'))
-			{
-				string numerator, denominator;
-				int divideIndex = NumberTextBox.Text.IndexOf('/');
-				numerator = NumberTextBox.Text.Substring(0, divideIndex);
-				denominator = NumberTextBox.Text.Substring(divideIndex + 1);
-				cachedRationalNumber = new RationalNumber(int.Parse(numerator), int.Parse(denominator), true);
-			}
-			else
-			{
-				cachedRationalNumber = new RationalNumber(int.Parse(NumberTextBox.Text), 1, true);
-			}
+			cachedRationalNumber = GetNumber(NumberTextBox.Text);
 			cachedRationalNumberIsValid = true;
 			return cachedRationalNumber;
 		}
