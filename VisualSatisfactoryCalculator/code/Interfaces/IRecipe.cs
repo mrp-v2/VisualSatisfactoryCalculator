@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using VisualSatisfactoryCalculator.code.Numbers;
-using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.satisfactory.Numbers;
+using VisualSatisfactoryCalculator.satisfactory.Utility;
 using VisualSatisfactoryCalculator.model.production;
 
-namespace VisualSatisfactoryCalculator.code.Interfaces
+namespace VisualSatisfactoryCalculator.satisfactory.Interfaces
 {
 	public interface IRecipe : IEquatable<IRecipe>, IEncoder
 	{

@@ -1,4 +1,4 @@
-﻿using VisualSatisfactoryCalculator.code.Utility;
+﻿using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.controls.user
 {

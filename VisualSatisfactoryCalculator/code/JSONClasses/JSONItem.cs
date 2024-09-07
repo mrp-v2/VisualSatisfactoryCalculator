@@ -1,24 +1,35 @@
 ﻿using Newtonsoft.Json;
 
-using VisualSatisfactoryCalculator.code.Interfaces;
-using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.model.production;
+using VisualSatisfactoryCalculator.satisfactory.Interfaces;
+using VisualSatisfactoryCalculator.satisfactory.Utility;
 
-namespace VisualSatisfactoryCalculator.code.JSONClasses
+namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 {
-	public class JSONItem : IItem, IFromJson
+	public class JSONItem : AbstractItem, IItem, IFromJson
 	{
-		public string ID { get; }
-		public string DisplayName { get; }
 		public string Form { get; }
 		public decimal EnergyValue { get; }
 		public bool IsFluid { get { return Form.Equals("RF_LIQUID") || Form.Equals("RF_GAS"); } }
 		public string NativeClass { get; }
+		string IHasID.ID
+		{
+			get
+			{
+				return ID;
+			}
+		}
+		string IHasDisplayName.DisplayName
+		{
+			get
+			{
+				return DisplayName;
+			}
+		}
 
 		[JsonConstructor]
-		public JSONItem(string ClassName, string mDisplayName, string mForm, string mEnergyValue)
+		public JSONItem(string ClassName, string mDisplayName, string mForm, string mEnergyValue) : base(ClassName, mDisplayName)
 		{
-			ID = ClassName;
-			DisplayName = mDisplayName;
 			Form = mForm;
 			EnergyValue = decimal.Parse(mEnergyValue);
 			NativeClass = FileInteractor.ActiveNativeClass;

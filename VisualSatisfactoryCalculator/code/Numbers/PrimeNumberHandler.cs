@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace VisualSatisfactoryCalculator.code.Numbers
+namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 {
 	internal static class PrimeNumberHandler
 	{

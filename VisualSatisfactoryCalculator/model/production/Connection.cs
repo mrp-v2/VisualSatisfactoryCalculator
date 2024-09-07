@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json.Bson;
 
-using VisualSatisfactoryCalculator.code.Numbers;
-using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.satisfactory.Numbers;
+using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.model.production
 {

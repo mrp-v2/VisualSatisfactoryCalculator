@@ -1,4 +1,4 @@
-﻿namespace VisualSatisfactoryCalculator.code.Interfaces
+﻿namespace VisualSatisfactoryCalculator.satisfactory.Interfaces
 {
 	public interface IEncoder : IHasID, IHasDisplayName
 	{

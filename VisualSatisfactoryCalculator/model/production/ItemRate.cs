@@ -1,8 +1,8 @@
 ﻿using System;
 
-using VisualSatisfactoryCalculator.code.Interfaces;
-using VisualSatisfactoryCalculator.code.Numbers;
-using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.satisfactory.Interfaces;
+using VisualSatisfactoryCalculator.satisfactory.Numbers;
+using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.model.production
 {

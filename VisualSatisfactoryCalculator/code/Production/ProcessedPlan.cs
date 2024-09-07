@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace VisualSatisfactoryCalculator.code.Production
+namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
 	public class ProcessedPlan
 	{

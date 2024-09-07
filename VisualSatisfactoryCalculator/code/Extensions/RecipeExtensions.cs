@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.satisfactory.Interfaces;
 
-namespace VisualSatisfactoryCalculator.code.Extensions
+namespace VisualSatisfactoryCalculator.satisfactory.Extensions
 {
 	public static class RecipeExtensions
 	{

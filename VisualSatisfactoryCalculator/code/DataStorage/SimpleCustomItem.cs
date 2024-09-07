@@ -1,18 +1,28 @@
-﻿using VisualSatisfactoryCalculator.code.Interfaces;
+﻿using VisualSatisfactoryCalculator.model.production;
+using VisualSatisfactoryCalculator.satisfactory.Interfaces;
 
-namespace VisualSatisfactoryCalculator.code.DataStorage
+namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 {
-	public class SimpleCustomItem : IItem
+	public class SimpleCustomItem : AbstractItem, IItem
 	{
-		public string ID { get; }
-		public string DisplayName { get; }
 		public bool IsFluid { get { return false; } }
 
-		public SimpleCustomItem(string ID, string displayName)
+		string IHasID.ID
 		{
-			this.ID = ID;
-			DisplayName = displayName;
+			get
+			{
+				return ID;
+			}
 		}
+		string IHasDisplayName.DisplayName
+		{
+			get
+			{
+				return DisplayName;
+			}
+		}
+
+		public SimpleCustomItem(string ID, string displayName) : base(ID, displayName) { }
 
 		public override string ToString()
 		{

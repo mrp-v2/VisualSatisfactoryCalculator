@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace VisualSatisfactoryCalculator.code.Interfaces
+namespace VisualSatisfactoryCalculator.satisfactory.Interfaces
 {
 	public interface IItem : IEquatable<IItem>, IEncoder
 	{

@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 using MrpV2.GenericLibrary.code.dictionary.bidirectional.classes;
 
-using VisualSatisfactoryCalculator.code.Numbers;
+using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.model.production;
 
 namespace VisualSatisfactoryCalculator.controls.user

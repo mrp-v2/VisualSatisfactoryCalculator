@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.satisfactory.Interfaces;
 
 namespace VisualSatisfactoryCalculator.forms
 {

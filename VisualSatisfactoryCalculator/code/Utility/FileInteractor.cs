@@ -5,10 +5,10 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-using VisualSatisfactoryCalculator.code.Extensions;
-using VisualSatisfactoryCalculator.code.JSONClasses;
+using VisualSatisfactoryCalculator.satisfactory.Extensions;
+using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
 
-namespace VisualSatisfactoryCalculator.code.Utility
+namespace VisualSatisfactoryCalculator.satisfactory.Utility
 {
 	public class FileInteractor
 	{

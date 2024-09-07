@@ -11,6 +11,12 @@ namespace VisualSatisfactoryCalculator.model.production
 		public readonly string ID;
 		public readonly string DisplayName;
 
+		protected AbstractItem(string id, string displayName)
+		{
+			ID = id;
+			DisplayName = displayName;
+		}
+
 		public override int GetHashCode()
 		{
 			return ID.GetHashCode();

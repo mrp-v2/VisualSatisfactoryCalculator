@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 
-using VisualSatisfactoryCalculator.code.Numbers;
-using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.satisfactory.Numbers;
+using VisualSatisfactoryCalculator.satisfactory.Utility;
 
-namespace VisualSatisfactoryCalculator.code.Production
+namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
 	public class RateCollection
 	{

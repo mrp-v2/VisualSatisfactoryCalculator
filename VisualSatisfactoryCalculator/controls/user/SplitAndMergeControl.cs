@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-using VisualSatisfactoryCalculator.code.Numbers;
-using VisualSatisfactoryCalculator.code.Production;
+using VisualSatisfactoryCalculator.satisfactory.Numbers;
+using VisualSatisfactoryCalculator.satisfactory.Production;
 using VisualSatisfactoryCalculator.forms;
 
-using static VisualSatisfactoryCalculator.code.Utility.PlanLayoutMaker;
+using static VisualSatisfactoryCalculator.satisfactory.Utility.PlanLayoutMaker;
 
 namespace VisualSatisfactoryCalculator.controls.user
 {

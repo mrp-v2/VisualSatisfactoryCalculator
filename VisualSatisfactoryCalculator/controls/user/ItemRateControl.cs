@@ -2,15 +2,15 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-using VisualSatisfactoryCalculator.code.Numbers;
-using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.satisfactory.Numbers;
+using VisualSatisfactoryCalculator.satisfactory.Utility;
 using VisualSatisfactoryCalculator.forms;
 
 namespace VisualSatisfactoryCalculator.controls.user
 {
 	public partial class ItemRateControl : UserControl
 	{
-		public delegate void RateChanged(string itemUID, RationalNumber newRate, bool isProduct);
+		public delegate void RateChanged(string itemUID, RationalNumber oldRate, RationalNumber newRate, bool isProduct);
 		public delegate void ItemClicked(string itemUID, bool isProduct);
 
 		public string ItemUID { get; }
@@ -41,12 +41,12 @@ namespace VisualSatisfactoryCalculator.controls.user
 			NumberControl.AddNumberChangedListener(NumberChanged);
 		}
 
-		private void NumberChanged()
+		private void NumberChanged(RationalNumber oldValue, RationalNumber newValue)
 		{
 			if (Enabled && initialized)
 			{
 				mainForm.SuspendDrawing();
-				rateChanged(ItemUID, NumberControl.GetNumber(), IsProduct);
+				rateChanged(ItemUID, oldValue, newValue, IsProduct);
 				mainForm.UpdateTotalView();
 				mainForm.ResumeDrawing();
 			}

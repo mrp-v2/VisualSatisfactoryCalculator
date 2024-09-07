@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using VisualSatisfactoryCalculator.code.Numbers;
+using VisualSatisfactoryCalculator.satisfactory.Numbers;
 
-namespace VisualSatisfactoryCalculator.code.Extensions
+namespace VisualSatisfactoryCalculator.satisfactory.Extensions
 {
 	internal static class GenericExtensions
 	{

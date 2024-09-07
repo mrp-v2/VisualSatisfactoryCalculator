@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 
-using VisualSatisfactoryCalculator.code.DataStorage;
-using VisualSatisfactoryCalculator.code.Interfaces;
+using VisualSatisfactoryCalculator.satisfactory.DataStorage;
+using VisualSatisfactoryCalculator.satisfactory.Interfaces;
 
-namespace VisualSatisfactoryCalculator.code.Utility
+namespace VisualSatisfactoryCalculator.satisfactory.Utility
 {
 	public static class Constants
 	{

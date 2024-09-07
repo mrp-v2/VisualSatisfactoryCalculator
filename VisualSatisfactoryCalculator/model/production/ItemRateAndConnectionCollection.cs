@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using VisualSatisfactoryCalculator.code.Numbers;
+using VisualSatisfactoryCalculator.satisfactory.Numbers;
 
 namespace VisualSatisfactoryCalculator.model.production
 {

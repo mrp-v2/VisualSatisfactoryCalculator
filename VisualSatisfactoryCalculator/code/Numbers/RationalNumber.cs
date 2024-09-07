@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace VisualSatisfactoryCalculator.code.Numbers
+namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 {
 	public class RationalNumber
 	{

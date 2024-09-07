@@ -6,8 +6,8 @@ using System.Windows.Forms;
 
 using MrpV2.GenericLibrary.code.persistance.classes;
 
-using VisualSatisfactoryCalculator.code.Production;
-using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.satisfactory.Production;
+using VisualSatisfactoryCalculator.satisfactory.Utility;
 using VisualSatisfactoryCalculator.controls.user;
 
 namespace VisualSatisfactoryCalculator.forms

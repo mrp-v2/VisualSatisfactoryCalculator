@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using VisualSatisfactoryCalculator.code.DataStorage;
-using VisualSatisfactoryCalculator.code.Interfaces;
-using VisualSatisfactoryCalculator.code.Numbers;
-using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.satisfactory.DataStorage;
+using VisualSatisfactoryCalculator.satisfactory.Interfaces;
+using VisualSatisfactoryCalculator.satisfactory.Numbers;
+using VisualSatisfactoryCalculator.satisfactory.Utility;
 using VisualSatisfactoryCalculator.model.production;
 
-namespace VisualSatisfactoryCalculator.code.JSONClasses
+namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 {
 	class JSONResourceExtractor : JSONBuilding, IResourceExtractor, IFromJson
 	{

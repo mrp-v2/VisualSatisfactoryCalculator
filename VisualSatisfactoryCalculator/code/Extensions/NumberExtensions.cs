@@ -1,8 +1,8 @@
 ﻿using System;
 
-using VisualSatisfactoryCalculator.code.Numbers;
+using VisualSatisfactoryCalculator.satisfactory.Numbers;
 
-namespace VisualSatisfactoryCalculator.code.Extensions
+namespace VisualSatisfactoryCalculator.satisfactory.Extensions
 {
 	public static class NumberExtensions
 	{

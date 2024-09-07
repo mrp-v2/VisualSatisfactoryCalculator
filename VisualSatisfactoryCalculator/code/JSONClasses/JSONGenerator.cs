@@ -4,14 +4,14 @@ using System.Diagnostics;
 
 using Newtonsoft.Json;
 
-using VisualSatisfactoryCalculator.code.DataStorage;
-using VisualSatisfactoryCalculator.code.Extensions;
-using VisualSatisfactoryCalculator.code.Interfaces;
-using VisualSatisfactoryCalculator.code.Numbers;
-using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.satisfactory.DataStorage;
+using VisualSatisfactoryCalculator.satisfactory.Extensions;
+using VisualSatisfactoryCalculator.satisfactory.Interfaces;
+using VisualSatisfactoryCalculator.satisfactory.Numbers;
+using VisualSatisfactoryCalculator.satisfactory.Utility;
 using VisualSatisfactoryCalculator.model.production;
 
-namespace VisualSatisfactoryCalculator.code.JSONClasses
+namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 {
 	internal class JSONGenerator : IBuilding, IFromJson
 	{

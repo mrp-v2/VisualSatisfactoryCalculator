@@ -4,10 +4,10 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-using VisualSatisfactoryCalculator.code.Extensions;
-using VisualSatisfactoryCalculator.code.Numbers;
-using VisualSatisfactoryCalculator.code.Production;
-using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.satisfactory.Extensions;
+using VisualSatisfactoryCalculator.satisfactory.Numbers;
+using VisualSatisfactoryCalculator.satisfactory.Production;
+using VisualSatisfactoryCalculator.satisfactory.Utility;
 using VisualSatisfactoryCalculator.forms;
 using VisualSatisfactoryCalculator.model.production;
 

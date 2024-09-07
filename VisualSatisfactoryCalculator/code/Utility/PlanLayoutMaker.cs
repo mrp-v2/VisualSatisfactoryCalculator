@@ -4,11 +4,11 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-using VisualSatisfactoryCalculator.code.Production;
+using VisualSatisfactoryCalculator.satisfactory.Production;
 using VisualSatisfactoryCalculator.controls.user;
 using VisualSatisfactoryCalculator.forms;
 
-namespace VisualSatisfactoryCalculator.code.Utility
+namespace VisualSatisfactoryCalculator.satisfactory.Utility
 {
 	public class PlanLayoutMaker
 	{

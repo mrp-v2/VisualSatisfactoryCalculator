@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 
-using VisualSatisfactoryCalculator.code.Interfaces;
-using VisualSatisfactoryCalculator.code.JSONClasses;
+using VisualSatisfactoryCalculator.satisfactory.Interfaces;
+using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
 
-namespace VisualSatisfactoryCalculator.code.Utility
+namespace VisualSatisfactoryCalculator.satisfactory.Utility
 {
 	public class Encodings : Dictionary<string, IEncoder>
 	{

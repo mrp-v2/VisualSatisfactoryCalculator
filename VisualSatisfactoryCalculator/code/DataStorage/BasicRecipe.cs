@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using VisualSatisfactoryCalculator.code.Extensions;
-using VisualSatisfactoryCalculator.code.Interfaces;
-using VisualSatisfactoryCalculator.code.Numbers;
-using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.satisfactory.Extensions;
+using VisualSatisfactoryCalculator.satisfactory.Interfaces;
+using VisualSatisfactoryCalculator.satisfactory.Numbers;
+using VisualSatisfactoryCalculator.satisfactory.Utility;
 using VisualSatisfactoryCalculator.model.production;
 
-namespace VisualSatisfactoryCalculator.code.DataStorage
+namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 {
 	public class BasicRecipe : IRecipe
 	{

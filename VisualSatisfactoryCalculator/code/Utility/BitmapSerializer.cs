@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Drawing;
 
-using VisualSatisfactoryCalculator.code.Extensions;
+using VisualSatisfactoryCalculator.satisfactory.Extensions;
 
-namespace VisualSatisfactoryCalculator.code.Utility
+namespace VisualSatisfactoryCalculator.satisfactory.Utility
 {
 	internal class BitmapSerializer
 	{

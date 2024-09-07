@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json;
 
-using VisualSatisfactoryCalculator.code.Interfaces;
-using VisualSatisfactoryCalculator.code.Numbers;
-using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.satisfactory.Interfaces;
+using VisualSatisfactoryCalculator.satisfactory.Numbers;
+using VisualSatisfactoryCalculator.satisfactory.Utility;
 
-namespace VisualSatisfactoryCalculator.code.JSONClasses
+namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 {
 	internal class JSONBuilding : IBuilding, IFromJson
 	{

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Windows.Forms;
 
-using VisualSatisfactoryCalculator.code.Numbers;
+using VisualSatisfactoryCalculator.satisfactory.Numbers;
 
 namespace VisualSatisfactoryCalculator.controls.user
 {
