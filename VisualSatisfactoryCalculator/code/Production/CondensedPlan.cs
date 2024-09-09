@@ -17,20 +17,20 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		{
 			CondensingContext context = new CondensingContext();
 			int id = 0;
-			foreach (Step step in plan.Steps)
+			foreach (Step step in plan.steps)
 			{
 				context.stepIDs.Add(step, id++);
 			}
 			id = 0;
-			foreach (Connection connection in plan.ProcessedPlan.Get().GetAllConnections())
+			foreach (Connection connection in plan.processedPlan.Get().GetAllConnections())
 			{
 				context.connectionIDs.Add(connection, id++);
 			}
-			foreach (Step step in plan.Steps)
+			foreach (Step step in plan.steps)
 			{
 				steps.Add(new CondensedStep(step, context));
 			}
-			foreach (Connection connection in plan.ProcessedPlan.Get().GetAllConnections())
+			foreach (Connection connection in plan.processedPlan.Get().GetAllConnections())
 			{
 				connections.Add(new CondensedConnection(connection, context));
 			}
@@ -45,7 +45,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				Step step = new Step((IRecipe)encodings[condensedStep.RecipeID]);
 				step.SetMultiplier(condensedStep.multiplier, false);
 				context.stepIDs.Add(condensedStep.ID, step);
-				plan.Steps.Add(step);
+				plan.steps.Add(step);
 			}
 			foreach (CondensedConnection condensedConnection in connections)
 			{

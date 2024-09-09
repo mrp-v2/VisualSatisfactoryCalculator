@@ -4,18 +4,21 @@ using VisualSatisfactoryCalculator.satisfactory.Interfaces;
 using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 using VisualSatisfactoryCalculator.model.production;
+using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
+
+using ItemRate = VisualSatisfactoryCalculator.model.production.ItemRate<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem>;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
 	public class Plan
 	{
-		public readonly HashSet<Step> Steps;
-		public readonly CachedValue<ProcessedPlan> ProcessedPlan;
+		public readonly HashSet<Step> steps;
+		public readonly CachedValue<ProcessedPlan> processedPlan;
 
 		public Plan()
 		{
-			Steps = new HashSet<Step>();
-			ProcessedPlan = new CachedValue<ProcessedPlan>(() => new ProcessedPlan(this));
+			steps = new HashSet<Step>();
+			processedPlan = new CachedValue<ProcessedPlan>(() => new ProcessedPlan(this));
 		}
 
 		public RateCollection GetNetRates(Encodings encodings)
@@ -26,11 +29,11 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		public RateCollection GetProductRates()
 		{
 			RateCollection rates = new RateCollection(0);
-			foreach (Step step in Steps)
+			foreach (Step step in steps)
 			{
-				foreach (ItemRate itemCount in step.ProductionRates.Get())
+				foreach (ItemRate<JSONItem> itemCount in step.productionRates.Get())
 				{
-					rates.Add(itemCount.Item, step.GetItemRate(itemCount.Item, true));
+					rates.Add(itemCount.item, step.GetItemRate(itemCount.item, true));
 				}
 			}
 			return rates;
@@ -39,7 +42,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		public double GetPowerDraw(Encodings encodings)
 		{
 			double powerDraw = 0;
-			foreach (Step step in Steps)
+			foreach (Step step in steps)
 			{
 				powerDraw += step.GetPowerDraw(encodings);
 			}
@@ -49,11 +52,11 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		public RateCollection GetIngredientRates(Encodings encodings)
 		{
 			RateCollection rates = new RateCollection(GetPowerDraw(encodings));
-			foreach (Step step in Steps)
+			foreach (Step step in steps)
 			{
-				foreach (ItemRate itemCount in step.ConsumptionRates.Get())
+				foreach (ItemRate itemCount in step.consumptionRates.Get())
 				{
-					rates.Add(itemCount.Item, step.GetItemRate(itemCount.Item, false));
+					rates.Add(itemCount.item, step.GetItemRate(itemCount.item, false));
 				}
 			}
 			return rates;
@@ -62,15 +65,15 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		public Dictionary<string, int> MachineCount()
 		{
 			Dictionary<string, int> totalMachines = new Dictionary<string, int>();
-			foreach (Step step in Steps)
+			foreach (Step step in steps)
 			{
-				if (!totalMachines.ContainsKey(step.Recipe.MachineUID))
+				if (!totalMachines.ContainsKey(step.recipe.MachineUID))
 				{
-					totalMachines.Add(step.Recipe.MachineUID, step.CalculateMachineCount());
+					totalMachines.Add(step.recipe.MachineUID, step.CalculateMachineCount());
 				}
 				else
 				{
-					totalMachines[step.Recipe.MachineUID] += step.CalculateMachineCount();
+					totalMachines[step.recipe.MachineUID] += step.CalculateMachineCount();
 				}
 			}
 			return totalMachines;
@@ -92,10 +95,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			string str = "Net Products: ";
 			RateCollection netRates = GetNetRates(encodings);
 			bool first = true;
-			foreach (string itemUID in netRates.ItemUIDs)
+			foreach (JSONItem item in netRates.Items)
 			{
-				RationalNumber rate = netRates[itemUID];
-				IItem item = encodings[itemUID] as IItem;
+				RationalNumber rate = netRates[item];
 				string rateStr = rate.ToString();
 				if (rate.IsPositive && rate.IsNonZero)
 				{
@@ -107,15 +109,14 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 					{
 						str += ", ";
 					}
-					str += rateStr + " " + item.DisplayName;
+					str += rateStr + " " + item.displayName;
 				}
 			}
 			str += "\nAll Products: ";
 			RateCollection rates = GetProductRates();
 			first = true;
-			foreach (string itemUID in rates.ItemUIDs)
+			foreach (JSONItem item in rates.Items)
 			{
-				IItem item = encodings[itemUID] as IItem;
 				if (first)
 				{
 					first = false;
@@ -124,7 +125,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				{
 					str += ", ";
 				}
-				str += rates[itemUID].ToString() + " " + item.DisplayName;
+				str += rates[item].ToString() + " " + item.displayName;
 			}
 			return str;
 		}
@@ -134,9 +135,8 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			string str = "All Ingredients: ";
 			RateCollection rates = GetIngredientRates(encodings);
 			bool first = true;
-			foreach (string itemUID in rates.ItemUIDs)
+			foreach (JSONItem item in rates.Items)
 			{
-				IItem item = encodings[itemUID] as IItem;
 				if (first)
 				{
 					first = false;
@@ -145,15 +145,14 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				{
 					str += ", ";
 				}
-				str += rates[itemUID].ToString() + " " + item.DisplayName;
+				str += rates[item].ToString() + " " + item.displayName;
 			}
 			str += "\nNet Ingredients: ";
 			RateCollection netRates = GetNetRates(encodings);
 			first = true;
-			foreach (string itemUID in netRates.ItemUIDs)
+			foreach (JSONItem item in netRates.Items)
 			{
-				RationalNumber rate = netRates[itemUID];
-				IItem item = encodings[itemUID] as IItem;
+				RationalNumber rate = netRates[item];
 				string rateStr = (-rate).ToString();
 				if (!rate.IsPositive && rate.IsNonZero)
 				{
@@ -165,7 +164,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 					{
 						str += ", ";
 					}
-					str += rateStr + " " + item.DisplayName;
+					str += rateStr + " " + item.displayName;
 				}
 			}
 			return str;

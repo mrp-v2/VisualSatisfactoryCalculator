@@ -2,6 +2,7 @@
 
 using VisualSatisfactoryCalculator.satisfactory.DataStorage;
 using VisualSatisfactoryCalculator.satisfactory.Interfaces;
+using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Utility
 {
@@ -9,9 +10,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 	{
 		public const int CLOCK_DECIMALS = 4;
 
-		public static readonly IItem MWItem = new SimpleCustomItem("FillerEnergyItemMW", "MW");
+		public static readonly JSONItem MWItem = new JSONItem("FillerEnergyItemMW", "MW", "POWER", false, 1.0m);
 
-		public static readonly Dictionary<string, IEncoder> AllConstantEncoders = new Dictionary<string, IEncoder>() { { MWItem.ID, MWItem } };
+		public static readonly Dictionary<string, IEncoder> AllConstantEncoders = new Dictionary<string, IEncoder>() { { MWItem.id, MWItem } };
 
 		public static Encodings LastResortEncoderList = new Encodings();
 

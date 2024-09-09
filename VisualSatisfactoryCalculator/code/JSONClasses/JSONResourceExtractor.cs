@@ -44,18 +44,18 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 				{
 					if (OnlySpecificResources)
 					{
-						if (!AllowedResources.Contains(item.ID))
+						if (!AllowedResources.Contains(item.id))
 						{
 							continue;
 						}
 					}
 					foreach (string resourceNodeType in NODE_CYCLE_TIME_DIVISORS.Keys)
 					{
-						List<ItemRate> products = new List<ItemRate>
+						List<ItemRate<JSONItem>> products = new List<ItemRate<JSONItem>>
 						{
-							new ItemRate(item.ID, ItemsPerCycle)
+							new ItemRate<JSONItem>(FileInteractor.CurrentEncodings[item.id] as JSONItem, ItemsPerCycle)
 						};
-						IRecipe recipe = new JSONResourceExtractorRecipe(ID + resourceNodeType + item.ID, CycleTime / NODE_CYCLE_TIME_DIVISORS[resourceNodeType], ID, new List<ItemRate>(), products, resourceNodeType + " " + item.DisplayName);
+						IRecipe recipe = new JSONResourceExtractorRecipe(ID + resourceNodeType + item.id, CycleTime / NODE_CYCLE_TIME_DIVISORS[resourceNodeType], ID, new List<ItemRate<JSONItem>>(), products, resourceNodeType + " " + item.displayName);
 						recipes.Add(recipe.ID, recipe);
 					}
 				}
@@ -78,16 +78,16 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 					{
 						if (OnlySpecificResources)
 						{
-							if (!AllowedResources.Contains(item.ID))
+							if (!AllowedResources.Contains(item.id))
 							{
 								continue;
 							}
 						}
-						List<ItemRate> products = new List<ItemRate>
+						List<ItemRate<JSONItem>> products = new List<ItemRate<JSONItem>>
 						{
-							new ItemRate(item.ID, ItemsPerCycle)
+							new ItemRate<JSONItem>(FileInteractor.CurrentEncodings[item.id] as JSONItem, ItemsPerCycle)
 						};
-						IRecipe recipe = new JSONResourceExtractorRecipe(ID + item.ID, CycleTime, ID, new List<ItemRate>(), products, item.DisplayName);
+						IRecipe recipe = new JSONResourceExtractorRecipe(ID + item.id, CycleTime, ID, new List<ItemRate<JSONItem>>(), products, item.displayName);
 						recipes.Add(recipe.ID, recipe);
 					}
 				}
@@ -97,7 +97,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 
 		public class JSONResourceExtractorRecipe : BasicRecipe
 		{
-			public JSONResourceExtractorRecipe(string UID, RationalNumber craftTime, string machineUID, List<ItemRate> ingredients, List<ItemRate> products, string displayName) : base(UID, craftTime, machineUID, ingredients, products, displayName)
+			public JSONResourceExtractorRecipe(string UID, RationalNumber craftTime, string machineUID, List<ItemRate<JSONItem>> ingredients, List<ItemRate<JSONItem>> products, string displayName) : base(UID, craftTime, machineUID, ingredients, products, displayName)
 			{
 			}
 
@@ -105,7 +105,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 			{
 				string str = "";
 				bool first = true;
-				foreach (string key in Products.Keys)
+				foreach (JSONItem key in products.Keys)
 				{
 					if (!first)
 					{
@@ -115,7 +115,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 					{
 						first = false;
 					}
-					str += Products[key].ToString(encodings);
+					str += key.ToString(products[key]);
 				}
 				return str;
 			}

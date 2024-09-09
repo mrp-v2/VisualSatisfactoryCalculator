@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 using VisualSatisfactoryCalculator.model.production;
+using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Interfaces
 {
 	public interface IRecipe : IEquatable<IRecipe>, IEncoder
 	{
 		string MachineUID { get; }
-		RationalNumber CraftTime { get; }
 		string ToString(Encodings encodings);
 		/// <summary>
 		/// Creates a formatted string representation of this recipe.
@@ -26,8 +26,6 @@ namespace VisualSatisfactoryCalculator.satisfactory.Interfaces
 		/// </param>
 		/// <returns></returns>
 		string ToString(Encodings encodings, string format);
-		Dictionary<string, ItemRate> Ingredients { get; }
-		Dictionary<string, ItemRate> Products { get; }
-		RationalNumber GetCountFor(string itemUID, bool isProduct);
+		RationalNumber GetCountFor(JSONItem item, bool isProduct);
 	}
 }

@@ -12,27 +12,27 @@ using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.model.production
 {
-	public class Connection<ItemType> where ItemType : AbstractItem
+	public class Connection<ItemType, RecipeType> where ItemType : AbstractItem
 	{
 		private static readonly string NO_VISITED_NEIGHBORS = "Cannot update rates from visited when no neighbors are visited.";
 
-		public readonly ItemType Item;
+		public readonly ItemType item;
 		/// <summary>
 		/// Steps that produce items flowing into this connection.
 		/// </summary>
-		private readonly Dictionary<AbstractStep<ItemType>, ItemRate<ItemType>> producers;
+		private readonly Dictionary<AbstractStep<ItemType, RecipeType>, ItemRate<ItemType>> _producers;
 		/// <summary>
 		/// Steps that consume items flowing out of this connection.
 		/// </summary>
-		private readonly Dictionary<AbstractStep<ItemType>, ItemRate<ItemType>> consumers;
+		private readonly Dictionary<AbstractStep<ItemType, RecipeType>, ItemRate<ItemType>> _consumers;
 
-		private readonly CachedValue<IEnumerable<AbstractStep<ItemType>>> steps;
+		private readonly CachedValue<IEnumerable<AbstractStep<ItemType, RecipeType>>> _steps;
 
-		public IEnumerable<AbstractStep<ItemType>> Steps
+		public IEnumerable<AbstractStep<ItemType, RecipeType>> Steps
 		{
 			get
 			{
-				return steps.Get();
+				return _steps.Get();
 			}
 		}
 
@@ -40,11 +40,11 @@ namespace VisualSatisfactoryCalculator.model.production
 		{
 			get
 			{
-				if (producers.Count == 1 && consumers.Count == 1)
+				if (_producers.Count == 1 && _consumers.Count == 1)
 				{
 					return ConnectionType.SINGLE;
 				}
-				else if (producers.Count == 0 || consumers.Count == 0)
+				else if (_producers.Count == 0 || _consumers.Count == 0)
 				{
 					return ConnectionType.INCOMPLETE;
 				}
@@ -57,14 +57,42 @@ namespace VisualSatisfactoryCalculator.model.production
 
 		public Connection(ItemType item)
 		{
-			Item = item;
-			producers = new Dictionary<AbstractStep<ItemType>, ItemRate<ItemType>>();
-			consumers = new Dictionary<AbstractStep<ItemType>, ItemRate<ItemType>>();
+			this.item = item;
+			_producers = new Dictionary<AbstractStep<ItemType, RecipeType>, ItemRate<ItemType>>();
+			_consumers = new Dictionary<AbstractStep<ItemType, RecipeType>, ItemRate<ItemType>>();
 
-			steps = new CachedValue<IEnumerable<AbstractStep<ItemType>>>(() =>
+			_steps = new CachedValue<IEnumerable<AbstractStep<ItemType, RecipeType>>>(() =>
 			{
-				return new HashSet<AbstractStep<ItemType>>(Enumerable.Concat(producers.Keys, consumers.Keys));
+				return new HashSet<AbstractStep<ItemType, RecipeType>>(Enumerable.Concat(_producers.Keys, _consumers.Keys));
 			});
+		}
+
+		public Connection<ItemType, RecipeType> AddProducer(AbstractStep<ItemType, RecipeType> step)
+		{
+			_producers.Add(step, step.GetRate(item, true));
+			_steps.Invalidate();
+			return this;
+		}
+
+		public Connection<ItemType, RecipeType> AddConsumer(AbstractStep<ItemType, RecipeType> step)
+		{
+			_consumers.Add(step, step.GetRate(item, false));
+			_steps.Invalidate();
+			return this;
+		}
+
+		public Connection<ItemType, RecipeType> RemoveProducer(AbstractStep<ItemType, RecipeType> step)
+		{
+			_producers.Remove(step);
+			_steps.Invalidate();
+			return this;
+		}
+
+		public Connection<ItemType, RecipeType> RemoveConsumer(AbstractStep<ItemType, RecipeType> step)
+		{
+			_consumers.Remove(step);
+			_steps.Invalidate();
+			return this;
 		}
 
 		public override bool Equals(object obj)
@@ -74,35 +102,35 @@ namespace VisualSatisfactoryCalculator.model.production
 
 		public override int GetHashCode()
 		{
-			return Item.GetHashCode() * producers.Count * consumers.Count;
+			return item.GetHashCode() * _producers.Count * _consumers.Count;
 		}
 
-		public ItemRate<ItemType> GetRate(AbstractStep<ItemType> step, bool isConsuming)
+		public ItemRate<ItemType> GetRate(AbstractStep<ItemType, RecipeType> step, bool isConsuming)
 		{
 			if (isConsuming)
 			{
-				return consumers[step];
+				return _consumers[step];
 			}
 			else
 			{
-				return producers[step];
+				return _producers[step];
 			}
 		}
 
-		public bool IsStepProducer(AbstractStep<ItemType> step)
+		public bool IsStepProducer(AbstractStep<ItemType, RecipeType> step)
 		{
-			return producers.ContainsKey(step);
+			return _producers.ContainsKey(step);
 		}
 
-		public bool IsStepConsumer(AbstractStep<ItemType> step)
+		public bool IsStepConsumer(AbstractStep<ItemType, RecipeType> step)
 		{
-			return consumers.ContainsKey(step);
+			return _consumers.ContainsKey(step);
 		}
 
 		public uint GetNonUpdatedStepCount(HashSet<object> visited)
 		{
 			uint notVisited = 0;
-			foreach (AbstractStep<ItemType> step in Steps)
+			foreach (AbstractStep<ItemType, RecipeType> step in Steps)
 			{
 				if (!visited.Contains(step))
 				{
@@ -113,36 +141,36 @@ namespace VisualSatisfactoryCalculator.model.production
 		}
 
 		private void ProcessVisitedSteps(HashSet<object> visited,
-										 HashSet<AbstractStep<ItemType>> toVisit,
-										 out HashSet<AbstractStep<ItemType>> notUpdatedConsumers,
-										 out HashSet<AbstractStep<ItemType>> notUpdatedProducers,
+										 HashSet<AbstractStep<ItemType, RecipeType>> toVisit,
+										 out HashSet<AbstractStep<ItemType, RecipeType>> notUpdatedConsumers,
+										 out HashSet<AbstractStep<ItemType, RecipeType>> notUpdatedProducers,
 										 out RationalNumber lockedRate)
 		{
-			notUpdatedConsumers = new HashSet<AbstractStep<ItemType>>();
-			notUpdatedProducers = new HashSet<AbstractStep<ItemType>>();
+			notUpdatedConsumers = new HashSet<AbstractStep<ItemType, RecipeType>>();
+			notUpdatedProducers = new HashSet<AbstractStep<ItemType, RecipeType>>();
 			lockedRate = 0;
-			foreach (AbstractStep<ItemType> step in Steps)
+			foreach (AbstractStep<ItemType, RecipeType> step in Steps)
 			{
 				if (visited.Contains(step))
 				{
-					if (producers.ContainsKey(step))
+					if (_producers.ContainsKey(step))
 					{
-						producers[step] = step.GetRate(Item, true);
-						lockedRate += producers[step].Rate;
+						_producers[step] = step.GetRate(item, true);
+						lockedRate += _producers[step].rate;
 					}
-					if (consumers.ContainsKey(step))
+					if (_consumers.ContainsKey(step))
 					{
-						consumers[step] = step.GetRate(Item, false);
-						lockedRate -= consumers[step].Rate;
+						_consumers[step] = step.GetRate(item, false);
+						lockedRate -= _consumers[step].rate;
 					}
 				}
 				else
 				{
-					if (producers.ContainsKey(step))
+					if (_producers.ContainsKey(step))
 					{
 						notUpdatedProducers.Add(step);
 					}
-					if (consumers.ContainsKey(step))
+					if (_consumers.ContainsKey(step))
 					{
 						notUpdatedConsumers.Add(step);
 					}
@@ -151,16 +179,16 @@ namespace VisualSatisfactoryCalculator.model.production
 			}
 		}
 
-		public void UpdateRatesFrom(HashSet<object> visited, HashSet<AbstractStep<ItemType>> toVisit)
+		public void UpdateRatesFrom(HashSet<object> visited, HashSet<AbstractStep<ItemType, RecipeType>> toVisit)
 		{
 			if (Type != ConnectionType.INCOMPLETE)
 			{
 				ProcessVisitedSteps(visited,
 									toVisit,
-									out HashSet<AbstractStep<ItemType>> notUpdatedConsumers,
-									out HashSet<AbstractStep<ItemType>> notUpdatedProducers,
+									out HashSet<AbstractStep<ItemType, RecipeType>> notUpdatedConsumers,
+									out HashSet<AbstractStep<ItemType, RecipeType>> notUpdatedProducers,
 									out RationalNumber netLockedRate);
-				if (notUpdatedConsumers.Count == consumers.Count && notUpdatedProducers.Count == producers.Count)
+				if (notUpdatedConsumers.Count == _consumers.Count && notUpdatedProducers.Count == _producers.Count)
 				{
 					throw new InvalidOperationException(NO_VISITED_NEIGHBORS);
 				}
@@ -176,28 +204,28 @@ namespace VisualSatisfactoryCalculator.model.production
 						{
 							throw new InvalidOperationException("Unable to update consumer with deficient rate");
 						}
-						AbstractStep<ItemType> remaining = notUpdatedConsumers.First();
-						consumers[remaining] = new ItemRate<ItemType>(Item, netLockedRate);
+						AbstractStep<ItemType, RecipeType> remaining = notUpdatedConsumers.First();
+						_consumers[remaining] = new ItemRate<ItemType>(item, netLockedRate);
 						toVisit.Add(remaining);
 					}
 					else
 					{
-						HashSet<HashSet<AbstractStep<ItemType>>> singleConnectedConsumers = GetSingleConnectedStepGroups(notUpdatedConsumers);
+						HashSet<HashSet<AbstractStep<ItemType, RecipeType>>> singleConnectedConsumers = GetSingleConnectedStepGroups(notUpdatedConsumers);
 						if (singleConnectedConsumers.Count == 1)
 						{
 							RationalNumber groupRate = 0;
-							foreach (AbstractStep<ItemType> step in notUpdatedConsumers)
+							foreach (AbstractStep<ItemType, RecipeType> step in notUpdatedConsumers)
 							{
-								groupRate -= step.GetRate(Item, false).Rate;
+								groupRate -= step.GetRate(item, false).rate;
 							}
 							if (netLockedRate < 0)
 							{
 								throw new InvalidOperationException("Cannot update single connected consumer group when the net locked rates has deficiency");
 							}
 							RationalNumber multiplier = netLockedRate / groupRate.AbsoluteValue();
-							foreach (AbstractStep<ItemType> step in notUpdatedConsumers)
+							foreach (AbstractStep<ItemType, RecipeType> step in notUpdatedConsumers)
 							{
-								consumers[step] *= multiplier;
+								_consumers[step] *= multiplier;
 								toVisit.Add(step);
 							}
 						}
@@ -216,28 +244,28 @@ namespace VisualSatisfactoryCalculator.model.production
 						{
 							throw new InvalidOperationException("Unable to update producer with excess rate");
 						}
-						AbstractStep<ItemType> remaining = notUpdatedProducers.First();
-						producers[remaining] = new ItemRate<ItemType>(Item, netLockedRate);
+						AbstractStep<ItemType, RecipeType> remaining = notUpdatedProducers.First();
+						_producers[remaining] = new ItemRate<ItemType>(item, netLockedRate);
 						toVisit.Add(remaining);
 					}
 					else
 					{
-						HashSet<HashSet<AbstractStep<ItemType>>> singleConnectedProducers = GetSingleConnectedStepGroups(notUpdatedProducers);
+						HashSet<HashSet<AbstractStep<ItemType, RecipeType>>> singleConnectedProducers = GetSingleConnectedStepGroups(notUpdatedProducers);
 						if (singleConnectedProducers.Count == 1)
 						{
 							RationalNumber groupRate = 0;
-							foreach (AbstractStep<ItemType> step in notUpdatedProducers)
+							foreach (AbstractStep<ItemType, RecipeType> step in notUpdatedProducers)
 							{
-								groupRate += step.GetRate(Item, true).Rate;
+								groupRate += step.GetRate(item, true).rate;
 							}
 							if (netLockedRate > 0)
 							{
 								throw new InvalidOperationException("Cannot update single connected producer group when the net locked rates has excess");
 							}
 							RationalNumber multiplier = netLockedRate.AbsoluteValue() / groupRate;
-							foreach (AbstractStep<ItemType> step in notUpdatedProducers)
+							foreach (AbstractStep<ItemType, RecipeType> step in notUpdatedProducers)
 							{
-								producers[step] *= multiplier;
+								_producers[step] *= multiplier;
 								toVisit.Add(step);
 							}
 						}
@@ -250,35 +278,35 @@ namespace VisualSatisfactoryCalculator.model.production
 				}
 				else
 				{
-					HashSet<HashSet<AbstractStep<ItemType>>> singleConnectedStepGroups = GetSingleConnectedStepGroups(new HashSet<AbstractStep<ItemType>>(notUpdatedProducers.Concat(notUpdatedConsumers)));
+					HashSet<HashSet<AbstractStep<ItemType, RecipeType>>> singleConnectedStepGroups = GetSingleConnectedStepGroups(new HashSet<AbstractStep<ItemType, RecipeType>>(notUpdatedProducers.Concat(notUpdatedConsumers)));
 					if (singleConnectedStepGroups.Count == 1)
 					{
 						RationalNumber groupRate = 0;
-						foreach (AbstractStep<ItemType> step in notUpdatedProducers)
+						foreach (AbstractStep<ItemType, RecipeType> step in notUpdatedProducers)
 						{
-							groupRate += step.GetRate(Item, true).Rate;
+							groupRate += step.GetRate(item, true).rate;
 						}
-						foreach (AbstractStep<ItemType> step in notUpdatedConsumers)
+						foreach (AbstractStep<ItemType, RecipeType> step in notUpdatedConsumers)
 						{
-							groupRate -= step.GetRate(Item, false).Rate;
+							groupRate -= step.GetRate(item, false).rate;
 						}
 						if (groupRate.AreSignsEqual(netLockedRate))
 						{
 							throw new InvalidOperationException("Cannot adjust single connected step group when group sign and net locked rate sign are equal");
 						}
 						RationalNumber multiplier = netLockedRate.AbsoluteValue() / groupRate.AbsoluteValue();
-						AbstractStep<ItemType> singleConsumer = notUpdatedConsumers.First();
-						foreach (AbstractStep<ItemType> step in notUpdatedProducers)
+						AbstractStep<ItemType, RecipeType> singleConsumer = notUpdatedConsumers.First();
+						foreach (AbstractStep<ItemType, RecipeType> step in notUpdatedProducers)
 						{
-							producers[step] *= multiplier;
+							_producers[step] *= multiplier;
 							toVisit.Add(step);
 						}
-						foreach (AbstractStep<ItemType> step in notUpdatedConsumers)
+						foreach (AbstractStep<ItemType, RecipeType> step in notUpdatedConsumers)
 						{
-							consumers[step] *= multiplier;
+							_consumers[step] *= multiplier;
 							toVisit.Add(step);
 						}
-						BreadthFirstSearchHandler<ItemType>.CascadeUpdates(singleConsumer, false);
+						BreadthFirstSearchHandler<ItemType, RecipeType>.CascadeUpdates(singleConsumer, false);
 					}
 					else
 					{
@@ -290,19 +318,19 @@ namespace VisualSatisfactoryCalculator.model.production
 			}
 		}
 
-		private HashSet<HashSet<AbstractStep<ItemType>>> GetSingleConnectedStepGroups(IEnumerable<AbstractStep<ItemType>> steps)
+		private HashSet<HashSet<AbstractStep<ItemType, RecipeType>>> GetSingleConnectedStepGroups(IEnumerable<AbstractStep<ItemType, RecipeType>> steps)
 		{
-			HashSet<HashSet<AbstractStep<ItemType>>> groups = new HashSet<HashSet<AbstractStep<ItemType>>>();
-			foreach (AbstractStep<ItemType> step in steps)
+			HashSet<HashSet<AbstractStep<ItemType, RecipeType>>> groups = new HashSet<HashSet<AbstractStep<ItemType, RecipeType>>>();
+			foreach (AbstractStep<ItemType, RecipeType> step in steps)
 			{
-				foreach (HashSet<AbstractStep<ItemType>> group in groups)
+				foreach (HashSet<AbstractStep<ItemType, RecipeType>> group in groups)
 				{
 					if (group.Contains(step))
 					{
 						goto OuterContinue;
 					}
 				}
-				groups.Add(BreadthFirstSearchHandler<ItemType>.GetSingleConnectedSteps(step));
+				groups.Add(BreadthFirstSearchHandler<ItemType, RecipeType>.GetSingleConnectedSteps(step));
 			OuterContinue:
 				continue;
 			}
@@ -312,13 +340,13 @@ namespace VisualSatisfactoryCalculator.model.production
 		private void VerifyEqualRates()
 		{
 			RationalNumber producingRate = 0, consumingRate = 0;
-			foreach (ItemRate<ItemType> rate in producers.Values)
+			foreach (ItemRate<ItemType> rate in _producers.Values)
 			{
-				producingRate += rate.Rate;
+				producingRate += rate.rate;
 			}
-			foreach (ItemRate<ItemType> rate in consumers.Values)
+			foreach (ItemRate<ItemType> rate in _consumers.Values)
 			{
-				consumingRate += rate.Rate;
+				consumingRate += rate.rate;
 			}
 			if (producingRate != consumingRate)
 			{
@@ -326,25 +354,25 @@ namespace VisualSatisfactoryCalculator.model.production
 			}
 		}
 
-		public void CascadingSetRates(Dictionary<AbstractStep<ItemType>, ItemRate<ItemType>> producers, Dictionary<AbstractStep<ItemType>, ItemRate<ItemType>> consumers)
+		public void CascadingSetRates(Dictionary<AbstractStep<ItemType, RecipeType>, ItemRate<ItemType>> producers, Dictionary<AbstractStep<ItemType, RecipeType>, ItemRate<ItemType>> consumers)
 		{
-			if (producers.Keys.Count != this.producers.Keys.Count || producers.Keys.All(key => this.producers.ContainsKey(key)))
+			if (producers.Keys.Count != _producers.Keys.Count || !producers.Keys.All(key => _producers.ContainsKey(key)))
 			{
 				throw new InvalidOperationException("Producers do not match connection producers.");
 			}
-			if (consumers.Keys.Count != this.consumers.Keys.Count || consumers.Keys.All(key => this.consumers.ContainsKey(key)))
+			if (consumers.Keys.Count != _consumers.Keys.Count || !consumers.Keys.All(key => _consumers.ContainsKey(key)))
 			{
 				throw new InvalidOperationException("Consumers do not match connection consumers.");
 			}
-			foreach (KeyValuePair<AbstractStep<ItemType>, ItemRate<ItemType>> producer in producers)
+			foreach (KeyValuePair<AbstractStep<ItemType, RecipeType>, ItemRate<ItemType>> producer in producers)
 			{
-				this.producers[producer.Key] = producer.Value;
+				_producers[producer.Key] = producer.Value;
 			}
-			foreach (KeyValuePair<AbstractStep<ItemType>, ItemRate<ItemType>> consumer in consumers)
+			foreach (KeyValuePair<AbstractStep<ItemType, RecipeType>, ItemRate<ItemType>> consumer in consumers)
 			{
-				this.consumers[consumer.Key] = consumer.Value;
+				_consumers[consumer.Key] = consumer.Value;
 			}
-			BreadthFirstSearchHandler<ItemType>.CascadeUpdates(this);
+			BreadthFirstSearchHandler<ItemType, RecipeType>.CascadeUpdates(this);
 		}
 	}
 

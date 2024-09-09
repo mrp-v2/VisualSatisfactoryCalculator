@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using VisualSatisfactoryCalculator.model.production;
+using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
 using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 
@@ -7,10 +9,10 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
 	public class RateCollection
 	{
-		private readonly Dictionary<string, RationalNumber> BasicRates;
+		private readonly ItemRateCollection<JSONItem> BasicRates;
 		private double Power;
 
-		public IEnumerable<string> ItemUIDs
+		public IEnumerable<JSONItem> Items
 		{
 			get
 			{
@@ -18,11 +20,11 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			}
 		}
 
-		public RationalNumber this[string itemUID]
+		public RationalNumber this[JSONItem item]
 		{
 			get
 			{
-				return BasicRates[itemUID];
+				return BasicRates[item].rate;
 			}
 		}
 
@@ -34,35 +36,35 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 
 		public RateCollection(double power)
 		{
-			BasicRates = new Dictionary<string, RationalNumber>();
+			BasicRates = new ItemRateCollection<JSONItem>();
 			Power = power;
 		}
 
-		public void Add(string itemUID, RationalNumber rate)
+		public void Add(JSONItem item, RationalNumber rate)
 		{
-			if (itemUID == Constants.MWItem.ID)
+			if (item == Constants.MWItem)
 			{
 				Power += rate.ToDouble();
 			}
-			else if (BasicRates.ContainsKey(itemUID))
+			else if (BasicRates.ContainsKey(item))
 			{
-				BasicRates[itemUID] += rate;
+				BasicRates[item] += rate;
 			}
 			else
 			{
-				BasicRates.Add(itemUID, rate);
+				BasicRates.Add(new ItemRate<JSONItem>(item, rate));
 			}
 		}
 
-		private void Subtract(string itemUID, RationalNumber rate)
+		private void Subtract(JSONItem item, RationalNumber rate)
 		{
-			if (BasicRates.ContainsKey(itemUID))
+			if (BasicRates.ContainsKey(item))
 			{
-				BasicRates[itemUID] -= rate;
+				BasicRates[item] -= rate;
 			}
 			else
 			{
-				BasicRates.Add(itemUID, -rate);
+				BasicRates.Add(new ItemRate<JSONItem>(item, -rate));
 			}
 		}
 
@@ -74,9 +76,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		public RateCollection Subtract(RateCollection other)
 		{
 			Power -= other.Power;
-			foreach (string itemUID in other.BasicRates.Keys)
+			foreach (JSONItem item in other.BasicRates.Keys)
 			{
-				Subtract(itemUID, other.BasicRates[itemUID]);
+				Subtract(item, other.BasicRates[item].rate);
 			}
 			return this;
 		}

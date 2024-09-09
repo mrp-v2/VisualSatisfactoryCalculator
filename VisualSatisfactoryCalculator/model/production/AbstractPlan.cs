@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VisualSatisfactoryCalculator.model.production
 {
-	public class AbstractPlan<StepType, ItemType> where StepType : AbstractStep<ItemType> where ItemType : AbstractItem
+	public class AbstractPlan<StepType, ItemType, RecipeType> where StepType : AbstractStep<ItemType, RecipeType> where ItemType : AbstractItem
 	{
 		protected readonly HashSet<StepType> steps;
 	}

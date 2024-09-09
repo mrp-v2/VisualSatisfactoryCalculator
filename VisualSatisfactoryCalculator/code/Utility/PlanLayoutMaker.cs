@@ -19,9 +19,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			DrawingContext = new PlanDrawingContext();
 			int yPosition = panel.GetPreferredSize(new Size()).Height, xPosition = 0;
 			// setup normal connections
-			for (int currentTier = plan.ProcessedPlan.Get().Tiers - 1; currentTier >= 0; currentTier--)
+			for (int currentTier = plan.processedPlan.Get().Tiers - 1; currentTier >= 0; currentTier--)
 			{
-				foreach (Step step in plan.ProcessedPlan.Get().GetStepsInTier(currentTier))
+				foreach (Step step in plan.processedPlan.Get().GetStepsInTier(currentTier))
 				{
 					StepControl stepControl = new StepControl(step, mainForm);
 					Dictionary<Step, string> ingredientControls = new Dictionary<Step, string>();
@@ -63,14 +63,14 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 				}
 			}
 			// setup abnormal connections
-			foreach (Connection connection in plan.ProcessedPlan.Get().GetAbnormalConnections())
+			foreach (Connection connection in plan.processedPlan.Get().GetAbnormalConnections())
 			{
 				DrawingContext.AbnormalConnectionUIMap.Add(connection, new Tuple<SplitAndMergeControl, SplitAndMergeLayout>(new SplitAndMergeControl(connection, mainForm), new SplitAndMergeLayout(connection)));
 				DrawingContext.AbnormalConnectionsRequiringIndependentDrawing.Add(connection);
 
 			}
 			// start placing things
-			foreach (Step step in plan.ProcessedPlan.Get().GetStepsInTier(0))
+			foreach (Step step in plan.processedPlan.Get().GetStepsInTier(0))
 			{
 				DrawingContext.StepUIMap[step].Item2.PrePlace();
 			}
@@ -86,7 +86,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			{
 				panel.Controls.Add(DrawingContext.AbnormalConnectionUIMap[connection].Item1);
 			}
-			foreach (Step step in plan.ProcessedPlan.Get().GetStepsInTier(0))
+			foreach (Step step in plan.processedPlan.Get().GetStepsInTier(0))
 			{
 				StepAndIngredientsLayout layout = DrawingContext.StepUIMap[step].Item2;
 				layout.Place(xPosition, yPosition);
@@ -507,7 +507,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 					line3.Location = AddPoints(line3.Location, new Point(0, height - line3.Location.Y));
 				}
 				Dictionary<Step, string> ingredientSteps = new Dictionary<Step, string>();
-				foreach (Connection ingredientConnection in TopControl.BackingStep.NormalIngredientConnections.Get())
+				foreach (Connection ingredientConnection in TopControl.BackingStep.normalIngredientConnections.Get())
 				{
 					foreach (Step step in ingredientConnection.GetProducerSteps())
 					{

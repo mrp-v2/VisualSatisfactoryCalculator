@@ -35,9 +35,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 			return default;
 		}
 
-		private static List<ItemRate> GetIngredients(string mIngredients)
+		private static List<ItemRate<JSONItem>> GetIngredients(string mIngredients)
 		{
-			List<ItemRate> ingredientsList = new List<ItemRate>();
+			List<ItemRate<JSONItem>> ingredientsList = new List<ItemRate<JSONItem>>();
 			string[] ingredientsArray = mIngredients.Split(',');
 			Trace.Assert(ingredientsArray.Length % 2 == 0);
 			for (int i = 0; i < ingredientsArray.Length; i += 2)
@@ -47,9 +47,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 			return ingredientsList;
 		}
 
-		private static List<ItemRate> GetProducts(string mProduct)
+		private static List<ItemRate<JSONItem>> GetProducts(string mProduct)
 		{
-			List<ItemRate> productsList = new List<ItemRate>();
+			List<ItemRate<JSONItem>> productsList = new List<ItemRate<JSONItem>>();
 			string[] productsArray = mProduct.Split(',');
 			Trace.Assert(productsArray.Length % 2 == 0);
 			for (int i = 0; i < productsArray.Length; i += 2)
@@ -59,14 +59,14 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 			return productsList;
 		}
 
-		private static ItemRate ParseItemCount(string itemString, string countString)
+		private static ItemRate<JSONItem> ParseItemCount(string itemString, string countString)
 		{
 			itemString = itemString.Substring(itemString.IndexOf(".") + 1);
 			itemString = itemString.Substring(0, itemString.LastIndexOf("\""));
 			countString = countString.Replace(")", "");
 			countString = countString.Remove(0, "Amount=".Length);
 			RationalNumber itemCount = int.Parse(countString);
-			return new ItemRate(itemString, itemCount);
+			return new ItemRate<JSONItem>(FileInteractor.CurrentEncodings[itemString] as JSONItem, itemCount);
 		}
 	}
 }

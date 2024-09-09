@@ -50,7 +50,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			GetSection<JSONItem, JSONItem>("FGAmmoTypeInstantHit", items);
 			foreach (JSONItem item in items)
 			{
-				totalResults.Add(item.ID, item);
+				totalResults.Add(item.id, item);
 			}
 			//JSONBuildings
 			List<JSONBuilding> buildings = new List<JSONBuilding>();

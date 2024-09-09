@@ -51,15 +51,15 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 				Trace.Assert(encodingItem is JSONItem);
 				JSONItem jItem = encodingItem as JSONItem;
 				decimal d = jItem.EnergyValue / 1000;
-				List<ItemRate> ingredients = new List<ItemRate>
+				List<ItemRate<JSONItem>> ingredients = new List<ItemRate<JSONItem>>
 				{
-					new ItemRate(fuelItemID, powerProduction / d / EnergyDivisor)
+					new ItemRate<JSONItem>(FileInteractor.CurrentEncodings[fuelItemID] as JSONItem, powerProduction / d / EnergyDivisor)
 				};
 				if (requiresSupplementalResource)
 				{
-					ingredients.Add(new ItemRate(Constants.WaterID, powerProduction * supplementalToPowerRatio * SupplementalResourceFactor));
+					ingredients.Add(new ItemRate<JSONItem>(FileInteractor.CurrentEncodings[Constants.WaterID] as JSONItem, powerProduction * supplementalToPowerRatio * SupplementalResourceFactor));
 				}
-				IRecipe recipe = new JSONGeneratorRecipe(ID + fuelItemID, 60, ID, ingredients, new List<ItemRate>(), jItem.DisplayName + " to Power", powerProduction);
+				IRecipe recipe = new JSONGeneratorRecipe(ID + fuelItemID, 60, ID, ingredients, new List<ItemRate<JSONItem>>(), jItem.displayName + " to Power", powerProduction);
 				recipes.Add(recipe.ID, recipe);
 			}
 			return recipes;
@@ -79,7 +79,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 		{
 			private readonly RationalNumber powerProduction;
 
-			public JSONGeneratorRecipe(string UID, decimal craftTime, string machineUID, List<ItemRate> ingredients, List<ItemRate> products, string displayName, RationalNumber powerProduction) : base(UID, craftTime, machineUID, ingredients, products, displayName)
+			public JSONGeneratorRecipe(string UID, decimal craftTime, string machineUID, List<ItemRate<JSONItem>> ingredients, List<ItemRate<JSONItem>> products, string displayName, RationalNumber powerProduction) : base(UID, craftTime, machineUID, ingredients, products, displayName)
 			{
 				this.powerProduction = powerProduction;
 			}
@@ -88,7 +88,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 			{
 				string str = "";
 				bool first = true;
-				foreach (string key in Ingredients.Keys)
+				foreach (JSONItem key in ingredients.Keys)
 				{
 					if (!first)
 					{
@@ -98,7 +98,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 					{
 						first = false;
 					}
-					str += Ingredients[key].ToString(encodings);
+					str += key.ToString(ingredients[key]);
 				}
 				str += " -> " + powerProduction.ToString() + " MW";
 				return str;

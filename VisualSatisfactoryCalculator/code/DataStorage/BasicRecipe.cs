@@ -6,33 +6,20 @@ using VisualSatisfactoryCalculator.satisfactory.Interfaces;
 using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 using VisualSatisfactoryCalculator.model.production;
+using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
 
 namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 {
-	public class BasicRecipe : IRecipe
+	public class BasicRecipe : AbstractRecipe<JSONItem>, IRecipe
 	{
 		public string ID { get; }
-		public RationalNumber CraftTime { get; }
 		public string MachineUID { get; }
-		public Dictionary<string, ItemRate> Ingredients { get; }
-		public Dictionary<string, ItemRate> Products { get; }
 		public string DisplayName { get; }
 
-		public BasicRecipe(string ID, RationalNumber craftTime, string machineUID, List<ItemRate> ingredients, List<ItemRate> products, string displayName)
+		public BasicRecipe(string ID, RationalNumber craftTime, string machineUID, List<ItemRate<JSONItem>> ingredients, List<ItemRate<JSONItem>> products, string displayName) : base(craftTime, ingredients, products)
 		{
 			this.ID = ID;
-			CraftTime = craftTime;
 			MachineUID = machineUID;
-			Ingredients = new Dictionary<string, ItemRate>();
-			foreach (ItemRate itemCount in ingredients)
-			{
-				Ingredients.Add(itemCount.Item, itemCount);
-			}
-			Products = new Dictionary<string, ItemRate>();
-			foreach (ItemRate itemCount in products)
-			{
-				Products.Add(itemCount.Item, itemCount);
-			}
 			DisplayName = displayName;
 		}
 
@@ -65,7 +52,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 		{
 			string str = "";
 			bool first = true;
-			foreach (string key in Ingredients.Keys)
+			foreach (JSONItem key in ingredients.Keys)
 			{
 				if (!first)
 				{
@@ -75,11 +62,11 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 				{
 					first = false;
 				}
-				str += Ingredients[key].ToString(encodings);
+				str += key.ToString(ingredients[key]);
 			}
 			str += " -> ";
 			first = true;
-			foreach (string key in Products.Keys)
+			foreach (JSONItem key in products.Keys)
 			{
 				if (!first)
 				{
@@ -89,7 +76,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 				{
 					first = false;
 				}
-				str += Products[key].ToString(encodings);
+				str += key.ToString(products[key]);
 			}
 			return str;
 		}
@@ -98,7 +85,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 		{
 			string str = DisplayName + ": ";
 			str += GetConversionString(encodings);
-			str += " in " + CraftTime.ToString() + " seconds using a " + encodings[MachineUID].DisplayName;
+			str += " in " + time.ToString() + " seconds using a " + encodings[MachineUID].DisplayName;
 			return str;
 		}
 
@@ -115,15 +102,15 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 		/// <summary>
 		/// Always positive
 		/// </summary>
-		public RationalNumber GetCountFor(string itemUID, bool isProduct)
+		public RationalNumber GetCountFor(JSONItem item, bool isProduct)
 		{
 			if (isProduct)
 			{
-				return Products[itemUID].Rate;
+				return products[item];
 			}
 			else
 			{
-				return Ingredients[itemUID].Rate;
+				return ingredients[item];
 			}
 		}
 
@@ -131,7 +118,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 		{
 			format = format.Replace("{name}", DisplayName);
 			format = format.Replace("{conversion}", GetConversionString(encodings));
-			format = format.Replace("{time}", CraftTime.ToString());
+			format = format.Replace("{time}", time.ToString());
 			format = format.Replace("{machine}", encodings[MachineUID].DisplayName);
 			return format;
 		}

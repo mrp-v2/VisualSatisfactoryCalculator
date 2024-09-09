@@ -14,7 +14,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 
 		public ProcessedPlan(Plan plan)
 		{
-			steps = plan.Steps;
+			steps = plan.steps;
 			normalConnectionGroups = new HashSet<HashSet<Connection>>();
 			abnormalConnections = new HashSet<Connection>();
 			tierSteps = new Dictionary<int, HashSet<Step>>();
@@ -58,7 +58,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			HashSet<Step> tier0 = new HashSet<Step>();
 			foreach (Step step in remainingSteps)
 			{
-				if (!step.HasNormalProductConnections.Get())
+				if (!step.hasNormalProductConnections.Get())
 				{
 					tier0.Add(step);
 				}
@@ -76,7 +76,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				HashSet<Step> ingredientSteps = new HashSet<Step>();
 				foreach (Step step in previousTier)
 				{
-					foreach (Connection connection in step.NormalIngredientConnections.Get())
+					foreach (Connection connection in step.normalIngredientConnections.Get())
 					{
 						ingredientSteps.UnionWith(connection.GetProducerSteps());
 					}

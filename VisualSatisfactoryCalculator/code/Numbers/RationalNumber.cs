@@ -1,84 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 {
-	public class RationalNumber
+	public sealed class RationalNumber
 	{
-		private readonly List<int> PrimeFactoredNumerator, PrimeFactoredDenominator;
+		private readonly ImmutableList<int> PrimeFactoredNumerator, PrimeFactoredDenominator;
 		public readonly bool IsPositive;
 		public readonly bool IsNonZero;
 
 		private RationalNumber(bool isNonZero, bool isPositive)
 		{
-			if (!isNonZero && !isPositive)
-			{
-				throw new ArgumentException("Can't have a negative zero value.");
-			}
-			PrimeFactoredNumerator = new List<int>();
-			PrimeFactoredDenominator = new List<int>();
+			PrimeFactoredNumerator = ImmutableList.Create<int>();
+			PrimeFactoredDenominator = ImmutableList.Create<int>();
+			IsPositive = isPositive;
 			IsNonZero = isNonZero;
-			IsPositive = isPositive;
 		}
 
-		private RationalNumber(IEnumerable<int> primeFactoredNumerator, IEnumerable<int> primeFactoredDenominator, bool isPositive)
+		private RationalNumber(IEnumerable<int> primeFactoredNumerator, IEnumerable<int> primeFactoredDenominator, bool isPositive, bool isNonZero)
 		{
-			PrimeFactoredNumerator = new List<int>();
-			PrimeFactoredDenominator = new List<int>();
-			PrimeFactoredNumerator.AddRange(primeFactoredNumerator);
-			PrimeFactoredDenominator.AddRange(primeFactoredDenominator);
+			PrimeFactoredNumerator = ImmutableList.CreateRange(primeFactoredNumerator);
+			PrimeFactoredDenominator = ImmutableList.CreateRange(primeFactoredDenominator);
 			IsPositive = isPositive;
-			IsNonZero = true;
+			IsNonZero = isNonZero;
 		}
 
-		public RationalNumber(int numerator, int denominator) : this(numerator > 0 ? numerator : -numerator, denominator, numerator > 0)
-		{
+		public RationalNumber(int numerator, int denominator) : this(numerator > 0 ? numerator : -numerator, denominator, numerator > 0) { }
 
-		}
-
-		public RationalNumber(int numerator, int denominator, bool isPositive)
+		public RationalNumber(int numerator, int denominator, bool isPositive) : this(numerator == 1 ? new List<int>() : PrimeNumberHandler.PrimeFactors(numerator), PrimeNumberHandler.PrimeFactors(denominator), isPositive, true)
 		{
 			if (numerator == 0 || denominator == 0)
 			{
 				throw new ArgumentException("Should not have zero arguments here. Use a different method.");
 			}
-			IsNonZero = true;
-			IsPositive = isPositive;
-			if (numerator == 1)
-			{
-				PrimeFactoredNumerator = new List<int>();
-				PrimeFactoredDenominator = PrimeNumberHandler.PrimeFactors(denominator);
-			}
-			else
-			{
-				PrimeFactoredNumerator = PrimeNumberHandler.PrimeFactors(numerator);
-				PrimeFactoredDenominator = PrimeNumberHandler.PrimeFactors(denominator);
-			}
 		}
 
-		private RationalNumber(int value)
+		private static RationalNumber From(int value)
 		{
+			bool isPositive;
 			if (value == 0)
 			{
-				IsNonZero = false;
-				IsPositive = true;
-				PrimeFactoredNumerator = new List<int>();
-				PrimeFactoredDenominator = new List<int>();
-				return;
+				return new RationalNumber(new List<int>(), new List<int>(), true, false);
 			}
-			IsNonZero = true;
-			IsPositive = value > 0;
-			value = IsPositive ? value : -value;
+			isPositive = value > 0;
+			value = isPositive ? value : -value;
 			if (value == 1)
 			{
-				PrimeFactoredNumerator = new List<int>();
+				return new RationalNumber(new List<int>(), new List<int>(), isPositive, true);
 			}
 			else
 			{
-				PrimeFactoredNumerator = PrimeNumberHandler.PrimeFactors(value);
+				return new RationalNumber(PrimeNumberHandler.PrimeFactors(value), new List<int>(), isPositive, true);
 			}
-			PrimeFactoredDenominator = new List<int>();
 		}
 
 		public static RationalNumber FromDecimalString(string str)
@@ -96,20 +71,28 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 				}
 				bool isPositive = numerator > 0;
 				int denominator = (int)Math.Pow(10, decimals);
-				return new RationalNumber(PrimeNumberHandler.PrimeFactors(isPositive ? numerator : -numerator), PrimeNumberHandler.PrimeFactors(denominator), isPositive);
+				return new RationalNumber(PrimeNumberHandler.PrimeFactors(isPositive ? numerator : -numerator), PrimeNumberHandler.PrimeFactors(denominator), isPositive, true);
 			}
-			return new RationalNumber(int.Parse(str));
+			return From(int.Parse(str));
 		}
 
-		private void Simplify()
+		private RationalNumber Simplify()
 		{
-			PrimeFactoredNumerator.Sort();
-			PrimeFactoredDenominator.Sort();
-			for (int i = 0; i < PrimeFactoredNumerator.Count; i++)
+			List<int> numerator = new List<int>(PrimeFactoredNumerator);
+			List<int> denominator = new List<int>(PrimeFactoredDenominator);
+			Simplify(numerator, denominator);
+			return new RationalNumber(numerator, denominator, IsPositive, IsNonZero);
+		}
+
+		private static void Simplify(List<int> numerator, List<int> denominator)
+		{
+			numerator.Sort();
+			denominator.Sort();
+			for (int i = 0; i < numerator.Count; i++)
 			{
-				if (PrimeFactoredDenominator.Remove(PrimeFactoredNumerator[i]))
+				if (denominator.Remove(numerator[i]))
 				{
-					PrimeFactoredNumerator.RemoveAt(i--);
+					numerator.RemoveAt(i--);
 				}
 			}
 		}
@@ -120,7 +103,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 			{
 				return new RationalNumber(false, true);
 			}
-			return new RationalNumber(PrimeFactoredNumerator, PrimeFactoredDenominator, IsPositive);
+			return new RationalNumber(PrimeFactoredNumerator, PrimeFactoredDenominator, IsPositive, true);
 		}
 
 		public int GetNumerator()
@@ -129,11 +112,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 			{
 				return 0;
 			}
-			int numerator = 1;
-			foreach (int i in PrimeFactoredNumerator)
-			{
-				numerator *= i;
-			}
+			int numerator = Product(PrimeFactoredNumerator);
 			if (!IsPositive)
 			{
 				numerator = -numerator;
@@ -141,14 +120,19 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 			return numerator;
 		}
 
+		private static int Product(IEnumerable<int> factors)
+		{
+			int product = 1;
+			foreach (int i in factors)
+			{
+				product *= i;
+			}
+			return product;
+		}
+
 		public int GetDenominator()
 		{
-			int denominator = 1;
-			foreach (int i in PrimeFactoredDenominator)
-			{
-				denominator *= i;
-			}
-			return denominator;
+			return Product(PrimeFactoredDenominator);
 		}
 
 		public double ToDouble()
@@ -183,7 +167,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 
 		public RationalNumber AbsoluteValue()
 		{
-			return new RationalNumber(PrimeFactoredNumerator, PrimeFactoredDenominator, true);
+			return new RationalNumber(PrimeFactoredNumerator, PrimeFactoredDenominator, true, IsNonZero);
 		}
 
 		/// <summary>
@@ -213,7 +197,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 
 		public static RationalNumber operator -(RationalNumber a)
 		{
-			return new RationalNumber(a.PrimeFactoredNumerator, a.PrimeFactoredDenominator, !a.IsPositive);
+			return new RationalNumber(a.PrimeFactoredNumerator, a.PrimeFactoredDenominator, !a.IsPositive, a.IsNonZero);
 		}
 
 		public static RationalNumber Add(RationalNumber a, RationalNumber b)
@@ -223,8 +207,6 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 
 		public static RationalNumber operator +(RationalNumber a, RationalNumber b)
 		{
-			a = a.Clone();
-			b = b.Clone();
 			if (!a.IsNonZero)
 			{
 				return b;
@@ -233,12 +215,10 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 			{
 				return a;
 			}
-			RationalNumber c = a.Clone();
-			a.PrimeFactoredNumerator.AddRange(b.PrimeFactoredDenominator);
-			a.PrimeFactoredDenominator.AddRange(b.PrimeFactoredDenominator);
-			b.PrimeFactoredNumerator.AddRange(c.PrimeFactoredDenominator);
-			b.PrimeFactoredDenominator.AddRange(c.PrimeFactoredDenominator);
-			int numerator = a.GetNumerator() + b.GetNumerator();
+			ImmutableList<int> numeratorA = a.PrimeFactoredNumerator.AddRange(b.PrimeFactoredDenominator);
+			ImmutableList<int> numeratorB = b.PrimeFactoredNumerator.AddRange(a.PrimeFactoredDenominator);
+			ImmutableList<int> denominator = a.PrimeFactoredDenominator.AddRange(b.PrimeFactoredDenominator);
+			int numerator = Product(numeratorA) + Product(numeratorB);
 			if (numerator == 0)
 			{
 				return new RationalNumber(false, true);
@@ -252,9 +232,8 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 			{
 				return new RationalNumber(true, isPositive);
 			}
-			RationalNumber result = new RationalNumber(PrimeNumberHandler.PrimeFactors(numerator), a.PrimeFactoredDenominator, isPositive);
-			result.Simplify();
-			return result;
+			RationalNumber result = new RationalNumber(PrimeNumberHandler.PrimeFactors(numerator), denominator, isPositive, true);
+			return result.Simplify();
 		}
 
 		public static RationalNumber operator -(RationalNumber a, RationalNumber b)
@@ -274,8 +253,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 			result.PrimeFactoredNumerator.AddRange(b.PrimeFactoredNumerator);
 			result.PrimeFactoredDenominator.AddRange(a.PrimeFactoredDenominator);
 			result.PrimeFactoredDenominator.AddRange(b.PrimeFactoredDenominator);
-			result.Simplify();
-			return result;
+			return result.Simplify();
 		}
 
 		public static RationalNumber operator /(RationalNumber a, RationalNumber b)
@@ -298,8 +276,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 			result.PrimeFactoredNumerator.AddRange(b.PrimeFactoredDenominator);
 			result.PrimeFactoredDenominator.AddRange(a.PrimeFactoredDenominator);
 			result.PrimeFactoredDenominator.AddRange(b.PrimeFactoredNumerator);
-			result.Simplify();
-			return result;
+			return result.Simplify();
 		}
 
 		public static bool operator ==(RationalNumber a, RationalNumber b)
@@ -415,13 +392,12 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 				b = -b;
 			}
 			result.PrimeFactoredNumerator.AddRange(PrimeNumberHandler.PrimeFactors(b));
-			result.Simplify();
-			return result;
+			return result.Simplify();
 		}
 
 		public static implicit operator RationalNumber(int a)
 		{
-			return new RationalNumber(a);
+			return From(a);
 		}
 
 		public static implicit operator RationalNumber(decimal d)

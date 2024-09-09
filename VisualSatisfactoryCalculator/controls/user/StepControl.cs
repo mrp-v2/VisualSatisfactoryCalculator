@@ -86,7 +86,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 						connection.MergeWith(MainForm.CurrentConnectionFunc());
 						MainForm.CurrentConnectionIRC = null;
 						MainForm.CurrentConnectionFunc = null;
-						MainForm.Plan.ProcessedPlan.Invalidate();
+						MainForm.Plan.processedPlan.Invalidate();
 						MainForm.PlanUpdated();
 					}
 					else
@@ -120,8 +120,8 @@ namespace VisualSatisfactoryCalculator.controls.user
 				if (srp.ShowDialog() == DialogResult.OK)
 				{
 					Step ps = new Step(srp.GetSelectedRecipe(), BackingStep, itemUID, isProduct);
-					MainForm.Plan.Steps.Add(ps);
-					MainForm.Plan.ProcessedPlan.Invalidate();
+					MainForm.Plan.steps.Add(ps);
+					MainForm.Plan.processedPlan.Invalidate();
 					MainForm.PlanUpdated();
 				}
 			}

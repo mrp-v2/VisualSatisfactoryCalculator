@@ -8,18 +8,18 @@ namespace VisualSatisfactoryCalculator.model.production
 {
 	public class AbstractItem
 	{
-		public readonly string ID;
-		public readonly string DisplayName;
+		public readonly string id;
+		public readonly string displayName;
 
 		protected AbstractItem(string id, string displayName)
 		{
-			ID = id;
-			DisplayName = displayName;
+			this.id = id;
+			this.displayName = displayName;
 		}
 
 		public override int GetHashCode()
 		{
-			return ID.GetHashCode();
+			return id.GetHashCode();
 		}
 
 		public override bool Equals(object obj)
@@ -29,7 +29,7 @@ namespace VisualSatisfactoryCalculator.model.production
 
 		public override string ToString()
 		{
-			return DisplayName;
+			return displayName;
 		}
 	}
 }

@@ -7,25 +7,25 @@ using VisualSatisfactoryCalculator.satisfactory.Utility;
 namespace VisualSatisfactoryCalculator.model.production
 {
 	[Serializable]
-	public class ItemRate<ItemType> where ItemType : AbstractItem
+	public sealed class ItemRate<ItemType> where ItemType : AbstractItem
 	{
-		public RationalNumber Rate { get; }
-		public ItemType Item { get; }
+		public readonly RationalNumber rate;
+		public readonly ItemType item;
 
 		public ItemRate(ItemType item, RationalNumber rate)
 		{
-			Item = item;
-			Rate = rate;
+			this.item = item;
+			this.rate = rate;
 		}
 
 		public override string ToString()
 		{
-			return Rate + " " + Item.ToString();
+			return rate + " " + item.ToString();
 		}
 
 		public override int GetHashCode()
 		{
-			return Item.GetHashCode() * Rate.GetHashCode();
+			return item.GetHashCode() * rate.GetHashCode();
 		}
 
 		public override bool Equals(object obj)
@@ -36,7 +36,7 @@ namespace VisualSatisfactoryCalculator.model.production
 			}
 			if (obj is ItemRate<ItemType> other)
 			{
-				return Item.Equals(other.Item) && Rate == other.Rate;
+				return item.Equals(other.item) && rate == other.rate;
 			}
 			else
 			{
@@ -46,7 +46,17 @@ namespace VisualSatisfactoryCalculator.model.production
 
 		public static ItemRate<ItemType> operator *(ItemRate<ItemType> rate, RationalNumber multiplier)
 		{
-			return new ItemRate<ItemType>(rate.Item, rate.Rate * multiplier);
+			return new ItemRate<ItemType>(rate.item, rate.rate * multiplier);
+		}
+
+		public static ItemRate<ItemType> operator +(ItemRate<ItemType> a, RationalNumber b)
+		{
+			return new ItemRate<ItemType>(a.item, a.rate + b);
+		}
+
+		public static ItemRate<ItemType> operator -(ItemRate<ItemType> a, RationalNumber b)
+		{
+			return new ItemRate<ItemType>(a.item, a.rate - b);
 		}
 	}
 }

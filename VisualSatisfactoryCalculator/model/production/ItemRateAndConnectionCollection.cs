@@ -8,51 +8,76 @@ using VisualSatisfactoryCalculator.satisfactory.Numbers;
 
 namespace VisualSatisfactoryCalculator.model.production
 {
-	public class ItemRateAndConnectionCollection<ItemType> where ItemType : AbstractItem
+	public sealed class ItemRateAndConnectionCollection<ItemType, RecipeType> where ItemType : AbstractItem
 	{
-		private readonly ItemRateCollection<ItemType> rates;
-		private readonly Dictionary<ItemType, Connection<ItemType>> connections;
+		public delegate void OnConnectionChanged();
+
+		private readonly ItemRateCollection<ItemType> _rates;
+		private readonly Dictionary<ItemType, Connection<ItemType, RecipeType>> _connections;
+		private OnConnectionChanged _connectionsChangedListener;
 
 		public ItemRateAndConnectionCollection()
 		{
-			rates = new ItemRateCollection<ItemType>();
-			connections = new Dictionary<ItemType, Connection<ItemType>>();
+			_rates = new ItemRateCollection<ItemType>();
+			_connections = new Dictionary<ItemType, Connection<ItemType, RecipeType>>();
+		}
+
+		public void SetConnectionsChangedListener(OnConnectionChanged listener)
+		{
+			_connectionsChangedListener = listener;
 		}
 
 		public IEnumerable<ItemType> ItemsWithConnections
 		{
 			get
 			{
-				return connections.Keys;
+				return _connections.Keys;
 			}
 		}
 
-		public IEnumerable<Connection<ItemType>> Connections
+		public bool HasConnection(ItemType item)
+		{
+			return _connections.ContainsKey(item);
+		}
+
+		public IEnumerable<Connection<ItemType, RecipeType>> Connections
 		{
 			get
 			{
-				return connections.Values;
+				return _connections.Values;
 			}
 		}
 
 		public ItemRate<ItemType> GetRate(ItemType item)
 		{
-			return rates[item];
+			return _rates[item];
 		}
 
 		public void SetRate(ItemType item, ItemRate<ItemType> rate)
 		{
-			rates[item] = rate;
+			_rates[item] = rate;
 		}
 
-		public Connection<ItemType> GetConnection(ItemType item)
+		public Connection<ItemType, RecipeType> GetConnection(ItemType item)
 		{
-			return connections[item];
+			return _connections[item];
+		}
+
+		public void AddConnection(Connection<ItemType, RecipeType> connection)
+		{
+			_connections[connection.item] = connection;
+			_connectionsChangedListener?.Invoke();
+		}
+
+		public void RemoveConnection(Connection<ItemType, RecipeType> connection)
+		{
+			_connections.Remove(connection.item);
+			_connectionsChangedListener?.Invoke();
 		}
 
 		public ItemRate<ItemType> GetItemRate(ItemType item)
 		{
-			return rates[item];
+			return _rates[item];
 		}
 	}
 }

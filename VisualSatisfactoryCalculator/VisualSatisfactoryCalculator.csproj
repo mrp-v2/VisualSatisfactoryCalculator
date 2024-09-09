@@ -120,15 +120,12 @@
     <Compile Include="code\Numbers\RationalNumber.cs" />
     <Compile Include="code\Numbers\PrimeNumberHandler.cs" />
     <Compile Include="code\Production\CondensedPlan.cs" />
-    <Compile Include="code\Production\Connection.cs" />
-    <Compile Include="code\DataStorage\SimpleCustomItem.cs" />
     <Compile Include="code\DataStorage\BasicRecipe.cs" />
     <Compile Include="code\Extensions\GenericExtensions.cs" />
     <Compile Include="code\Interfaces\IBuilding.cs" />
     <Compile Include="code\Interfaces\IEncoder.cs" />
     <Compile Include="code\Interfaces\IFromJson.cs" />
     <Compile Include="code\Interfaces\IHasID.cs" />
-    <Compile Include="code\Interfaces\IItem.cs" />
     <Compile Include="code\Interfaces\IRecipe.cs" />
     <Compile Include="code\Interfaces\IHasDisplayName.cs" />
     <Compile Include="code\Interfaces\IResourceExtractor.cs" />
@@ -207,7 +204,7 @@
     <Compile Include="model\production\AbstractStep.cs" />
     <Compile Include="model\production\ItemRateAndConnectionCollection.cs" />
     <Compile Include="model\production\ItemRateCollection.cs" />
-    <Compile Include="model\production\Recipe.cs" />
+    <Compile Include="model\production\AbstractRecipe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="controls\user\ItemRateControl.resx">
       <DependentUpon>ItemRateControl.cs</DependentUpon>
