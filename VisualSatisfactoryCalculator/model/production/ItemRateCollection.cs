@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace VisualSatisfactoryCalculator.model.production
 {
-	public sealed class ItemRateCollection<ItemType> : Dictionary<ItemType, ItemRate<ItemType>> where ItemType : AbstractItem
+	public sealed class ItemRateCollection<ItemType> : Dictionary<ItemType, ItemCount<ItemType>> where ItemType : BasicItem
 	{
-		public void Add(ItemRate<ItemType> rate)
+		public void Add(ItemCount<ItemType> rate)
 		{
 			Add(rate.item, rate);
 		}

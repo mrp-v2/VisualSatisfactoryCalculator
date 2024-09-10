@@ -52,7 +52,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			}
 			else
 			{
-				BasicRates.Add(new ItemRate<JSONItem>(item, rate));
+				BasicRates.Add(new ItemCount<JSONItem>(item, rate));
 			}
 		}
 
@@ -64,7 +64,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			}
 			else
 			{
-				BasicRates.Add(new ItemRate<JSONItem>(item, -rate));
+				BasicRates.Add(new ItemCount<JSONItem>(item, -rate));
 			}
 		}
 

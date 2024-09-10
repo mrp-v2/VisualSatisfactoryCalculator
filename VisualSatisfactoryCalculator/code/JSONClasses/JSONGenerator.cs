@@ -51,15 +51,15 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 				Trace.Assert(encodingItem is JSONItem);
 				JSONItem jItem = encodingItem as JSONItem;
 				decimal d = jItem.EnergyValue / 1000;
-				List<ItemRate<JSONItem>> ingredients = new List<ItemRate<JSONItem>>
+				List<ItemCount<JSONItem>> ingredients = new List<ItemCount<JSONItem>>
 				{
-					new ItemRate<JSONItem>(FileInteractor.CurrentEncodings[fuelItemID] as JSONItem, powerProduction / d / EnergyDivisor)
+					new ItemCount<JSONItem>(FileInteractor.CurrentEncodings[fuelItemID] as JSONItem, powerProduction / d / EnergyDivisor)
 				};
 				if (requiresSupplementalResource)
 				{
-					ingredients.Add(new ItemRate<JSONItem>(FileInteractor.CurrentEncodings[Constants.WaterID] as JSONItem, powerProduction * supplementalToPowerRatio * SupplementalResourceFactor));
+					ingredients.Add(new ItemCount<JSONItem>(FileInteractor.CurrentEncodings[Constants.WaterID] as JSONItem, powerProduction * supplementalToPowerRatio * SupplementalResourceFactor));
 				}
-				IRecipe recipe = new JSONGeneratorRecipe(ID + fuelItemID, 60, ID, ingredients, new List<ItemRate<JSONItem>>(), jItem.displayName + " to Power", powerProduction);
+				IRecipe recipe = new JSONGeneratorRecipe(ID + fuelItemID, 60, ID, ingredients, new List<ItemCount<JSONItem>>(), jItem.displayName + " to Power", powerProduction);
 				recipes.Add(recipe.ID, recipe);
 			}
 			return recipes;
@@ -79,7 +79,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 		{
 			private readonly RationalNumber powerProduction;
 
-			public JSONGeneratorRecipe(string UID, decimal craftTime, string machineUID, List<ItemRate<JSONItem>> ingredients, List<ItemRate<JSONItem>> products, string displayName, RationalNumber powerProduction) : base(UID, craftTime, machineUID, ingredients, products, displayName)
+			public JSONGeneratorRecipe(string UID, decimal craftTime, string machineUID, List<ItemCount<JSONItem>> ingredients, List<ItemCount<JSONItem>> products, string displayName, RationalNumber powerProduction) : base(UID, craftTime, machineUID, ingredients, products, displayName)
 			{
 				this.powerProduction = powerProduction;
 			}

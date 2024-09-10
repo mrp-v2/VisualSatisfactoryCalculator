@@ -112,11 +112,11 @@
     <Compile Include="controls\user\SingleConnectedStepGroupControl.Designer.cs">
       <DependentUpon>SingleConnectedStepGroupControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="model\production\AbstractItem.cs" />
+    <Compile Include="model\production\BasicItem.cs" />
     <Compile Include="model\production\AbstractPlan.cs" />
     <Compile Include="model\production\BreadthFirstSearchHandler.cs" />
     <Compile Include="model\production\Connection.cs" />
-    <Compile Include="model\production\ItemRate.cs" />
+    <Compile Include="model\production\ItemCount.cs" />
     <Compile Include="code\Numbers\RationalNumber.cs" />
     <Compile Include="code\Numbers\PrimeNumberHandler.cs" />
     <Compile Include="code\Production\CondensedPlan.cs" />

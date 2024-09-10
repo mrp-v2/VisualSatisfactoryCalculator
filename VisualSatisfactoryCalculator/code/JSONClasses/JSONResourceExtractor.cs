@@ -51,11 +51,11 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 					}
 					foreach (string resourceNodeType in NODE_CYCLE_TIME_DIVISORS.Keys)
 					{
-						List<ItemRate<JSONItem>> products = new List<ItemRate<JSONItem>>
+						List<ItemCount<JSONItem>> products = new List<ItemCount<JSONItem>>
 						{
-							new ItemRate<JSONItem>(FileInteractor.CurrentEncodings[item.id] as JSONItem, ItemsPerCycle)
+							new ItemCount<JSONItem>(FileInteractor.CurrentEncodings[item.id] as JSONItem, ItemsPerCycle)
 						};
-						IRecipe recipe = new JSONResourceExtractorRecipe(ID + resourceNodeType + item.id, CycleTime / NODE_CYCLE_TIME_DIVISORS[resourceNodeType], ID, new List<ItemRate<JSONItem>>(), products, resourceNodeType + " " + item.displayName);
+						IRecipe recipe = new JSONResourceExtractorRecipe(ID + resourceNodeType + item.id, CycleTime / NODE_CYCLE_TIME_DIVISORS[resourceNodeType], ID, new List<ItemCount<JSONItem>>(), products, resourceNodeType + " " + item.displayName);
 						recipes.Add(recipe.ID, recipe);
 					}
 				}
@@ -83,11 +83,11 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 								continue;
 							}
 						}
-						List<ItemRate<JSONItem>> products = new List<ItemRate<JSONItem>>
+						List<ItemCount<JSONItem>> products = new List<ItemCount<JSONItem>>
 						{
-							new ItemRate<JSONItem>(FileInteractor.CurrentEncodings[item.id] as JSONItem, ItemsPerCycle)
+							new ItemCount<JSONItem>(FileInteractor.CurrentEncodings[item.id] as JSONItem, ItemsPerCycle)
 						};
-						IRecipe recipe = new JSONResourceExtractorRecipe(ID + item.id, CycleTime, ID, new List<ItemRate<JSONItem>>(), products, item.displayName);
+						IRecipe recipe = new JSONResourceExtractorRecipe(ID + item.id, CycleTime, ID, new List<ItemCount<JSONItem>>(), products, item.displayName);
 						recipes.Add(recipe.ID, recipe);
 					}
 				}
@@ -97,7 +97,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 
 		public class JSONResourceExtractorRecipe : BasicRecipe
 		{
-			public JSONResourceExtractorRecipe(string UID, RationalNumber craftTime, string machineUID, List<ItemRate<JSONItem>> ingredients, List<ItemRate<JSONItem>> products, string displayName) : base(UID, craftTime, machineUID, ingredients, products, displayName)
+			public JSONResourceExtractorRecipe(string UID, RationalNumber craftTime, string machineUID, List<ItemCount<JSONItem>> ingredients, List<ItemCount<JSONItem>> products, string displayName) : base(UID, craftTime, machineUID, ingredients, products, displayName)
 			{
 			}
 

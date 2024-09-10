@@ -9,7 +9,7 @@ using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 {
-	public class JSONItem : AbstractItem, IFromJson, IEquatable<JSONItem>, IEncoder
+	public class JSONItem : BasicItem, IFromJson, IEquatable<JSONItem>, IEncoder
 	{
 		public string Form { get; }
 		public decimal EnergyValue { get; }

@@ -64,7 +64,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		public void ToggleInput(bool on)
 		{
-			if (!NumberControl.GetNumber().IsNonZero && Enabled)
+			if (!NumberControl.GetNumber().isNonZero && Enabled)
 			{
 				Enabled = false;
 				return;

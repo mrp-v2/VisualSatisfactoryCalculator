@@ -96,15 +96,15 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 					RationalNumber discriminate = (b * b) - (4 * a * c);
 					RationalNumber discriminateSqrt = discriminate.Sqrt();
 					RationalNumber pairedMultiplierA = (-b + discriminateSqrt) / (2 * a), pairedMultiplierB = discriminate > 0 ? (-b - discriminateSqrt) / (2 * a) : pairedMultiplierA;
-					if (!pairedMultiplierA.IsPositive && !pairedMultiplierB.IsPositive)
+					if (!pairedMultiplierA.isPositive && !pairedMultiplierB.isPositive)
 					{
 						throw new BalancingException("Unable to find a valid multiplier");
 					}
-					else if (!pairedMultiplierB.IsPositive)
+					else if (!pairedMultiplierB.isPositive)
 					{
 						pairedMultiplierB = pairedMultiplierA;
 					}
-					else if (!pairedMultiplierA.IsPositive)
+					else if (!pairedMultiplierA.isPositive)
 					{
 						pairedMultiplierA = pairedMultiplierB;
 					}

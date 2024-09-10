@@ -2,7 +2,7 @@
 
 namespace VisualSatisfactoryCalculator.controls.user
 {
-	partial class SingleConnectedStepGroupControl<ItemType> where ItemType : AbstractItem
+	partial class SingleConnectedStepGroupControl<ItemType> where ItemType : BasicItem
 	{
 		/// <summary> 
 		/// Required designer variable.

@@ -16,7 +16,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 		public string MachineUID { get; }
 		public string DisplayName { get; }
 
-		public BasicRecipe(string ID, RationalNumber craftTime, string machineUID, List<ItemRate<JSONItem>> ingredients, List<ItemRate<JSONItem>> products, string displayName) : base(craftTime, ingredients, products)
+		public BasicRecipe(string ID, RationalNumber craftTime, string machineUID, List<ItemCount<JSONItem>> ingredients, List<ItemCount<JSONItem>> products, string displayName) : base(craftTime, ingredients, products)
 		{
 			this.ID = ID;
 			MachineUID = machineUID;

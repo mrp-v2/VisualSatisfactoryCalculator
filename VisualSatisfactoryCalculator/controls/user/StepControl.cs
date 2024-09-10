@@ -28,11 +28,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 			BackingStep = backingStep;
 			MainForm = mainForm;
 			backingStep.SetControl(this);
-			foreach (ItemRate ic in backingStep.Recipe.Products.Values)
+			foreach (ItemCount ic in backingStep.Recipe.Products.Values)
 			{
 				AddItemRateControl(ic.Item, true);
 			}
-			foreach (ItemRate ic in backingStep.Recipe.Ingredients.Values)
+			foreach (ItemCount ic in backingStep.Recipe.Ingredients.Values)
 			{
 				AddItemRateControl(ic.Item, false);
 			}
@@ -154,7 +154,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		private void MultiplierValueChanged()
 		{
-			if (!MultiplierNumberControl.GetNumber().IsNonZero)
+			if (!MultiplierNumberControl.GetNumber().isNonZero)
 			{
 				return;
 			}

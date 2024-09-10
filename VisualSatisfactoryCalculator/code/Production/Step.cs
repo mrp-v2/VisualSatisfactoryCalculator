@@ -11,7 +11,7 @@ using VisualSatisfactoryCalculator.model.production;
 using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
 using VisualSatisfactoryCalculator.satisfactory.DataStorage;
 using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem, VisualSatisfactoryCalculator.satisfactory.DataStorage.BasicRecipe>;
-using ItemRate = VisualSatisfactoryCalculator.model.production.ItemRate<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem>;
+using ItemCount = VisualSatisfactoryCalculator.model.production.ItemCount<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem>;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
@@ -19,8 +19,10 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 	{
 		public readonly CachedValue<bool> hasNormalProductConnections;
 		public readonly CachedValue<IImmutableSet<Connection>> normalIngredientConnections;
-		public readonly CachedValue<IEnumerable<ItemRate>> productionRates;
-		public readonly CachedValue<IEnumerable<ItemRate>> consumptionRates;
+		public readonly CachedValue<IEnumerable<ItemCount>> productionRates;
+		public readonly CachedValue<IEnumerable<ItemCount>> consumptionRates;
+		public uint MachineCount { get; private set; }
+		public ushort ClockSpeedThousandths { get; private set; }
 		private StepControl _control;
 
 		public IEnumerable<Connection> GetIngredientConnections()
@@ -147,18 +149,18 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				}
 				return ImmutableHashSet.CreateRange(normalIngredients);
 			});
-			productionRates = new CachedValue<IEnumerable<ItemRate>>(() =>
+			productionRates = new CachedValue<IEnumerable<ItemCount>>(() =>
 			{
-				HashSet<ItemRate> rates = new HashSet<ItemRate>();
+				HashSet<ItemCount> rates = new HashSet<ItemCount>();
 				foreach (Connection connection in products.Connections)
 				{
 					rates.Add(new ItemRate(connection.item, GetItemRate(connection.item, true)));
 				}
 				return rates;
 			});
-			consumptionRates = new CachedValue<IEnumerable<ItemRate>>(() =>
+			consumptionRates = new CachedValue<IEnumerable<ItemCount>>(() =>
 			{
-				HashSet<ItemRate> rates = new HashSet<ItemRate>();
+				HashSet<ItemCount> rates = new HashSet<ItemCount>();
 				foreach (Connection connection in ingredients.Connections)
 				{
 					rates.Add(new ItemRate(connection.item, GetItemRate(connection.item, false)));
@@ -167,16 +169,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			});
 		}
 
-		public int CalculateMachineCount()
-		{
-			throw new NotImplementedException();
-		}
-
-		public RationalNumber CalculateMachineClockPercentage()
-		{
-			throw new NotImplementedException();
-			// return (Multiplier * RationalNumber.Pow(Constants.CLOCK_DECIMALS + 2) / CalculateMachineCount()).Ceiling() / RationalNumber.Pow(Constants.CLOCK_DECIMALS);
-		}
+		// return (Multiplier * RationalNumber.Pow(Constants.CLOCK_DECIMALS + 2) / CalculateMachineCount()).Ceiling() / RationalNumber.Pow(Constants.CLOCK_DECIMALS);
 
 		public void AddRelatedStep(Step related, JSONItem item, bool isProductOfRelated)
 		{
@@ -212,8 +205,14 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		/// </summary>
 		public RationalNumber GetItemRate(JSONItem item, bool isItemProduct)
 		{
-			throw new NotImplementedException();
-			// return CalculateDefaultItemRate(item, isItemProduct);
+			if (isItemProduct)
+			{
+				return products.GetRate(item).rate;
+			}
+			else
+			{
+				return ingredients.GetRate(item).rate;
+			}
 		}
 
 		public void SetControl(StepControl control)
@@ -238,15 +237,15 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		public double GetPowerDraw(Encodings encodings)
 		{
 			IBuilding building = encodings[recipe.MachineUID] as IBuilding;
-			return building.PowerConsumption.ToDouble() * Math.Pow(CalculateMachineClockPercentage().ToDouble() / 100, building.PowerConsumptionExponent.ToDouble()) * CalculateMachineCount();
+			return building.PowerConsumption.ToDouble() * Math.Pow(ClockSpeedThousandths / 1000d, building.PowerConsumptionExponent.ToDouble()) * MachineCount;
 		}
 
-		protected override void UpdateRatesFrom(ItemRate rate, bool isProduct)
+		protected override void UpdateRatesFrom(ItemCount rate, bool isProduct)
 		{
 			throw new NotImplementedException();
 		}
 
-		protected override void UpdateRatesFrom(Dictionary<ItemRate, bool> rates)
+		protected override void UpdateRatesFrom(Dictionary<ItemCount, bool> rates)
 		{
 			throw new NotImplementedException();
 		}

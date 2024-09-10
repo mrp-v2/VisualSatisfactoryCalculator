@@ -5,26 +5,29 @@ using System.Linq;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 {
+	/// <summary>
+	/// Represents any rational number as a prime-factored numerator and denominator.
+	/// </summary>
 	public sealed class RationalNumber
 	{
-		private readonly ImmutableList<int> PrimeFactoredNumerator, PrimeFactoredDenominator;
-		public readonly bool IsPositive;
-		public readonly bool IsNonZero;
+		private readonly ImmutableList<int> _primeFactoredNumerator, _primeFactoredDenominator;
+		public readonly bool isPositive;
+		public readonly bool isNonZero;
 
 		private RationalNumber(bool isNonZero, bool isPositive)
 		{
-			PrimeFactoredNumerator = ImmutableList.Create<int>();
-			PrimeFactoredDenominator = ImmutableList.Create<int>();
-			IsPositive = isPositive;
-			IsNonZero = isNonZero;
+			_primeFactoredNumerator = ImmutableList.Create<int>();
+			_primeFactoredDenominator = ImmutableList.Create<int>();
+			this.isPositive = isPositive;
+			this.isNonZero = isNonZero;
 		}
 
 		private RationalNumber(IEnumerable<int> primeFactoredNumerator, IEnumerable<int> primeFactoredDenominator, bool isPositive, bool isNonZero)
 		{
-			PrimeFactoredNumerator = ImmutableList.CreateRange(primeFactoredNumerator);
-			PrimeFactoredDenominator = ImmutableList.CreateRange(primeFactoredDenominator);
-			IsPositive = isPositive;
-			IsNonZero = isNonZero;
+			_primeFactoredNumerator = ImmutableList.CreateRange(primeFactoredNumerator);
+			_primeFactoredDenominator = ImmutableList.CreateRange(primeFactoredDenominator);
+			this.isPositive = isPositive;
+			this.isNonZero = isNonZero;
 		}
 
 		public RationalNumber(int numerator, int denominator) : this(numerator > 0 ? numerator : -numerator, denominator, numerator > 0) { }
@@ -76,14 +79,6 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 			return From(int.Parse(str));
 		}
 
-		private RationalNumber Simplify()
-		{
-			List<int> numerator = new List<int>(PrimeFactoredNumerator);
-			List<int> denominator = new List<int>(PrimeFactoredDenominator);
-			Simplify(numerator, denominator);
-			return new RationalNumber(numerator, denominator, IsPositive, IsNonZero);
-		}
-
 		private static void Simplify(List<int> numerator, List<int> denominator)
 		{
 			numerator.Sort();
@@ -97,23 +92,14 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 			}
 		}
 
-		private RationalNumber Clone()
-		{
-			if (!IsNonZero)
-			{
-				return new RationalNumber(false, true);
-			}
-			return new RationalNumber(PrimeFactoredNumerator, PrimeFactoredDenominator, IsPositive, true);
-		}
-
 		public int GetNumerator()
 		{
-			if (!IsNonZero)
+			if (!isNonZero)
 			{
 				return 0;
 			}
-			int numerator = Product(PrimeFactoredNumerator);
-			if (!IsPositive)
+			int numerator = Product(_primeFactoredNumerator);
+			if (!isPositive)
 			{
 				numerator = -numerator;
 			}
@@ -132,7 +118,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 
 		public int GetDenominator()
 		{
-			return Product(PrimeFactoredDenominator);
+			return Product(_primeFactoredDenominator);
 		}
 
 		public double ToDouble()
@@ -147,7 +133,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 
 		public bool AreSignsEqual(RationalNumber other)
 		{
-			return IsPositive == other.IsPositive;
+			return isPositive == other.isPositive;
 		}
 
 		public int Ceiling()
@@ -167,7 +153,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 
 		public RationalNumber AbsoluteValue()
 		{
-			return new RationalNumber(PrimeFactoredNumerator, PrimeFactoredDenominator, true, IsNonZero);
+			return new RationalNumber(_primeFactoredNumerator, _primeFactoredDenominator, true, isNonZero);
 		}
 
 		/// <summary>
@@ -185,7 +171,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 			List<int> tenFactors = new List<int>() { 2, 5 };
 			for (int i = 0; i < power; i++)
 			{
-				result.PrimeFactoredNumerator.AddRange(tenFactors);
+				result._primeFactoredNumerator.AddRange(tenFactors);
 			}
 			return result;
 		}
@@ -197,7 +183,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 
 		public static RationalNumber operator -(RationalNumber a)
 		{
-			return new RationalNumber(a.PrimeFactoredNumerator, a.PrimeFactoredDenominator, !a.IsPositive, a.IsNonZero);
+			return new RationalNumber(a._primeFactoredNumerator, a._primeFactoredDenominator, !a.isPositive, a.isNonZero);
 		}
 
 		public static RationalNumber Add(RationalNumber a, RationalNumber b)
@@ -207,17 +193,16 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 
 		public static RationalNumber operator +(RationalNumber a, RationalNumber b)
 		{
-			if (!a.IsNonZero)
+			if (!a.isNonZero)
 			{
 				return b;
 			}
-			if (!b.IsNonZero)
+			if (!b.isNonZero)
 			{
 				return a;
 			}
-			ImmutableList<int> numeratorA = a.PrimeFactoredNumerator.AddRange(b.PrimeFactoredDenominator);
-			ImmutableList<int> numeratorB = b.PrimeFactoredNumerator.AddRange(a.PrimeFactoredDenominator);
-			ImmutableList<int> denominator = a.PrimeFactoredDenominator.AddRange(b.PrimeFactoredDenominator);
+			ImmutableList<int> numeratorA = a._primeFactoredNumerator.AddRange(b._primeFactoredDenominator);
+			ImmutableList<int> numeratorB = b._primeFactoredNumerator.AddRange(a._primeFactoredDenominator);
 			int numerator = Product(numeratorA) + Product(numeratorB);
 			if (numerator == 0)
 			{
@@ -232,8 +217,12 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 			{
 				return new RationalNumber(true, isPositive);
 			}
-			RationalNumber result = new RationalNumber(PrimeNumberHandler.PrimeFactors(numerator), denominator, isPositive, true);
-			return result.Simplify();
+			List<int> finalNumerator = PrimeNumberHandler.PrimeFactors(numerator);
+			List<int> denominator = new List<int>(a._primeFactoredDenominator.Count + b._primeFactoredDenominator.Count);
+			denominator.AddRange(a._primeFactoredDenominator);
+			denominator.AddRange(b._primeFactoredDenominator);
+			Simplify(finalNumerator, denominator);
+			return new RationalNumber(finalNumerator, denominator, isPositive, true);
 		}
 
 		public static RationalNumber operator -(RationalNumber a, RationalNumber b)
@@ -243,40 +232,44 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 
 		public static RationalNumber operator *(RationalNumber a, RationalNumber b)
 		{
-			if (!a.IsNonZero || !b.IsNonZero)
+			if (!a.isNonZero || !b.isNonZero)
 			{
 				return new RationalNumber(false, true);
 			}
-			bool isPositive = b.IsPositive ? a.IsPositive : !a.IsPositive;
-			RationalNumber result = new RationalNumber(true, isPositive);
-			result.PrimeFactoredNumerator.AddRange(a.PrimeFactoredNumerator);
-			result.PrimeFactoredNumerator.AddRange(b.PrimeFactoredNumerator);
-			result.PrimeFactoredDenominator.AddRange(a.PrimeFactoredDenominator);
-			result.PrimeFactoredDenominator.AddRange(b.PrimeFactoredDenominator);
-			return result.Simplify();
+			bool isPositive = b.isPositive ? a.isPositive : !a.isPositive;
+			List<int> numerator = new List<int>(a._primeFactoredNumerator.Count + b._primeFactoredNumerator.Count);
+			List<int> denominator = new List<int>(a._primeFactoredDenominator.Count + b._primeFactoredDenominator.Count);
+			numerator.AddRange(a._primeFactoredNumerator);
+			numerator.AddRange(b._primeFactoredNumerator);
+			denominator.AddRange(a._primeFactoredDenominator);
+			denominator.AddRange(b._primeFactoredDenominator);
+			Simplify(numerator, denominator);
+			return new RationalNumber(numerator, denominator, isPositive, true);
 		}
 
 		public static RationalNumber operator /(RationalNumber a, RationalNumber b)
 		{
-			if (!b.IsNonZero)
+			if (!b.isNonZero)
 			{
 				throw new ArgumentException("Can't divide by zero!");
 			}
-			if (!a.IsNonZero)
+			if (!a.isNonZero)
 			{
 				return new RationalNumber(false, true);
 			}
-			bool isPositive = a.IsPositive;
-			if (!b.IsPositive)
+			bool isPositive = a.isPositive;
+			if (!b.isPositive)
 			{
 				isPositive = !isPositive;
 			}
-			RationalNumber result = new RationalNumber(true, isPositive);
-			result.PrimeFactoredNumerator.AddRange(a.PrimeFactoredNumerator);
-			result.PrimeFactoredNumerator.AddRange(b.PrimeFactoredDenominator);
-			result.PrimeFactoredDenominator.AddRange(a.PrimeFactoredDenominator);
-			result.PrimeFactoredDenominator.AddRange(b.PrimeFactoredNumerator);
-			return result.Simplify();
+			List<int> numerator = new List<int>(a._primeFactoredNumerator.Count + b._primeFactoredDenominator.Count);
+			List<int> denominator = new List<int>(a._primeFactoredDenominator.Count + b._primeFactoredNumerator.Count);
+			numerator.AddRange(a._primeFactoredNumerator);
+			numerator.AddRange(b._primeFactoredDenominator);
+			denominator.AddRange(a._primeFactoredDenominator);
+			denominator.AddRange(b._primeFactoredNumerator);
+			Simplify(numerator, denominator);
+			return new RationalNumber(numerator, denominator, isPositive, true);
 		}
 
 		public static bool operator ==(RationalNumber a, RationalNumber b)
@@ -286,32 +279,32 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 
 		public static bool operator !=(RationalNumber a, RationalNumber b)
 		{
-			if (a.IsPositive != b.IsPositive)
+			if (a.isPositive != b.isPositive)
 			{
 				return true;
 			}
-			if (a.IsNonZero != b.IsNonZero)
+			if (a.isNonZero != b.isNonZero)
 			{
 				return true;
 			}
-			if (a.PrimeFactoredNumerator.Count != b.PrimeFactoredNumerator.Count)
+			if (a._primeFactoredNumerator.Count != b._primeFactoredNumerator.Count)
 			{
 				return true;
 			}
-			if (a.PrimeFactoredDenominator.Count != b.PrimeFactoredDenominator.Count)
+			if (a._primeFactoredDenominator.Count != b._primeFactoredDenominator.Count)
 			{
 				return true;
 			}
-			for (int i = 0; i < a.PrimeFactoredNumerator.Count; i++)
+			for (int i = 0; i < a._primeFactoredNumerator.Count; i++)
 			{
-				if (a.PrimeFactoredNumerator[i] != b.PrimeFactoredNumerator[i])
+				if (a._primeFactoredNumerator[i] != b._primeFactoredNumerator[i])
 				{
 					return true;
 				}
 			}
-			for (int i = 0; i < a.PrimeFactoredDenominator.Count; i++)
+			for (int i = 0; i < a._primeFactoredDenominator.Count; i++)
 			{
-				if (a.PrimeFactoredDenominator[i] != b.PrimeFactoredDenominator[i])
+				if (a._primeFactoredDenominator[i] != b._primeFactoredDenominator[i])
 				{
 					return true;
 				}
@@ -321,22 +314,22 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 
 		public static bool operator ==(RationalNumber a, int b)
 		{
-			if (b == 0 && !a.IsNonZero)
+			if (b == 0 && !a.isNonZero)
 			{
 				return true;
 			}
-			if (a.PrimeFactoredNumerator.Count == 0 && a.PrimeFactoredDenominator.Count == 0)
+			if (a._primeFactoredNumerator.Count == 0 && a._primeFactoredDenominator.Count == 0)
 			{
-				if (b == 1 && a.IsPositive)
+				if (b == 1 && a.isPositive)
 				{
 					return true;
 				}
-				if (b == -1 && !a.IsPositive)
+				if (b == -1 && !a.isPositive)
 				{
 					return true;
 				}
 			}
-			if (a.PrimeFactoredDenominator.Count > 0)
+			if (a._primeFactoredDenominator.Count > 0)
 			{
 				return false;
 			}
@@ -350,23 +343,23 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 
 		public static bool operator >(RationalNumber left, RationalNumber right)
 		{
-			if (!left.IsNonZero && !right.IsNonZero)
+			if (!left.isNonZero && !right.isNonZero)
 			{
 				return false;
 			}
-			if (!left.IsNonZero)
+			if (!left.isNonZero)
 			{
-				return !right.IsPositive;
+				return !right.isPositive;
 			}
-			if (!right.IsNonZero)
+			if (!right.isNonZero)
 			{
-				return left.IsPositive;
+				return left.isPositive;
 			}
-			if (left.IsPositive && !right.IsPositive)
+			if (left.isPositive && !right.isPositive)
 			{
 				return true;
 			}
-			if (right.IsPositive && !left.IsPositive)
+			if (right.isPositive && !left.isPositive)
 			{
 				return false;
 			}
@@ -380,19 +373,19 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 
 		public static RationalNumber operator *(RationalNumber a, int b)
 		{
-			if (b == 0 || !a.IsNonZero)
+			if (b == 0 || !a.isNonZero)
 			{
 				return new RationalNumber(false, true);
 			}
-			RationalNumber result = new RationalNumber(true, b > 0 ? a.IsPositive : !a.IsPositive);
-			result.PrimeFactoredNumerator.AddRange(a.PrimeFactoredNumerator);
-			result.PrimeFactoredDenominator.AddRange(a.PrimeFactoredDenominator);
+			List<int> numerator = new List<int>(a._primeFactoredNumerator);
+			List<int> denominator = new List<int>(a._primeFactoredDenominator);
 			if (b < 0)
 			{
 				b = -b;
 			}
-			result.PrimeFactoredNumerator.AddRange(PrimeNumberHandler.PrimeFactors(b));
-			return result.Simplify();
+			numerator.AddRange(PrimeNumberHandler.PrimeFactors(b));
+			Simplify(numerator, denominator);
+			return new RationalNumber(numerator, denominator, b > 0 ? a.isPositive : !a.isPositive, true);
 		}
 
 		public static implicit operator RationalNumber(int a)
@@ -407,7 +400,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 
 		public override int GetHashCode()
 		{
-			return PrimeFactoredNumerator.GetHashCode() + PrimeFactoredDenominator.GetHashCode();
+			return _primeFactoredNumerator.GetHashCode() + _primeFactoredDenominator.GetHashCode();
 		}
 
 		public override bool Equals(object obj)
@@ -424,11 +417,11 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 
 		public override string ToString()
 		{
-			if (!IsNonZero)
+			if (!isNonZero)
 			{
 				return 0.ToString();
 			}
-			if (PrimeFactoredDenominator.Count > 0)
+			if (_primeFactoredDenominator.Count > 0)
 			{
 				return GetNumerator().ToString() + " / " + GetDenominator().ToString();
 			}

@@ -15,7 +15,7 @@ using VisualSatisfactoryCalculator.model.production;
 
 namespace VisualSatisfactoryCalculator.controls.user
 {
-	public partial class SingleConnectedStepGroupControl<ItemType> : UserControl where ItemType : AbstractItem
+	public partial class SingleConnectedStepGroupControl<ItemType> : UserControl where ItemType : BasicItem
 	{
 		private readonly Dictionary<AbstractStep<ItemType>, RationalNumberControl> producersStepControlMap = new Dictionary<AbstractStep<ItemType>, RationalNumberControl>();
 		private readonly Dictionary<AbstractStep<ItemType>, RationalNumberControl> consumersStepControlMap = new Dictionary<AbstractStep<ItemType>, RationalNumberControl>();

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace VisualSatisfactoryCalculator.model.production
 {
-	internal class BreadthFirstSearchHandler<ItemType, RecipeType> where ItemType : AbstractItem
+	internal class BreadthFirstSearchHandler<ItemType, RecipeType> where ItemType : BasicItem
 	{
 		internal static void CascadeUpdates(AbstractStep<ItemType, RecipeType> origin, bool includeMulticonnections = true)
 		{

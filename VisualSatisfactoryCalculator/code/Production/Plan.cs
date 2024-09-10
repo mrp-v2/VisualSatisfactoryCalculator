@@ -6,7 +6,7 @@ using VisualSatisfactoryCalculator.satisfactory.Utility;
 using VisualSatisfactoryCalculator.model.production;
 using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
 
-using ItemRate = VisualSatisfactoryCalculator.model.production.ItemRate<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem>;
+using ItemCount = VisualSatisfactoryCalculator.model.production.ItemCount<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem>;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
@@ -31,7 +31,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			RateCollection rates = new RateCollection(0);
 			foreach (Step step in steps)
 			{
-				foreach (ItemRate<JSONItem> itemCount in step.productionRates.Get())
+				foreach (ItemCount<JSONItem> itemCount in step.productionRates.Get())
 				{
 					rates.Add(itemCount.item, step.GetItemRate(itemCount.item, true));
 				}
@@ -54,7 +54,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			RateCollection rates = new RateCollection(GetPowerDraw(encodings));
 			foreach (Step step in steps)
 			{
-				foreach (ItemRate itemCount in step.consumptionRates.Get())
+				foreach (ItemCount itemCount in step.consumptionRates.Get())
 				{
 					rates.Add(itemCount.item, step.GetItemRate(itemCount.item, false));
 				}
@@ -99,7 +99,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			{
 				RationalNumber rate = netRates[item];
 				string rateStr = rate.ToString();
-				if (rate.IsPositive && rate.IsNonZero)
+				if (rate.isPositive && rate.isNonZero)
 				{
 					if (first)
 					{
@@ -154,7 +154,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			{
 				RationalNumber rate = netRates[item];
 				string rateStr = (-rate).ToString();
-				if (!rate.IsPositive && rate.IsNonZero)
+				if (!rate.isPositive && rate.isNonZero)
 				{
 					if (first)
 					{

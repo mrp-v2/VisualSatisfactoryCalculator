@@ -6,13 +6,17 @@ using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.model.production
 {
+	/// <summary>
+	/// Represents an item and an amount of that item.
+	/// </summary>
+	/// <typeparam name="ItemType"></typeparam>
 	[Serializable]
-	public sealed class ItemRate<ItemType> where ItemType : AbstractItem
+	public sealed class ItemCount<ItemType> where ItemType : BasicItem
 	{
 		public readonly RationalNumber rate;
 		public readonly ItemType item;
 
-		public ItemRate(ItemType item, RationalNumber rate)
+		public ItemCount(ItemType item, RationalNumber rate)
 		{
 			this.item = item;
 			this.rate = rate;
@@ -34,7 +38,7 @@ namespace VisualSatisfactoryCalculator.model.production
 			{
 				return false;
 			}
-			if (obj is ItemRate<ItemType> other)
+			if (obj is ItemCount<ItemType> other)
 			{
 				return item.Equals(other.item) && rate == other.rate;
 			}
@@ -44,19 +48,19 @@ namespace VisualSatisfactoryCalculator.model.production
 			}
 		}
 
-		public static ItemRate<ItemType> operator *(ItemRate<ItemType> rate, RationalNumber multiplier)
+		public static ItemCount<ItemType> operator *(ItemCount<ItemType> rate, RationalNumber multiplier)
 		{
-			return new ItemRate<ItemType>(rate.item, rate.rate * multiplier);
+			return new ItemCount<ItemType>(rate.item, rate.rate * multiplier);
 		}
 
-		public static ItemRate<ItemType> operator +(ItemRate<ItemType> a, RationalNumber b)
+		public static ItemCount<ItemType> operator +(ItemCount<ItemType> a, RationalNumber b)
 		{
-			return new ItemRate<ItemType>(a.item, a.rate + b);
+			return new ItemCount<ItemType>(a.item, a.rate + b);
 		}
 
-		public static ItemRate<ItemType> operator -(ItemRate<ItemType> a, RationalNumber b)
+		public static ItemCount<ItemType> operator -(ItemCount<ItemType> a, RationalNumber b)
 		{
-			return new ItemRate<ItemType>(a.item, a.rate - b);
+			return new ItemCount<ItemType>(a.item, a.rate - b);
 		}
 	}
 }

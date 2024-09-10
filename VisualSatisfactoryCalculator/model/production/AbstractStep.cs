@@ -8,7 +8,7 @@ using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.model.production
 {
-	public abstract class AbstractStep<ItemType, RecipeType> where ItemType : AbstractItem
+	public abstract class AbstractStep<ItemType, RecipeType> where ItemType : BasicItem
 	{
 		public readonly RecipeType recipe;
 		protected readonly ItemRateAndConnectionCollection<ItemType, RecipeType> products;
@@ -39,7 +39,7 @@ namespace VisualSatisfactoryCalculator.model.production
 			ingredients.SetConnectionsChangedListener(_connections.Invalidate);
 		}
 
-		public ItemRate<ItemType> GetRate(ItemType item, bool isProduct)
+		public ItemCount<ItemType> GetRate(ItemType item, bool isProduct)
 		{
 			if (isProduct)
 			{
@@ -51,21 +51,21 @@ namespace VisualSatisfactoryCalculator.model.production
 			}
 		}
 
-		protected abstract void UpdateRatesFrom(ItemRate<ItemType> rate, bool isProduct);
+		protected abstract void UpdateRatesFrom(ItemCount<ItemType> rate, bool isProduct);
 
 		/// <summary>
 		/// Updates the rates using the given rates.
 		/// Should throw an error if the given rates have a conflict.
 		/// </summary>
 		/// <param name="rates">The rates to consider, mapped to if they are a product</param>
-		protected abstract void UpdateRatesFrom(Dictionary<ItemRate<ItemType>, bool> rates);
+		protected abstract void UpdateRatesFrom(Dictionary<ItemCount<ItemType>, bool> rates);
 
 		public void UpdateRatesFrom(HashSet<object> visited)
 		{
 			/// <summary>
 			/// Tracks relevant rates, and if they are a product
 			/// </summary>
-			Dictionary<ItemRate<ItemType>, bool> relevantRates = new Dictionary<ItemRate<ItemType>, bool>();
+			Dictionary<ItemCount<ItemType>, bool> relevantRates = new Dictionary<ItemCount<ItemType>, bool>();
 			foreach (Connection<ItemType, RecipeType> connection in products.Connections)
 			{
 				if (visited.Contains(connection))
@@ -83,7 +83,7 @@ namespace VisualSatisfactoryCalculator.model.production
 			UpdateRatesFrom(relevantRates);
 		}
 
-		public void CascadingUpdateRatesFrom(ItemRate<ItemType> rate, bool isProduct)
+		public void CascadingUpdateRatesFrom(ItemCount<ItemType> rate, bool isProduct)
 		{
 			UpdateRatesFrom(rate, isProduct);
 			BreadthFirstSearchHandler<ItemType, RecipeType>.CascadeUpdates(this);

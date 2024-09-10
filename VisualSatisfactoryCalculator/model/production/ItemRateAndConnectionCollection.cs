@@ -8,7 +8,7 @@ using VisualSatisfactoryCalculator.satisfactory.Numbers;
 
 namespace VisualSatisfactoryCalculator.model.production
 {
-	public sealed class ItemRateAndConnectionCollection<ItemType, RecipeType> where ItemType : AbstractItem
+	public sealed class ItemRateAndConnectionCollection<ItemType, RecipeType> where ItemType : BasicItem
 	{
 		public delegate void OnConnectionChanged();
 
@@ -48,12 +48,12 @@ namespace VisualSatisfactoryCalculator.model.production
 			}
 		}
 
-		public ItemRate<ItemType> GetRate(ItemType item)
+		public ItemCount<ItemType> GetRate(ItemType item)
 		{
 			return _rates[item];
 		}
 
-		public void SetRate(ItemType item, ItemRate<ItemType> rate)
+		public void SetRate(ItemType item, ItemCount<ItemType> rate)
 		{
 			_rates[item] = rate;
 		}
@@ -73,11 +73,6 @@ namespace VisualSatisfactoryCalculator.model.production
 		{
 			_connections.Remove(connection.item);
 			_connectionsChangedListener?.Invoke();
-		}
-
-		public ItemRate<ItemType> GetItemRate(ItemType item)
-		{
-			return _rates[item];
 		}
 	}
 }

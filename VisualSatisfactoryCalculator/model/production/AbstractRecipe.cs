@@ -9,7 +9,7 @@ using VisualSatisfactoryCalculator.satisfactory.Numbers;
 
 namespace VisualSatisfactoryCalculator.model.production
 {
-	public abstract class AbstractRecipe<ItemType> where ItemType : AbstractItem
+	public abstract class AbstractRecipe<ItemType> where ItemType : BasicItem
 	{
 		public readonly RationalNumber time;
 		public readonly ImmutableDictionary<ItemType, RationalNumber> ingredients;
@@ -22,7 +22,7 @@ namespace VisualSatisfactoryCalculator.model.production
 			this.products = products;
 		}
 
-		protected AbstractRecipe(RationalNumber time, IEnumerable<ItemRate<ItemType>> ingredients, IEnumerable<ItemRate<ItemType>> products)
+		protected AbstractRecipe(RationalNumber time, IEnumerable<ItemCount<ItemType>> ingredients, IEnumerable<ItemCount<ItemType>> products)
 		{
 			this.time = time;
 			this.ingredients = ingredients.ToImmutableDictionary((rate) =>
