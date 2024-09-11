@@ -51,15 +51,23 @@ namespace VisualSatisfactoryCalculator.model.production
 			}
 		}
 
-		protected abstract void UpdateRatesFrom(ItemCount<ItemType> rate, bool isProduct);
+		protected virtual void UpdateRatesFrom(ItemCount<ItemType> rate, bool isProduct)
+		{
+			UpdateRatesFrom(new Dictionary<ItemCount<ItemType>, bool> { { rate, isProduct } });
+		}
 
 		/// <summary>
 		/// Updates the rates using the given rates.
 		/// Should throw an error if the given rates have a conflict.
+		/// Used during cascading updates. See <see cref="BreadthFirstSearchHandler{ItemType, RecipeType}"/>.
 		/// </summary>
 		/// <param name="rates">The rates to consider, mapped to if they are a product</param>
 		protected abstract void UpdateRatesFrom(Dictionary<ItemCount<ItemType>, bool> rates);
 
+		/// <summary>
+		/// Used during cascading updates. See <see cref="BreadthFirstSearchHandler{ItemType, RecipeType}"/>.
+		/// </summary>
+		/// <param name="visited"></param>
 		public void UpdateRatesFrom(HashSet<object> visited)
 		{
 			/// <summary>
@@ -83,6 +91,11 @@ namespace VisualSatisfactoryCalculator.model.production
 			UpdateRatesFrom(relevantRates);
 		}
 
+		/// <summary>
+		/// Update this steps rates from a given rate, then cascade updates to connected steps.
+		/// </summary>
+		/// <param name="rate"></param>
+		/// <param name="isProduct"></param>
 		public void CascadingUpdateRatesFrom(ItemCount<ItemType> rate, bool isProduct)
 		{
 			UpdateRatesFrom(rate, isProduct);

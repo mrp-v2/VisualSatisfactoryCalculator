@@ -9,20 +9,33 @@ using VisualSatisfactoryCalculator.satisfactory.Numbers;
 
 namespace VisualSatisfactoryCalculator.model.production
 {
-	public abstract class AbstractRecipe<ItemType> where ItemType : BasicItem
+	/// <summary>
+	/// The basic implementation of a recipe. Extend this class to provide additional functionality.
+	/// </summary>
+	/// <typeparam name="ItemType"></typeparam>
+	public class BasicRecipe<ItemType> where ItemType : BasicItem
 	{
+		/// <summary>
+		/// How long the recipe takes.
+		/// </summary>
 		public readonly RationalNumber time;
+		/// <summary>
+		/// The ingredients of the recipe.
+		/// </summary>
 		public readonly ImmutableDictionary<ItemType, RationalNumber> ingredients;
+		/// <summary>
+		/// The products of the recipe.
+		/// </summary>
 		public readonly ImmutableDictionary<ItemType, RationalNumber> products;
 
-		protected AbstractRecipe(RationalNumber time, ImmutableDictionary<ItemType, RationalNumber> ingredients, ImmutableDictionary<ItemType, RationalNumber> products)
+		public BasicRecipe(RationalNumber time, ImmutableDictionary<ItemType, RationalNumber> ingredients, ImmutableDictionary<ItemType, RationalNumber> products)
 		{
 			this.time = time;
 			this.ingredients = ingredients;
 			this.products = products;
 		}
 
-		protected AbstractRecipe(RationalNumber time, IEnumerable<ItemCount<ItemType>> ingredients, IEnumerable<ItemCount<ItemType>> products)
+		public BasicRecipe(RationalNumber time, IEnumerable<ItemCount<ItemType>> ingredients, IEnumerable<ItemCount<ItemType>> products)
 		{
 			this.time = time;
 			this.ingredients = ingredients.ToImmutableDictionary((rate) =>

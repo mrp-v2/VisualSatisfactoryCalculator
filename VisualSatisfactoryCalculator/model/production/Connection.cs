@@ -28,6 +28,9 @@ namespace VisualSatisfactoryCalculator.model.production
 
 		private readonly CachedValue<IEnumerable<AbstractStep<ItemType, RecipeType>>> _steps;
 
+		/// <summary>
+		/// The steps that are part of this connection.
+		/// </summary>
 		public IEnumerable<AbstractStep<ItemType, RecipeType>> Steps
 		{
 			get
@@ -140,6 +143,12 @@ namespace VisualSatisfactoryCalculator.model.production
 			return notVisited;
 		}
 
+		/// <summary>
+		/// Used by <see cref="UpdateRatesFrom(HashSet{object}, HashSet{AbstractStep{ItemType, RecipeType}})"/>.
+		/// Identifies which consumers and producers have not been updated yet,
+		/// and the total rate of the already updated consumers and producers.
+		/// </summary>
+		/// <param name="lockedRate">The total rate of the already updated consumers and producers</param>
 		private void ProcessVisitedSteps(HashSet<object> visited,
 										 HashSet<AbstractStep<ItemType, RecipeType>> toVisit,
 										 out HashSet<AbstractStep<ItemType, RecipeType>> notUpdatedConsumers,
@@ -179,6 +188,9 @@ namespace VisualSatisfactoryCalculator.model.production
 			}
 		}
 
+		/// <summary>
+		/// Used during cascading updates. See <see cref="BreadthFirstSearchHandler{ItemType, RecipeType}"/>.
+		/// </summary>
 		public void UpdateRatesFrom(HashSet<object> visited, HashSet<AbstractStep<ItemType, RecipeType>> toVisit)
 		{
 			if (Type != ConnectionType.INCOMPLETE)
@@ -318,6 +330,9 @@ namespace VisualSatisfactoryCalculator.model.production
 			}
 		}
 
+		/// <summary>
+		/// Finds all groups of steps connected by <see cref="ConnectionType.SINGLE"> connections from the given steps.
+		/// </summary>
 		private HashSet<HashSet<AbstractStep<ItemType, RecipeType>>> GetSingleConnectedStepGroups(IEnumerable<AbstractStep<ItemType, RecipeType>> steps)
 		{
 			HashSet<HashSet<AbstractStep<ItemType, RecipeType>>> groups = new HashSet<HashSet<AbstractStep<ItemType, RecipeType>>>();
@@ -354,6 +369,10 @@ namespace VisualSatisfactoryCalculator.model.production
 			}
 		}
 
+		/// <summary>
+		/// Updates the rates of the producers and consumers of this connection, and cascades updates.
+		/// See <see cref="BreadthFirstSearchHandler{ItemType, RecipeType}"/>.
+		/// </summary>
 		public void CascadingSetRates(Dictionary<AbstractStep<ItemType, RecipeType>, ItemCount<ItemType>> producers, Dictionary<AbstractStep<ItemType, RecipeType>, ItemCount<ItemType>> consumers)
 		{
 			if (producers.Keys.Count != _producers.Keys.Count || !producers.Keys.All(key => _producers.ContainsKey(key)))
@@ -378,8 +397,17 @@ namespace VisualSatisfactoryCalculator.model.production
 
 	public enum ConnectionType
 	{
+		/// <summary>
+		/// The connection lacks either producers or consumers.
+		/// </summary>
 		INCOMPLETE,
+		/// <summary>
+		/// The connnection has a single producer and a single consumer.
+		/// </summary>
 		SINGLE,
+		/// <summary>
+		/// The connection has multiple producers and/or multiple consumers.
+		/// </summary>
 		MULTI,
 	}
 }

@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace VisualSatisfactoryCalculator.model.production
 {
-	public sealed class ItemRateCollection<ItemType> : Dictionary<ItemType, ItemCount<ItemType>> where ItemType : BasicItem
+	/// <summary>
+	/// A map of items to <see cref="ItemCount{ItemType}"/>s.
+	/// </summary>
+	public sealed class ItemCountCollection<ItemType> : Dictionary<ItemType, ItemCount<ItemType>> where ItemType : BasicItem
 	{
 		public void Add(ItemCount<ItemType> rate)
 		{

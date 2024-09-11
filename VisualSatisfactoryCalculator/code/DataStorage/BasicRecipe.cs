@@ -10,7 +10,7 @@ using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
 
 namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 {
-	public class BasicRecipe : AbstractRecipe<JSONItem>, IRecipe
+	public class BasicRecipe : BasicRecipe<JSONItem>, IRecipe
 	{
 		public string ID { get; }
 		public string MachineUID { get; }

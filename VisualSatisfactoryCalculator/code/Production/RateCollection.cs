@@ -9,7 +9,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
 	public class RateCollection
 	{
-		private readonly ItemRateCollection<JSONItem> BasicRates;
+		private readonly ItemCountCollection<JSONItem> BasicRates;
 		private double Power;
 
 		public IEnumerable<JSONItem> Items
@@ -36,7 +36,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 
 		public RateCollection(double power)
 		{
-			BasicRates = new ItemRateCollection<JSONItem>();
+			BasicRates = new ItemCountCollection<JSONItem>();
 			Power = power;
 		}
 

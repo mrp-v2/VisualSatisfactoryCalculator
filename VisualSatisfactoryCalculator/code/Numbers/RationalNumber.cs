@@ -79,6 +79,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 			return From(int.Parse(str));
 		}
 
+		/// <summary>
+		/// Removes common numbers from two lists.
+		/// </summary>
 		private static void Simplify(List<int> numerator, List<int> denominator)
 		{
 			numerator.Sort();
@@ -92,6 +95,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 			}
 		}
 
+		/// <summary>
+		/// Multiples the factors of the numerator together and adds the correct sign.
+		/// </summary>
 		public int GetNumerator()
 		{
 			if (!isNonZero)
@@ -116,6 +122,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 			return product;
 		}
 
+		/// <summary>
+		/// Multiples the factors of the denominator together.
+		/// </summary>
 		public int GetDenominator()
 		{
 			return Product(_primeFactoredDenominator);
@@ -184,11 +193,6 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 		public static RationalNumber operator -(RationalNumber a)
 		{
 			return new RationalNumber(a._primeFactoredNumerator, a._primeFactoredDenominator, !a.isPositive, a.isNonZero);
-		}
-
-		public static RationalNumber Add(RationalNumber a, RationalNumber b)
-		{
-			return a + b;
 		}
 
 		public static RationalNumber operator +(RationalNumber a, RationalNumber b)
@@ -379,11 +383,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 			}
 			List<int> numerator = new List<int>(a._primeFactoredNumerator);
 			List<int> denominator = new List<int>(a._primeFactoredDenominator);
-			if (b < 0)
-			{
-				b = -b;
-			}
-			numerator.AddRange(PrimeNumberHandler.PrimeFactors(b));
+			numerator.AddRange(PrimeNumberHandler.PrimeFactors(Math.Abs(b)));
 			Simplify(numerator, denominator);
 			return new RationalNumber(numerator, denominator, b > 0 ? a.isPositive : !a.isPositive, true);
 		}

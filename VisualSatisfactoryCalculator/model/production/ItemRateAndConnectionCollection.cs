@@ -8,20 +8,27 @@ using VisualSatisfactoryCalculator.satisfactory.Numbers;
 
 namespace VisualSatisfactoryCalculator.model.production
 {
+	/// <summary>
+	/// A map of items to connections and counts.
+	/// </summary>
 	public sealed class ItemRateAndConnectionCollection<ItemType, RecipeType> where ItemType : BasicItem
 	{
 		public delegate void OnConnectionChanged();
 
-		private readonly ItemRateCollection<ItemType> _rates;
+		private readonly ItemCountCollection<ItemType> _rates;
 		private readonly Dictionary<ItemType, Connection<ItemType, RecipeType>> _connections;
 		private OnConnectionChanged _connectionsChangedListener;
 
 		public ItemRateAndConnectionCollection()
 		{
-			_rates = new ItemRateCollection<ItemType>();
+			_rates = new ItemCountCollection<ItemType>();
 			_connections = new Dictionary<ItemType, Connection<ItemType, RecipeType>>();
 		}
 
+		/// <summary>
+		/// Add a callback for if a connection is added or removed.
+		/// </summary>
+		/// <param name="listener"></param>
 		public void SetConnectionsChangedListener(OnConnectionChanged listener)
 		{
 			_connectionsChangedListener = listener;

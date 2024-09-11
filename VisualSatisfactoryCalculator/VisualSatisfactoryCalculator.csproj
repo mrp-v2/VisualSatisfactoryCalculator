@@ -203,8 +203,8 @@
     </Compile>
     <Compile Include="model\production\AbstractStep.cs" />
     <Compile Include="model\production\ItemRateAndConnectionCollection.cs" />
-    <Compile Include="model\production\ItemRateCollection.cs" />
-    <Compile Include="model\production\AbstractRecipe.cs" />
+    <Compile Include="model\production\ItemCountCollection.cs" />
+    <Compile Include="model\production\BasicRecipe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="controls\user\ItemRateControl.resx">
       <DependentUpon>ItemRateControl.cs</DependentUpon>
