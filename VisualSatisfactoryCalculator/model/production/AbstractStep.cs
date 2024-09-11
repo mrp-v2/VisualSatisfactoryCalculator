@@ -8,15 +8,15 @@ using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.model.production
 {
-	public abstract class AbstractStep<ItemType, RecipeType> where ItemType : BasicItem
+	public abstract class AbstractStep<ItemType, StepType, RecipeType> where ItemType : BasicItem where StepType : AbstractStep<ItemType, StepType, RecipeType>
 	{
 		public readonly RecipeType recipe;
-		protected readonly ItemRateAndConnectionCollection<ItemType, RecipeType> products;
-		protected readonly ItemRateAndConnectionCollection<ItemType, RecipeType> ingredients;
+		protected readonly ItemRateAndConnectionCollection<ItemType, StepType, RecipeType> products;
+		protected readonly ItemRateAndConnectionCollection<ItemType, StepType, RecipeType> ingredients;
 
-		private readonly CachedValue<IEnumerable<Connection<ItemType, RecipeType>>> _connections;
+		private readonly CachedValue<IEnumerable<Connection<ItemType, StepType, RecipeType>>> _connections;
 
-		public IEnumerable<Connection<ItemType, RecipeType>> Connections
+		public IEnumerable<Connection<ItemType, StepType, RecipeType>> Connections
 		{
 			get
 			{
@@ -27,12 +27,12 @@ namespace VisualSatisfactoryCalculator.model.production
 		protected AbstractStep(RecipeType recipe)
 		{
 			this.recipe = recipe;
-			products = new ItemRateAndConnectionCollection<ItemType, RecipeType>();
-			ingredients = new ItemRateAndConnectionCollection<ItemType, RecipeType>();
+			products = new ItemRateAndConnectionCollection<ItemType, StepType, RecipeType>();
+			ingredients = new ItemRateAndConnectionCollection<ItemType, StepType, RecipeType>();
 
-			_connections = new CachedValue<IEnumerable<Connection<ItemType, RecipeType>>>(() =>
+			_connections = new CachedValue<IEnumerable<Connection<ItemType, StepType, RecipeType>>>(() =>
 			{
-				return new HashSet<Connection<ItemType, RecipeType>>(Enumerable.Concat(products.Connections, ingredients.Connections));
+				return new HashSet<Connection<ItemType, StepType, RecipeType>>(Enumerable.Concat(products.Connections, ingredients.Connections));
 			});
 
 			products.SetConnectionsChangedListener(_connections.Invalidate);
@@ -74,18 +74,18 @@ namespace VisualSatisfactoryCalculator.model.production
 			/// Tracks relevant rates, and if they are a product
 			/// </summary>
 			Dictionary<ItemCount<ItemType>, bool> relevantRates = new Dictionary<ItemCount<ItemType>, bool>();
-			foreach (Connection<ItemType, RecipeType> connection in products.Connections)
+			foreach (Connection<ItemType, StepType, RecipeType> connection in products.Connections)
 			{
 				if (visited.Contains(connection))
 				{
-					relevantRates.Add(connection.GetRate(this, false), true);
+					relevantRates.Add(connection.GetRate(This, false), true);
 				}
 			}
-			foreach (Connection<ItemType, RecipeType> connection in ingredients.Connections)
+			foreach (Connection<ItemType, StepType, RecipeType> connection in ingredients.Connections)
 			{
 				if (visited.Contains(connection))
 				{
-					relevantRates.Add(connection.GetRate(this, true), false);
+					relevantRates.Add(connection.GetRate(This, true), false);
 				}
 			}
 			UpdateRatesFrom(relevantRates);
@@ -99,7 +99,9 @@ namespace VisualSatisfactoryCalculator.model.production
 		public void CascadingUpdateRatesFrom(ItemCount<ItemType> rate, bool isProduct)
 		{
 			UpdateRatesFrom(rate, isProduct);
-			BreadthFirstSearchHandler<ItemType, RecipeType>.CascadeUpdates(this);
+			BreadthFirstSearchHandler<ItemType, StepType, RecipeType>.CascadeUpdates(This);
 		}
+
+		protected abstract StepType This { get; }
 	}
 }

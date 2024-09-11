@@ -2,58 +2,60 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem, VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.DataStorage.BasicRecipe>;
+
 namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
 	public class ProcessedPlan
 	{
-		private readonly HashSet<HashSet<Connection>> normalConnectionGroups;
-		private readonly HashSet<Connection> abnormalConnections;
-		private readonly HashSet<Step> steps;
-		private readonly Dictionary<int, HashSet<Step>> tierSteps;
-		private readonly HashSet<Connection> allConnections;
+		private readonly HashSet<HashSet<Connection>> _normalConnectionGroups;
+		private readonly HashSet<Connection> _abnormalConnections;
+		private readonly HashSet<Step> _steps;
+		private readonly Dictionary<int, HashSet<Step>> _tierSteps;
+		private readonly HashSet<Connection> _allConnections;
 
 		public ProcessedPlan(Plan plan)
 		{
-			steps = plan.steps;
-			normalConnectionGroups = new HashSet<HashSet<Connection>>();
-			abnormalConnections = new HashSet<Connection>();
-			tierSteps = new Dictionary<int, HashSet<Step>>();
-			allConnections = new HashSet<Connection>();
+			_steps = plan.steps;
+			_normalConnectionGroups = new HashSet<HashSet<Connection>>();
+			_abnormalConnections = new HashSet<Connection>();
+			_tierSteps = new Dictionary<int, HashSet<Step>>();
+			_allConnections = new HashSet<Connection>();
 			CalculateConnectionGroups();
 			CalculateStepTiers();
 		}
 
 		public IEnumerable<Connection> GetAbnormalConnections()
 		{
-			return abnormalConnections;
+			return _abnormalConnections;
 		}
 
 		public IEnumerable<Connection> GetAllConnections()
 		{
-			return allConnections;
+			return _allConnections;
 		}
 
 		public int Tiers
 		{
 			get
 			{
-				return tierSteps.Count;
+				return _tierSteps.Count;
 			}
 		}
 
 		public IEnumerable<Step> GetStepsInTier(int tier)
 		{
-			if (!tierSteps.ContainsKey(tier))
+			if (!_tierSteps.ContainsKey(tier))
 			{
 				return new List<Step>();
 			}
-			return tierSteps[tier];
+			return _tierSteps[tier];
 		}
 
 		private void CalculateStepTiers()
 		{
 			Dictionary<Step, int> stepTiers = new Dictionary<Step, int>();
-			HashSet<Step> remainingSteps = new HashSet<Step>(steps);
+			HashSet<Step> remainingSteps = new HashSet<Step>(_steps);
 			// tier 0
 			HashSet<Step> tier0 = new HashSet<Step>();
 			foreach (Step step in remainingSteps)
@@ -78,14 +80,14 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				{
 					foreach (Connection connection in step.normalIngredientConnections.Get())
 					{
-						ingredientSteps.UnionWith(connection.GetProducerSteps());
+						ingredientSteps.UnionWith(connection.ProducerSteps);
 					}
 				}
 				if (currentTier == 1)
 				{
-					foreach (Connection connection in abnormalConnections)
+					foreach (Connection connection in _abnormalConnections)
 					{
-						ingredientSteps.UnionWith(connection.GetProducerSteps());
+						ingredientSteps.UnionWith(connection.ProducerSteps);
 					}
 				}
 				foreach (Step step in ingredientSteps)
@@ -108,20 +110,20 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			foreach (Step step in stepTiers.Keys)
 			{
 				int stepTier = stepTiers[step];
-				if (!tierSteps.ContainsKey(stepTier))
+				if (!_tierSteps.ContainsKey(stepTier))
 				{
-					tierSteps.Add(stepTier, new HashSet<Step>());
+					_tierSteps.Add(stepTier, new HashSet<Step>());
 				}
-				tierSteps[stepTier].Add(step);
+				_tierSteps[stepTier].Add(step);
 			}
-			while (!tierSteps.ContainsKey(0) && tierSteps.Count > 0)
+			while (!_tierSteps.ContainsKey(0) && _tierSteps.Count > 0)
 			{
 				for (int i = 0; i < currentTier; i++)
 				{
-					if (tierSteps.ContainsKey(i + 1))
+					if (_tierSteps.ContainsKey(i + 1))
 					{
-						tierSteps.Add(i, tierSteps[i + 1]);
-						tierSteps.Remove(i + 1);
+						_tierSteps.Add(i, _tierSteps[i + 1]);
+						_tierSteps.Remove(i + 1);
 					}
 				}
 			}
@@ -129,25 +131,25 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 
 		private void CalculateConnectionGroups()
 		{
-			foreach (Step step in steps)
+			foreach (Step step in _steps)
 			{
-				foreach (Connection connection in step.Connections.Get())
+				foreach (Connection connection in step.Connections)
 				{
-					allConnections.Add(connection);
-					if (abnormalConnections.Contains(connection))
+					_allConnections.Add(connection);
+					if (_abnormalConnections.Contains(connection))
 					{
 						continue;
 					}
-					foreach (HashSet<Connection> connectionGroup in normalConnectionGroups)
+					foreach (HashSet<Connection> connectionGroup in _normalConnectionGroups)
 					{
 						if (connectionGroup.Contains(connection))
 						{
 							goto Continue;
 						}
 					}
-					if (connection.Type.Get() == Connection.ConnectionType.NORMAL)
+					if (connection.Type == model.production.ConnectionType.SINGLE)
 					{
-						foreach (HashSet<Connection> connections in normalConnectionGroups)
+						foreach (HashSet<Connection> connections in _normalConnectionGroups)
 						{
 							if (connections.First().IsConnectedNormallyTo(connection))
 							{
@@ -157,11 +159,11 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 								}
 							}
 						}
-						normalConnectionGroups.Add(new HashSet<Connection>() { connection });
+						_normalConnectionGroups.Add(new HashSet<Connection>() { connection });
 					}
 					else
 					{
-						abnormalConnections.Add(connection);
+						_abnormalConnections.Add(connection);
 					}
 				Continue:
 					continue;

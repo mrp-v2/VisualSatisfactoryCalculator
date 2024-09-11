@@ -5,6 +5,8 @@ using VisualSatisfactoryCalculator.satisfactory.Interfaces;
 using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 
+using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem, VisualSatisfactoryCalculator.satisfactory.DataStorage.BasicRecipe>;
+
 namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
 	[Serializable]

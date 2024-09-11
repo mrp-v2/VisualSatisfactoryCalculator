@@ -11,18 +11,18 @@ namespace VisualSatisfactoryCalculator.model.production
 	/// <summary>
 	/// A map of items to connections and counts.
 	/// </summary>
-	public sealed class ItemRateAndConnectionCollection<ItemType, RecipeType> where ItemType : BasicItem
+	public sealed class ItemRateAndConnectionCollection<ItemType, StepType, RecipeType> where ItemType : BasicItem where StepType : AbstractStep<ItemType, StepType, RecipeType>
 	{
 		public delegate void OnConnectionChanged();
 
 		private readonly ItemCountCollection<ItemType> _rates;
-		private readonly Dictionary<ItemType, Connection<ItemType, RecipeType>> _connections;
+		private readonly Dictionary<ItemType, Connection<ItemType, StepType, RecipeType>> _connections;
 		private OnConnectionChanged _connectionsChangedListener;
 
 		public ItemRateAndConnectionCollection()
 		{
 			_rates = new ItemCountCollection<ItemType>();
-			_connections = new Dictionary<ItemType, Connection<ItemType, RecipeType>>();
+			_connections = new Dictionary<ItemType, Connection<ItemType, StepType, RecipeType>>();
 		}
 
 		/// <summary>
@@ -47,7 +47,7 @@ namespace VisualSatisfactoryCalculator.model.production
 			return _connections.ContainsKey(item);
 		}
 
-		public IEnumerable<Connection<ItemType, RecipeType>> Connections
+		public IEnumerable<Connection<ItemType, StepType, RecipeType>> Connections
 		{
 			get
 			{
@@ -65,18 +65,18 @@ namespace VisualSatisfactoryCalculator.model.production
 			_rates[item] = rate;
 		}
 
-		public Connection<ItemType, RecipeType> GetConnection(ItemType item)
+		public Connection<ItemType, StepType, RecipeType> GetConnection(ItemType item)
 		{
 			return _connections[item];
 		}
 
-		public void AddConnection(Connection<ItemType, RecipeType> connection)
+		public void AddConnection(Connection<ItemType, StepType, RecipeType> connection)
 		{
 			_connections[connection.item] = connection;
 			_connectionsChangedListener?.Invoke();
 		}
 
-		public void RemoveConnection(Connection<ItemType, RecipeType> connection)
+		public void RemoveConnection(Connection<ItemType, StepType, RecipeType> connection)
 		{
 			_connections.Remove(connection.item);
 			_connectionsChangedListener?.Invoke();

@@ -10,12 +10,12 @@ using VisualSatisfactoryCalculator.controls.user;
 using VisualSatisfactoryCalculator.model.production;
 using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
 using VisualSatisfactoryCalculator.satisfactory.DataStorage;
-using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem, VisualSatisfactoryCalculator.satisfactory.DataStorage.BasicRecipe>;
+using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem, VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.DataStorage.BasicRecipe>;
 using ItemCount = VisualSatisfactoryCalculator.model.production.ItemCount<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem>;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
-	public class Step : AbstractStep<JSONItem, BasicRecipe>
+	public class Step : AbstractStep<JSONItem, Step, BasicRecipe>
 	{
 		public readonly CachedValue<bool> hasNormalProductConnections;
 		public readonly CachedValue<IImmutableSet<Connection>> normalIngredientConnections;
@@ -24,6 +24,14 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		public uint MachineCount { get; private set; }
 		public ushort ClockSpeedThousandths { get; private set; }
 		private StepControl _control;
+
+		protected override Step This
+		{
+			get
+			{
+				return this;
+			}
+		}
 
 		public IEnumerable<Connection> GetIngredientConnections()
 		{
@@ -154,7 +162,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				HashSet<ItemCount> rates = new HashSet<ItemCount>();
 				foreach (Connection connection in products.Connections)
 				{
-					rates.Add(new ItemRate(connection.item, GetItemRate(connection.item, true)));
+					rates.Add(new ItemCount(connection.item, GetItemRate(connection.item, true)));
 				}
 				return rates;
 			});
@@ -163,7 +171,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				HashSet<ItemCount> rates = new HashSet<ItemCount>();
 				foreach (Connection connection in ingredients.Connections)
 				{
-					rates.Add(new ItemRate(connection.item, GetItemRate(connection.item, false)));
+					rates.Add(new ItemCount(connection.item, GetItemRate(connection.item, false)));
 				}
 				return rates;
 			});

@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace VisualSatisfactoryCalculator.model.production
 {
-	internal class BreadthFirstSearchHandler<ItemType, RecipeType> where ItemType : BasicItem
+	internal class BreadthFirstSearchHandler<ItemType, StepType, RecipeType> where ItemType : BasicItem where StepType : AbstractStep<ItemType, StepType, RecipeType>
 	{
 		/// <summary>
 		/// Starts cascading updates from an origin step.
 		/// </summary>
 		/// <param name="includeMulticonnections">Whether to include connections that are <see cref="ConnectionType.MULTI"/></param>
-		internal static void CascadeUpdates(AbstractStep<ItemType, RecipeType> origin, bool includeMulticonnections = true)
+		internal static void CascadeUpdates(StepType origin, bool includeMulticonnections = true)
 		{
 			StartCascadingUpdate(new StepOrigin(origin, includeMulticonnections));
 		}
@@ -23,7 +23,7 @@ namespace VisualSatisfactoryCalculator.model.production
 		/// Starts cascading updates from an origin connection
 		/// </summary>
 		/// <param name="includeMulticonnections">Whether to include connections that are <see cref="ConnectionType.MULTI"/></param>
-		internal static void CascadeUpdates(Connection<ItemType, RecipeType> origin, bool includeMulticonnections = true)
+		internal static void CascadeUpdates(Connection<ItemType, StepType, RecipeType> origin, bool includeMulticonnections = true)
 		{
 			StartCascadingUpdate(new ConnectionOrigin(origin, includeMulticonnections));
 		}
@@ -31,7 +31,7 @@ namespace VisualSatisfactoryCalculator.model.production
 		/// <summary>
 		/// Finds all steps that can be reached using only <see cref="ConnectionType.SINGLE"/> connections from an origin step.
 		/// </summary>
-		internal static HashSet<AbstractStep<ItemType, RecipeType>> GetSingleConnectedSteps(AbstractStep<ItemType, RecipeType> origin)
+		internal static HashSet<StepType> GetSingleConnectedSteps(StepType origin)
 		{
 			BreadthFirstSearchOrigin bfsOrigin = new BreadthFirstSearchOrigin(origin);
 			BreadthFirstSearchOrigin.IRound currentRound = bfsOrigin.GetFirstRound();
@@ -124,9 +124,9 @@ namespace VisualSatisfactoryCalculator.model.production
 				/// <summary>
 				/// Filters unvisited connections of a step into <see cref="ConnectionType.SINGLE"/> and <see cref="ConnectionType.MULTI"/> connections.
 				/// </summary>
-				public static void FilterConnections(AbstractStep<ItemType, RecipeType> step, HashSet<object> visited, HashSet<Connection<ItemType, RecipeType>> toVisit, HashSet<Connection<ItemType, RecipeType>> multiconnectionsToVisit)
+				public static void FilterConnections(StepType step, HashSet<object> visited, HashSet<Connection<ItemType, StepType, RecipeType>> toVisit, HashSet<Connection<ItemType, StepType, RecipeType>> multiconnectionsToVisit)
 				{
-					foreach (Connection<ItemType, RecipeType> connection in step.Connections)
+					foreach (Connection<ItemType, StepType, RecipeType> connection in step.Connections)
 					{
 						if (!visited.Contains(connection))
 						{
@@ -148,18 +148,18 @@ namespace VisualSatisfactoryCalculator.model.production
 		/// <summary>
 		/// The origin for performng a breadth first search of <see cref="ConnectionType.SINGLE"/> connections.
 		/// </summary>
-		private class BreadthFirstSearchOrigin : AbstractOrigin<BreadthFirstSearchOrigin, AbstractStep<ItemType, RecipeType>>
+		private class BreadthFirstSearchOrigin : AbstractOrigin<BreadthFirstSearchOrigin, StepType>
 		{
-			private readonly AbstractStep<ItemType, RecipeType> _origin;
+			private readonly StepType _origin;
 
-			public BreadthFirstSearchOrigin(AbstractStep<ItemType, RecipeType> origin) : base(false)
+			public BreadthFirstSearchOrigin(StepType origin) : base(false)
 			{
 				_origin = origin;
 			}
 
 			public override IRound GetFirstRound()
 			{
-				return new StepsOnlyRound(new HashSet<AbstractStep<ItemType, RecipeType>> { _origin });
+				return new StepsOnlyRound(new HashSet<StepType> { _origin });
 			}
 		}
 
@@ -168,7 +168,7 @@ namespace VisualSatisfactoryCalculator.model.production
 		/// </summary>
 		private abstract class CascadingUpdatesOrigin : AbstractOrigin<CascadingUpdatesOrigin, object>
 		{
-			public readonly HashSet<Connection<ItemType, RecipeType>> multiconnectionsToVisit;
+			public readonly HashSet<Connection<ItemType, StepType, RecipeType>> multiconnectionsToVisit;
 
 			public CascadingUpdatesOrigin(bool includeMulticonnections) : base(includeMulticonnections) { }
 
@@ -180,16 +180,16 @@ namespace VisualSatisfactoryCalculator.model.production
 		/// </summary>
 		private class StepOrigin : CascadingUpdatesOrigin
 		{
-			private readonly AbstractStep<ItemType, RecipeType> _origin;
+			private readonly StepType _origin;
 
-			public StepOrigin(AbstractStep<ItemType, RecipeType> origin, bool includeMulticonnections) : base(includeMulticonnections)
+			public StepOrigin(StepType origin, bool includeMulticonnections) : base(includeMulticonnections)
 			{
 				_origin = origin;
 			}
 
 			public override IRound GetFirstRound()
 			{
-				HashSet<Connection<ItemType, RecipeType>> connections = new HashSet<Connection<ItemType, RecipeType>>();
+				HashSet<Connection<ItemType, StepType, RecipeType>> connections = new HashSet<Connection<ItemType, StepType, RecipeType>>();
 				StepRound.FilterConnections(_origin, new HashSet<object>(), connections, multiconnectionsToVisit);
 				return new ConnectionRound(connections);
 			}
@@ -200,37 +200,37 @@ namespace VisualSatisfactoryCalculator.model.production
 		/// </summary>
 		private class ConnectionOrigin : CascadingUpdatesOrigin
 		{
-			private readonly Connection<ItemType, RecipeType> _origin;
+			private readonly Connection<ItemType, StepType, RecipeType> _origin;
 
-			public ConnectionOrigin(Connection<ItemType, RecipeType> origin, bool includeMulticonnections) : base(includeMulticonnections)
+			public ConnectionOrigin(Connection<ItemType, StepType, RecipeType> origin, bool includeMulticonnections) : base(includeMulticonnections)
 			{
 				_origin = origin;
 			}
 
 			public override IRound GetFirstRound()
 			{
-				return new StepRound(new HashSet<AbstractStep<ItemType, RecipeType>>(_origin.Steps));
+				return new StepRound(new HashSet<StepType>(_origin.Steps));
 			}
 		}
 
 		/// <summary>
 		/// A round of searching through connections, that yields a round of steps.
 		/// </summary>
-		private class ConnectionRound : CascadingUpdatesOrigin.Round<Connection<ItemType, RecipeType>, AbstractStep<ItemType, RecipeType>>
+		private class ConnectionRound : CascadingUpdatesOrigin.Round<Connection<ItemType, StepType, RecipeType>, StepType>
 		{
-			public ConnectionRound(HashSet<Connection<ItemType, RecipeType>> connections) : base(connections) { }
+			public ConnectionRound(HashSet<Connection<ItemType, StepType, RecipeType>> connections) : base(connections) { }
 
 			public override bool GetHasNextRound(CascadingUpdatesOrigin data)
 			{
 				return nextRound.Count > 0;
 			}
 
-			protected override CascadingUpdatesOrigin.Round<AbstractStep<ItemType, RecipeType>, Connection<ItemType, RecipeType>> NextRound(CascadingUpdatesOrigin data)
+			protected override CascadingUpdatesOrigin.Round<StepType, Connection<ItemType, StepType, RecipeType>> NextRound(CascadingUpdatesOrigin data)
 			{
 				return new StepRound(nextRound);
 			}
 
-			protected override void Visit(Connection<ItemType, RecipeType> obj, CascadingUpdatesOrigin data)
+			protected override void Visit(Connection<ItemType, StepType, RecipeType> obj, CascadingUpdatesOrigin data)
 			{
 				obj.UpdateRatesFrom(data.visited, nextRound);
 			}
@@ -239,29 +239,29 @@ namespace VisualSatisfactoryCalculator.model.production
 		/// <summary>
 		/// A round of searching through steps, that yields another round of steps.
 		/// </summary>
-		private class StepsOnlyRound : BreadthFirstSearchOrigin.Round<AbstractStep<ItemType, RecipeType>, AbstractStep<ItemType, RecipeType>>
+		private class StepsOnlyRound : BreadthFirstSearchOrigin.Round<StepType, StepType>
 		{
-			public StepsOnlyRound(HashSet<AbstractStep<ItemType, RecipeType>> steps) : base(steps) { }
+			public StepsOnlyRound(HashSet<StepType> steps) : base(steps) { }
 
 			public override bool GetHasNextRound(BreadthFirstSearchOrigin data)
 			{
 				return nextRound.Count > 0;
 			}
 
-			protected override BreadthFirstSearchOrigin.Round<AbstractStep<ItemType, RecipeType>, AbstractStep<ItemType, RecipeType>> NextRound(BreadthFirstSearchOrigin data)
+			protected override BreadthFirstSearchOrigin.Round<StepType, StepType> NextRound(BreadthFirstSearchOrigin data)
 			{
 				return new StepsOnlyRound(nextRound);
 			}
 
-			protected override void Visit(AbstractStep<ItemType, RecipeType> obj, BreadthFirstSearchOrigin data)
+			protected override void Visit(StepType obj, BreadthFirstSearchOrigin data)
 			{
-				foreach (Connection<ItemType, RecipeType> connection in obj.Connections)
+				foreach (Connection<ItemType, StepType, RecipeType> connection in obj.Connections)
 				{
 					if (connection.Type != ConnectionType.SINGLE)
 					{
 						continue;
 					}
-					foreach (AbstractStep<ItemType, RecipeType> step in connection.Steps)
+					foreach (StepType step in connection.Steps)
 					{
 						if (!data.visited.Contains(step))
 						{
@@ -275,16 +275,16 @@ namespace VisualSatisfactoryCalculator.model.production
 		/// <summary>
 		/// A round of searching through steps, that yields a round of connections.
 		/// </summary>
-		private class StepRound : CascadingUpdatesOrigin.Round<AbstractStep<ItemType, RecipeType>, Connection<ItemType, RecipeType>>
+		private class StepRound : CascadingUpdatesOrigin.Round<StepType, Connection<ItemType, StepType, RecipeType>>
 		{
-			public StepRound(HashSet<AbstractStep<ItemType, RecipeType>> steps) : base(steps) { }
+			public StepRound(HashSet<StepType> steps) : base(steps) { }
 
 			public override bool GetHasNextRound(CascadingUpdatesOrigin data)
 			{
 				return nextRound.Count > 0 || (data.includeMulticonnections && data.multiconnectionsToVisit.Count > 0);
 			}
 
-			protected override CascadingUpdatesOrigin.Round<Connection<ItemType, RecipeType>, AbstractStep<ItemType, RecipeType>> NextRound(CascadingUpdatesOrigin data)
+			protected override CascadingUpdatesOrigin.Round<Connection<ItemType, StepType, RecipeType>, StepType> NextRound(CascadingUpdatesOrigin data)
 			{
 				if (nextRound.Count > 0 || !data.includeMulticonnections)
 				{
@@ -292,9 +292,9 @@ namespace VisualSatisfactoryCalculator.model.production
 				}
 				else
 				{
-					HashSet<Connection<ItemType, RecipeType>> fewestRemainingStepMulticonnections = new HashSet<Connection<ItemType, RecipeType>>();
+					HashSet<Connection<ItemType, StepType, RecipeType>> fewestRemainingStepMulticonnections = new HashSet<Connection<ItemType, StepType, RecipeType>>();
 					uint fewestRemainingSteps = uint.MaxValue;
-					foreach (Connection<ItemType, RecipeType> multiconnection in data.multiconnectionsToVisit)
+					foreach (Connection<ItemType, StepType, RecipeType> multiconnection in data.multiconnectionsToVisit)
 					{
 						uint remaining = multiconnection.GetNonUpdatedStepCount(data.visited);
 						if (remaining < fewestRemainingSteps)
@@ -312,7 +312,7 @@ namespace VisualSatisfactoryCalculator.model.production
 				}
 			}
 
-			protected override void Visit(AbstractStep<ItemType, RecipeType> obj, CascadingUpdatesOrigin data)
+			protected override void Visit(StepType obj, CascadingUpdatesOrigin data)
 			{
 				obj.UpdateRatesFrom(data.visited);
 				FilterConnections(obj, data.visited, nextRound, data.multiconnectionsToVisit);
