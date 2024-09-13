@@ -10,18 +10,18 @@ namespace VisualSatisfactoryCalculator.controls.user
 	{
 		public delegate void NumberChanged(RationalNumber oldValue, RationalNumber newValue);
 
-		private NumberChanged numberChanged;
-		private string oldValue;
+		private NumberChanged _numberChanged;
+		private string _oldValue;
 
 		public void AddNumberChangedListener(NumberChanged numberChanged)
 		{
-			this.numberChanged += numberChanged;
+			_numberChanged += numberChanged;
 		}
 
 		public RationalNumberControl()
 		{
 			InitializeComponent();
-			oldValue = NumberTextBox.Text;
+			_oldValue = NumberTextBox.Text;
 		}
 
 		public RationalNumberControl(bool enabled) : this()
@@ -31,10 +31,10 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		private void ValueChanged()
 		{
-			if (NumberTextBox.Text != oldValue)
+			if (NumberTextBox.Text != _oldValue)
 			{
-				oldValue = NumberTextBox.Text;
-				numberChanged(GetNumber(oldValue), GetNumber());
+				_oldValue = NumberTextBox.Text;
+				_numberChanged(GetNumber(_oldValue), GetNumber());
 			}
 		}
 
@@ -58,8 +58,8 @@ namespace VisualSatisfactoryCalculator.controls.user
 			AlternateNumberLabel.Text = "";
 		}
 
-		private RationalNumber cachedRationalNumber;
-		private bool cachedRationalNumberIsValid = false;
+		private RationalNumber _cachedRationalNumber;
+		private bool _cachedRationalNumberIsValid = false;
 
 		private RationalNumber GetNumber(string source)
 		{
@@ -79,26 +79,26 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		public RationalNumber GetNumber()
 		{
-			if (cachedRationalNumberIsValid)
+			if (_cachedRationalNumberIsValid)
 			{
-				return cachedRationalNumber;
+				return _cachedRationalNumber;
 			}
-			cachedRationalNumber = GetNumber(NumberTextBox.Text);
-			cachedRationalNumberIsValid = true;
-			return cachedRationalNumber;
+			_cachedRationalNumber = GetNumber(NumberTextBox.Text);
+			_cachedRationalNumberIsValid = true;
+			return _cachedRationalNumber;
 		}
 
 		public void SetNumber(RationalNumber number)
 		{
 			NumberTextBox.Text = number.ToString().Replace(" ", "");
-			oldValue = NumberTextBox.Text;
-			cachedRationalNumber = number;
-			cachedRationalNumberIsValid = true;
+			_oldValue = NumberTextBox.Text;
+			_cachedRationalNumber = number;
+			_cachedRationalNumberIsValid = true;
 		}
 
 		private void NumberTextBox_LostFocus(object sender, EventArgs e)
 		{
-			if (NumberTextBox.Text != oldValue)
+			if (NumberTextBox.Text != _oldValue)
 			{
 				ValueChanged();
 			}
@@ -159,7 +159,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		private void NumberTextBox_TextChanged(object sender, EventArgs e)
 		{
-			cachedRationalNumberIsValid = false;
+			_cachedRationalNumberIsValid = false;
 			UpdateAlternateLabel();
 		}
 	}

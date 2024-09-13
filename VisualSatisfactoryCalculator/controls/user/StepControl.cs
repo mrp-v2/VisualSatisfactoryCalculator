@@ -10,34 +10,37 @@ using VisualSatisfactoryCalculator.satisfactory.Production;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 using VisualSatisfactoryCalculator.forms;
 using VisualSatisfactoryCalculator.model.production;
+using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
+
+using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem, VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.DataStorage.BasicRecipe>;
 
 namespace VisualSatisfactoryCalculator.controls.user
 {
 	public partial class StepControl : UserControl, PlanLayoutMaker.ILayoutControl
 	{
-		public readonly Step BackingStep;
-		public readonly MainForm MainForm;
-		private bool initialized = false;
-		public readonly Dictionary<string, ItemRateControl> ProductRateControls = new Dictionary<string, ItemRateControl>();
-		public readonly Dictionary<string, ItemRateControl> IngredientRateControls = new Dictionary<string, ItemRateControl>();
+		public readonly Step backingStep;
+		public readonly MainForm mainForm;
+		private bool _initialized = false;
+		public readonly Dictionary<JSONItem, ItemRateControl> productRateControls = new Dictionary<JSONItem, ItemRateControl>();
+		public readonly Dictionary<JSONItem, ItemRateControl> ingredientRateControls = new Dictionary<JSONItem, ItemRateControl>();
 		public StepControl TopControl { get { return this; } }
 
 		public StepControl(Step backingStep, MainForm mainForm)
 		{
 			InitializeComponent();
-			BackingStep = backingStep;
-			MainForm = mainForm;
+			this.backingStep = backingStep;
+			this.mainForm = mainForm;
 			backingStep.SetControl(this);
-			foreach (ItemCount ic in backingStep.Recipe.Products.Values)
+			foreach (JSONItem item in backingStep.recipe.products.Keys)
 			{
-				AddItemRateControl(ic.Item, true);
+				AddItemRateControl(item, true);
 			}
-			foreach (ItemCount ic in backingStep.Recipe.Ingredients.Values)
+			foreach (JSONItem item in backingStep.recipe.ingredients.Keys)
 			{
-				AddItemRateControl(ic.Item, false);
+				AddItemRateControl(item, false);
 			}
-			RecipeLabel.Text = backingStep.Recipe.ToString(mainForm.Encoders, "{name} | {conversion} | {time} seconds");
-			MultiplierNumberControl.SetNumber(BackingStep.Multiplier);
+			RecipeLabel.Text = backingStep.recipe.ToString(mainForm.Encoders, "{name} | {conversion} | {time} seconds");
+			MultiplierNumberControl.SetNumber(this.backingStep.Multiplier);
 			UpdateNumerics();
 			FinishInitialization();
 			Disposed += OnDisposed;
@@ -46,7 +49,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		private void OnDisposed(object sender, EventArgs e)
 		{
-			BackingStep.SetControl(null);
+			backingStep.SetControl(null);
 		}
 
 		public void UpdateNumerics()
@@ -54,40 +57,40 @@ namespace VisualSatisfactoryCalculator.controls.user
 			ToggleInput(false);
 			foreach (ItemRateControl irc in GetItemRateControls())
 			{
-				irc.UpdateRateValue(BackingStep.GetItemRate(irc.ItemUID, irc.IsProduct));
+				irc.UpdateRateValue(backingStep.GetItemRate(irc.Item, irc.IsProduct));
 			}
-			if (MultiplierNumberControl.GetNumber() != BackingStep.Multiplier)
+			if (MultiplierNumberControl.GetNumber() != backingStep.Multiplier)
 			{
-				MultiplierNumberControl.SetNumber(BackingStep.Multiplier);
+				MultiplierNumberControl.SetNumber(backingStep.Multiplier);
 			}
-			MachineCountLabel.Text = MainForm.Encoders[BackingStep.Recipe.MachineUID].DisplayName + ": " + BackingStep.CalculateMachineCount() + " x " + BackingStep.CalculateMachineClockPercentage() + "%";
-			double powerDraw = BackingStep.GetPowerDraw(MainForm.Encoders);
+			MachineCountLabel.Text = mainForm.Encoders[backingStep.Recipe.MachineUID].DisplayName + ": " + backingStep.CalculateMachineCount() + " x " + backingStep.CalculateMachineClockPercentage() + "%";
+			double powerDraw = backingStep.GetPowerDraw(mainForm.Encoders);
 			PowerConsumptionLabel.Text = powerDraw > 0 ? $"Power Consumption: {powerDraw} MW" : $"Power Production: {-powerDraw} MW";
 			ToggleInput(true);
 		}
 
 		private void RateChanged(string itemUID, RationalNumber newRate, bool isProduct)
 		{
-			if (BackingStep.GetItemRate(itemUID, isProduct).AbsoluteValue() != newRate)
+			if (backingStep.GetItemRate(itemUID, isProduct).AbsoluteValue() != newRate)
 			{
-				BackingStep.SetMultiplier(BackingStep.CalculateMultiplierForRate(itemUID, newRate, isProduct));
+				backingStep.SetMultiplier(backingStep.CalculateMultiplierForRate(itemUID, newRate, isProduct));
 			}
 		}
 
 		private void ItemClicked(string itemUID, bool isProduct)
 		{
-			if (MainForm.CurrentConnectionIRC != null)
+			if (mainForm.CurrentConnectionIRC != null)
 			{
-				if (itemUID == MainForm.CurrentConnectionIRC.ItemUID)
+				if (itemUID == mainForm.CurrentConnectionIRC.Item)
 				{
-					if (isProduct != MainForm.CurrentConnectionIRC.IsProduct)
+					if (isProduct != mainForm.CurrentConnectionIRC.IsProduct)
 					{
-						Connection connection = isProduct ? BackingStep.HasProductConnectionFor(itemUID) ? BackingStep.GetProductConnection(itemUID) : new Connection(itemUID).AddProducer(BackingStep) : BackingStep.HasIngredientConnectionFor(itemUID) ? BackingStep.GetIngredientConnection(itemUID) : new Connection(itemUID).AddConsumer(BackingStep);
-						connection.MergeWith(MainForm.CurrentConnectionFunc());
-						MainForm.CurrentConnectionIRC = null;
-						MainForm.CurrentConnectionFunc = null;
-						MainForm.Plan.processedPlan.Invalidate();
-						MainForm.PlanUpdated();
+						Connection connection = isProduct ? backingStep.HasProductConnectionFor(itemUID) ? backingStep.GetProductConnection(itemUID) : new Connection(itemUID).AddProducer(backingStep) : backingStep.HasIngredientConnectionFor(itemUID) ? backingStep.GetIngredientConnection(itemUID) : new Connection(itemUID).AddConsumer(backingStep);
+						connection.MergeWith(mainForm.CurrentConnectionFunc());
+						mainForm.CurrentConnectionIRC = null;
+						mainForm.CurrentConnectionFunc = null;
+						mainForm.Plan.processedPlan.Invalidate();
+						mainForm.PlanUpdated();
 					}
 					else
 					{
@@ -96,50 +99,50 @@ namespace VisualSatisfactoryCalculator.controls.user
 				}
 				return;
 			Else:
-				MainForm.CurrentConnectionIRC.ItemButton.Enabled = true;
-				MainForm.CurrentConnectionIRC = null;
-				MainForm.CurrentConnectionFunc = null;
+				mainForm.CurrentConnectionIRC.ItemButton.Enabled = true;
+				mainForm.CurrentConnectionIRC = null;
+				mainForm.CurrentConnectionFunc = null;
 			}
-			else if (MainForm.ControlKeyPressed)
+			else if (mainForm.ControlKeyPressed)
 			{
-				MainForm.CurrentConnectionIRC = isProduct ? ProductRateControls[itemUID] : IngredientRateControls[itemUID];
-				MainForm.CurrentConnectionFunc = () => isProduct ? BackingStep.HasProductConnectionFor(itemUID) ? BackingStep.GetProductConnection(itemUID) : new Connection(itemUID).AddProducer(BackingStep) : BackingStep.HasIngredientConnectionFor(itemUID) ? BackingStep.GetIngredientConnection(itemUID) : new Connection(itemUID).AddConsumer(BackingStep);
-				MainForm.CurrentConnectionIRC.ItemButton.Enabled = false;
+				mainForm.CurrentConnectionIRC = isProduct ? productRateControls[itemUID] : ingredientRateControls[itemUID];
+				mainForm.CurrentConnectionFunc = () => isProduct ? backingStep.HasProductConnectionFor(itemUID) ? backingStep.GetProductConnection(itemUID) : new Connection(itemUID).AddProducer(backingStep) : backingStep.HasIngredientConnectionFor(itemUID) ? backingStep.GetIngredientConnection(itemUID) : new Connection(itemUID).AddConsumer(backingStep);
+				mainForm.CurrentConnectionIRC.ItemButton.Enabled = false;
 			}
 			else
 			{
 				SelectRecipePrompt srp;
 				if (isProduct)
 				{
-					srp = new SelectRecipePrompt(MainForm.Encoders.Recipes.GetRecipesThatConsume(itemUID));
+					srp = new SelectRecipePrompt(mainForm.Encoders.Recipes.GetRecipesThatConsume(itemUID));
 				}
 				else
 				{
-					srp = new SelectRecipePrompt(MainForm.Encoders.Recipes.GetRecipesThatProduce(itemUID));
+					srp = new SelectRecipePrompt(mainForm.Encoders.Recipes.GetRecipesThatProduce(itemUID));
 				}
 				if (srp.ShowDialog() == DialogResult.OK)
 				{
-					Step ps = new Step(srp.GetSelectedRecipe(), BackingStep, itemUID, isProduct);
-					MainForm.Plan.steps.Add(ps);
-					MainForm.Plan.processedPlan.Invalidate();
-					MainForm.PlanUpdated();
+					Step ps = new Step(srp.GetSelectedRecipe(), backingStep, itemUID, isProduct);
+					mainForm.Plan.steps.Add(ps);
+					mainForm.Plan.processedPlan.Invalidate();
+					mainForm.PlanUpdated();
 				}
 			}
 		}
 
 		private void AddItemRateControl(string itemUID, bool isProduct)
 		{
-			ItemRateControl irc = new ItemRateControl(MainForm, itemUID, BackingStep.GetItemRate(itemUID, isProduct), isProduct, 4, RateChanged, ItemClicked);
+			ItemRateControl irc = new ItemRateControl(mainForm, itemUID, backingStep.GetItemRate(itemUID, isProduct), isProduct, 4, RateChanged, ItemClicked);
 			if (isProduct)
 			{
 				irc.Anchor = AnchorStyles.Bottom;
 				ProductsPanel.Controls.Add(irc);
-				ProductRateControls.Add(itemUID, irc);
+				productRateControls.Add(itemUID, irc);
 			}
 			else
 			{
 				IngredientsPanel.Controls.Add(irc);
-				IngredientRateControls.Add(itemUID, irc);
+				ingredientRateControls.Add(itemUID, irc);
 			}
 			irc.FinishInitialization();
 		}
@@ -147,8 +150,8 @@ namespace VisualSatisfactoryCalculator.controls.user
 		private List<ItemRateControl> GetItemRateControls()
 		{
 			List<ItemRateControl> list = new List<ItemRateControl>();
-			list.AddRange(ProductRateControls.Values);
-			list.AddRange(IngredientRateControls.Values);
+			list.AddRange(productRateControls.Values);
+			list.AddRange(ingredientRateControls.Values);
 			return list;
 		}
 
@@ -158,10 +161,10 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				return;
 			}
-			if (Enabled && initialized)
+			if (Enabled && _initialized)
 			{
-				BackingStep.SetMultiplier(MultiplierNumberControl.GetNumber());
-				MainForm.UpdateTotalView();
+				backingStep.SetMultiplier(MultiplierNumberControl.GetNumber());
+				mainForm.UpdateTotalView();
 			}
 		}
 
@@ -172,25 +175,25 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		public void FinishInitialization()
 		{
-			initialized = true;
+			_initialized = true;
 		}
 
 		private void DeleteStepButton_Click(object sender, EventArgs e)
 		{
-			BackingStep.Delete(MainForm.Plan);
-			MainForm.PlanUpdated();
+			backingStep.Delete(mainForm.Plan);
+			mainForm.PlanUpdated();
 		}
 
-		private bool placed = false;
+		private bool _placed = false;
 
 		public void Place(int xStart, int yStart)
 		{
-			if (placed)
+			if (_placed)
 			{
 				throw new InvalidOperationException("Can't place a step control that has already been placed");
 			}
 			Location = new Point(xStart, yStart);
-			placed = true;
+			_placed = true;
 		}
 	}
 }

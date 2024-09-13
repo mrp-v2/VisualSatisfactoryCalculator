@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using VisualSatisfactoryCalculator.satisfactory.Extensions;
+
 using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem, VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.DataStorage.BasicRecipe>;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Production
@@ -131,43 +133,65 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 
 		private void CalculateConnectionGroups()
 		{
-			foreach (Step step in _steps)
+			HashSet<Connection> visitedConnections = new HashSet<Connection>();
+			HashSet<Connection> currentConnections = new HashSet<Connection>(_steps.First().Connections);
+			HashSet<Connection> nextConnections = new HashSet<Connection>();
+			while (currentConnections.Count > 0)
 			{
-				foreach (Connection connection in step.Connections)
+				foreach (Connection connection in currentConnections)
 				{
-					_allConnections.Add(connection);
-					if (_abnormalConnections.Contains(connection))
+					visitedConnections.Add(connection);
+					switch (connection.Type)
 					{
-						continue;
-					}
-					foreach (HashSet<Connection> connectionGroup in _normalConnectionGroups)
-					{
-						if (connectionGroup.Contains(connection))
-						{
-							goto Continue;
-						}
-					}
-					if (connection.Type == model.production.ConnectionType.SINGLE)
-					{
-						foreach (HashSet<Connection> connections in _normalConnectionGroups)
-						{
-							if (connections.First().IsConnectedNormallyTo(connection))
+						case model.production.ConnectionType.SINGLE:
+							HashSet<HashSet<Connection>> connectedGroups = new HashSet<HashSet<Connection>>();
+							foreach (HashSet<Connection> connectionGroup in _normalConnectionGroups)
 							{
-								if (connections.Add(connection))
+								foreach (Connection potential in connectionGroup)
 								{
-									goto Continue;
+									if (potential.SharesStep(connection))
+									{
+										connectedGroups.Add(connectionGroup);
+										break;
+									}
 								}
 							}
-						}
-						_normalConnectionGroups.Add(new HashSet<Connection>() { connection });
+							switch (connectedGroups.Count)
+							{
+								case 0:
+									_normalConnectionGroups.Add(new HashSet<Connection> { connection });
+									break;
+								case 1:
+									connectedGroups.First().Add(connection);
+									break;
+								default:
+									HashSet<Connection> combined = new HashSet<Connection>() { connection };
+									foreach (HashSet<Connection> group in connectedGroups)
+									{
+										combined.AddRange(group);
+										_normalConnectionGroups.Remove(group);
+									}
+									_normalConnectionGroups.Add(combined);
+									break;
+							}
+							break;
+						case model.production.ConnectionType.MULTI:
+							_abnormalConnections.Add(connection);
+							break;
 					}
-					else
+					foreach (Step step in connection.Steps)
 					{
-						_abnormalConnections.Add(connection);
+						foreach (Connection other in step.Connections)
+						{
+							if (!visitedConnections.Contains(other))
+							{
+								nextConnections.Add(other);
+							}
+						}
 					}
-				Continue:
-					continue;
 				}
+				currentConnections = nextConnections;
+				nextConnections = new HashSet<Connection>();
 			}
 		}
 	}

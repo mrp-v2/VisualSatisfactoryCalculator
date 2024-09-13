@@ -11,17 +11,15 @@ namespace VisualSatisfactoryCalculator.model.production
 	/// <summary>
 	/// A map of items to connections and counts.
 	/// </summary>
-	public sealed class ItemRateAndConnectionCollection<ItemType, StepType, RecipeType> where ItemType : BasicItem where StepType : AbstractStep<ItemType, StepType, RecipeType>
+	public sealed class ConnectionCollection<ItemType, StepType, RecipeType> where ItemType : BasicItem where StepType : AbstractStep<ItemType, StepType, RecipeType>
 	{
 		public delegate void OnConnectionChanged();
 
-		private readonly ItemCountCollection<ItemType> _rates;
 		private readonly Dictionary<ItemType, Connection<ItemType, StepType, RecipeType>> _connections;
 		private OnConnectionChanged _connectionsChangedListener;
 
-		public ItemRateAndConnectionCollection()
+		public ConnectionCollection()
 		{
-			_rates = new ItemCountCollection<ItemType>();
 			_connections = new Dictionary<ItemType, Connection<ItemType, StepType, RecipeType>>();
 		}
 
@@ -53,16 +51,6 @@ namespace VisualSatisfactoryCalculator.model.production
 			{
 				return _connections.Values;
 			}
-		}
-
-		public ItemCount<ItemType> GetRate(ItemType item)
-		{
-			return _rates[item];
-		}
-
-		public void SetRate(ItemType item, ItemCount<ItemType> rate)
-		{
-			_rates[item] = rate;
 		}
 
 		public Connection<ItemType, StepType, RecipeType> GetConnection(ItemType item)

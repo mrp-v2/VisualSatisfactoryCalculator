@@ -4,15 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.model.production
 {
+	/// <summary>
+	/// The base type for steps.
+	/// Implementations should keep track of their item rates somehow.
+	/// </summary>
 	public abstract class AbstractStep<ItemType, StepType, RecipeType> where ItemType : BasicItem where StepType : AbstractStep<ItemType, StepType, RecipeType>
 	{
 		public readonly RecipeType recipe;
-		protected readonly ItemRateAndConnectionCollection<ItemType, StepType, RecipeType> products;
-		protected readonly ItemRateAndConnectionCollection<ItemType, StepType, RecipeType> ingredients;
+		protected readonly ConnectionCollection<ItemType, StepType, RecipeType> products;
+		protected readonly ConnectionCollection<ItemType, StepType, RecipeType> ingredients;
 
 		private readonly CachedValue<IEnumerable<Connection<ItemType, StepType, RecipeType>>> _connections;
 
@@ -27,8 +32,8 @@ namespace VisualSatisfactoryCalculator.model.production
 		protected AbstractStep(RecipeType recipe)
 		{
 			this.recipe = recipe;
-			products = new ItemRateAndConnectionCollection<ItemType, StepType, RecipeType>();
-			ingredients = new ItemRateAndConnectionCollection<ItemType, StepType, RecipeType>();
+			products = new ConnectionCollection<ItemType, StepType, RecipeType>();
+			ingredients = new ConnectionCollection<ItemType, StepType, RecipeType>();
 
 			_connections = new CachedValue<IEnumerable<Connection<ItemType, StepType, RecipeType>>>(() =>
 			{
@@ -39,17 +44,7 @@ namespace VisualSatisfactoryCalculator.model.production
 			ingredients.SetConnectionsChangedListener(_connections.Invalidate);
 		}
 
-		public ItemCount<ItemType> GetRate(ItemType item, bool isProduct)
-		{
-			if (isProduct)
-			{
-				return products.GetRate(item);
-			}
-			else
-			{
-				return ingredients.GetRate(item);
-			}
-		}
+		public abstract RationalNumber GetRate(ItemType item, bool isProduct);
 
 		protected virtual void UpdateRatesFrom(ItemCount<ItemType> rate, bool isProduct)
 		{
@@ -78,14 +73,14 @@ namespace VisualSatisfactoryCalculator.model.production
 			{
 				if (visited.Contains(connection))
 				{
-					relevantRates.Add(connection.GetRate(This, false), true);
+					relevantRates.Add(connection.GetRate(This, false).ToCount(connection.item), true);
 				}
 			}
 			foreach (Connection<ItemType, StepType, RecipeType> connection in ingredients.Connections)
 			{
 				if (visited.Contains(connection))
 				{
-					relevantRates.Add(connection.GetRate(This, true), false);
+					relevantRates.Add(connection.GetRate(This, true).ToCount(connection.item), false);
 				}
 			}
 			UpdateRatesFrom(relevantRates);

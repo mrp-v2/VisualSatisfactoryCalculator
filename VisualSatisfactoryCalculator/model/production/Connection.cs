@@ -20,11 +20,11 @@ namespace VisualSatisfactoryCalculator.model.production
 		/// <summary>
 		/// Steps that produce items flowing into this connection.
 		/// </summary>
-		private readonly Dictionary<StepType, ItemCount<ItemType>> _producers;
+		private readonly Dictionary<StepType, RationalNumber> _producers;
 		/// <summary>
 		/// Steps that consume items flowing out of this connection.
 		/// </summary>
-		private readonly Dictionary<StepType, ItemCount<ItemType>> _consumers;
+		private readonly Dictionary<StepType, RationalNumber> _consumers;
 
 		private readonly CachedValue<IEnumerable<StepType>> _steps;
 
@@ -44,6 +44,14 @@ namespace VisualSatisfactoryCalculator.model.production
 			get
 			{
 				return _producers.Keys;
+			}
+		}
+
+		public IEnumerable<StepType> ConsumerSteps
+		{
+			get
+			{
+				return _consumers.Keys;
 			}
 		}
 
@@ -69,8 +77,8 @@ namespace VisualSatisfactoryCalculator.model.production
 		public Connection(ItemType item)
 		{
 			this.item = item;
-			_producers = new Dictionary<StepType, ItemCount<ItemType>>();
-			_consumers = new Dictionary<StepType, ItemCount<ItemType>>();
+			_producers = new Dictionary<StepType, RationalNumber>();
+			_consumers = new Dictionary<StepType, RationalNumber>();
 
 			_steps = new CachedValue<IEnumerable<StepType>>(() =>
 			{
@@ -106,6 +114,11 @@ namespace VisualSatisfactoryCalculator.model.production
 			return this;
 		}
 
+		public bool SharesStep(Connection<ItemType, StepType, RecipeType> other)
+		{
+			return Steps.Intersect(other.Steps).Any();
+		}
+
 		public override bool Equals(object obj)
 		{
 			return this == obj;
@@ -116,7 +129,7 @@ namespace VisualSatisfactoryCalculator.model.production
 			return item.GetHashCode() * _producers.Count * _consumers.Count;
 		}
 
-		public ItemCount<ItemType> GetRate(StepType step, bool isConsuming)
+		public RationalNumber GetRate(StepType step, bool isConsuming)
 		{
 			if (isConsuming)
 			{
@@ -173,12 +186,12 @@ namespace VisualSatisfactoryCalculator.model.production
 					if (_producers.ContainsKey(step))
 					{
 						_producers[step] = step.GetRate(item, true);
-						lockedRate += _producers[step].rate;
+						lockedRate += _producers[step];
 					}
 					if (_consumers.ContainsKey(step))
 					{
 						_consumers[step] = step.GetRate(item, false);
-						lockedRate -= _consumers[step].rate;
+						lockedRate -= _consumers[step];
 					}
 				}
 				else
@@ -225,7 +238,7 @@ namespace VisualSatisfactoryCalculator.model.production
 							throw new InvalidOperationException("Unable to update consumer with deficient rate");
 						}
 						StepType remaining = notUpdatedConsumers.First();
-						_consumers[remaining] = new ItemCount<ItemType>(item, netLockedRate);
+						_consumers[remaining] = netLockedRate;
 						toVisit.Add(remaining);
 					}
 					else
@@ -236,7 +249,7 @@ namespace VisualSatisfactoryCalculator.model.production
 							RationalNumber groupRate = 0;
 							foreach (StepType step in notUpdatedConsumers)
 							{
-								groupRate -= step.GetRate(item, false).rate;
+								groupRate -= step.GetRate(item, false);
 							}
 							if (netLockedRate < 0)
 							{
@@ -265,7 +278,7 @@ namespace VisualSatisfactoryCalculator.model.production
 							throw new InvalidOperationException("Unable to update producer with excess rate");
 						}
 						StepType remaining = notUpdatedProducers.First();
-						_producers[remaining] = new ItemCount<ItemType>(item, netLockedRate);
+						_producers[remaining] = netLockedRate;
 						toVisit.Add(remaining);
 					}
 					else
@@ -276,7 +289,7 @@ namespace VisualSatisfactoryCalculator.model.production
 							RationalNumber groupRate = 0;
 							foreach (StepType step in notUpdatedProducers)
 							{
-								groupRate += step.GetRate(item, true).rate;
+								groupRate += step.GetRate(item, true);
 							}
 							if (netLockedRate > 0)
 							{
@@ -304,11 +317,11 @@ namespace VisualSatisfactoryCalculator.model.production
 						RationalNumber groupRate = 0;
 						foreach (StepType step in notUpdatedProducers)
 						{
-							groupRate += step.GetRate(item, true).rate;
+							groupRate += step.GetRate(item, true);
 						}
 						foreach (StepType step in notUpdatedConsumers)
 						{
-							groupRate -= step.GetRate(item, false).rate;
+							groupRate -= step.GetRate(item, false);
 						}
 						if (groupRate.AreSignsEqual(netLockedRate))
 						{
@@ -363,13 +376,13 @@ namespace VisualSatisfactoryCalculator.model.production
 		private void VerifyEqualRates()
 		{
 			RationalNumber producingRate = 0, consumingRate = 0;
-			foreach (ItemCount<ItemType> rate in _producers.Values)
+			foreach (RationalNumber rate in _producers.Values)
 			{
-				producingRate += rate.rate;
+				producingRate += rate;
 			}
-			foreach (ItemCount<ItemType> rate in _consumers.Values)
+			foreach (RationalNumber rate in _consumers.Values)
 			{
-				consumingRate += rate.rate;
+				consumingRate += rate;
 			}
 			if (producingRate != consumingRate)
 			{
@@ -381,7 +394,7 @@ namespace VisualSatisfactoryCalculator.model.production
 		/// Updates the rates of the producers and consumers of this connection, and cascades updates.
 		/// See <see cref="BreadthFirstSearchHandler{ItemType, RecipeType}"/>.
 		/// </summary>
-		public void CascadingSetRates(Dictionary<StepType, ItemCount<ItemType>> producers, Dictionary<StepType, ItemCount<ItemType>> consumers)
+		public void CascadingSetRates(Dictionary<StepType, RationalNumber> producers, Dictionary<StepType, RationalNumber> consumers)
 		{
 			if (producers.Keys.Count != _producers.Keys.Count || !producers.Keys.All(key => _producers.ContainsKey(key)))
 			{
@@ -391,11 +404,11 @@ namespace VisualSatisfactoryCalculator.model.production
 			{
 				throw new InvalidOperationException("Consumers do not match connection consumers.");
 			}
-			foreach (KeyValuePair<StepType, ItemCount<ItemType>> producer in producers)
+			foreach (KeyValuePair<StepType, RationalNumber> producer in producers)
 			{
 				_producers[producer.Key] = producer.Value;
 			}
-			foreach (KeyValuePair<StepType, ItemCount<ItemType>> consumer in consumers)
+			foreach (KeyValuePair<StepType, RationalNumber> consumer in consumers)
 			{
 				_consumers[consumer.Key] = consumer.Value;
 			}

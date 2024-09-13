@@ -154,12 +154,6 @@
     <Compile Include="controls\user\RationalNumberControl.Designer.cs">
       <DependentUpon>RationalNumberControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="controls\user\SplitAndMergeControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="controls\user\SplitAndMergeControl.Designer.cs">
-      <DependentUpon>SplitAndMergeControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="forms\UseSaveFilePrompt.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -202,9 +196,10 @@
       <DependentUpon>SelectRecipePrompt.cs</DependentUpon>
     </Compile>
     <Compile Include="model\production\AbstractStep.cs" />
-    <Compile Include="model\production\ItemRateAndConnectionCollection.cs" />
+    <Compile Include="model\production\ConnectionCollection.cs" />
     <Compile Include="model\production\ItemCountCollection.cs" />
     <Compile Include="model\production\BasicRecipe.cs" />
+    <Compile Include="model\production\Util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="controls\user\ItemRateControl.resx">
       <DependentUpon>ItemRateControl.cs</DependentUpon>
@@ -220,9 +215,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="controls\user\SingleConnectedStepGroupControl.resx">
       <DependentUpon>SingleConnectedStepGroupControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="controls\user\SplitAndMergeControl.resx">
-      <DependentUpon>SplitAndMergeControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

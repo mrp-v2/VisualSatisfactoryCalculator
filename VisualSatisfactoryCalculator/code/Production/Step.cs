@@ -162,7 +162,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				HashSet<ItemCount> rates = new HashSet<ItemCount>();
 				foreach (Connection connection in products.Connections)
 				{
-					rates.Add(new ItemCount(connection.item, GetItemRate(connection.item, true)));
+					rates.Add(new ItemCount(connection.item, GetRate(connection.item, true)));
 				}
 				return rates;
 			});
@@ -171,10 +171,16 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				HashSet<ItemCount> rates = new HashSet<ItemCount>();
 				foreach (Connection connection in ingredients.Connections)
 				{
-					rates.Add(new ItemCount(connection.item, GetItemRate(connection.item, false)));
+					rates.Add(new ItemCount(connection.item, GetRate(connection.item, false)));
 				}
 				return rates;
 			});
+		}
+
+		public Step(BasicRecipe recipe, uint machineCount, ushort clockSpeedThousandths) : this(recipe)
+		{
+			MachineCount = machineCount;
+			ClockSpeedThousandths = clockSpeedThousandths;
 		}
 
 		// return (Multiplier * RationalNumber.Pow(Constants.CLOCK_DECIMALS + 2) / CalculateMachineCount()).Ceiling() / RationalNumber.Pow(Constants.CLOCK_DECIMALS);
@@ -200,27 +206,11 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		}
 
 		/// <summary>
-		/// Always positive.
-		/// Calculates the multiplier required to produce/consume the specified rate.
-		/// </summary>
-		public RationalNumber CalculateMultiplierForRate(JSONItem item, RationalNumber rate, bool isItemProduct)
-		{
-			return (rate / CalculateDefaultItemRate(item, isItemProduct)).AbsoluteValue().Ceiling(3);
-		}
-
-		/// <summary>
 		/// Always positive
 		/// </summary>
-		public RationalNumber GetItemRate(JSONItem item, bool isItemProduct)
+		public override RationalNumber GetRate(JSONItem item, bool isItemProduct)
 		{
-			if (isItemProduct)
-			{
-				return products.GetRate(item).rate;
-			}
-			else
-			{
-				return ingredients.GetRate(item).rate;
-			}
+			return CalculateDefaultItemRate(item, isItemProduct) * (ClockSpeedThousandths / (RationalNumber)1000) * MachineCount;
 		}
 
 		public void SetControl(StepControl control)
@@ -248,14 +238,23 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			return building.PowerConsumption.ToDouble() * Math.Pow(ClockSpeedThousandths / 1000d, building.PowerConsumptionExponent.ToDouble()) * MachineCount;
 		}
 
-		protected override void UpdateRatesFrom(ItemCount rate, bool isProduct)
-		{
-			throw new NotImplementedException();
-		}
-
 		protected override void UpdateRatesFrom(Dictionary<ItemCount, bool> rates)
 		{
-			throw new NotImplementedException();
+			uint newMachineCount = 0;
+			foreach (KeyValuePair<ItemCount<JSONItem>, bool> entry in rates)
+			{
+				uint potentialMachineCount = (uint)Math.Ceiling((entry.Key.rate / CalculateDefaultItemRate(entry.Key.item, entry.Value)).ToDecimalT());
+				newMachineCount = Math.Max(newMachineCount, potentialMachineCount);
+			}
+			MachineCount = newMachineCount;
+			ClockSpeedThousandths = 1000;
+			ushort newClockSpeedThousandths = 0;
+			foreach (KeyValuePair<ItemCount<JSONItem>, bool> entry in rates)
+			{
+				ushort potentialClockSpeedThousandths = (ushort)Math.Ceiling((entry.Key.rate / GetRate(entry.Key.item, entry.Value) * 1000).ToDecimalT());
+				newClockSpeedThousandths = Math.Max(newClockSpeedThousandths, potentialClockSpeedThousandths);
+			}
+			ClockSpeedThousandths = newClockSpeedThousandths;
 		}
 	}
 }

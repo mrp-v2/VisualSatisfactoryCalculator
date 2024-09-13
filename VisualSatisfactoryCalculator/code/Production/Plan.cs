@@ -33,7 +33,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			{
 				foreach (ItemCount<JSONItem> itemCount in step.productionRates.Get())
 				{
-					rates.Add(itemCount.item, step.GetItemRate(itemCount.item, true));
+					rates.Add(itemCount.item, step.GetRate(itemCount.item, true));
 				}
 			}
 			return rates;
@@ -56,7 +56,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			{
 				foreach (ItemCount itemCount in step.consumptionRates.Get())
 				{
-					rates.Add(itemCount.item, step.GetItemRate(itemCount.item, false));
+					rates.Add(itemCount.item, step.GetRate(itemCount.item, false));
 				}
 			}
 			return rates;

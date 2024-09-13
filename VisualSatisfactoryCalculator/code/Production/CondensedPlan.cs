@@ -1,19 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using VisualSatisfactoryCalculator.satisfactory.DataStorage;
 using VisualSatisfactoryCalculator.satisfactory.Interfaces;
 using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 
-using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem, VisualSatisfactoryCalculator.satisfactory.DataStorage.BasicRecipe>;
+using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem,
+	VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.DataStorage.BasicRecipe>;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
 	[Serializable]
 	public class CondensedPlan
 	{
-		private readonly HashSet<CondensedStep> steps = new HashSet<CondensedStep>();
-		private readonly HashSet<CondensedConnection> connections = new HashSet<CondensedConnection>();
+		private readonly HashSet<CondensedStep> _steps = new HashSet<CondensedStep>();
+		private readonly HashSet<CondensedConnection> _connections = new HashSet<CondensedConnection>();
 
 		public CondensedPlan(Plan plan)
 		{
@@ -21,20 +23,20 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			int id = 0;
 			foreach (Step step in plan.steps)
 			{
-				context.stepIDs.Add(step, id++);
+				context._stepIDs.Add(step, id++);
 			}
 			id = 0;
 			foreach (Connection connection in plan.processedPlan.Get().GetAllConnections())
 			{
-				context.connectionIDs.Add(connection, id++);
+				context._connectionIDs.Add(connection, id++);
 			}
 			foreach (Step step in plan.steps)
 			{
-				steps.Add(new CondensedStep(step, context));
+				_steps.Add(new CondensedStep(step, context));
 			}
 			foreach (Connection connection in plan.processedPlan.Get().GetAllConnections())
 			{
-				connections.Add(new CondensedConnection(connection, context));
+				_connections.Add(new CondensedConnection(connection, context));
 			}
 		}
 
@@ -42,16 +44,16 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		{
 			Plan plan = new Plan();
 			ExpandingContext context = new ExpandingContext();
-			foreach (CondensedStep condensedStep in steps)
+			foreach (CondensedStep condensedStep in _steps)
 			{
-				Step step = new Step((IRecipe)encodings[condensedStep.RecipeID]);
-				step.SetMultiplier(condensedStep.multiplier, false);
-				context.stepIDs.Add(condensedStep.ID, step);
+				Step step = new Step((BasicRecipe)encodings[condensedStep._recipeID], condensedStep._machineCount, condensedStep._clockSpeedThousandths);
+				context.stepIDs.Add(condensedStep._id, step);
 				plan.steps.Add(step);
 			}
-			foreach (CondensedConnection condensedConnection in connections)
+			foreach (CondensedConnection condensedConnection in _connections)
 			{
-				new Connection(condensedConnection, context, steps);
+				throw new NotImplementedException();
+				//new Connection(condensedConnection, context, _steps);
 			}
 			return plan;
 		}
@@ -63,44 +65,46 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 
 		internal class CondensingContext
 		{
-			internal readonly Dictionary<Connection, int> connectionIDs = new Dictionary<Connection, int>();
-			internal readonly Dictionary<Step, int> stepIDs = new Dictionary<Step, int>();
+			internal readonly Dictionary<Connection, int> _connectionIDs = new Dictionary<Connection, int>();
+			internal readonly Dictionary<Step, int> _stepIDs = new Dictionary<Step, int>();
 		}
 
 		[Serializable]
 		public class CondensedStep
 		{
-			internal readonly int ID;
-			internal readonly string RecipeID;
-			internal readonly RationalNumber multiplier;
+			internal readonly int _id;
+			internal readonly string _recipeID;
+			internal readonly uint _machineCount;
+			internal readonly ushort _clockSpeedThousandths;
 
 			internal CondensedStep(Step step, CondensingContext context)
 			{
-				ID = context.stepIDs[step];
-				RecipeID = step.Recipe.ID;
-				multiplier = step.Multiplier;
+				_id = context._stepIDs[step];
+				_recipeID = step.recipe.ID;
+				_machineCount = step.MachineCount;
+				_clockSpeedThousandths = step.ClockSpeedThousandths;
 			}
 		}
 
 		[Serializable]
 		public class CondensedConnection
 		{
-			internal readonly int ID;
-			public readonly Dictionary<int, RationalNumber> Consumers = new Dictionary<int, RationalNumber>();
-			public readonly Dictionary<int, RationalNumber> Producers = new Dictionary<int, RationalNumber>();
-			internal readonly string ItemID;
+			internal readonly int _id;
+			public readonly Dictionary<int, RationalNumber> consumers = new Dictionary<int, RationalNumber>();
+			public readonly Dictionary<int, RationalNumber> producers = new Dictionary<int, RationalNumber>();
+			internal readonly string _itemID;
 
 			internal CondensedConnection(Connection connection, CondensingContext context)
 			{
-				ID = context.connectionIDs[connection];
-				ItemID = connection.ItemID;
-				foreach (Step step in connection.GetConsumerSteps())
+				_id = context._connectionIDs[connection];
+				_itemID = connection.item.id;
+				foreach (Step step in connection.ConsumerSteps)
 				{
-					Consumers.Add(context.stepIDs[step], connection.GetConsumerRate(step));
+					consumers.Add(context._stepIDs[step], connection.GetRate(step, true));
 				}
-				foreach (Step step in connection.GetProducerSteps())
+				foreach (Step step in connection.ProducerSteps)
 				{
-					Producers.Add(context.stepIDs[step], connection.GetProducerRate(step));
+					producers.Add(context._stepIDs[step], connection.GetRate(step, false));
 				}
 			}
 		}
