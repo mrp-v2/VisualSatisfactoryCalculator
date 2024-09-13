@@ -40,11 +40,13 @@ namespace VisualSatisfactoryCalculator.controls.user
 				AddItemRateControl(item, false);
 			}
 			RecipeLabel.Text = backingStep.recipe.ToString(mainForm.Encoders, "{name} | {conversion} | {time} seconds");
-			MultiplierNumberControl.SetNumber(this.backingStep.Multiplier);
+			MachineCountNumeric.Value = this.backingStep.MachineCount;
+			ClockSpeedNumeric.Value = this.backingStep.ClockSpeedThousandths / 1000m;
 			UpdateNumerics();
 			FinishInitialization();
 			Disposed += OnDisposed;
-			MultiplierNumberControl.AddNumberChangedListener(MultiplierValueChanged);
+			MachineCountNumeric.ValueChanged += MachineCountValueChanged;
+			ClockSpeedNumeric.ValueChanged += ClockSpeedValueChanged;
 		}
 
 		private void OnDisposed(object sender, EventArgs e)
@@ -57,36 +59,40 @@ namespace VisualSatisfactoryCalculator.controls.user
 			ToggleInput(false);
 			foreach (ItemRateControl irc in GetItemRateControls())
 			{
-				irc.UpdateRateValue(backingStep.GetItemRate(irc.Item, irc.IsProduct));
+				irc.UpdateRateValue(backingStep.GetRate(irc.Item, irc.IsProduct));
 			}
-			if (MultiplierNumberControl.GetNumber() != backingStep.Multiplier)
+			if (MachineCountNumeric.Value != backingStep.MachineCount)
 			{
-				MultiplierNumberControl.SetNumber(backingStep.Multiplier);
+				MachineCountNumeric.Value = backingStep.MachineCount;
 			}
-			MachineCountLabel.Text = mainForm.Encoders[backingStep.Recipe.MachineUID].DisplayName + ": " + backingStep.CalculateMachineCount() + " x " + backingStep.CalculateMachineClockPercentage() + "%";
+			if (ClockSpeedNumeric.Value != backingStep.ClockSpeedThousandths / 1000m)
+			{
+				ClockSpeedNumeric.Value = backingStep.ClockSpeedThousandths / 1000m;
+			}
 			double powerDraw = backingStep.GetPowerDraw(mainForm.Encoders);
 			PowerConsumptionLabel.Text = powerDraw > 0 ? $"Power Consumption: {powerDraw} MW" : $"Power Production: {-powerDraw} MW";
 			ToggleInput(true);
 		}
 
-		private void RateChanged(string itemUID, RationalNumber newRate, bool isProduct)
+		private void RateChanged(JSONItem item, RationalNumber oldRate, RationalNumber newRate, bool isProduct)
 		{
-			if (backingStep.GetItemRate(itemUID, isProduct).AbsoluteValue() != newRate)
+			if (backingStep.GetRate(item, isProduct).AbsoluteValue() != newRate)
 			{
-				backingStep.SetMultiplier(backingStep.CalculateMultiplierForRate(itemUID, newRate, isProduct));
+				backingStep.CascadingUpdateRatesFrom(new ItemCount<JSONItem>(item, newRate), isProduct);
 			}
 		}
 
-		private void ItemClicked(string itemUID, bool isProduct)
+		private void ItemClicked(JSONItem item, bool isProduct)
 		{
 			if (mainForm.CurrentConnectionIRC != null)
 			{
-				if (itemUID == mainForm.CurrentConnectionIRC.Item)
+				throw new NotImplementedException();
+				if (item == mainForm.CurrentConnectionIRC.Item)
 				{
 					if (isProduct != mainForm.CurrentConnectionIRC.IsProduct)
 					{
-						Connection connection = isProduct ? backingStep.HasProductConnectionFor(itemUID) ? backingStep.GetProductConnection(itemUID) : new Connection(itemUID).AddProducer(backingStep) : backingStep.HasIngredientConnectionFor(itemUID) ? backingStep.GetIngredientConnection(itemUID) : new Connection(itemUID).AddConsumer(backingStep);
-						connection.MergeWith(mainForm.CurrentConnectionFunc());
+						Connection connection = isProduct ? backingStep.HasProductConnectionFor(item) ? backingStep.GetProductConnection(item) : new Connection(item).AddProducer(backingStep) : backingStep.HasIngredientConnectionFor(item) ? backingStep.GetIngredientConnection(item) : new Connection(item).AddConsumer(backingStep);
+						//connection.MergeWith(mainForm.CurrentConnectionFunc());
 						mainForm.CurrentConnectionIRC = null;
 						mainForm.CurrentConnectionFunc = null;
 						mainForm.Plan.processedPlan.Invalidate();
@@ -105,8 +111,9 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 			else if (mainForm.ControlKeyPressed)
 			{
-				mainForm.CurrentConnectionIRC = isProduct ? productRateControls[itemUID] : ingredientRateControls[itemUID];
-				mainForm.CurrentConnectionFunc = () => isProduct ? backingStep.HasProductConnectionFor(itemUID) ? backingStep.GetProductConnection(itemUID) : new Connection(itemUID).AddProducer(backingStep) : backingStep.HasIngredientConnectionFor(itemUID) ? backingStep.GetIngredientConnection(itemUID) : new Connection(itemUID).AddConsumer(backingStep);
+				throw new NotImplementedException();
+				mainForm.CurrentConnectionIRC = isProduct ? productRateControls[item] : ingredientRateControls[item];
+				mainForm.CurrentConnectionFunc = () => isProduct ? backingStep.HasProductConnectionFor(item) ? backingStep.GetProductConnection(item) : new Connection(item).AddProducer(backingStep) : backingStep.HasIngredientConnectionFor(item) ? backingStep.GetIngredientConnection(item) : new Connection(item).AddConsumer(backingStep);
 				mainForm.CurrentConnectionIRC.ItemButton.Enabled = false;
 			}
 			else
@@ -114,15 +121,15 @@ namespace VisualSatisfactoryCalculator.controls.user
 				SelectRecipePrompt srp;
 				if (isProduct)
 				{
-					srp = new SelectRecipePrompt(mainForm.Encoders.Recipes.GetRecipesThatConsume(itemUID));
+					srp = new SelectRecipePrompt(mainForm.Encoders.Recipes.GetRecipesThatConsume(item));
 				}
 				else
 				{
-					srp = new SelectRecipePrompt(mainForm.Encoders.Recipes.GetRecipesThatProduce(itemUID));
+					srp = new SelectRecipePrompt(mainForm.Encoders.Recipes.GetRecipesThatProduce(item));
 				}
 				if (srp.ShowDialog() == DialogResult.OK)
 				{
-					Step ps = new Step(srp.GetSelectedRecipe(), backingStep, itemUID, isProduct);
+					Step ps = new Step(srp.GetSelectedRecipe(), backingStep, item, isProduct);
 					mainForm.Plan.steps.Add(ps);
 					mainForm.Plan.processedPlan.Invalidate();
 					mainForm.PlanUpdated();
@@ -130,19 +137,19 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 		}
 
-		private void AddItemRateControl(string itemUID, bool isProduct)
+		private void AddItemRateControl(JSONItem item, bool isProduct)
 		{
-			ItemRateControl irc = new ItemRateControl(mainForm, itemUID, backingStep.GetItemRate(itemUID, isProduct), isProduct, 4, RateChanged, ItemClicked);
+			ItemRateControl irc = new ItemRateControl(mainForm, item, backingStep.GetRate(item, isProduct), isProduct, 4, RateChanged, ItemClicked);
 			if (isProduct)
 			{
 				irc.Anchor = AnchorStyles.Bottom;
 				ProductsPanel.Controls.Add(irc);
-				productRateControls.Add(itemUID, irc);
+				productRateControls.Add(item, irc);
 			}
 			else
 			{
 				IngredientsPanel.Controls.Add(irc);
-				ingredientRateControls.Add(itemUID, irc);
+				ingredientRateControls.Add(item, irc);
 			}
 			irc.FinishInitialization();
 		}
@@ -155,15 +162,20 @@ namespace VisualSatisfactoryCalculator.controls.user
 			return list;
 		}
 
-		private void MultiplierValueChanged()
+		private void MachineCountValueChanged(object sender, EventArgs args)
 		{
-			if (!MultiplierNumberControl.GetNumber().isNonZero)
-			{
-				return;
-			}
 			if (Enabled && _initialized)
 			{
-				backingStep.SetMultiplier(MultiplierNumberControl.GetNumber());
+				backingStep.SetMachineCount((uint)MachineCountNumeric.Value);
+				mainForm.UpdateTotalView();
+			}
+		}
+
+		private void ClockSpeedValueChanged(object sender, EventArgs args)
+		{
+			if (Enabled && _initialized)
+			{
+				backingStep.SetClockSpeedThousandths((ushort)(ClockSpeedNumeric.Value * 1000));
 				mainForm.UpdateTotalView();
 			}
 		}

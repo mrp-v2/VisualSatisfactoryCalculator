@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -37,18 +38,22 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			Encodings totalResults = new Encodings();
 			CurrentEncodings = totalResults;
 			//JSONItems
-			List<JSONItem> items = new List<JSONItem>();
-			GetSection<JSONItem, JSONItem>("FGItemDescriptor", items);
-			GetSection<JSONItem, JSONItem>("FGBuildingDescriptor", items);
-			GetSection<JSONItem, JSONItem>("FGItemDescriptorBiomass", items);
-			GetSection<JSONItem, JSONItem>("FGEquipmentDescriptor", items);
-			GetSection<JSONItem, JSONItem>("FGResourceDescriptor", items);
-			GetSection<JSONItem, JSONItem>("FGConsumableDescriptor", items);
-			GetSection<JSONItem, JSONItem>("FGItemDescriptorNuclearFuel", items);
-			GetSection<JSONItem, JSONItem>("FGAmmoTypeProjectile", items);
-			GetSection<JSONItem, JSONItem>("FGAmmoTypeSpreadshot", items);
-			GetSection<JSONItem, JSONItem>("FGAmmoTypeInstantHit", items);
-			foreach (JSONItem item in items)
+			Dictionary<string, JSONItem> items = new Dictionary<string, JSONItem>();
+			static string itemKeyFunc(JSONItem item)
+			{
+				return item.id;
+			}
+			GetSection("FGItemDescriptor", items, itemKeyFunc);
+			GetSection("FGBuildingDescriptor", items, itemKeyFunc);
+			GetSection("FGItemDescriptorBiomass", items, itemKeyFunc);
+			GetSection("FGEquipmentDescriptor", items, itemKeyFunc);
+			GetSection("FGResourceDescriptor", items, itemKeyFunc);
+			GetSection("FGConsumableDescriptor", items, itemKeyFunc);
+			GetSection("FGItemDescriptorNuclearFuel", items, itemKeyFunc);
+			GetSection("FGAmmoTypeProjectile", items, itemKeyFunc);
+			GetSection("FGAmmoTypeSpreadshot", items, itemKeyFunc);
+			GetSection("FGAmmoTypeInstantHit", items, itemKeyFunc);
+			foreach (JSONItem item in items.Values)
 			{
 				totalResults.Add(item.id, item);
 			}
@@ -114,6 +119,19 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 		public static Encodings CurrentEncodings { get; private set; }
 
 		public static string ActiveNativeClass { get; private set; }
+
+		private Dictionary<T, V> GetSection<T, V>(string nativeClass, Dictionary<T, V> output, Func<V, T> keyFunc)
+		{
+			ActiveNativeClass = nativeClass;
+			nativeClass = "Class'/Script/FactoryGame." + nativeClass + "'";
+			foreach (JToken token in _docGroups[nativeClass].Children().ToList())
+			{
+				V result = token.ToObject<V>(_jsonSerializer);
+				output.Add(keyFunc(result), result);
+			}
+			ActiveNativeClass = string.Empty;
+			return output;
+		}
 
 		private List<V> GetSection<T, V>(string nativeClass, List<V> output) where T : V
 		{

@@ -101,7 +101,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 			{
 			}
 
-			protected override string GetConversionString(Encodings encodings)
+			protected override string GetConversionString()
 			{
 				string str = "";
 				bool first = true;

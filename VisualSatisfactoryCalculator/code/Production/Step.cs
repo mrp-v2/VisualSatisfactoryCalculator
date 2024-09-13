@@ -21,8 +21,34 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		public readonly CachedValue<IImmutableSet<Connection>> normalIngredientConnections;
 		public readonly CachedValue<IEnumerable<ItemCount>> productionRates;
 		public readonly CachedValue<IEnumerable<ItemCount>> consumptionRates;
-		public uint MachineCount { get; private set; }
-		public ushort ClockSpeedThousandths { get; private set; }
+		private uint _machineCount;
+		private ushort _clockSpeedThousandths;
+		public uint MachineCount
+		{
+			get
+			{
+				return _machineCount;
+			}
+			private set
+			{
+				_machineCount = value;
+				productionRates.Invalidate();
+				consumptionRates.Invalidate();
+			}
+		}
+		public ushort ClockSpeedThousandths
+		{
+			get
+			{
+				return _clockSpeedThousandths;
+			}
+			private set
+			{
+				_clockSpeedThousandths = value;
+				productionRates.Invalidate();
+				consumptionRates.Invalidate();
+			}
+		}
 		private StepControl _control;
 
 		protected override Step This
@@ -255,6 +281,16 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				newClockSpeedThousandths = Math.Max(newClockSpeedThousandths, potentialClockSpeedThousandths);
 			}
 			ClockSpeedThousandths = newClockSpeedThousandths;
+		}
+
+		public void SetMachineCount(uint machineCount)
+		{
+			MachineCount = machineCount;
+		}
+
+		public void SetClockSpeedThousandths(ushort clockSpeedThousandths)
+		{
+			ClockSpeedThousandths = clockSpeedThousandths;
 		}
 	}
 }

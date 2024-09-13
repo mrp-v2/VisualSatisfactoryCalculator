@@ -84,7 +84,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 				this.powerProduction = powerProduction;
 			}
 
-			protected override string GetConversionString(Encodings encodings)
+			protected override string GetConversionString()
 			{
 				string str = "";
 				bool first = true;

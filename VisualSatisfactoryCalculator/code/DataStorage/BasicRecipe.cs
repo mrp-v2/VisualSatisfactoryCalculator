@@ -48,7 +48,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 			return ID.GetHashCode();
 		}
 
-		protected virtual string GetConversionString(Encodings encodings)
+		protected virtual string GetConversionString()
 		{
 			string str = "";
 			bool first = true;
@@ -84,7 +84,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 		public string ToString(Encodings encodings)
 		{
 			string str = DisplayName + ": ";
-			str += GetConversionString(encodings);
+			str += GetConversionString();
 			str += " in " + time.ToString() + " seconds using a " + encodings[MachineUID].DisplayName;
 			return str;
 		}
@@ -117,7 +117,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 		public string ToString(Encodings encodings, string format)
 		{
 			format = format.Replace("{name}", DisplayName);
-			format = format.Replace("{conversion}", GetConversionString(encodings));
+			format = format.Replace("{conversion}", GetConversionString());
 			format = format.Replace("{time}", time.ToString());
 			format = format.Replace("{machine}", encodings[MachineUID].DisplayName);
 			return format;

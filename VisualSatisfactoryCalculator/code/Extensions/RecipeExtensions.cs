@@ -2,17 +2,18 @@
 using System.Linq;
 
 using VisualSatisfactoryCalculator.satisfactory.Interfaces;
+using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Extensions
 {
 	public static class RecipeExtensions
 	{
-		public static Dictionary<string, IRecipe> GetRecipesThatProduce(this Dictionary<string, IRecipe> me, string productUID)
+		public static Dictionary<JSONItem, IRecipe> GetRecipesThatProduce(this Dictionary<JSONItem, IRecipe> me, JSONItem item)
 		{
 			Dictionary<string, IRecipe> recs = new Dictionary<string, IRecipe>();
 			foreach (IRecipe rec in me.Values)
-			{
-				if (rec.Products.Keys.Contains(productUID))
+			
+				if (rec.Products.Keys.Contains(item))
 				{
 					recs.Add(rec.ID, rec);
 				}
@@ -20,12 +21,12 @@ namespace VisualSatisfactoryCalculator.satisfactory.Extensions
 			return recs;
 		}
 
-		public static Dictionary<string, IRecipe> GetRecipesThatConsume(this Dictionary<string, IRecipe> me, string ingredientUID)
+		public static Dictionary<JSONItem, IRecipe> GetRecipesThatConsume(this Dictionary<JSONItem, IRecipe> me, JSONItem item)
 		{
 			Dictionary<string, IRecipe> recs = new Dictionary<string, IRecipe>();
 			foreach (IRecipe rec in me.Values)
 			{
-				if (rec.Ingredients.Keys.Contains(ingredientUID))
+				if (rec.Ingredients.Keys.Contains(item))
 				{
 					recs.Add(rec.ID, rec);
 				}

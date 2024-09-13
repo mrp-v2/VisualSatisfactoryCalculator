@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 
 using VisualSatisfactoryCalculator.model.production;
 using VisualSatisfactoryCalculator.satisfactory.Interfaces;
+using VisualSatisfactoryCalculator.satisfactory.model.production;
 using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 
@@ -87,6 +88,11 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 		public bool EqualID(IHasID obj)
 		{
 			return obj.EqualID(id);
+		}
+
+		public Item Process()
+		{
+			return new Item(id, displayName, IsFluid);
 		}
 	}
 }
