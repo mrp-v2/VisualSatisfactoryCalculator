@@ -13,7 +13,7 @@ using VisualSatisfactoryCalculator.model.production;
 
 namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 {
-	internal class JSONGenerator : IBuilding, IFromJson
+	public class JSONGenerator : IBuilding, IFromJson
 	{
 		public string ID { get; }
 		private readonly string[] fuelItemIDs;
@@ -42,7 +42,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 		public static readonly RationalNumber EnergyDivisor = new RationalNumber(50, 3, true);
 		public static readonly decimal SupplementalResourceFactor = 60m;
 
-		public Dictionary<string, IRecipe> GetRecipes(Encodings encodings)
+		public Dictionary<string, IRecipe> GetRecipes(JsonEncodings encodings)
 		{
 			Dictionary<string, IRecipe> recipes = new Dictionary<string, IRecipe>();
 			foreach (string fuelItemID in fuelItemIDs)
@@ -57,7 +57,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 				};
 				if (requiresSupplementalResource)
 				{
-					ingredients.Add(new ItemCount<JSONItem>(FileInteractor.CurrentEncodings[Constants.WaterID] as JSONItem, powerProduction * supplementalToPowerRatio * SupplementalResourceFactor));
+					ingredients.Add(new ItemCount<JSONItem>(FileInteractor.CurrentEncodings[Constants.WATER_ID] as JSONItem, powerProduction * supplementalToPowerRatio * SupplementalResourceFactor));
 				}
 				IRecipe recipe = new JSONGeneratorRecipe(ID + fuelItemID, 60, ID, ingredients, new List<ItemCount<JSONItem>>(), jItem.displayName + " to Power", powerProduction);
 				recipes.Add(recipe.ID, recipe);

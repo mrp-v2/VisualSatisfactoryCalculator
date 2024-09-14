@@ -81,7 +81,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 			return str;
 		}
 
-		public string ToString(Encodings encodings)
+		public string ToString(JsonEncodings encodings)
 		{
 			string str = DisplayName + ": ";
 			str += GetConversionString();
@@ -96,7 +96,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 
 		public override string ToString()
 		{
-			return ToString(Constants.LastResortEncoderList);
+			return ToString(Constants.FALLBACK_ENCODINGS);
 		}
 
 		/// <summary>
@@ -114,7 +114,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 			}
 		}
 
-		public string ToString(Encodings encodings, string format)
+		public string ToString(JsonEncodings encodings, string format)
 		{
 			format = format.Replace("{name}", DisplayName);
 			format = format.Replace("{conversion}", GetConversionString());

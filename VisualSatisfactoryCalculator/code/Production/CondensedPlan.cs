@@ -40,7 +40,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			}
 		}
 
-		public Plan ToPlan(Encodings encodings)
+		public Plan ToPlan(JsonEncodings encodings)
 		{
 			Plan plan = new Plan();
 			ExpandingContext context = new ExpandingContext();

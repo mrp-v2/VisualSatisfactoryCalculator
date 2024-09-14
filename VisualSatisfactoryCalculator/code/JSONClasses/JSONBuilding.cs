@@ -6,7 +6,7 @@ using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 {
-	internal class JSONBuilding : IBuilding, IFromJson
+	public class JSONBuilding : IBuilding, IFromJson
 	{
 		public string ID { get; }
 		public RationalNumber PowerConsumption { get; }

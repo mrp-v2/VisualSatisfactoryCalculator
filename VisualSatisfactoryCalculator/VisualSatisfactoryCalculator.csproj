@@ -106,6 +106,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="code\Utility\Encodings.cs" />
     <Compile Include="controls\user\SingleConnectedStepGroupControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -139,7 +140,7 @@
     <Compile Include="code\Utility\BitmapSerializer.cs" />
     <Compile Include="code\Utility\CachedValue.cs" />
     <Compile Include="code\Utility\Constants.cs" />
-    <Compile Include="code\Utility\Encodings.cs" />
+    <Compile Include="code\Utility\JsonEncodings.cs" />
     <Compile Include="code\Utility\PlanLayoutMaker.cs" />
     <Compile Include="code\Utility\Util.cs" />
     <Compile Include="controls\user\LineControl.cs">

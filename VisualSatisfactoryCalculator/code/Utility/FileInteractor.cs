@@ -33,74 +33,46 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			}
 		}
 
-		public Encodings GetEncoders()
+		public JsonEncodings GetEncoders()
 		{
-			Encodings totalResults = new Encodings();
-			CurrentEncodings = totalResults;
+			JsonEncodings jsonEncodings = new JsonEncodings();
 			//JSONItems
-			Dictionary<string, JSONItem> items = new Dictionary<string, JSONItem>();
-			static string itemKeyFunc(JSONItem item)
-			{
-				return item.id;
-			}
-			GetSection("FGItemDescriptor", items, itemKeyFunc);
-			GetSection("FGBuildingDescriptor", items, itemKeyFunc);
-			GetSection("FGItemDescriptorBiomass", items, itemKeyFunc);
-			GetSection("FGEquipmentDescriptor", items, itemKeyFunc);
-			GetSection("FGResourceDescriptor", items, itemKeyFunc);
-			GetSection("FGConsumableDescriptor", items, itemKeyFunc);
-			GetSection("FGItemDescriptorNuclearFuel", items, itemKeyFunc);
-			GetSection("FGAmmoTypeProjectile", items, itemKeyFunc);
-			GetSection("FGAmmoTypeSpreadshot", items, itemKeyFunc);
-			GetSection("FGAmmoTypeInstantHit", items, itemKeyFunc);
-			foreach (JSONItem item in items.Values)
-			{
-				totalResults.Add(item.id, item);
-			}
+			GetSection<JSONItem>("FGItemDescriptor", jsonEncodings.Add);
+			GetSection<JSONItem>("FGBuildingDescriptor", jsonEncodings.Add);
+			GetSection<JSONItem>("FGItemDescriptorBiomass", jsonEncodings.Add);
+			GetSection<JSONItem>("FGEquipmentDescriptor", jsonEncodings.Add);
+			GetSection<JSONItem>("FGResourceDescriptor", jsonEncodings.Add);
+			GetSection<JSONItem>("FGConsumableDescriptor", jsonEncodings.Add);
+			GetSection<JSONItem>("FGItemDescriptorNuclearFuel", jsonEncodings.Add);
+			GetSection<JSONItem>("FGAmmoTypeProjectile", jsonEncodings.Add);
+			GetSection<JSONItem>("FGAmmoTypeSpreadshot", jsonEncodings.Add);
+			GetSection<JSONItem>("FGAmmoTypeInstantHit", jsonEncodings.Add);
+			jsonEncodings.Add(Constants.MW_ITEM);
 			//JSONBuildings
-			List<JSONBuilding> buildings = new List<JSONBuilding>();
-			GetSection<JSONBuilding, JSONBuilding>("FGBuildableManufacturer", buildings);
-			GetSection<JSONBuilding, JSONBuilding>("FGBuildableManufacturerVariablePower", buildings);
-			foreach (JSONBuilding building in buildings)
-			{
-				totalResults.Add(building.ID, building);
-			}
+			GetSection<JSONBuilding>("FGBuildableManufacturer", jsonEncodings.Add);
+			GetSection<JSONBuilding>("FGBuildableManufacturerVariablePower", jsonEncodings.Add);
 			//JSONRecipes -- must go after all buildings, uses buildings to decide what produces this recipe
 			foreach (JSONRecipe recipe in GetSection<JSONRecipe>("FGRecipe"))
 			{
 				if (recipe.MachineUID != default)
 				{
-					totalResults.Add(recipe.ID, recipe);
+					jsonEncodings.Add(recipe);
 				}
 			}
 			//JSONResourceExtractors
-			List<JSONResourceExtractor> resourceExtractors = new List<JSONResourceExtractor>();
-			GetSection<JSONResourceExtractor, JSONResourceExtractor>("FGBuildableResourceExtractor", resourceExtractors);
-			GetSection<JSONResourceExtractor.JSONWaterPump, JSONResourceExtractor>("FGBuildableWaterPump", resourceExtractors);
-			GetSection<JSONResourceExtractor, JSONResourceExtractor>("FGBuildableFrackingExtractor", resourceExtractors);
-			foreach (JSONResourceExtractor resourceExtractor in resourceExtractors)
-			{
-				totalResults.Add(resourceExtractor.ID, resourceExtractor);
-			}
+			GetSection<JSONResourceExtractor>("FGBuildableResourceExtractor", jsonEncodings.Add);
+			GetSection<JSONResourceExtractor.JSONWaterPump>("FGBuildableWaterPump", jsonEncodings.Add);
+			GetSection<JSONResourceExtractor>("FGBuildableFrackingExtractor", jsonEncodings.Add);
 			//JSONGenerators
 			List<JSONGenerator> generators = new List<JSONGenerator>();
-			GetSection<JSONGenerator, JSONGenerator>("FGBuildableGeneratorFuel", generators);
-			GetSection<JSONGenerator, JSONGenerator>("FGBuildableGeneratorNuclear", generators);
-			foreach (JSONGenerator generator in generators)
-			{
-				if (generator.DisplayName.Equals("Biomass Burner"))
-				{
-					continue;
-				}
-				totalResults.Add(generator.ID, generator);
-			}
-			//Constants
-			totalResults.AddRange(Constants.AllConstantEncoders);
+			GetSection<JSONGenerator>("FGBuildableGeneratorFuel", jsonEncodings.Add);
+			GetSection<JSONGenerator>("FGBuildableGeneratorNuclear", jsonEncodings.Add);
 			//Generated Recipes -- must go after all items, uses item properties
 			//JSONResourceExtractor Recipes
+			// TODO move to process encodings
 			foreach (JSONResourceExtractor resourceExtractor in resourceExtractors)
 			{
-				totalResults.AddRange(resourceExtractor.GetRecipes(totalResults));
+				jsonEncodings.AddRange(resourceExtractor.GetRecipes(jsonEncodings));
 			}
 			//JSONGenerator Recipes
 			foreach (JSONGenerator generator in generators)
@@ -109,45 +81,38 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 				{
 					continue;
 				}
-				totalResults.AddRange(generator.GetRecipes(totalResults));
+				jsonEncodings.AddRange(generator.GetRecipes(jsonEncodings));
 			}
 			//finished
-			Constants.LastResortEncoderList.AddRange(totalResults);
-			return totalResults;
+			Constants.FALLBACK_ENCODINGS.AddRange(jsonEncodings);
+			return jsonEncodings;
 		}
-
-		public static Encodings CurrentEncodings { get; private set; }
 
 		public static string ActiveNativeClass { get; private set; }
 
-		private Dictionary<T, V> GetSection<T, V>(string nativeClass, Dictionary<T, V> output, Func<V, T> keyFunc)
+		private void GetSection<V>(string nativeClass, Action<V> action)
 		{
 			ActiveNativeClass = nativeClass;
 			nativeClass = "Class'/Script/FactoryGame." + nativeClass + "'";
 			foreach (JToken token in _docGroups[nativeClass].Children().ToList())
 			{
 				V result = token.ToObject<V>(_jsonSerializer);
-				output.Add(keyFunc(result), result);
+				action(result);
 			}
 			ActiveNativeClass = string.Empty;
-			return output;
 		}
 
-		private List<V> GetSection<T, V>(string nativeClass, List<V> output) where T : V
+		private IEnumerable<T> GetSection<T>(string nativeClass)
 		{
 			ActiveNativeClass = nativeClass;
 			nativeClass = "Class'/Script/FactoryGame." + nativeClass + "'";
+			List<T> output = new List<T>();
 			foreach (JToken token in _docGroups[nativeClass].Children().ToList())
 			{
 				output.Add(token.ToObject<T>(_jsonSerializer));
 			}
 			ActiveNativeClass = string.Empty;
 			return output;
-		}
-
-		private List<T> GetSection<T>(string nativeClass)
-		{
-			return GetSection<T, T>(nativeClass, new List<T>());
 		}
 	}
 }

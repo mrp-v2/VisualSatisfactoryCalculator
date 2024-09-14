@@ -13,7 +13,7 @@ using VisualSatisfactoryCalculator.model.production;
 
 namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 {
-	class JSONResourceExtractor : JSONBuilding, IResourceExtractor, IFromJson
+	public class JSONResourceExtractor : JSONBuilding, IResourceExtractor, IFromJson
 	{
 		public static Dictionary<string, RationalNumber> NODE_CYCLE_TIME_DIVISORS = new Dictionary<string, RationalNumber>
 		{
@@ -35,7 +35,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 			AllowedResources = Util.ParseUIDList(mAllowedResources);
 		}
 
-		public virtual Dictionary<string, IRecipe> GetRecipes(Encodings encodings)
+		public virtual Dictionary<string, IRecipe> GetRecipes(JsonEncodings encodings)
 		{
 			Dictionary<string, IRecipe> recipes = new Dictionary<string, IRecipe>();
 			foreach (JSONItem item in encodings.ResourceItems)
@@ -69,7 +69,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 			{
 			}
 
-			public override Dictionary<string, IRecipe> GetRecipes(Encodings encodings)
+			public override Dictionary<string, IRecipe> GetRecipes(JsonEncodings encodings)
 			{
 				Dictionary<string, IRecipe> recipes = new Dictionary<string, IRecipe>();
 				foreach (JSONItem item in encodings.ResourceItems)

@@ -258,7 +258,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			plan.processedPlan.Invalidate();
 		}
 
-		public double GetPowerDraw(Encodings encodings)
+		public double GetPowerDraw(JsonEncodings encodings)
 		{
 			IBuilding building = encodings[recipe.MachineUID] as IBuilding;
 			return building.PowerConsumption.ToDouble() * Math.Pow(ClockSpeedThousandths / 1000d, building.PowerConsumptionExponent.ToDouble()) * MachineCount;

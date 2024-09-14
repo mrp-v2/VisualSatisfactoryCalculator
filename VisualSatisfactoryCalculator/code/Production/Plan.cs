@@ -21,7 +21,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			processedPlan = new CachedValue<ProcessedPlan>(() => new ProcessedPlan(this));
 		}
 
-		public RateCollection GetNetRates(Encodings encodings)
+		public RateCollection GetNetRates(JsonEncodings encodings)
 		{
 			return GetProductRates().Subtract(GetIngredientRates(encodings));
 		}
@@ -39,7 +39,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			return rates;
 		}
 
-		public double GetPowerDraw(Encodings encodings)
+		public double GetPowerDraw(JsonEncodings encodings)
 		{
 			double powerDraw = 0;
 			foreach (Step step in steps)
@@ -49,7 +49,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			return powerDraw;
 		}
 
-		public RateCollection GetIngredientRates(Encodings encodings)
+		public RateCollection GetIngredientRates(JsonEncodings encodings)
 		{
 			RateCollection rates = new RateCollection(GetPowerDraw(encodings));
 			foreach (Step step in steps)
@@ -79,7 +79,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			return totalMachines;
 		}
 
-		public string GetMachinesString(Encodings encodings)
+		public string GetMachinesString(JsonEncodings encodings)
 		{
 			string total = "";
 			Dictionary<string, int> machines = MachineCount();
@@ -90,7 +90,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			return total;
 		}
 
-		public string GetProductsString(Encodings encodings)
+		public string GetProductsString(JsonEncodings encodings)
 		{
 			string str = "Net Products: ";
 			RateCollection netRates = GetNetRates(encodings);
@@ -130,7 +130,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			return str;
 		}
 
-		public string GetIngredientsString(Encodings encodings)
+		public string GetIngredientsString(JsonEncodings encodings)
 		{
 			string str = "All Ingredients: ";
 			RateCollection rates = GetIngredientRates(encodings);

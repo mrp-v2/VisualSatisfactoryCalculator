@@ -10,12 +10,10 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 	{
 		public const int CLOCK_DECIMALS = 4;
 
-		public static readonly JSONItem MWItem = new JSONItem("FillerEnergyItemMW", "MW", "POWER", false, 1.0m);
+		public static readonly JSONItem MW_ITEM = new JSONItem("FillerEnergyItemMW", "MW", "POWER", false, 1.0m);
 
-		public static readonly Dictionary<string, IEncoder> AllConstantEncoders = new Dictionary<string, IEncoder>() { { MWItem.id, MWItem } };
+		public static JsonEncodings FALLBACK_ENCODINGS = new JsonEncodings();
 
-		public static Encodings LastResortEncoderList = new Encodings();
-
-		public static readonly string WaterID = "Desc_Water_C";
+		public static readonly string WATER_ID = "Desc_Water_C";
 	}
 }

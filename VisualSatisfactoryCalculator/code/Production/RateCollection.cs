@@ -42,7 +42,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 
 		public void Add(JSONItem item, RationalNumber rate)
 		{
-			if (item == Constants.MWItem)
+			if (item == Constants.MW_ITEM)
 			{
 				Power += rate.ToDouble();
 			}

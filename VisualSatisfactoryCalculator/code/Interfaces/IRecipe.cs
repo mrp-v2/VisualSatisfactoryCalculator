@@ -11,7 +11,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Interfaces
 	public interface IRecipe : IEquatable<IRecipe>, IEncoder
 	{
 		string MachineUID { get; }
-		string ToString(Encodings encodings);
+		string ToString(JsonEncodings encodings);
 		/// <summary>
 		/// Creates a formatted string representation of this recipe.
 		/// </summary>
@@ -25,7 +25,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Interfaces
 		/// </list>
 		/// </param>
 		/// <returns></returns>
-		string ToString(Encodings encodings, string format);
+		string ToString(JsonEncodings encodings, string format);
 		RationalNumber GetCountFor(JSONItem item, bool isProduct);
 	}
 }

@@ -34,11 +34,11 @@ namespace VisualSatisfactoryCalculator.forms
 		{
 			Application.EnableVisualStyles();
 			FileInteractor sfi = new FileInteractor();
-			Encodings encoders = sfi.GetEncoders();
+			JsonEncodings encoders = sfi.GetEncoders();
 			Application.Run(new MainForm(encoders));
 		}
 
-		public Encodings Encoders { get; }
+		public JsonEncodings Encoders { get; }
 
 		public Plan Plan;
 		private PlanTotalViewControl PPTVC;
@@ -48,7 +48,7 @@ namespace VisualSatisfactoryCalculator.forms
 
 		private readonly DigitalStenographySaveLoad saveLoad;
 
-		private MainForm(Encodings encoders)
+		private MainForm(JsonEncodings encoders)
 		{
 			InitializeComponent();
 			KeyDown += MainForm_KeyDown;
