@@ -202,7 +202,9 @@
     <Compile Include="model\production\BasicRecipe.cs" />
     <Compile Include="model\production\Util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="satisfactory\model\production\Building.cs" />
     <Compile Include="satisfactory\model\production\Item.cs" />
+    <Compile Include="satisfactory\model\production\Recipe.cs" />
     <EmbeddedResource Include="controls\user\ItemRateControl.resx">
       <DependentUpon>ItemRateControl.cs</DependentUpon>
     </EmbeddedResource>
