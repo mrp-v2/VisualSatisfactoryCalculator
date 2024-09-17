@@ -15,12 +15,14 @@ namespace VisualSatisfactoryCalculator.satisfactory.model.production
 		public readonly string id;
 		public readonly string displayName;
 		public readonly string conversionString;
+		public readonly Building building;
 
-		public Recipe(string id, string displayName, string conversionString, RationalNumber time, ImmutableDictionary<Item, RationalNumber> ingredients, ImmutableDictionary<Item, RationalNumber> products) : base(time, ingredients, products)
+		public Recipe(string id, string displayName, string conversionString, RationalNumber time, Building building, ImmutableDictionary<Item, RationalNumber> ingredients, ImmutableDictionary<Item, RationalNumber> products) : base(time, ingredients, products)
 		{
 			this.id = id;
 			this.displayName = displayName;
 			this.conversionString = conversionString;
+			this.building = building;
 		}
 	}
 }

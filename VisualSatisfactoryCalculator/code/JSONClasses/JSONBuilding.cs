@@ -1,6 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.Collections.Generic;
+
+using Newtonsoft.Json;
 
 using VisualSatisfactoryCalculator.satisfactory.Interfaces;
+using VisualSatisfactoryCalculator.satisfactory.model.production;
 using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 
@@ -32,6 +36,16 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 		public bool EqualID(IHasID obj)
 		{
 			return obj.EqualID(ID);
+		}
+
+		public virtual Building Process(Dictionary<string, Item> items)
+		{
+			return new Building(ID, DisplayName, PowerConsumption, PowerConsumptionExponent);
+		}
+
+		public virtual IEnumerable<Recipe> ProcessRecipes(Dictionary<string, Item> items, HashSet<JSONItem> resourceItems, Dictionary<string, Building> buildings)
+		{
+			return new Recipe[0];
 		}
 	}
 }

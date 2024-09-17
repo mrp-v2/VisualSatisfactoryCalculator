@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.satisfactory.DataStorage;
 using VisualSatisfactoryCalculator.satisfactory.Interfaces;
 using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 
-using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem,
-	VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.DataStorage.BasicRecipe>;
+using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.model.production.Item,
+	VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.model.production.Recipe>;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
@@ -40,13 +41,13 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			}
 		}
 
-		public Plan ToPlan(JsonEncodings encodings)
+		public Plan ToPlan(Encodings encodings)
 		{
 			Plan plan = new Plan();
 			ExpandingContext context = new ExpandingContext();
 			foreach (CondensedStep condensedStep in _steps)
 			{
-				Step step = new Step((BasicRecipe)encodings[condensedStep._recipeID], condensedStep._machineCount, condensedStep._clockSpeedThousandths);
+				Step step = new Step(encodings.recipes[condensedStep._recipeID], condensedStep._machineCount, condensedStep._clockSpeedDecimal);
 				context.stepIDs.Add(condensedStep._id, step);
 				plan.steps.Add(step);
 			}
@@ -75,14 +76,14 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			internal readonly int _id;
 			internal readonly string _recipeID;
 			internal readonly uint _machineCount;
-			internal readonly ushort _clockSpeedThousandths;
+			internal readonly uint _clockSpeedDecimal;
 
 			internal CondensedStep(Step step, CondensingContext context)
 			{
 				_id = context._stepIDs[step];
-				_recipeID = step.recipe.ID;
+				_recipeID = step.recipe.id;
 				_machineCount = step.MachineCount;
-				_clockSpeedThousandths = step.ClockSpeedThousandths;
+				_clockSpeedDecimal = step.ClockSpeedDecimal;
 			}
 		}
 

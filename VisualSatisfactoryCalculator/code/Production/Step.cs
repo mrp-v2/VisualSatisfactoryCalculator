@@ -1,28 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-
-using VisualSatisfactoryCalculator.satisfactory.Extensions;
-using VisualSatisfactoryCalculator.satisfactory.Interfaces;
 using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 using VisualSatisfactoryCalculator.controls.user;
 using VisualSatisfactoryCalculator.model.production;
-using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
-using VisualSatisfactoryCalculator.satisfactory.DataStorage;
-using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem, VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.DataStorage.BasicRecipe>;
-using ItemCount = VisualSatisfactoryCalculator.model.production.ItemCount<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem>;
+using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.model.production.Item, VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.model.production.Recipe>;
+using ItemCount = VisualSatisfactoryCalculator.model.production.ItemCount<VisualSatisfactoryCalculator.satisfactory.model.production.Item>;
+using VisualSatisfactoryCalculator.satisfactory.model.production;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
-	public class Step : AbstractStep<JSONItem, Step, BasicRecipe>
+	public class Step : AbstractStep<Item, Step, Recipe>
 	{
 		public readonly CachedValue<bool> hasNormalProductConnections;
 		public readonly CachedValue<IImmutableSet<Connection>> normalIngredientConnections;
 		public readonly CachedValue<IEnumerable<ItemCount>> productionRates;
 		public readonly CachedValue<IEnumerable<ItemCount>> consumptionRates;
 		private uint _machineCount;
-		private ushort _clockSpeedThousandths;
+		private uint _clockSpeedDecimal;
 		public uint MachineCount
 		{
 			get
@@ -36,15 +32,15 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				consumptionRates.Invalidate();
 			}
 		}
-		public ushort ClockSpeedThousandths
+		public uint ClockSpeedDecimal
 		{
 			get
 			{
-				return _clockSpeedThousandths;
+				return _clockSpeedDecimal;
 			}
 			private set
 			{
-				_clockSpeedThousandths = value;
+				_clockSpeedDecimal = value;
 				productionRates.Invalidate();
 				consumptionRates.Invalidate();
 			}
@@ -69,17 +65,17 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			return products.Connections;
 		}
 
-		public bool HasProductConnectionFor(JSONItem item)
+		public bool HasProductConnectionFor(Item item)
 		{
 			return products.HasConnection(item);
 		}
 
-		public bool HasIngredientConnectionFor(JSONItem item)
+		public bool HasIngredientConnectionFor(Item item)
 		{
 			return ingredients.HasConnection(item);
 		}
 
-		public Connection GetProductConnection(JSONItem item)
+		public Connection GetProductConnection(Item item)
 		{
 			try
 			{
@@ -91,7 +87,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			}
 		}
 
-		public Connection GetIngredientConnection(JSONItem item)
+		public Connection GetIngredientConnection(Item item)
 		{
 			try
 			{
@@ -131,7 +127,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			productionRates.Invalidate();
 		}
 
-		public Step(BasicRecipe recipe, Step relatedStep, JSONItem item, bool isProductOfRelated) : this(recipe)
+		public Step(Recipe recipe, Step relatedStep, Item item, bool isProductOfRelated) : this(recipe)
 		{
 			if (isProductOfRelated)
 			{
@@ -157,7 +153,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			}
 		}
 
-		public Step(BasicRecipe recipe) : base(recipe)
+		public Step(Recipe recipe) : base(recipe)
 		{
 			_control = default;
 			hasNormalProductConnections = new CachedValue<bool>(() =>
@@ -203,15 +199,15 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			});
 		}
 
-		public Step(BasicRecipe recipe, uint machineCount, ushort clockSpeedThousandths) : this(recipe)
+		public Step(Recipe recipe, uint machineCount, uint clockSpeedThousandths) : this(recipe)
 		{
 			MachineCount = machineCount;
-			ClockSpeedThousandths = clockSpeedThousandths;
+			ClockSpeedDecimal = clockSpeedThousandths;
 		}
 
 		// return (Multiplier * RationalNumber.Pow(Constants.CLOCK_DECIMALS + 2) / CalculateMachineCount()).Ceiling() / RationalNumber.Pow(Constants.CLOCK_DECIMALS);
 
-		public void AddRelatedStep(Step related, JSONItem item, bool isProductOfRelated)
+		public void AddRelatedStep(Step related, Item item, bool isProductOfRelated)
 		{
 			if (isProductOfRelated)
 			{
@@ -226,17 +222,17 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		/// <summary>
 		/// Always positive
 		/// </summary>
-		private RationalNumber CalculateDefaultItemRate(JSONItem item, bool isItemProduct)
+		private RationalNumber CalculateDefaultItemRate(Item item, bool isItemProduct)
 		{
-			return 60 / recipe.time * recipe.GetCountFor(item, isItemProduct);
+			return 60 / recipe.time * recipe.GetCount(item, isItemProduct);
 		}
 
 		/// <summary>
 		/// Always positive
 		/// </summary>
-		public override RationalNumber GetRate(JSONItem item, bool isItemProduct)
+		public override RationalNumber GetRate(Item item, bool isItemProduct)
 		{
-			return CalculateDefaultItemRate(item, isItemProduct) * (ClockSpeedThousandths / (RationalNumber)1000) * MachineCount;
+			return CalculateDefaultItemRate(item, isItemProduct) * (ClockSpeedDecimal / (RationalNumber)Constants.CLOCK_SPEED_DECIMAL_FACTOR) * MachineCount;
 		}
 
 		public void SetControl(StepControl control)
@@ -258,29 +254,29 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			plan.processedPlan.Invalidate();
 		}
 
-		public double GetPowerDraw(JsonEncodings encodings)
+		public double GetPowerDraw()
 		{
-			IBuilding building = encodings[recipe.MachineUID] as IBuilding;
-			return building.PowerConsumption.ToDouble() * Math.Pow(ClockSpeedThousandths / 1000d, building.PowerConsumptionExponent.ToDouble()) * MachineCount;
+			Building building = recipe.building;
+			return building.powerConsumption.ToDouble() * Math.Pow(ClockSpeedDecimal / (double)Constants.CLOCK_SPEED_DECIMAL_FACTOR, building.powerConsumptionExponent.ToDouble()) * MachineCount;
 		}
 
 		protected override void UpdateRatesFrom(Dictionary<ItemCount, bool> rates)
 		{
 			uint newMachineCount = 0;
-			foreach (KeyValuePair<ItemCount<JSONItem>, bool> entry in rates)
+			foreach (KeyValuePair<ItemCount<Item>, bool> entry in rates)
 			{
 				uint potentialMachineCount = (uint)Math.Ceiling((entry.Key.rate / CalculateDefaultItemRate(entry.Key.item, entry.Value)).ToDecimalT());
 				newMachineCount = Math.Max(newMachineCount, potentialMachineCount);
 			}
 			MachineCount = newMachineCount;
-			ClockSpeedThousandths = 1000;
-			ushort newClockSpeedThousandths = 0;
-			foreach (KeyValuePair<ItemCount<JSONItem>, bool> entry in rates)
+			ClockSpeedDecimal = Constants.CLOCK_SPEED_DECIMAL_FACTOR;
+			uint newClockSpeedThousandths = 0;
+			foreach (KeyValuePair<ItemCount<Item>, bool> entry in rates)
 			{
-				ushort potentialClockSpeedThousandths = (ushort)Math.Ceiling((entry.Key.rate / GetRate(entry.Key.item, entry.Value) * 1000).ToDecimalT());
+				uint potentialClockSpeedThousandths = (uint)Math.Ceiling((entry.Key.rate / GetRate(entry.Key.item, entry.Value) * Constants.CLOCK_SPEED_DECIMAL_FACTOR).ToDecimalT());
 				newClockSpeedThousandths = Math.Max(newClockSpeedThousandths, potentialClockSpeedThousandths);
 			}
-			ClockSpeedThousandths = newClockSpeedThousandths;
+			ClockSpeedDecimal = newClockSpeedThousandths;
 		}
 
 		public void SetMachineCount(uint machineCount)
@@ -290,7 +286,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 
 		public void SetClockSpeedThousandths(ushort clockSpeedThousandths)
 		{
-			ClockSpeedThousandths = clockSpeedThousandths;
+			ClockSpeedDecimal = clockSpeedThousandths;
 		}
 	}
 }

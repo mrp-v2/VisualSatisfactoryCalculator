@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using VisualSatisfactoryCalculator.model.production;
-using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
+using VisualSatisfactoryCalculator.satisfactory.model.production;
 using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 
@@ -9,22 +9,22 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
 	public class RateCollection
 	{
-		private readonly ItemCountCollection<JSONItem> BasicRates;
-		private double Power;
+		private readonly ItemCountCollection<Item> _basicRates;
+		private double _power;
 
-		public IEnumerable<JSONItem> Items
+		public IEnumerable<Item> Items
 		{
 			get
 			{
-				return BasicRates.Keys;
+				return _basicRates.Keys;
 			}
 		}
 
-		public RationalNumber this[JSONItem item]
+		public RationalNumber this[Item item]
 		{
 			get
 			{
-				return BasicRates[item].rate;
+				return _basicRates[item].rate;
 			}
 		}
 
@@ -36,49 +36,49 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 
 		public RateCollection(double power)
 		{
-			BasicRates = new ItemCountCollection<JSONItem>();
-			Power = power;
+			_basicRates = new ItemCountCollection<Item>();
+			_power = power;
 		}
 
-		public void Add(JSONItem item, RationalNumber rate)
+		public void Add(Item item, RationalNumber rate)
 		{
 			if (item == Constants.MW_ITEM)
 			{
-				Power += rate.ToDouble();
+				_power += rate.ToDouble();
 			}
-			else if (BasicRates.ContainsKey(item))
+			else if (_basicRates.ContainsKey(item))
 			{
-				BasicRates[item] += rate;
+				_basicRates[item] += rate;
 			}
 			else
 			{
-				BasicRates.Add(new ItemCount<JSONItem>(item, rate));
+				_basicRates.Add(new ItemCount<Item>(item, rate));
 			}
 		}
 
-		private void Subtract(JSONItem item, RationalNumber rate)
+		private void Subtract(Item item, RationalNumber rate)
 		{
-			if (BasicRates.ContainsKey(item))
+			if (_basicRates.ContainsKey(item))
 			{
-				BasicRates[item] -= rate;
+				_basicRates[item] -= rate;
 			}
 			else
 			{
-				BasicRates.Add(new ItemCount<JSONItem>(item, -rate));
+				_basicRates.Add(new ItemCount<Item>(item, -rate));
 			}
 		}
 
 		public void AdjustPower(double power)
 		{
-			Power += power;
+			_power += power;
 		}
 
 		public RateCollection Subtract(RateCollection other)
 		{
-			Power -= other.Power;
-			foreach (JSONItem item in other.BasicRates.Keys)
+			_power -= other._power;
+			foreach (Item item in other._basicRates.Keys)
 			{
-				Subtract(item, other.BasicRates[item].rate);
+				Subtract(item, other._basicRates[item].rate);
 			}
 			return this;
 		}

@@ -9,6 +9,9 @@ using MrpV2.GenericLibrary.code.persistance.classes;
 using VisualSatisfactoryCalculator.satisfactory.Production;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 using VisualSatisfactoryCalculator.controls.user;
+using VisualSatisfactoryCalculator.code.Utility;
+
+using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.model.production.Item, VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.model.production.Recipe>;
 
 namespace VisualSatisfactoryCalculator.forms
 {
@@ -34,38 +37,39 @@ namespace VisualSatisfactoryCalculator.forms
 		{
 			Application.EnableVisualStyles();
 			FileInteractor sfi = new FileInteractor();
-			JsonEncodings encoders = sfi.GetEncoders();
-			Application.Run(new MainForm(encoders));
+			JsonEncodings jsonEncodings = sfi.GetEncoders();
+			Encodings encodings = jsonEncodings.Process();
+			Application.Run(new MainForm(encodings));
 		}
 
-		public JsonEncodings Encoders { get; }
+		public Encodings Encoders { get; }
 
-		public Plan Plan;
-		private PlanTotalViewControl PPTVC;
+		public Plan plan;
+		private PlanTotalViewControl ptvc;
 		public bool ControlKeyPressed { get; private set; }
-		public ItemRateControl CurrentConnectionIRC;
-		public Func<Connection> CurrentConnectionFunc;
+		public ItemRateControl currentConnectionIRC;
+		public Func<Connection> currentConnectionFunc;
 
-		private readonly DigitalStenographySaveLoad saveLoad;
+		private readonly DigitalStenographySaveLoad _saveLoad;
 
-		private MainForm(JsonEncodings encoders)
+		private MainForm(Encodings encoders)
 		{
 			InitializeComponent();
 			KeyDown += MainForm_KeyDown;
 			KeyUp += MainForm_KeyUp;
 			Encoders = encoders;
-			saveLoad = new DigitalStenographySaveLoad();
-			Plan = new Plan();
+			_saveLoad = new DigitalStenographySaveLoad();
+			plan = new Plan();
 		}
 
 		private void AddStepButton_Click(object sender, EventArgs e)
 		{
-			SelectRecipePrompt srp = new SelectRecipePrompt(Encoders.Recipes);
+			SelectRecipePrompt srp = new SelectRecipePrompt(Encoders.recipes.Values);
 			if (srp.ShowDialog() == DialogResult.OK)
 			{
 				Step step = new Step(srp.GetSelectedRecipe());
-				Plan.steps.Add(step);
-				Plan.processedPlan.Invalidate();
+				plan.steps.Add(step);
+				plan.processedPlan.Invalidate();
 				PlanUpdated();
 			}
 		}
@@ -78,10 +82,10 @@ namespace VisualSatisfactoryCalculator.forms
 				c.Dispose();
 			}
 			PlanPanel.Controls.Clear();
-			PPTVC = new PlanTotalViewControl();
+			ptvc = new PlanTotalViewControl();
 			UpdateTotalView();
-			PlanPanel.Controls.Add(PPTVC);
-			PlanLayoutMaker.LayoutSteps(this, PlanPanel, Plan);
+			PlanPanel.Controls.Add(ptvc);
+			PlanLayoutMaker.LayoutSteps(this, PlanPanel, plan);
 			ResumeDrawing();
 		}
 
@@ -101,7 +105,7 @@ namespace VisualSatisfactoryCalculator.forms
 				ReverseControlOrder();
 				PlanPanel.DrawToBitmap(map, new Rectangle(0, 0, size.Width, size.Height));
 				ReverseControlOrder();
-				saveLoad.Save(map, new CondensedPlan(Plan));
+				_saveLoad.Save(map, new CondensedPlan(plan));
 				map.Save(dialog.FileName, ImageFormat.Png);
 			}
 		}
@@ -121,11 +125,11 @@ namespace VisualSatisfactoryCalculator.forms
 
 		public void UpdateTotalView()
 		{
-			PPTVC.ProductsLabel.Text = Plan.GetProductsString(Encoders);
-			double powerDraw = Plan.GetPowerDraw(Encoders);
-			PPTVC.PowerDrawLabel.Text = powerDraw > 0 ? $"Power Draw: {powerDraw} MW" : $"Power Production: {-powerDraw} MW";
-			PPTVC.MachinesLabel.Text = Plan.GetMachinesString(Encoders);
-			PPTVC.IngredientsLabel.Text = Plan.GetIngredientsString(Encoders);
+			ptvc.ProductsLabel.Text = plan.GetProductsString();
+			double powerDraw = plan.GetPowerDraw();
+			ptvc.PowerDrawLabel.Text = powerDraw > 0 ? $"Power Draw: {powerDraw} MW" : $"Power Production: {-powerDraw} MW";
+			ptvc.MachinesLabel.Text = plan.GetMachinesString();
+			ptvc.IngredientsLabel.Text = plan.GetIngredientsString();
 		}
 
 		private void LoadChartButton_Click(object sender, EventArgs e)
@@ -139,11 +143,11 @@ namespace VisualSatisfactoryCalculator.forms
 			};
 			if (dialog.ShowDialog() == DialogResult.OK)
 			{
-				if (saveLoad.TryLoad(dialog.FileName, out CondensedPlan loadedPlan))
+				if (_saveLoad.TryLoad(dialog.FileName, out CondensedPlan loadedPlan))
 				{
 					if (loadedPlan != null)
 					{
-						Plan = loadedPlan.ToPlan(Encoders);
+						plan = loadedPlan.ToPlan(Encoders);
 						PlanUpdated();
 					}
 				}
@@ -158,11 +162,11 @@ namespace VisualSatisfactoryCalculator.forms
 			}
 			if (e.KeyCode == Keys.Escape)
 			{
-				if (CurrentConnectionIRC != null)
+				if (currentConnectionIRC != null)
 				{
-					CurrentConnectionIRC.ItemButton.Enabled = true;
-					CurrentConnectionIRC = null;
-					CurrentConnectionFunc = null;
+					currentConnectionIRC.ItemButton.Enabled = true;
+					currentConnectionIRC = null;
+					currentConnectionFunc = null;
 				}
 			}
 		}
@@ -177,8 +181,8 @@ namespace VisualSatisfactoryCalculator.forms
 
 		private void ClearStepsButton_Click(object sender, EventArgs e)
 		{
-			Plan.steps.Clear();
-			Plan.processedPlan.Invalidate();
+			plan.steps.Clear();
+			plan.processedPlan.Invalidate();
 			PlanUpdated();
 		}
 	}

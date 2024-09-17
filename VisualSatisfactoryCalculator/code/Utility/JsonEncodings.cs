@@ -5,6 +5,7 @@ using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.satisfactory.DataStorage;
 using VisualSatisfactoryCalculator.satisfactory.Interfaces;
 using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
+using VisualSatisfactoryCalculator.satisfactory.model.production;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Utility
 {
@@ -51,9 +52,19 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			}
 		}
 
+		public JSONItem GetItem(string id)
+		{
+			return _items[id];
+		}
+
 		public void Add(JSONBuilding building)
 		{
 			_buildings.Add(building.ID, building);
+		}
+
+		public JSONBuilding GetBuilding(string id)
+		{
+			return _buildings[id];
 		}
 
 		public void Add(JSONRecipe recipe)
@@ -61,9 +72,19 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			_recipes.Add(recipe.ID, recipe);
 		}
 
+		public JSONRecipe GetRecipe(string id)
+		{
+			return _recipes[id];
+		}
+
 		public void Add(JSONResourceExtractor extractor)
 		{
 			_resourceExtractors.Add(extractor.ID, extractor);
+		}
+
+		public JSONResourceExtractor GetResourceExtractor(string id)
+		{
+			return _resourceExtractors[id];
 		}
 
 		public void Add(JSONGenerator generator)
@@ -71,8 +92,23 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			_generators.Add(generator.ID, generator);
 		}
 
+		public JSONGenerator GetGenerator(string id)
+		{
+			return _generators[id];
+		}
+
 		public Encodings Process()
 		{
+			Dictionary<string, Item> processedItems = new Dictionary<string, Item>();
+			foreach (JSONItem item in _items.Values)
+			{
+				processedItems.Add(item.id, item.Process());
+			}
+			Dictionary<string, Building> processedBuildings = new Dictionary<string, Building>();
+			foreach (JSONBuilding building in _buildings.Values)
+			{
+				processedBuildings.Add(building.ID, building.Process(processedItems));
+			}
 			throw new NotImplementedException();
 		}
 	}

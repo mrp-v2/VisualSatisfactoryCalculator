@@ -41,7 +41,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 			RecipeLabel.Text = backingStep.recipe.ToString(mainForm.Encoders, "{name} | {conversion} | {time} seconds");
 			MachineCountNumeric.Value = this.backingStep.MachineCount;
-			ClockSpeedNumeric.Value = this.backingStep.ClockSpeedThousandths / 1000m;
+			ClockSpeedNumeric.Value = this.backingStep.ClockSpeedDecimal / 1000m;
 			UpdateNumerics();
 			FinishInitialization();
 			Disposed += OnDisposed;
@@ -65,9 +65,9 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				MachineCountNumeric.Value = backingStep.MachineCount;
 			}
-			if (ClockSpeedNumeric.Value != backingStep.ClockSpeedThousandths / 1000m)
+			if (ClockSpeedNumeric.Value != backingStep.ClockSpeedDecimal / 1000m)
 			{
-				ClockSpeedNumeric.Value = backingStep.ClockSpeedThousandths / 1000m;
+				ClockSpeedNumeric.Value = backingStep.ClockSpeedDecimal / 1000m;
 			}
 			double powerDraw = backingStep.GetPowerDraw(mainForm.Encoders);
 			PowerConsumptionLabel.Text = powerDraw > 0 ? $"Power Consumption: {powerDraw} MW" : $"Power Production: {-powerDraw} MW";
@@ -84,18 +84,18 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		private void ItemClicked(JSONItem item, bool isProduct)
 		{
-			if (mainForm.CurrentConnectionIRC != null)
+			if (mainForm.currentConnectionIRC != null)
 			{
 				throw new NotImplementedException();
-				if (item == mainForm.CurrentConnectionIRC.Item)
+				if (item == mainForm.currentConnectionIRC.Item)
 				{
-					if (isProduct != mainForm.CurrentConnectionIRC.IsProduct)
+					if (isProduct != mainForm.currentConnectionIRC.IsProduct)
 					{
 						Connection connection = isProduct ? backingStep.HasProductConnectionFor(item) ? backingStep.GetProductConnection(item) : new Connection(item).AddProducer(backingStep) : backingStep.HasIngredientConnectionFor(item) ? backingStep.GetIngredientConnection(item) : new Connection(item).AddConsumer(backingStep);
 						//connection.MergeWith(mainForm.CurrentConnectionFunc());
-						mainForm.CurrentConnectionIRC = null;
-						mainForm.CurrentConnectionFunc = null;
-						mainForm.Plan.processedPlan.Invalidate();
+						mainForm.currentConnectionIRC = null;
+						mainForm.currentConnectionFunc = null;
+						mainForm.plan.processedPlan.Invalidate();
 						mainForm.PlanUpdated();
 					}
 					else
@@ -105,16 +105,16 @@ namespace VisualSatisfactoryCalculator.controls.user
 				}
 				return;
 			Else:
-				mainForm.CurrentConnectionIRC.ItemButton.Enabled = true;
-				mainForm.CurrentConnectionIRC = null;
-				mainForm.CurrentConnectionFunc = null;
+				mainForm.currentConnectionIRC.ItemButton.Enabled = true;
+				mainForm.currentConnectionIRC = null;
+				mainForm.currentConnectionFunc = null;
 			}
 			else if (mainForm.ControlKeyPressed)
 			{
 				throw new NotImplementedException();
-				mainForm.CurrentConnectionIRC = isProduct ? productRateControls[item] : ingredientRateControls[item];
-				mainForm.CurrentConnectionFunc = () => isProduct ? backingStep.HasProductConnectionFor(item) ? backingStep.GetProductConnection(item) : new Connection(item).AddProducer(backingStep) : backingStep.HasIngredientConnectionFor(item) ? backingStep.GetIngredientConnection(item) : new Connection(item).AddConsumer(backingStep);
-				mainForm.CurrentConnectionIRC.ItemButton.Enabled = false;
+				mainForm.currentConnectionIRC = isProduct ? productRateControls[item] : ingredientRateControls[item];
+				mainForm.currentConnectionFunc = () => isProduct ? backingStep.HasProductConnectionFor(item) ? backingStep.GetProductConnection(item) : new Connection(item).AddProducer(backingStep) : backingStep.HasIngredientConnectionFor(item) ? backingStep.GetIngredientConnection(item) : new Connection(item).AddConsumer(backingStep);
+				mainForm.currentConnectionIRC.ItemButton.Enabled = false;
 			}
 			else
 			{
@@ -130,8 +130,8 @@ namespace VisualSatisfactoryCalculator.controls.user
 				if (srp.ShowDialog() == DialogResult.OK)
 				{
 					Step ps = new Step(srp.GetSelectedRecipe(), backingStep, item, isProduct);
-					mainForm.Plan.steps.Add(ps);
-					mainForm.Plan.processedPlan.Invalidate();
+					mainForm.plan.steps.Add(ps);
+					mainForm.plan.processedPlan.Invalidate();
 					mainForm.PlanUpdated();
 				}
 			}
@@ -175,7 +175,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			if (Enabled && _initialized)
 			{
-				backingStep.SetClockSpeedThousandths((ushort)(ClockSpeedNumeric.Value * 1000));
+				backingStep.SetClockSpeedThousandths((ushort)(ClockSpeedNumeric.Value * Constants.CLOCK_SPEED_DECIMAL_FACTOR));
 				mainForm.UpdateTotalView();
 			}
 		}
@@ -192,7 +192,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		private void DeleteStepButton_Click(object sender, EventArgs e)
 		{
-			backingStep.Delete(mainForm.Plan);
+			backingStep.Delete(mainForm.plan);
 			mainForm.PlanUpdated();
 		}
 

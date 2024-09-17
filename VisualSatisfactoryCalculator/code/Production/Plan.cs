@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 
-using VisualSatisfactoryCalculator.satisfactory.Interfaces;
 using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 using VisualSatisfactoryCalculator.model.production;
-using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
 
-using ItemCount = VisualSatisfactoryCalculator.model.production.ItemCount<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem>;
+using ItemCount = VisualSatisfactoryCalculator.model.production.ItemCount<VisualSatisfactoryCalculator.satisfactory.model.production.Item>;
+using VisualSatisfactoryCalculator.satisfactory.model.production;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
@@ -21,9 +20,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			processedPlan = new CachedValue<ProcessedPlan>(() => new ProcessedPlan(this));
 		}
 
-		public RateCollection GetNetRates(JsonEncodings encodings)
+		public RateCollection GetNetRates()
 		{
-			return GetProductRates().Subtract(GetIngredientRates(encodings));
+			return GetProductRates().Subtract(GetIngredientRates());
 		}
 
 		public RateCollection GetProductRates()
@@ -31,7 +30,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			RateCollection rates = new RateCollection(0);
 			foreach (Step step in steps)
 			{
-				foreach (ItemCount<JSONItem> itemCount in step.productionRates.Get())
+				foreach (ItemCount<Item> itemCount in step.productionRates.Get())
 				{
 					rates.Add(itemCount.item, step.GetRate(itemCount.item, true));
 				}
@@ -39,19 +38,19 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			return rates;
 		}
 
-		public double GetPowerDraw(JsonEncodings encodings)
+		public double GetPowerDraw()
 		{
 			double powerDraw = 0;
 			foreach (Step step in steps)
 			{
-				powerDraw += step.GetPowerDraw(encodings);
+				powerDraw += step.GetPowerDraw();
 			}
 			return powerDraw;
 		}
 
-		public RateCollection GetIngredientRates(JsonEncodings encodings)
+		public RateCollection GetIngredientRates()
 		{
-			RateCollection rates = new RateCollection(GetPowerDraw(encodings));
+			RateCollection rates = new RateCollection(GetPowerDraw());
 			foreach (Step step in steps)
 			{
 				foreach (ItemCount itemCount in step.consumptionRates.Get())
@@ -62,40 +61,40 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			return rates;
 		}
 
-		public Dictionary<string, int> MachineCount()
+		public Dictionary<Building, uint> MachineCount()
 		{
-			Dictionary<string, int> totalMachines = new Dictionary<string, int>();
+			Dictionary<Building, uint> totalMachines = new Dictionary<Building, uint>();
 			foreach (Step step in steps)
 			{
-				if (!totalMachines.ContainsKey(step.recipe.MachineUID))
+				if (!totalMachines.ContainsKey(step.recipe.building))
 				{
-					totalMachines.Add(step.recipe.MachineUID, step.CalculateMachineCount());
+					totalMachines.Add(step.recipe.building, step.MachineCount);
 				}
 				else
 				{
-					totalMachines[step.recipe.MachineUID] += step.CalculateMachineCount();
+					totalMachines[step.recipe.building] += step.MachineCount;
 				}
 			}
 			return totalMachines;
 		}
 
-		public string GetMachinesString(JsonEncodings encodings)
+		public string GetMachinesString()
 		{
 			string total = "";
-			Dictionary<string, int> machines = MachineCount();
-			foreach (string machineUID in machines.Keys)
+			Dictionary<Building, uint> machines = MachineCount();
+			foreach (Building building in machines.Keys)
 			{
-				total += machines[machineUID] + " " + encodings[machineUID].DisplayName + "\n";
+				total += machines[building] + " " + building.displayName + "\n";
 			}
 			return total;
 		}
 
-		public string GetProductsString(JsonEncodings encodings)
+		public string GetProductsString()
 		{
 			string str = "Net Products: ";
-			RateCollection netRates = GetNetRates(encodings);
+			RateCollection netRates = GetNetRates();
 			bool first = true;
-			foreach (JSONItem item in netRates.Items)
+			foreach (Item item in netRates.Items)
 			{
 				RationalNumber rate = netRates[item];
 				string rateStr = rate.ToString();
@@ -115,7 +114,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			str += "\nAll Products: ";
 			RateCollection rates = GetProductRates();
 			first = true;
-			foreach (JSONItem item in rates.Items)
+			foreach (Item item in rates.Items)
 			{
 				if (first)
 				{
@@ -130,12 +129,12 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			return str;
 		}
 
-		public string GetIngredientsString(JsonEncodings encodings)
+		public string GetIngredientsString()
 		{
 			string str = "All Ingredients: ";
-			RateCollection rates = GetIngredientRates(encodings);
+			RateCollection rates = GetIngredientRates();
 			bool first = true;
-			foreach (JSONItem item in rates.Items)
+			foreach (Item item in rates.Items)
 			{
 				if (first)
 				{
@@ -148,9 +147,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				str += rates[item].ToString() + " " + item.displayName;
 			}
 			str += "\nNet Ingredients: ";
-			RateCollection netRates = GetNetRates(encodings);
+			RateCollection netRates = GetNetRates();
 			first = true;
-			foreach (JSONItem item in netRates.Items)
+			foreach (Item item in netRates.Items)
 			{
 				RationalNumber rate = netRates[item];
 				string rateStr = (-rate).ToString();

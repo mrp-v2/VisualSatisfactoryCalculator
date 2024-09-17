@@ -53,5 +53,17 @@ namespace VisualSatisfactoryCalculator.model.production
 				return rate.rate;
 			});
 		}
+
+		public RationalNumber GetCount(ItemType item, bool isProduct)
+		{
+			if (isProduct)
+			{
+				return products[item];
+			}
+			else
+			{
+				return ingredients[item];
+			}
+		}
 	}
 }

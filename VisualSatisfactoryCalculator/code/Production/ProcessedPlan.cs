@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using VisualSatisfactoryCalculator.model.production;
 using VisualSatisfactoryCalculator.satisfactory.Extensions;
 
-using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem, VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.DataStorage.BasicRecipe>;
+using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.model.production.Item, VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.model.production.Recipe>;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
@@ -143,7 +144,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 					visitedConnections.Add(connection);
 					switch (connection.Type)
 					{
-						case model.production.ConnectionType.SINGLE:
+						case ConnectionType.SINGLE:
 							HashSet<HashSet<Connection>> connectedGroups = new HashSet<HashSet<Connection>>();
 							foreach (HashSet<Connection> connectionGroup in _normalConnectionGroups)
 							{
@@ -175,7 +176,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 									break;
 							}
 							break;
-						case model.production.ConnectionType.MULTI:
+						case ConnectionType.MULTI:
 							_abnormalConnections.Add(connection);
 							break;
 					}

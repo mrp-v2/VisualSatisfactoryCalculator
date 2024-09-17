@@ -2,38 +2,38 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-using VisualSatisfactoryCalculator.satisfactory.Interfaces;
+using VisualSatisfactoryCalculator.satisfactory.model.production;
 
 namespace VisualSatisfactoryCalculator.forms
 {
 	public partial class SelectRecipePrompt : Form
 	{
-		private readonly Dictionary<string, IRecipe>.ValueCollection originalList;
+		private readonly IEnumerable<Recipe> _originalList;
 
-		public SelectRecipePrompt(Dictionary<string, IRecipe> options)
+		public SelectRecipePrompt(IEnumerable<Recipe> options)
 		{
 			InitializeComponent();
-			originalList = options.Values;
-			foreach (IRecipe rec in options.Values)
+			_originalList = options;
+			foreach (Recipe rec in options)
 			{
-				_ = RecipesList.Items.Add(rec);
+				RecipesList.Items.Add(rec);
 			}
 		}
 
 		private void YesButton_Click(object sender, EventArgs e)
 		{
-			if (RecipesList.SelectedItem is IRecipe)
+			if (RecipesList.SelectedItem is Recipe)
 			{
 				DialogResult = DialogResult.OK;
 				Close();
 			}
 		}
 
-		public IRecipe GetSelectedRecipe()
+		public Recipe GetSelectedRecipe()
 		{
-			if (RecipesList.SelectedItem is IRecipe)
+			if (RecipesList.SelectedItem is Recipe)
 			{
-				return RecipesList.SelectedItem as IRecipe;
+				return RecipesList.SelectedItem as Recipe;
 			}
 			return default;
 		}
@@ -48,7 +48,7 @@ namespace VisualSatisfactoryCalculator.forms
 		{
 			RecipesList.BeginUpdate();
 			RecipesList.Items.Clear();
-			foreach (IRecipe recipe in originalList)
+			foreach (Recipe recipe in _originalList)
 			{
 				if (recipe.ToString().ToLower().Contains(FilterBox.Text.ToLower()))
 				{
