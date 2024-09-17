@@ -8,8 +8,10 @@ using VisualSatisfactoryCalculator.satisfactory.Production;
 using VisualSatisfactoryCalculator.controls.user;
 using VisualSatisfactoryCalculator.forms;
 
-using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem, VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.DataStorage.BasicRecipe>;
+using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.model.production.Item, VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.model.production.Recipe>;
 using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
+using VisualSatisfactoryCalculator.satisfactory.model.production;
+using VisualSatisfactoryCalculator.model.production;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Utility
 {
@@ -27,17 +29,17 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 				foreach (Step step in plan.processedPlan.Get().GetStepsInTier(currentTier))
 				{
 					StepControl stepControl = new StepControl(step, mainForm);
-					Dictionary<Step, JSONItem> ingredientControls = new Dictionary<Step, JSONItem>();
-					Dictionary<JSONItem, Connection> abnormalConnectionIngredients = new Dictionary<JSONItem, Connection>();
+					Dictionary<Step, Item> ingredientControls = new Dictionary<Step, Item>();
+					Dictionary<Item, Connection> abnormalConnectionIngredients = new Dictionary<Item, Connection>();
 					foreach (Connection connection in step.GetIngredientConnections())
 					{
-						if (connection.Type == model.production.ConnectionType.SINGLE)
+						if (connection.Type == ConnectionType.SINGLE)
 						{
 							foreach (Step ingredientStep in connection.ProducerSteps)
 							{
 								if (ingredientStep.recipe.products.Count > 1)
 								{
-									foreach (JSONItem item in ingredientStep.recipe.products.Keys)
+									foreach (Item item in ingredientStep.recipe.products.Keys)
 									{
 										if (connection.item == item)
 										{
@@ -56,7 +58,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 								continue;
 							}
 						}
-						if (connection.Type == model.production.ConnectionType.MULTI && connection.ConsumerSteps.Count() == 1)
+						if (connection.Type == ConnectionType.MULTI && connection.ConsumerSteps.Count() == 1)
 						{
 							abnormalConnectionIngredients.Add(connection.item, connection);
 						}
@@ -248,13 +250,13 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 				{
 					if (step.recipe.products.Count > 1)
 					{
-						foreach (JSONItem str in step.recipe.products.Keys)
+						foreach (Item item in step.recipe.products.Keys)
 						{
-							if (str == connection.item)
+							if (item == connection.item)
 							{
 								goto Add;
 							}
-							else if (!step.HasProductConnectionFor(str))
+							else if (!step.HasProductConnectionFor(item))
 							{
 								continue;
 							}
@@ -381,15 +383,15 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 		private class StepAndIngredientsLayout : ILayoutControl
 		{
 			private readonly Step _productStep;
-			private readonly Dictionary<Step, JSONItem> _ingredientSteps;
-			private readonly Dictionary<JSONItem, Connection> _abnormalConnectionIngredients;
+			private readonly Dictionary<Step, Item> _ingredientSteps;
+			private readonly Dictionary<Item, Connection> _abnormalConnectionIngredients;
 			public StepControl TopControl { get; protected set; }
-			private readonly Dictionary<ILayoutControl, JSONItem> _ingredientControls = new Dictionary<ILayoutControl, JSONItem>();
+			private readonly Dictionary<ILayoutControl, Item> _ingredientControls = new Dictionary<ILayoutControl, Item>();
 			public Size PreferredSize { get; protected set; }
 			protected Size topSize;
 			protected bool placed = false;
 
-			public StepAndIngredientsLayout(Step productStep, Dictionary<Step, JSONItem> ingredientSteps, Dictionary<JSONItem, Connection> abnormalConnectionIngredients)
+			public StepAndIngredientsLayout(Step productStep, Dictionary<Step, Item> ingredientSteps, Dictionary<Item, Connection> abnormalConnectionIngredients)
 			{
 				_productStep = productStep;
 				_ingredientSteps = ingredientSteps;
@@ -403,7 +405,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 				{
 					_ingredientControls.Add(DRAWING_CONTEXT.stepUIMap[step].Item2, _ingredientSteps[step]);
 				}
-				foreach (JSONItem item in _abnormalConnectionIngredients.Keys)
+				foreach (Item item in _abnormalConnectionIngredients.Keys)
 				{
 					Connection connection = _abnormalConnectionIngredients[item];
 					//_ingredientControls.Add(DRAWING_CONTEXT.abnormalConnectionUIMap[connection].Item2, item);
@@ -438,13 +440,13 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 				}
 				TopControl.Place(xStart + (PreferredSize.Width / 2) - (topSize.Width / 2), yStart);
 				int currentX = xStart, y = yStart + topSize.Height;
-				Dictionary<JSONItem, ILayoutControl> reverseIngredientControls = new Dictionary<JSONItem, ILayoutControl>();
+				Dictionary<Item, ILayoutControl> reverseIngredientControls = new Dictionary<Item, ILayoutControl>();
 				foreach (ILayoutControl control in _ingredientControls.Keys)
 				{
 					reverseIngredientControls.Add(_ingredientControls[control], control);
 				}
 				List<ILayoutControl> orderedIngredients = new List<ILayoutControl>();
-				foreach (JSONItem item in TopControl.backingStep.recipe.ingredients.Keys)
+				foreach (Item item in TopControl.backingStep.recipe.ingredients.Keys)
 				{
 					if (reverseIngredientControls.ContainsKey(item))
 					{
@@ -466,11 +468,11 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 					control.Place(currentX, y);
 					currentX += control.PreferredSize.Width;
 				}
-				Dictionary<JSONItem, Point> ingredientIRCConnectionPoints = new Dictionary<JSONItem, Point>();
-				Dictionary<JSONItem, Point> productIRCConnectionPoints = new Dictionary<JSONItem, Point>();
+				Dictionary<Item, Point> ingredientIRCConnectionPoints = new Dictionary<Item, Point>();
+				Dictionary<Item, Point> productIRCConnectionPoints = new Dictionary<Item, Point>();
 				foreach (ILayoutControl control in orderedIngredients)
 				{
-					JSONItem item = _ingredientControls[control];
+					Item item = _ingredientControls[control];
 					//ItemRateControl productIRC = (!(control is SplitAndMergeLayout)) ? control.TopControl.productRateControls[item] : (control as SplitAndMergeLayout).TopControl.outControls.Values.First();
 					ItemRateControl productIRC = control.TopControl.productRateControls[item];
 					Point productIRCLoc = productIRC.GetTotalLocation();
@@ -479,10 +481,10 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 					Point ingredientIRCLoc = ingredientIRC.GetTotalLocation();
 					ingredientIRCConnectionPoints.Add(item, new Point(ingredientIRCLoc.X + (ingredientIRC.Size.Width / 2), ingredientIRCLoc.Y + ingredientIRC.Size.Height));
 				}
-				Dictionary<JSONItem, Range> itemLineRanges = new Dictionary<JSONItem, Range>();
+				Dictionary<Item, Range> itemLineRanges = new Dictionary<Item, Range>();
 				foreach (ILayoutControl control in orderedIngredients)
 				{
-					JSONItem item = _ingredientControls[control];
+					Item item = _ingredientControls[control];
 					int left1 = ingredientIRCConnectionPoints[item].X, left2 = productIRCConnectionPoints[item].X;
 					int left3 = left1 < left2 ? left1 : left2;
 					int right1 = ingredientIRCConnectionPoints[item].X, right2 = productIRCConnectionPoints[item].X;
@@ -492,7 +494,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 				DRAWING_CONTEXT.StartNewIngredientColorGroup();
 				foreach (ILayoutControl control in orderedIngredients)
 				{
-					JSONItem item = _ingredientControls[control];
+					Item item = _ingredientControls[control];
 					LineControl line1 = new LineControl(), line2 = new LineControl(), line3 = new LineControl();
 					TopControl.Parent.Controls.AddRange(new Control[] { line1, line2, line3 });
 					line1.BringToFront();
@@ -511,7 +513,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 					line3.Size = new Size(line3.Size.Width, line3.Location.Y - height + line3.Size.Height);
 					line3.Location = AddPoints(line3.Location, new Point(0, height - line3.Location.Y));
 				}
-				Dictionary<Step, JSONItem> ingredientSteps = new Dictionary<Step, JSONItem>();
+				Dictionary<Step, Item> ingredientSteps = new Dictionary<Step, Item>();
 				foreach (Connection ingredientConnection in TopControl.backingStep.normalIngredientConnections.Get())
 				{
 					foreach (Step step in ingredientConnection.ProducerSteps)
@@ -519,7 +521,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 						ingredientSteps.Add(step, ingredientConnection.item);
 					}
 				}
-				Dictionary<Step, JSONItem> alternateConnectionIngredients = new Dictionary<Step, JSONItem>();
+				Dictionary<Step, Item> alternateConnectionIngredients = new Dictionary<Step, Item>();
 				foreach (Step ingredientStep in ingredientSteps.Keys)
 				{
 					foreach (ILayoutControl ingredientLayout in _ingredientControls.Keys)
@@ -535,7 +537,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 				}
 				foreach (Step alternateConnectionStep in alternateConnectionIngredients.Keys)
 				{
-					JSONItem item = alternateConnectionIngredients[alternateConnectionStep];
+					Item item = alternateConnectionIngredients[alternateConnectionStep];
 					ItemRateControl ingredientIRC = TopControl.ingredientRateControls[item];
 					ItemRateControl productIRC = DRAWING_CONTEXT.stepUIMap[alternateConnectionStep].Item1.productRateControls[item];
 					DRAWING_CONTEXT.scheduledAlternateConnections.Add(new Tuple<ItemRateControl, ItemRateControl>(ingredientIRC, productIRC));

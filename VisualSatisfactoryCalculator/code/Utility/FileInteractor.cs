@@ -77,7 +77,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			//JSONGenerator Recipes
 			foreach (JSONGenerator generator in generators)
 			{
-				if (generator.DisplayName.Equals("Biomass Burner"))
+				if (generator.displayName.Equals("Biomass Burner"))
 				{
 					continue;
 				}

@@ -16,7 +16,7 @@ using System.Collections.Immutable;
 
 namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 {
-	public class JSONResourceExtractor : JSONBuilding, IBuilding, IFromJson
+	public class JSONResourceExtractor : JSONBuilding
 	{
 		public static Dictionary<string, RationalNumber> NODE_CYCLE_TIME_DIVISORS = new Dictionary<string, RationalNumber>
 		{
@@ -38,7 +38,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 			AllowedResources = Util.ParseUIDList(mAllowedResources);
 		}
 
-		public override IEnumerable<Recipe> ProcessRecipes(Dictionary<string, Item> items, HashSet<JSONItem> resourceItems, Dictionary<string, Building> buildings)
+		public virtual IEnumerable<Recipe> ProcessRecipes(ImmutableDictionary<string, Item> items, HashSet<JSONItem> resourceItems, ImmutableDictionary<string, Building> buildings)
 		{
 			List<Recipe> recipes = new List<Recipe>();
 			foreach (JSONItem item in resourceItems)
@@ -118,7 +118,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 			return new Recipe(id, displayName, conversionString, time, building, ingredients.ToImmutableDictionary(), products.ToImmutableDictionary());
 		}
 
-		public class JSONResourceExtractorRecipe : BasicRecipe
+		public class JSONResourceExtractorRecipe : JSONRecipeBase
 		{
 			public JSONResourceExtractorRecipe(string UID, RationalNumber craftTime, string machineUID, List<ItemCount<JSONItem>> ingredients, List<ItemCount<JSONItem>> products, string displayName) : base(UID, craftTime, machineUID, ingredients, products, displayName)
 			{

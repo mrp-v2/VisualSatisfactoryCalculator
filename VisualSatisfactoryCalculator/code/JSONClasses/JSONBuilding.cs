@@ -38,7 +38,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 			return obj.EqualID(ID);
 		}
 
-		public virtual Building Process(Dictionary<string, Item> items)
+		public virtual Building Process()
 		{
 			return new Building(ID, DisplayName, PowerConsumption, PowerConsumptionExponent);
 		}

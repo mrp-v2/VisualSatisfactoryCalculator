@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.satisfactory.DataStorage;
@@ -69,7 +70,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 
 		public void Add(JSONRecipe recipe)
 		{
-			_recipes.Add(recipe.ID, recipe);
+			_recipes.Add(recipe.id, recipe);
 		}
 
 		public JSONRecipe GetRecipe(string id)
@@ -89,7 +90,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 
 		public void Add(JSONGenerator generator)
 		{
-			_generators.Add(generator.ID, generator);
+			_generators.Add(generator.id, generator);
 		}
 
 		public JSONGenerator GetGenerator(string id)
@@ -104,12 +105,46 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			{
 				processedItems.Add(item.id, item.Process());
 			}
+			ImmutableDictionary<string, Item> finalItems = processedItems.ToImmutableDictionary();
+			HashSet<Item> processedResourceItems = new HashSet<Item>();
+			foreach (JSONItem item in _resourceItems)
+			{
+				processedResourceItems.Add(finalItems[item.id]);
+			}
 			Dictionary<string, Building> processedBuildings = new Dictionary<string, Building>();
 			foreach (JSONBuilding building in _buildings.Values)
 			{
-				processedBuildings.Add(building.ID, building.Process(processedItems));
+				processedBuildings.Add(building.ID, building.Process());
 			}
-			throw new NotImplementedException();
+			foreach (JSONResourceExtractor extractor in _resourceExtractors.Values)
+			{
+				processedBuildings.Add(extractor.ID, extractor.Process());
+			}
+			foreach (JSONGenerator generator in _generators.Values)
+			{
+				processedBuildings.Add(generator.id, generator.Process());
+			}
+			ImmutableDictionary<string, Building> finalBuildings = processedBuildings.ToImmutableDictionary();
+			Dictionary<string, Recipe> processedRecipes = new Dictionary<string, Recipe>();
+			foreach (JSONRecipe recipe in _recipes.Values)
+			{
+				processedRecipes.Add(recipe.id, recipe.Process(finalItems, finalBuildings));
+			}
+			foreach (JSONResourceExtractor extractor in _resourceExtractors.Values)
+			{
+				foreach (Recipe recipe in extractor.ProcessRecipes(finalItems, _resourceItems, finalBuildings))
+				{
+					processedRecipes.Add(recipe.id, recipe);
+				}
+			}
+			foreach (JSONGenerator generator in _generators.Values)
+			{
+				foreach (Recipe recipe in generator.ProcessRecipes(_items, finalItems, finalBuildings))
+				{
+					processedRecipes.Add(recipe.id, recipe);
+				}
+			}
+			return new Encodings(finalItems, processedResourceItems.ToImmutableHashSet(), processedRecipes.ToImmutableDictionary(), finalBuildings);
 		}
 	}
 }

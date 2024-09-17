@@ -6,15 +6,16 @@ using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 using VisualSatisfactoryCalculator.forms;
 using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
+using VisualSatisfactoryCalculator.satisfactory.model.production;
 
 namespace VisualSatisfactoryCalculator.controls.user
 {
 	public partial class ItemRateControl : UserControl
 	{
-		public delegate void RateChanged(JSONItem itemUID, RationalNumber oldRate, RationalNumber newRate, bool isProduct);
-		public delegate void ItemClicked(JSONItem itemUID, bool isProduct);
+		public delegate void RateChanged(Item itemUID, RationalNumber oldRate, RationalNumber newRate, bool isProduct);
+		public delegate void ItemClicked(Item itemUID, bool isProduct);
 
-		public JSONItem Item { get; }
+		public Item Item { get; }
 		private bool _initialized;
 		public bool IsProduct { get; }
 		private readonly MainForm _mainForm;
@@ -27,7 +28,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			return PlanLayoutMaker.AddParentPoints(this, _panelDepth);
 		}
 
-		public ItemRateControl(MainForm mainForm, JSONItem item, RationalNumber rate, bool isProduct, int panelDepth, RateChanged rateChanged, ItemClicked itemClicked)
+		public ItemRateControl(MainForm mainForm, Item item, RationalNumber rate, bool isProduct, int panelDepth, RateChanged rateChanged, ItemClicked itemClicked)
 		{
 			_initialized = false;
 			InitializeComponent();

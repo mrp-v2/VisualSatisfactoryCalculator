@@ -12,7 +12,10 @@ using VisualSatisfactoryCalculator.forms;
 using VisualSatisfactoryCalculator.model.production;
 using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
 
-using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.JSONClasses.JSONItem, VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.DataStorage.BasicRecipe>;
+using ItemCount = VisualSatisfactoryCalculator.model.production.ItemCount<VisualSatisfactoryCalculator.satisfactory.model.production.Item>;
+
+using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.model.production.Item, VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.model.production.Recipe>;
+using VisualSatisfactoryCalculator.satisfactory.model.production;
 
 namespace VisualSatisfactoryCalculator.controls.user
 {
@@ -21,8 +24,8 @@ namespace VisualSatisfactoryCalculator.controls.user
 		public readonly Step backingStep;
 		public readonly MainForm mainForm;
 		private bool _initialized = false;
-		public readonly Dictionary<JSONItem, ItemRateControl> productRateControls = new Dictionary<JSONItem, ItemRateControl>();
-		public readonly Dictionary<JSONItem, ItemRateControl> ingredientRateControls = new Dictionary<JSONItem, ItemRateControl>();
+		public readonly Dictionary<Item, ItemRateControl> productRateControls = new Dictionary<Item, ItemRateControl>();
+		public readonly Dictionary<Item, ItemRateControl> ingredientRateControls = new Dictionary<Item, ItemRateControl>();
 		public StepControl TopControl { get { return this; } }
 
 		public StepControl(Step backingStep, MainForm mainForm)
@@ -31,15 +34,15 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.backingStep = backingStep;
 			this.mainForm = mainForm;
 			backingStep.SetControl(this);
-			foreach (JSONItem item in backingStep.recipe.products.Keys)
+			foreach (Item item in backingStep.recipe.products.Keys)
 			{
 				AddItemRateControl(item, true);
 			}
-			foreach (JSONItem item in backingStep.recipe.ingredients.Keys)
+			foreach (Item item in backingStep.recipe.ingredients.Keys)
 			{
 				AddItemRateControl(item, false);
 			}
-			RecipeLabel.Text = backingStep.recipe.ToString(mainForm.Encoders, "{name} | {conversion} | {time} seconds");
+			RecipeLabel.Text = backingStep.recipe.displayName + " | " + backingStep.recipe.conversionString + " | " + backingStep.recipe.time + " seconds";
 			MachineCountNumeric.Value = this.backingStep.MachineCount;
 			ClockSpeedNumeric.Value = this.backingStep.ClockSpeedDecimal / 1000m;
 			UpdateNumerics();
@@ -69,20 +72,20 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				ClockSpeedNumeric.Value = backingStep.ClockSpeedDecimal / 1000m;
 			}
-			double powerDraw = backingStep.GetPowerDraw(mainForm.Encoders);
+			double powerDraw = backingStep.GetPowerDraw();
 			PowerConsumptionLabel.Text = powerDraw > 0 ? $"Power Consumption: {powerDraw} MW" : $"Power Production: {-powerDraw} MW";
 			ToggleInput(true);
 		}
 
-		private void RateChanged(JSONItem item, RationalNumber oldRate, RationalNumber newRate, bool isProduct)
+		private void RateChanged(Item item, RationalNumber oldRate, RationalNumber newRate, bool isProduct)
 		{
 			if (backingStep.GetRate(item, isProduct).AbsoluteValue() != newRate)
 			{
-				backingStep.CascadingUpdateRatesFrom(new ItemCount<JSONItem>(item, newRate), isProduct);
+				backingStep.CascadingUpdateRatesFrom(new ItemCount(item, newRate), isProduct);
 			}
 		}
 
-		private void ItemClicked(JSONItem item, bool isProduct)
+		private void ItemClicked(Item item, bool isProduct)
 		{
 			if (mainForm.currentConnectionIRC != null)
 			{
@@ -121,11 +124,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 				SelectRecipePrompt srp;
 				if (isProduct)
 				{
-					srp = new SelectRecipePrompt(mainForm.Encoders.Recipes.GetRecipesThatConsume(item));
+					srp = new SelectRecipePrompt(mainForm.Encoders.recipes.GetRecipesThatConsume(item));
 				}
 				else
 				{
-					srp = new SelectRecipePrompt(mainForm.Encoders.Recipes.GetRecipesThatProduce(item));
+					srp = new SelectRecipePrompt(mainForm.Encoders.recipes.GetRecipesThatProduce(item));
 				}
 				if (srp.ShowDialog() == DialogResult.OK)
 				{
@@ -137,7 +140,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 		}
 
-		private void AddItemRateControl(JSONItem item, bool isProduct)
+		private void AddItemRateControl(Item item, bool isProduct)
 		{
 			ItemRateControl irc = new ItemRateControl(mainForm, item, backingStep.GetRate(item, isProduct), isProduct, 4, RateChanged, ItemClicked);
 			if (isProduct)

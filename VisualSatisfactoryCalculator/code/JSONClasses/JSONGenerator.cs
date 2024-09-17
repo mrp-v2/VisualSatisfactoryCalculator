@@ -11,18 +11,18 @@ using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 using VisualSatisfactoryCalculator.model.production;
 using Util = VisualSatisfactoryCalculator.satisfactory.Utility.Util;
+using VisualSatisfactoryCalculator.satisfactory.model.production;
+using System.Collections.Immutable;
 
 namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 {
-	public class JSONGenerator : IBuilding, IFromJson
+	public class JSONGenerator
 	{
-		public string ID { get; }
+		public readonly string id;
 		private readonly string[] _fuelItemIDs;
 		private readonly RationalNumber _powerProduction;
-		public string DisplayName { get; }
-		public RationalNumber PowerConsumption { get { return -_powerProduction; } }
-		public RationalNumber PowerConsumptionExponent { get; }
-		public string NativeClass { get; }
+		public readonly string displayName;
+		private readonly RationalNumber _powerConsumptionExponent;
 
 		private readonly bool _requiresSupplementalResource;
 		private readonly decimal _supplementalToPowerRatio;
@@ -30,78 +30,70 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 		[JsonConstructor]
 		public JSONGenerator(string ClassName, string mDefaultFuelClasses, bool mRequiresSupplementalResource, decimal mSupplementalToPowerRatio, string mPowerProduction, string mDisplayName)
 		{
-			ID = ClassName;
+			id = ClassName;
 			_fuelItemIDs = Util.ParseUIDList(mDefaultFuelClasses);
 			_powerProduction = decimal.Parse(mPowerProduction);
-			PowerConsumptionExponent = 1;
-			DisplayName = mDisplayName;
+			_powerConsumptionExponent = 1;
+			displayName = mDisplayName;
 			_requiresSupplementalResource = mRequiresSupplementalResource;
 			_supplementalToPowerRatio = mSupplementalToPowerRatio;
-			NativeClass = FileInteractor.ActiveNativeClass;
 		}
 
 		public static readonly RationalNumber ENERGY_DIVISOR = new RationalNumber(50, 3, true);
 		public static readonly decimal SUPPLEMENTAL_RESOURCE_FACTOR = 60m;
 
-		public Dictionary<string, IRecipe> GetRecipes(JsonEncodings encodings)
-		{
-			Dictionary<string, IRecipe> recipes = new Dictionary<string, IRecipe>();
-			foreach (string fuelItemID in _fuelItemIDs)
-			{
-				JSONItem fuelItem = encodings.GetItem(fuelItemID);
-				decimal d = fuelItem.EnergyValue / 1000;
-				List<ItemCount<JSONItem>> ingredients = new List<ItemCount<JSONItem>>
-				{
-					new ItemCount<JSONItem>(fuelItem, _powerProduction / d / ENERGY_DIVISOR)
-				};
-				if (_requiresSupplementalResource)
-				{
-					ingredients.Add(new ItemCount<JSONItem>(encodings.GetItem(Constants.WATER_ID), _powerProduction * _supplementalToPowerRatio * SUPPLEMENTAL_RESOURCE_FACTOR));
-				}
-				IRecipe recipe = new JSONGeneratorRecipe(ID + fuelItemID, 60, ID, ingredients, new List<ItemCount<JSONItem>>(), fuelItem.displayName + " to Power", _powerProduction);
-				recipes.Add(recipe.ID, recipe);
-			}
-			return recipes;
-		}
-
 		public bool EqualID(string id)
 		{
-			return ID.Equals(id);
+			return this.id.Equals(id);
 		}
 
 		public bool EqualID(IHasID obj)
 		{
-			return obj.EqualID(ID);
+			return obj.EqualID(id);
 		}
 
-		private class JSONGeneratorRecipe : BasicRecipe
+		public Building Process()
 		{
-			private readonly RationalNumber _powerProduction;
+			return new Building(id, displayName, -_powerProduction, _powerConsumptionExponent);
+		}
 
-			public JSONGeneratorRecipe(string UID, decimal craftTime, string machineUID, List<ItemCount<JSONItem>> ingredients, List<ItemCount<JSONItem>> products, string displayName, RationalNumber powerProduction) : base(UID, craftTime, machineUID, ingredients, products, displayName)
+		public IEnumerable<Recipe> ProcessRecipes(Dictionary<string, JSONItem> items, ImmutableDictionary<string, Item> processedItems, ImmutableDictionary<string, Building> buildings)
+		{
+			HashSet<Recipe> recipes = new HashSet<Recipe>();
+			foreach (string fuelItemID in _fuelItemIDs)
 			{
-				_powerProduction = powerProduction;
-			}
-
-			protected override string GetConversionString()
-			{
-				string str = "";
-				bool first = true;
-				foreach (JSONItem key in ingredients.Keys)
+				JSONItem fuelItem = items[fuelItemID];
+				decimal itemEnergy = fuelItem.EnergyValue / 1000;
+				Dictionary<Item, RationalNumber> ingredients = new Dictionary<Item, RationalNumber>() {
+					{ processedItems[fuelItemID], _powerProduction / itemEnergy / ENERGY_DIVISOR }
+				};
+				if (_requiresSupplementalResource)
 				{
-					if (!first)
-					{
-						str += ", ";
-					}
-					else
-					{
-						first = false;
-					}
-					str += key.ToString(ingredients[key]);
+					ingredients.Add(processedItems[Constants.WATER_ID], _powerProduction * _supplementalToPowerRatio * SUPPLEMENTAL_RESOURCE_FACTOR);
 				}
-				str += " -> " + _powerProduction.ToString() + " MW";
-				return str;
+				recipes.Add(new Recipe(id + fuelItemID, fuelItem.displayName + " to Power", MakeRecipeConversionString(ingredients), 60, buildings[id], ingredients.ToImmutableDictionary(), ImmutableDictionary<Item, RationalNumber>.Empty));
 			}
+			return recipes;
+		}
+
+		private string MakeRecipeConversionString(Dictionary<Item, RationalNumber> ingredients)
+		{
+			string conversionString = "";
+			bool first = true;
+			foreach (KeyValuePair<Item, RationalNumber> pair in ingredients)
+			{
+				if (!first)
+				{
+					conversionString += ", ";
+				}
+				else
+				{
+					first = false;
+				}
+				conversionString += pair.Key.ToString(pair.Value);
+			}
+			conversionString += " -> " + _powerProduction.ToString() + " MW";
+			return conversionString;
 		}
 	}
 }

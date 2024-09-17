@@ -121,7 +121,7 @@
     <Compile Include="code\Numbers\RationalNumber.cs" />
     <Compile Include="code\Numbers\PrimeNumberHandler.cs" />
     <Compile Include="code\Production\CondensedPlan.cs" />
-    <Compile Include="code\DataStorage\BasicRecipe.cs" />
+    <Compile Include="code\JSONClasses\JSONRecipeBase.cs" />
     <Compile Include="code\Extensions\GenericExtensions.cs" />
     <Compile Include="code\Interfaces\IBuilding.cs" />
     <Compile Include="code\Interfaces\IEncoder.cs" />
