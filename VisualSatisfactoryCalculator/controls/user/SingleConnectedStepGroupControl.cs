@@ -17,7 +17,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 {
 	public partial class SingleConnectedStepGroupControl<ItemType> : UserControl where ItemType : BasicItem
 	{
-		private readonly Dictionary<AbstractStep<ItemType>, RationalNumberControl> producersStepControlMap = new Dictionary<AbstractStep<ItemType>, RationalNumberControl>();
+		/*private readonly Dictionary<AbstractStep<ItemType>, RationalNumberControl> producersStepControlMap = new Dictionary<AbstractStep<ItemType>, RationalNumberControl>();
 		private readonly Dictionary<AbstractStep<ItemType>, RationalNumberControl> consumersStepControlMap = new Dictionary<AbstractStep<ItemType>, RationalNumberControl>();
 		private readonly Dictionary<RationalNumberControl, AbstractStep<ItemType>> controlMap = new Dictionary<RationalNumberControl, AbstractStep<ItemType>>();
 		private readonly Connection<ItemType> connection;
@@ -71,6 +71,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 			// TODO
 			controlMap[control].CascadingUpdateRatesFrom(new ItemRate<ItemType>(connection.Item, newValue), isProducer);
 			throw new NotImplementedException();
-		}
+		}*/
 	}
 }

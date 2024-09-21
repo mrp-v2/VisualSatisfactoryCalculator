@@ -40,25 +40,25 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 
 		public virtual IEnumerable<Recipe> ProcessRecipes(ImmutableDictionary<string, Item> items, HashSet<JSONItem> resourceItems, ImmutableDictionary<string, Building> buildings)
 		{
-			List<Recipe> recipes = new List<Recipe>();
-			foreach (JSONItem item in resourceItems)
+			HashSet<Recipe> recipes = new HashSet<Recipe>();
+			foreach (JSONItem resourceItem in resourceItems)
 			{
-				if (AllowedResourceForms.Contains(item.Form))
+				if (AllowedResourceForms.Contains(resourceItem.Form))
 				{
 					if (OnlySpecificResources)
 					{
-						if (!AllowedResources.Contains(item.id))
+						if (!AllowedResources.Contains(resourceItem.id))
 						{
 							continue;
 						}
 					}
 					foreach (string resourceNodeType in NODE_CYCLE_TIME_DIVISORS.Keys)
 					{
-						List<ItemCount<Item>> products = new List<ItemCount<Item>>
+						Dictionary<Item, RationalNumber> products = new Dictionary<Item, RationalNumber>
 						{
-							new ItemCount<Item>(items[item.id], ItemsPerCycle)
+							{ items[resourceItem.id], ItemsPerCycle }
 						};
-						Recipe recipe = new JSONResourceExtractorRecipe(ID + resourceNodeType + item.id, CycleTime / NODE_CYCLE_TIME_DIVISORS[resourceNodeType], ID, new List<ItemCount<JSONItem>>(), products, resourceNodeType + " " + item.displayName);
+						Recipe recipe = MakeRecipe(ID + resourceNodeType + resourceItem.id, resourceNodeType + " " + resourceItem.displayName, CycleTime / NODE_CYCLE_TIME_DIVISORS[resourceNodeType], buildings[ID], products);
 						recipes.Add(recipe);
 					}
 				}
@@ -72,38 +72,37 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 			{
 			}
 
-			public override Dictionary<string, IRecipe> GetRecipes(JsonEncodings encodings)
+			public override IEnumerable<Recipe> ProcessRecipes(ImmutableDictionary<string, Item> items, HashSet<JSONItem> resourceItems, ImmutableDictionary<string, Building> buildings)
 			{
-				Dictionary<string, IRecipe> recipes = new Dictionary<string, IRecipe>();
-				foreach (JSONItem item in encodings.ResourceItems)
+				HashSet<Recipe> recipes = new HashSet<Recipe>();
+				foreach (JSONItem resouceItem in resourceItems)
 				{
-					if (AllowedResourceForms.Contains(item.Form))
+					if (AllowedResourceForms.Contains(resouceItem.Form))
 					{
 						if (OnlySpecificResources)
 						{
-							if (!AllowedResources.Contains(item.id))
+							if (!AllowedResources.Contains(resouceItem.id))
 							{
 								continue;
 							}
 						}
-						List<ItemCount<JSONItem>> products = new List<ItemCount<JSONItem>>
+						Dictionary<Item, RationalNumber> products = new Dictionary<Item, RationalNumber>
 						{
-							new ItemCount<JSONItem>(encodings.GetItem(item.id), ItemsPerCycle)
+							{ items[resouceItem.id], ItemsPerCycle }
 						};
-						IRecipe recipe = new JSONResourceExtractorRecipe(ID + item.id, CycleTime, ID, new List<ItemCount<JSONItem>>(), products, item.displayName);
-						recipe = MakeRecipe()
-						recipes.Add(recipe.ID, recipe);
+						Recipe recipe = MakeRecipe(ID + resouceItem.id, resouceItem.displayName, CycleTime, buildings[ID], products);
+						recipes.Add(recipe);
 					}
 				}
 				return recipes;
 			}
 		}
 
-		private Recipe MakeRecipe(string id, string displayName, RationalNumber time, Building building, Dictionary<Item, RationalNumber> ingredients, Dictionary<Item, RationalNumber> products)
+		private Recipe MakeRecipe(string id, string displayName, RationalNumber time, Building building, Dictionary<Item, RationalNumber> products)
 		{
 			string conversionString = "";
 			bool first = true;
-			foreach (Item key in products.Keys)
+			foreach (KeyValuePair<Item, RationalNumber> pair in products)
 			{
 				if (!first)
 				{
@@ -113,35 +112,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 				{
 					first = false;
 				}
-				conversionString += key.ToString(products[key]);
+				conversionString += pair.Key.ToString(pair.Value);
 			}
-			return new Recipe(id, displayName, conversionString, time, building, ingredients.ToImmutableDictionary(), products.ToImmutableDictionary());
-		}
-
-		public class JSONResourceExtractorRecipe : JSONRecipeBase
-		{
-			public JSONResourceExtractorRecipe(string UID, RationalNumber craftTime, string machineUID, List<ItemCount<JSONItem>> ingredients, List<ItemCount<JSONItem>> products, string displayName) : base(UID, craftTime, machineUID, ingredients, products, displayName)
-			{
-			}
-
-			protected override string GetConversionString()
-			{
-				string str = "";
-				bool first = true;
-				foreach (JSONItem key in products.Keys)
-				{
-					if (!first)
-					{
-						str += ", ";
-					}
-					else
-					{
-						first = false;
-					}
-					str += key.ToString(products[key]);
-				}
-				return str;
-			}
+			return new Recipe(id, displayName, conversionString, time, building, ImmutableDictionary<Item, RationalNumber>.Empty, products.ToImmutableDictionary());
 		}
 	}
 }

@@ -1,2 +1,2 @@
 ﻿@echo off
-copy "C:\Program Files\Epic Games\SatisfactoryEarlyAccess\CommunityResources\Docs\Docs.json" data\Docs.json
+copy "C:\Program Files (x86)\Steam\steamapps\common\Satisfactory\CommunityResources\Docs\en-US.json" data\Docs.json

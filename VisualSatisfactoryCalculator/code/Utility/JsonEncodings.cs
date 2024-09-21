@@ -13,6 +13,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 	public class JsonEncodings
 	{
 		private readonly Dictionary<string, JSONItem> _items;
+		private readonly Dictionary<string, HashSet<string>> _itemsByNativeClass;
 		private readonly HashSet<JSONItem> _resourceItems;
 		private readonly Dictionary<string, JSONBuilding> _buildings;
 		private readonly Dictionary<string, JSONRecipe> _recipes;
@@ -22,6 +23,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 		public JsonEncodings() : base()
 		{
 			_items = new Dictionary<string, JSONItem>();
+			_itemsByNativeClass = new Dictionary<string, HashSet<string>>();
 			_resourceItems = new HashSet<JSONItem>();
 			_buildings = new Dictionary<string, JSONBuilding>();
 			_recipes = new Dictionary<string, JSONRecipe>();
@@ -47,15 +49,15 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 		public void Add(JSONItem item)
 		{
 			_items.Add(item.id, item);
+			if (!_itemsByNativeClass.ContainsKey(item.NativeClass))
+			{
+				_itemsByNativeClass.Add(item.NativeClass, new HashSet<string>());
+			}
+			_itemsByNativeClass[item.NativeClass].Add(item.id);
 			if (item.NativeClass.Equals("FGResourceDescriptor"))
 			{
 				_resourceItems.Add(item);
 			}
-		}
-
-		public JSONItem GetItem(string id)
-		{
-			return _items[id];
 		}
 
 		public void Add(JSONBuilding building)
@@ -63,19 +65,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			_buildings.Add(building.ID, building);
 		}
 
-		public JSONBuilding GetBuilding(string id)
-		{
-			return _buildings[id];
-		}
-
 		public void Add(JSONRecipe recipe)
 		{
 			_recipes.Add(recipe.id, recipe);
-		}
-
-		public JSONRecipe GetRecipe(string id)
-		{
-			return _recipes[id];
 		}
 
 		public void Add(JSONResourceExtractor extractor)
@@ -83,19 +75,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			_resourceExtractors.Add(extractor.ID, extractor);
 		}
 
-		public JSONResourceExtractor GetResourceExtractor(string id)
-		{
-			return _resourceExtractors[id];
-		}
-
 		public void Add(JSONGenerator generator)
 		{
 			_generators.Add(generator.id, generator);
-		}
-
-		public JSONGenerator GetGenerator(string id)
-		{
-			return _generators[id];
 		}
 
 		public Encodings Process()
@@ -105,6 +87,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			{
 				processedItems.Add(item.id, item.Process());
 			}
+			processedItems.Add(Constants.MW_ITEM.id, Constants.MW_ITEM);
 			ImmutableDictionary<string, Item> finalItems = processedItems.ToImmutableDictionary();
 			HashSet<Item> processedResourceItems = new HashSet<Item>();
 			foreach (JSONItem item in _resourceItems)
@@ -128,7 +111,10 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			Dictionary<string, Recipe> processedRecipes = new Dictionary<string, Recipe>();
 			foreach (JSONRecipe recipe in _recipes.Values)
 			{
-				processedRecipes.Add(recipe.id, recipe.Process(finalItems, finalBuildings));
+				if (recipe.GetBuilding(finalBuildings) != default)
+				{
+					processedRecipes.Add(recipe.id, recipe.Process(finalItems, finalBuildings));
+				}
 			}
 			foreach (JSONResourceExtractor extractor in _resourceExtractors.Values)
 			{
@@ -139,7 +125,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			}
 			foreach (JSONGenerator generator in _generators.Values)
 			{
-				foreach (Recipe recipe in generator.ProcessRecipes(_items, finalItems, finalBuildings))
+				foreach (Recipe recipe in generator.ProcessRecipes(_items, _itemsByNativeClass, finalItems, finalBuildings))
 				{
 					processedRecipes.Add(recipe.id, recipe);
 				}
