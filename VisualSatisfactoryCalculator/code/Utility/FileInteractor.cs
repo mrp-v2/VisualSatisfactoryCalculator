@@ -53,7 +53,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			//JSONBuildings
 			GetSection<JSONBuilding>("BuildableManufacturer", jsonEncodings.Add);
 			GetSection<JSONBuilding>("BuildableManufacturerVariablePower", jsonEncodings.Add);
-			//JSONRecipes -- must go after all buildings, uses buildings to decide what produces this recipe
+			//JSONRecipes
 			foreach (JSONRecipe recipe in GetSection<JSONRecipe>("Recipe"))
 			{
 				jsonEncodings.Add(recipe);

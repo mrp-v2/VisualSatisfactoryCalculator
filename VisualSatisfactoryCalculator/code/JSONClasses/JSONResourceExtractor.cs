@@ -58,7 +58,8 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 						{
 							{ items[resourceItem.id], ItemsPerCycle }
 						};
-						Recipe recipe = MakeRecipe(ID + resourceNodeType + resourceItem.id, resourceNodeType + " " + resourceItem.displayName, CycleTime / NODE_CYCLE_TIME_DIVISORS[resourceNodeType], buildings[ID], products);
+						string displayName = resourceNodeType + " " + resourceItem.displayName + " in a " + buildings[ID].displayName;
+						Recipe recipe = MakeRecipe(ID + resourceNodeType + resourceItem.id, displayName, CycleTime / NODE_CYCLE_TIME_DIVISORS[resourceNodeType], buildings[ID], products);
 						recipes.Add(recipe);
 					}
 				}
@@ -90,7 +91,8 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 						{
 							{ items[resouceItem.id], ItemsPerCycle }
 						};
-						Recipe recipe = MakeRecipe(ID + resouceItem.id, resouceItem.displayName, CycleTime, buildings[ID], products);
+						string displayName = resouceItem.displayName + " in a " + buildings[ID].displayName;
+						Recipe recipe = MakeRecipe(ID + resouceItem.id, displayName, CycleTime, buildings[ID], products);
 						recipes.Add(recipe);
 					}
 				}

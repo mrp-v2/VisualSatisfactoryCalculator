@@ -31,6 +31,10 @@ namespace VisualSatisfactoryCalculator.controls.user
 		public StepControl(Step backingStep, MainForm mainForm)
 		{
 			InitializeComponent();
+			ClockSpeedNumeric.DecimalPlaces = Constants.CLOCK_SPEED_DECIMALS;
+			ClockSpeedNumeric.Maximum = Constants.CLOCK_SPEED_PERCENT_FACTOR;
+			ClockSpeedNumeric.Increment = Constants.MINIMUM_CLOCK_SPEED_CHANGE;
+			MachineLabel.Text = backingStep.recipe.building.displayName + "s";
 			this.backingStep = backingStep;
 			this.mainForm = mainForm;
 			backingStep.SetControl(this);
@@ -44,7 +48,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 			RecipeLabel.Text = backingStep.recipe.displayName + " | " + backingStep.recipe.conversionString + " | " + backingStep.recipe.time + " seconds";
 			MachineCountNumeric.Value = this.backingStep.MachineCount;
-			ClockSpeedNumeric.Value = this.backingStep.ClockSpeedDecimal / 1000m;
+			ClockSpeedNumeric.Value = this.backingStep.ClockSpeedDecimal / Constants.CLOCK_SPEED_PERCENT_FACTOR;
 			UpdateNumerics();
 			FinishInitialization();
 			Disposed += OnDisposed;
@@ -68,9 +72,9 @@ namespace VisualSatisfactoryCalculator.controls.user
 			{
 				MachineCountNumeric.Value = backingStep.MachineCount;
 			}
-			if (ClockSpeedNumeric.Value != backingStep.ClockSpeedDecimal / 1000m)
+			if (ClockSpeedNumeric.Value != backingStep.ClockSpeedDecimal / (decimal)Constants.CLOCK_SPEED_PERCENT_FACTOR)
 			{
-				ClockSpeedNumeric.Value = backingStep.ClockSpeedDecimal / 1000m;
+				ClockSpeedNumeric.Value = backingStep.ClockSpeedDecimal / (decimal)Constants.CLOCK_SPEED_PERCENT_FACTOR;
 			}
 			double powerDraw = backingStep.GetPowerDraw();
 			PowerConsumptionLabel.Text = powerDraw > 0 ? $"Power Consumption: {powerDraw} MW" : $"Power Production: {-powerDraw} MW";
@@ -178,7 +182,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			if (Enabled && _initialized)
 			{
-				backingStep.SetClockSpeedThousandths((ushort)(ClockSpeedNumeric.Value * Constants.CLOCK_SPEED_DECIMAL_FACTOR));
+				backingStep.SetClockSpeedThousandths((uint)(ClockSpeedNumeric.Value * Constants.CLOCK_SPEED_PERCENT_FACTOR));
 				mainForm.UpdateTotalView();
 			}
 		}

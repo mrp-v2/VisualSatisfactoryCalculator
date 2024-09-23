@@ -54,7 +54,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 				_itemsByNativeClass.Add(item.NativeClass, new HashSet<string>());
 			}
 			_itemsByNativeClass[item.NativeClass].Add(item.id);
-			if (item.NativeClass.Equals("FGResourceDescriptor"))
+			if (item.NativeClass.Equals("ResourceDescriptor"))
 			{
 				_resourceItems.Add(item);
 			}

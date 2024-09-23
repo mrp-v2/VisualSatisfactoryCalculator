@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 {
@@ -10,6 +11,8 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 	/// </summary>
 	public sealed class RationalNumber
 	{
+		public static readonly RationalNumber ZERO = new RationalNumber(false, true);
+
 		private readonly ImmutableList<int> _primeFactoredNumerator, _primeFactoredDenominator;
 		public readonly bool isPositive;
 		public readonly bool isNonZero;
@@ -61,7 +64,10 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 
 		public static RationalNumber FromDecimalString(string str)
 		{
-			str = str.TrimEnd('0');
+			if (str.Contains('.'))
+			{
+				str = str.TrimEnd('0');
+			}
 			str = str.TrimEnd('.');
 			if (str.Contains('.'))
 			{
@@ -207,7 +213,17 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 			}
 			ImmutableList<int> numeratorA = a._primeFactoredNumerator.AddRange(b._primeFactoredDenominator);
 			ImmutableList<int> numeratorB = b._primeFactoredNumerator.AddRange(a._primeFactoredDenominator);
-			int numerator = Product(numeratorA) + Product(numeratorB);
+			int productA = Product(numeratorA);
+			if (!a.isPositive)
+			{
+				productA = -productA;
+			}
+			int productB = Product(numeratorB);
+			if (!b.isPositive)
+			{
+				productB = -productB;
+			}
+			int numerator = productA + productB;
 			if (numerator == 0)
 			{
 				return new RationalNumber(false, true);
@@ -395,6 +411,10 @@ namespace VisualSatisfactoryCalculator.satisfactory.Numbers
 
 		public static implicit operator RationalNumber(decimal d)
 		{
+			if (d == 0)
+			{
+				return ZERO;
+			}
 			return FromDecimalString(d.ToString());
 		}
 

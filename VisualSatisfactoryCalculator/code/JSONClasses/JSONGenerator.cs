@@ -19,24 +19,24 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 	public class JSONGenerator
 	{
 		public readonly string id;
-		private readonly string[] _fuelItemIDs;
 		private readonly RationalNumber _powerProduction;
 		public readonly string displayName;
 		private readonly RationalNumber _powerConsumptionExponent;
+		private readonly Fuel[] _fuels;
 
 		private readonly bool _requiresSupplementalResource;
-		private readonly decimal _supplementalToPowerRatio;
+		private readonly RationalNumber _supplementalToPowerRatio;
 
 		[JsonConstructor]
-		public JSONGenerator(string ClassName, string mDefaultFuelClasses, bool mRequiresSupplementalResource, decimal mSupplementalToPowerRatio, string mPowerProduction, string mDisplayName)
+		public JSONGenerator(string ClassName, bool mRequiresSupplementalResource, decimal mSupplementalToPowerRatio, string mPowerProduction, string mDisplayName, Fuel[] mFuel)
 		{
 			id = ClassName;
-			_fuelItemIDs = Util.ParseUIDList(mDefaultFuelClasses);
-			_powerProduction = decimal.Parse(mPowerProduction);
+			_powerProduction = RationalNumber.FromDecimalString(mPowerProduction);
 			_powerConsumptionExponent = 1;
 			displayName = mDisplayName;
 			_requiresSupplementalResource = mRequiresSupplementalResource;
 			_supplementalToPowerRatio = mSupplementalToPowerRatio;
+			_fuels = mFuel;
 		}
 
 		public static readonly RationalNumber ENERGY_DIVISOR = new RationalNumber(50, 3, true);
@@ -60,40 +60,53 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 		public IEnumerable<Recipe> ProcessRecipes(Dictionary<string, JSONItem> items, Dictionary<string, HashSet<string>> itemsByNativeClass, ImmutableDictionary<string, Item> processedItems, ImmutableDictionary<string, Building> buildings)
 		{
 			HashSet<Recipe> recipes = new HashSet<Recipe>();
-			ProcessRecipesRecursively(items, itemsByNativeClass, processedItems, buildings, _fuelItemIDs, recipes);
+			foreach (Fuel fuel in _fuels)
+			{
+				JSONItem fuelItem = items[fuel.itemID];
+				decimal itemEnergy = fuelItem.EnergyValue / 1000;
+				if (itemEnergy == 0)
+				{
+					continue;
+				}
+				Dictionary<Item, RationalNumber> ingredients = new Dictionary<Item, RationalNumber>()
+				{
+					{ processedItems[fuel.itemID], _powerProduction / itemEnergy / ENERGY_DIVISOR }
+				};
+				if (_requiresSupplementalResource)
+				{
+					ingredients.Add(processedItems[fuel.supplementalItemID], _powerProduction * _supplementalToPowerRatio * SUPPLEMENTAL_RESOURCE_FACTOR);
+				}
+				Dictionary<Item, RationalNumber> products = new Dictionary<Item, RationalNumber>();
+				if (fuel.byproductItemID.Length > 0)
+				{
+					products.Add(processedItems[fuel.byproductItemID], fuel.byproductAmount);
+				}
+				recipes.Add(new Recipe(id + fuel.itemID, fuelItem.displayName + " to Power in a " + buildings[id].displayName, MakeRecipeConversionString(ingredients, products), 60, buildings[id], ingredients.ToImmutableDictionary(), products.ToImmutableDictionary()));
+			}
 			return recipes;
 		}
 
-		private void ProcessRecipesRecursively(Dictionary<string, JSONItem> items, Dictionary<string, HashSet<string>> itemsByNativeClass, ImmutableDictionary<string, Item> processedItems, ImmutableDictionary<string, Building> buildings, IEnumerable<string> fuelItemIDs, HashSet<Recipe> recipes)
+		public class Fuel
 		{
-			foreach (string fuelItemID in fuelItemIDs)
+			public readonly string itemID;
+			public readonly string supplementalItemID;
+			public readonly string byproductItemID;
+			public readonly RationalNumber byproductAmount;
+
+			[JsonConstructor]
+			public Fuel(string mFuelClass, string mSupplementalResourceClass, string mByproduct, string mByproductAmount)
 			{
-				if (fuelItemID.StartsWith("FGItemDescriptor"))
+				itemID = mFuelClass;
+				supplementalItemID = mSupplementalResourceClass;
+				byproductItemID = mByproduct;
+				if (mByproduct.Length > 0)
 				{
-					ProcessRecipesRecursively(items, itemsByNativeClass, processedItems, buildings, itemsByNativeClass[fuelItemID], recipes);
-				}
-				else
-				{
-					JSONItem fuelItem = items[fuelItemID];
-					decimal itemEnergy = fuelItem.EnergyValue / 1000;
-					if (itemEnergy == 0)
-					{
-						continue;
-					}
-					Dictionary<Item, RationalNumber> ingredients = new Dictionary<Item, RationalNumber>()
-					{
-						{ processedItems[fuelItemID], _powerProduction / itemEnergy / ENERGY_DIVISOR }
-					};
-					if (_requiresSupplementalResource)
-					{
-						ingredients.Add(processedItems[Constants.WATER_ID], _powerProduction * _supplementalToPowerRatio * SUPPLEMENTAL_RESOURCE_FACTOR);
-					}
-					recipes.Add(new Recipe(id + fuelItemID, fuelItem.displayName + " to Power", MakeRecipeConversionString(ingredients), 60, buildings[id], ingredients.ToImmutableDictionary(), ImmutableDictionary<Item, RationalNumber>.Empty));
+					byproductAmount = mByproductAmount.Length > 0 ? RationalNumber.FromDecimalString(mByproductAmount) : null;
 				}
 			}
 		}
 
-		private string MakeRecipeConversionString(Dictionary<Item, RationalNumber> ingredients)
+		private string MakeRecipeConversionString(Dictionary<Item, RationalNumber> ingredients, Dictionary<Item, RationalNumber> products)
 		{
 			string conversionString = "";
 			bool first = true;
@@ -109,7 +122,12 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 				}
 				conversionString += pair.Key.ToString(pair.Value);
 			}
-			conversionString += " -> " + _powerProduction.ToString() + " MW";
+			conversionString += " -> ";
+			foreach (KeyValuePair<Item, RationalNumber> pair in ingredients)
+			{
+				conversionString += pair.Key.ToString(pair.Value) + ", ";
+			}
+			conversionString += _powerProduction.ToString() + " MW";
 			return conversionString;
 		}
 	}

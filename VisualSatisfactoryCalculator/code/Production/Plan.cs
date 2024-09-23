@@ -30,9 +30,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			RateCollection rates = new RateCollection(0);
 			foreach (Step step in steps)
 			{
-				foreach (ItemCount<Item> itemCount in step.productionRates.Get())
+				foreach (KeyValuePair<Item, RationalNumber> pair in step.productionRates.Get())
 				{
-					rates.Add(itemCount.item, step.GetRate(itemCount.item, true));
+					rates.Add(pair.Key, pair.Value);
 				}
 			}
 			return rates;
@@ -53,9 +53,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			RateCollection rates = new RateCollection(GetPowerDraw());
 			foreach (Step step in steps)
 			{
-				foreach (ItemCount itemCount in step.consumptionRates.Get())
+				foreach (KeyValuePair<Item, RationalNumber> pair in step.consumptionRates.Get())
 				{
-					rates.Add(itemCount.item, step.GetRate(itemCount.item, false));
+					rates.Add(pair.Key, pair.Value);
 				}
 			}
 			return rates;

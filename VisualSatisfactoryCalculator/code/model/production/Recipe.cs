@@ -24,5 +24,10 @@ namespace VisualSatisfactoryCalculator.satisfactory.model.production
 			this.conversionString = conversionString;
 			this.building = building;
 		}
+
+		public override string ToString()
+		{
+			return displayName;
+		}
 	}
 }

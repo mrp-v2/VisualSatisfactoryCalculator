@@ -170,7 +170,10 @@ namespace VisualSatisfactoryCalculator.model.production
 		{
 			public readonly HashSet<Connection<ItemType, StepType, RecipeType>> multiconnectionsToVisit;
 
-			public CascadingUpdatesOrigin(bool includeMulticonnections) : base(includeMulticonnections) { }
+			public CascadingUpdatesOrigin(bool includeMulticonnections) : base(includeMulticonnections)
+			{
+				multiconnectionsToVisit = new HashSet<Connection<ItemType, StepType, RecipeType>>();
+			}
 
 			public override abstract IRound GetFirstRound();
 		}
@@ -185,6 +188,7 @@ namespace VisualSatisfactoryCalculator.model.production
 			public StepOrigin(StepType origin, bool includeMulticonnections) : base(includeMulticonnections)
 			{
 				_origin = origin;
+				visited.Add(origin);
 			}
 
 			public override IRound GetFirstRound()
@@ -205,6 +209,7 @@ namespace VisualSatisfactoryCalculator.model.production
 			public ConnectionOrigin(Connection<ItemType, StepType, RecipeType> origin, bool includeMulticonnections) : base(includeMulticonnections)
 			{
 				_origin = origin;
+				visited.Add(origin);
 			}
 
 			public override IRound GetFirstRound()

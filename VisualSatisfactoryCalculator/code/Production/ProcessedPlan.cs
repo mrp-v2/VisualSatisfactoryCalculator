@@ -24,8 +24,11 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			_abnormalConnections = new HashSet<Connection>();
 			_tierSteps = new Dictionary<int, HashSet<Step>>();
 			_allConnections = new HashSet<Connection>();
-			CalculateConnectionGroups();
-			CalculateStepTiers();
+			if (_steps.Count > 0)
+			{
+				CalculateConnectionGroups();
+				CalculateStepTiers();
+			}
 		}
 
 		public IEnumerable<Connection> GetAbnormalConnections()

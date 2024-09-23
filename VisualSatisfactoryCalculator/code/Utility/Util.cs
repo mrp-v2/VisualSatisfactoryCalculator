@@ -20,7 +20,8 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			for (int i = 0; i < items.Length; i++)
 			{
 				string item = items[i];
-				items[i] = item.Substring(item.IndexOf('.') + 1);
+				item = item.Substring(item.LastIndexOf('.') + 1);
+				items[i] = item;
 			}
 			return items;
 		}
