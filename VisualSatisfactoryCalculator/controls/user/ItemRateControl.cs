@@ -48,7 +48,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			if (Enabled && _initialized)
 			{
 				_mainForm.SuspendDrawing();
-				_rateChanged(Item, oldValue, newValue, IsProduct);
+				_rateChanged(Item, oldValue * Item.countDisplayFactor, newValue * Item.countDisplayFactor, IsProduct);
 				_mainForm.UpdateTotalView();
 				_mainForm.ResumeDrawing();
 			}
@@ -61,7 +61,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		public void UpdateRateValue(RationalNumber newRate)
 		{
-			NumberControl.SetNumber(newRate);
+			NumberControl.SetNumber(newRate / Item.countDisplayFactor);
 		}
 
 		public void ToggleInput(bool on)

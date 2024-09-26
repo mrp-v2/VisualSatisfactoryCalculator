@@ -97,7 +97,6 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			foreach (Item item in netRates.Items)
 			{
 				RationalNumber rate = netRates[item];
-				string rateStr = rate.ToString();
 				if (rate.isPositive && rate.isNonZero)
 				{
 					if (first)
@@ -108,7 +107,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 					{
 						str += ", ";
 					}
-					str += rateStr + " " + item.displayName;
+					str += item.ToString(rate);
 				}
 			}
 			str += "\nAll Products: ";
@@ -116,6 +115,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			first = true;
 			foreach (Item item in rates.Items)
 			{
+				RationalNumber rate = rates[item];
 				if (first)
 				{
 					first = false;
@@ -124,7 +124,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				{
 					str += ", ";
 				}
-				str += rates[item].ToString() + " " + item.displayName;
+				str += item.ToString(rate);
 			}
 			return str;
 		}
@@ -144,7 +144,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				{
 					str += ", ";
 				}
-				str += rates[item].ToString() + " " + item.displayName;
+				str += item.ToString(rates[item]);
 			}
 			str += "\nNet Ingredients: ";
 			RateCollection netRates = GetNetRates();
@@ -152,7 +152,6 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			foreach (Item item in netRates.Items)
 			{
 				RationalNumber rate = netRates[item];
-				string rateStr = (-rate).ToString();
 				if (!rate.isPositive && rate.isNonZero)
 				{
 					if (first)
@@ -163,7 +162,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 					{
 						str += ", ";
 					}
-					str += rateStr + " " + item.displayName;
+					str += item.ToString(-rate);
 				}
 			}
 			return str;

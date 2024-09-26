@@ -11,23 +11,23 @@ namespace VisualSatisfactoryCalculator.satisfactory.model.production
 {
 	public class Item : BasicItem
 	{
-		private readonly bool _isFluid;
+		public readonly RationalNumber countDisplayFactor;
 
 		public Item(string id, string displayName, bool isFluid) : base(id, displayName)
 		{
-			_isFluid = isFluid;
+			if (isFluid)
+			{
+				countDisplayFactor = 1000;
+			}
+			else
+			{
+				countDisplayFactor = 1;
+			}
 		}
 
 		public string ToString(RationalNumber count)
 		{
-			if (_isFluid)
-			{
-				return (count / 1000) + " " + ToString();
-			}
-			else
-			{
-				return count + " " + ToString();
-			}
+			return (count / countDisplayFactor) + " " + ToString();
 		}
 	}
 }
