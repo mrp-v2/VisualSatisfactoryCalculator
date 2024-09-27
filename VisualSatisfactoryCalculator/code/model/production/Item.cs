@@ -13,16 +13,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.model.production
 	{
 		public readonly RationalNumber countDisplayFactor;
 
-		public Item(string id, string displayName, bool isFluid) : base(id, displayName)
+		public Item(string id, string displayName, RationalNumber countDisplayFactor) : base(id, displayName)
 		{
-			if (isFluid)
-			{
-				countDisplayFactor = 1000;
-			}
-			else
-			{
-				countDisplayFactor = 1;
-			}
+			this.countDisplayFactor = countDisplayFactor;
 		}
 
 		public string ToString(RationalNumber count)

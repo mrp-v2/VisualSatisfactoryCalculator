@@ -33,7 +33,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			InitializeComponent();
 			ClockSpeedNumeric.DecimalPlaces = Constants.CLOCK_SPEED_DECIMALS;
 			ClockSpeedNumeric.Maximum = Constants.CLOCK_SPEED_PERCENT_FACTOR;
-			ClockSpeedNumeric.Increment = Constants.MINIMUM_CLOCK_SPEED_CHANGE;
+			ClockSpeedNumeric.Increment = 1;
 			MachineLabel.Text = backingStep.recipe.building.displayName + "s";
 			this.backingStep = backingStep;
 			this.mainForm = mainForm;

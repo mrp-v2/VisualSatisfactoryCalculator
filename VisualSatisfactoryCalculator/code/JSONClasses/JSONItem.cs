@@ -92,7 +92,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 
 		public Item Process()
 		{
-			return new Item(id, displayName, IsFluid);
+			return new Item(id, displayName, IsFluid ? 1000 : 1);
 		}
 	}
 }

@@ -41,12 +41,12 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.ClockSpeedPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.ClockPercentLabelA = new System.Windows.Forms.Label();
 			this.ClockSpeedNumeric = new System.Windows.Forms.NumericUpDown();
+			this.ClockSpeedPercentLabelB = new System.Windows.Forms.Label();
 			this.DeleteStepButton = new System.Windows.Forms.Button();
 			this.RecipeLabel = new System.Windows.Forms.Label();
 			this.PowerConsumptionLabel = new System.Windows.Forms.Label();
 			this.MainPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.MainLayout = new System.Windows.Forms.FlowLayoutPanel();
-			this.ClockSpeedPercentLabelB = new System.Windows.Forms.Label();
 			this.InfoPanel.SuspendLayout();
 			this.StepActionsPanel.SuspendLayout();
 			this.MachinePanel.SuspendLayout();
@@ -190,11 +190,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 			// ClockSpeedNumeric
 			// 
 			this.ClockSpeedNumeric.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-			this.ClockSpeedNumeric.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            196608});
 			this.ClockSpeedNumeric.Location = new System.Drawing.Point(62, 2);
 			this.ClockSpeedNumeric.Margin = new System.Windows.Forms.Padding(2);
 			this.ClockSpeedNumeric.Maximum = new decimal(new int[] {
@@ -215,6 +210,18 @@ namespace VisualSatisfactoryCalculator.controls.user
             0,
             0,
             0});
+			// 
+			// ClockSpeedPercentLabelB
+			// 
+			this.ClockSpeedPercentLabelB.Anchor = System.Windows.Forms.AnchorStyles.None;
+			this.ClockSpeedPercentLabelB.AutoSize = true;
+			this.ClockSpeedPercentLabelB.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+			this.ClockSpeedPercentLabelB.Location = new System.Drawing.Point(156, 5);
+			this.ClockSpeedPercentLabelB.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+			this.ClockSpeedPercentLabelB.Name = "ClockSpeedPercentLabelB";
+			this.ClockSpeedPercentLabelB.Size = new System.Drawing.Size(20, 17);
+			this.ClockSpeedPercentLabelB.TabIndex = 2;
+			this.ClockSpeedPercentLabelB.Text = "%";
 			// 
 			// DeleteStepButton
 			// 
@@ -275,18 +282,6 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.MainLayout.Name = "MainLayout";
 			this.MainLayout.Size = new System.Drawing.Size(465, 126);
 			this.MainLayout.TabIndex = 4;
-			// 
-			// ClockSpeedPercentLabelB
-			// 
-			this.ClockSpeedPercentLabelB.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.ClockSpeedPercentLabelB.AutoSize = true;
-			this.ClockSpeedPercentLabelB.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-			this.ClockSpeedPercentLabelB.Location = new System.Drawing.Point(156, 5);
-			this.ClockSpeedPercentLabelB.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-			this.ClockSpeedPercentLabelB.Name = "ClockSpeedPercentLabelB";
-			this.ClockSpeedPercentLabelB.Size = new System.Drawing.Size(20, 17);
-			this.ClockSpeedPercentLabelB.TabIndex = 2;
-			this.ClockSpeedPercentLabelB.Text = "%";
 			// 
 			// StepControl
 			// 
