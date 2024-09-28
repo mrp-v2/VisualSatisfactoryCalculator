@@ -4,14 +4,13 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-using VisualSatisfactoryCalculator.satisfactory.Production;
 using VisualSatisfactoryCalculator.controls.user;
 using VisualSatisfactoryCalculator.forms;
+using VisualSatisfactoryCalculator.model.production;
+using VisualSatisfactoryCalculator.satisfactory.model.production;
+using VisualSatisfactoryCalculator.satisfactory.Production;
 
 using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.model.production.Item, VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.model.production.Recipe>;
-using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
-using VisualSatisfactoryCalculator.satisfactory.model.production;
-using VisualSatisfactoryCalculator.model.production;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Utility
 {

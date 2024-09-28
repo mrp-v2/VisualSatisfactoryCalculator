@@ -1,11 +1,7 @@
 ﻿using System.Collections.Generic;
 
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
-using VisualSatisfactoryCalculator.satisfactory.Utility;
-using VisualSatisfactoryCalculator.model.production;
-
-using ItemCount = VisualSatisfactoryCalculator.model.production.ItemCount<VisualSatisfactoryCalculator.satisfactory.model.production.Item>;
 using VisualSatisfactoryCalculator.satisfactory.model.production;
+using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
@@ -30,7 +26,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			RateCollection rates = new RateCollection(0);
 			foreach (Step step in steps)
 			{
-				foreach (KeyValuePair<Item, RationalNumber> pair in step.productionRates.Get())
+				foreach (KeyValuePair<Item, decimal> pair in step.productionRates.Get())
 				{
 					rates.Add(pair.Key, pair.Value);
 				}
@@ -53,7 +49,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			RateCollection rates = new RateCollection(GetPowerDraw());
 			foreach (Step step in steps)
 			{
-				foreach (KeyValuePair<Item, RationalNumber> pair in step.consumptionRates.Get())
+				foreach (KeyValuePair<Item, decimal> pair in step.consumptionRates.Get())
 				{
 					rates.Add(pair.Key, pair.Value);
 				}
@@ -96,8 +92,8 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			bool first = true;
 			foreach (Item item in netRates.Items)
 			{
-				RationalNumber rate = netRates[item];
-				if (rate.isPositive && rate.isNonZero)
+				decimal rate = netRates[item];
+				if (rate > 0)
 				{
 					if (first)
 					{
@@ -115,7 +111,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			first = true;
 			foreach (Item item in rates.Items)
 			{
-				RationalNumber rate = rates[item];
+				decimal rate = rates[item];
 				if (first)
 				{
 					first = false;
@@ -151,8 +147,8 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			first = true;
 			foreach (Item item in netRates.Items)
 			{
-				RationalNumber rate = netRates[item];
-				if (!rate.isPositive && rate.isNonZero)
+				decimal rate = netRates[item];
+				if (rate < 0)
 				{
 					if (first)
 					{

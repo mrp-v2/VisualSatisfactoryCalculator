@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VisualSatisfactoryCalculator.model.production
+﻿namespace VisualSatisfactoryCalculator.model.production
 {
 	/// <summary>
 	/// The basic implementations of an item. Extend this class to provide additional functionality.

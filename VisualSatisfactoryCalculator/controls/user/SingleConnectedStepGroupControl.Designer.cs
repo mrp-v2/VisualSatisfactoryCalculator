@@ -1,4 +1,6 @@
-﻿using VisualSatisfactoryCalculator.model.production;
+﻿using System.Windows.Forms;
+
+using VisualSatisfactoryCalculator.model.production;
 
 namespace VisualSatisfactoryCalculator.controls.user
 {
@@ -30,7 +32,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.NetGroupRate = new VisualSatisfactoryCalculator.controls.user.RationalNumberControl();
+			this.NetGroupRate = new System.Windows.Forms.NumericUpDown();
 			this.MainPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.ProducersPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.ConsumersPanel = new System.Windows.Forms.FlowLayoutPanel();
@@ -39,8 +41,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			// 
 			// NetGroupRate
 			// 
-			this.NetGroupRate.AutoSize = true;
-			this.NetGroupRate.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.NetGroupRate.AutoSize = false;
 			this.NetGroupRate.Location = new System.Drawing.Point(4, 10);
 			this.NetGroupRate.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
 			this.NetGroupRate.Name = "NetGroupRate";
@@ -96,7 +97,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 
 		#endregion
 
-		private RationalNumberControl NetGroupRate;
+		private NumericUpDown NetGroupRate;
 		private System.Windows.Forms.FlowLayoutPanel MainPanel;
 		private System.Windows.Forms.FlowLayoutPanel ProducersPanel;
 		private System.Windows.Forms.FlowLayoutPanel ConsumersPanel;

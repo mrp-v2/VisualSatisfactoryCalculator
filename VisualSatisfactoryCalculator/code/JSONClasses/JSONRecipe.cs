@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-
-using VisualSatisfactoryCalculator.satisfactory.Extensions;
-using VisualSatisfactoryCalculator.satisfactory.Interfaces;
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
-using VisualSatisfactoryCalculator.satisfactory.Utility;
-using VisualSatisfactoryCalculator.model.production;
-using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
-using VisualSatisfactoryCalculator.code.Utility;
-using VisualSatisfactoryCalculator.satisfactory.model.production;
-using System.Windows.Forms;
 using System.Diagnostics;
+
 using Newtonsoft.Json;
+
+using VisualSatisfactoryCalculator.model.production;
+using VisualSatisfactoryCalculator.satisfactory.model.production;
 
 namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 {
@@ -21,7 +14,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 		public readonly string id;
 		private readonly string _producedIn;
 		private readonly string _displayName;
-		private readonly RationalNumber _craftTime;
+		private readonly decimal _craftTime;
 		private readonly string _ingredients;
 		private readonly string _products;
 
@@ -30,7 +23,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 		{
 		}
 
-		public JSONRecipe(string id, RationalNumber craftTime, string producedIn, string ingredients, string products, string displayName)
+		public JSONRecipe(string id, decimal craftTime, string producedIn, string ingredients, string products, string displayName)
 		{
 			this.id = id;
 			_producedIn = producedIn;
@@ -62,13 +55,13 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 			return false;
 		}
 
-		private ImmutableDictionary<Item, RationalNumber> GetIngredients(ImmutableDictionary<string, Item> items)
+		private ImmutableDictionary<Item, decimal> GetIngredients(ImmutableDictionary<string, Item> items)
 		{
 			if (_ingredients.Length == 0)
 			{
-				return ImmutableDictionary<Item, RationalNumber>.Empty;
+				return ImmutableDictionary<Item, decimal>.Empty;
 			}
-			Dictionary<Item, RationalNumber> ingredientsList = new Dictionary<Item, RationalNumber>();
+			Dictionary<Item, decimal> ingredientsList = new Dictionary<Item, decimal>();
 			string[] ingredientsArray = _ingredients.Split(',');
 			Trace.Assert(ingredientsArray.Length % 2 == 0);
 			for (int i = 0; i < ingredientsArray.Length; i += 2)
@@ -79,9 +72,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 			return ingredientsList.ToImmutableDictionary();
 		}
 
-		private ImmutableDictionary<Item, RationalNumber> GetProducts(ImmutableDictionary<string, Item> items)
+		private ImmutableDictionary<Item, decimal> GetProducts(ImmutableDictionary<string, Item> items)
 		{
-			Dictionary<Item, RationalNumber> productsList = new Dictionary<Item, RationalNumber>();
+			Dictionary<Item, decimal> productsList = new Dictionary<Item, decimal>();
 			string[] productsArray = _products.Split(',');
 			Trace.Assert(productsArray.Length % 2 == 0);
 			for (int i = 0; i < productsArray.Length; i += 2)
@@ -98,14 +91,14 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 			id = id.Substring(0, id.LastIndexOf("'"));
 			count = count.Replace(")", "");
 			count = count.Remove(0, "Amount=".Length);
-			RationalNumber itemCount = int.Parse(count);
+			decimal itemCount = int.Parse(count);
 			return new ItemCount<Item>(items[id], itemCount);
 		}
 
 		public virtual Recipe Process(ImmutableDictionary<string, Item> items, ImmutableDictionary<string, Building> buildings)
 		{
-			ImmutableDictionary<Item, RationalNumber> ingredients = GetIngredients(items);
-			ImmutableDictionary<Item, RationalNumber> products = GetProducts(items);
+			ImmutableDictionary<Item, decimal> ingredients = GetIngredients(items);
+			ImmutableDictionary<Item, decimal> products = GetProducts(items);
 			string conversionString = GetConversionString(ingredients, products);
 			Building building = GetBuilding(buildings);
 			return new Recipe(id, GetDisplayName(conversionString, building), conversionString, _craftTime, building, ingredients, products);
@@ -124,11 +117,11 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 			return default;
 		}
 
-		protected virtual string GetConversionString(ImmutableDictionary<Item, RationalNumber> ingredients, ImmutableDictionary<Item, RationalNumber> products)
+		protected virtual string GetConversionString(ImmutableDictionary<Item, decimal> ingredients, ImmutableDictionary<Item, decimal> products)
 		{
 			string str = "";
 			bool first = true;
-			foreach (KeyValuePair<Item, RationalNumber> pair in ingredients)
+			foreach (KeyValuePair<Item, decimal> pair in ingredients)
 			{
 				if (!first)
 				{
@@ -145,7 +138,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 				str += " -> ";
 				first = true;
 			}
-			foreach (KeyValuePair<Item, RationalNumber> pair in products)
+			foreach (KeyValuePair<Item, decimal> pair in products)
 			{
 				if (!first)
 				{

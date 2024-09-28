@@ -6,10 +6,10 @@ using System.Windows.Forms;
 
 using MrpV2.GenericLibrary.code.persistance.classes;
 
+using VisualSatisfactoryCalculator.code.Utility;
+using VisualSatisfactoryCalculator.controls.user;
 using VisualSatisfactoryCalculator.satisfactory.Production;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
-using VisualSatisfactoryCalculator.controls.user;
-using VisualSatisfactoryCalculator.code.Utility;
 
 using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.model.production.Item, VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.model.production.Recipe>;
 

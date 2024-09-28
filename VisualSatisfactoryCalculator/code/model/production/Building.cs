@@ -1,15 +1,13 @@
-﻿using VisualSatisfactoryCalculator.satisfactory.Numbers;
-
-namespace VisualSatisfactoryCalculator.satisfactory.model.production
+﻿namespace VisualSatisfactoryCalculator.satisfactory.model.production
 {
 	public class Building
 	{
 		public readonly string id;
 		public readonly string displayName;
-		public readonly RationalNumber powerConsumption;
-		public readonly RationalNumber powerConsumptionExponent;
+		public readonly decimal powerConsumption;
+		public readonly decimal powerConsumptionExponent;
 
-		public Building(string id, string displayName, RationalNumber powerConsumption, RationalNumber powerConsumptionExponent)
+		public Building(string id, string displayName, decimal powerConsumption, decimal powerConsumptionExponent)
 		{
 			this.id = id;
 			this.displayName = displayName;

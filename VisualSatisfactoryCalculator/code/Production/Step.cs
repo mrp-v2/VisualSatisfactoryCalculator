@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
-using VisualSatisfactoryCalculator.satisfactory.Utility;
+
 using VisualSatisfactoryCalculator.controls.user;
 using VisualSatisfactoryCalculator.model.production;
+using VisualSatisfactoryCalculator.satisfactory.model.production;
+using VisualSatisfactoryCalculator.satisfactory.Utility;
+
 using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.model.production.Item, VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.model.production.Recipe>;
 using ItemCount = VisualSatisfactoryCalculator.model.production.ItemCount<VisualSatisfactoryCalculator.satisfactory.model.production.Item>;
-using VisualSatisfactoryCalculator.satisfactory.model.production;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
@@ -15,8 +16,8 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 	{
 		public readonly CachedValue<bool> hasNormalProductConnections;
 		public readonly CachedValue<IImmutableSet<Connection>> normalIngredientConnections;
-		public readonly CachedValue<ImmutableDictionary<Item, RationalNumber>> productionRates;
-		public readonly CachedValue<ImmutableDictionary<Item, RationalNumber>> consumptionRates;
+		public readonly CachedValue<ImmutableDictionary<Item, decimal>> productionRates;
+		public readonly CachedValue<ImmutableDictionary<Item, decimal>> consumptionRates;
 		private uint _machineCount;
 		private uint _clockSpeedDecimal;
 		public uint MachineCount
@@ -189,19 +190,19 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				}
 				return ImmutableHashSet.CreateRange(normalIngredients);
 			});
-			productionRates = new CachedValue<ImmutableDictionary<Item, RationalNumber>>(() =>
+			productionRates = new CachedValue<ImmutableDictionary<Item, decimal>>(() =>
 			{
-				Dictionary<Item, RationalNumber> rates = new Dictionary<Item, RationalNumber>();
-				foreach (KeyValuePair<Item, RationalNumber> pair in recipe.products)
+				Dictionary<Item, decimal> rates = new Dictionary<Item, decimal>();
+				foreach (KeyValuePair<Item, decimal> pair in recipe.products)
 				{
 					rates.Add(pair.Key, CalculateCurrentRate(pair.Value));
 				}
 				return rates.ToImmutableDictionary();
 			});
-			consumptionRates = new CachedValue<ImmutableDictionary<Item, RationalNumber>>(() =>
+			consumptionRates = new CachedValue<ImmutableDictionary<Item, decimal>>(() =>
 			{
-				Dictionary<Item, RationalNumber> rates = new Dictionary<Item, RationalNumber>();
-				foreach (KeyValuePair<Item, RationalNumber> pair in recipe.ingredients)
+				Dictionary<Item, decimal> rates = new Dictionary<Item, decimal>();
+				foreach (KeyValuePair<Item, decimal> pair in recipe.ingredients)
 				{
 					rates.Add(pair.Key, CalculateCurrentRate(pair.Value));
 				}
@@ -230,19 +231,19 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		/// <summary>
 		/// Always positive
 		/// </summary>
-		private RationalNumber CalculateDefaultItemRate(Item item, bool isItemProduct)
+		private decimal CalculateDefaultItemRate(Item item, bool isItemProduct)
 		{
 			return CalculateDefaultItemRate(recipe.GetCount(item, isItemProduct));
 		}
 
-		private RationalNumber CalculateDefaultItemRate(RationalNumber recipeCount)
+		private decimal CalculateDefaultItemRate(decimal recipeCount)
 		{
 			return 60 / recipe.time * recipeCount;
 		}
 
-		private RationalNumber CalculateCurrentRate(RationalNumber recipeCount)
+		private decimal CalculateCurrentRate(decimal recipeCount)
 		{
-			return CalculateDefaultItemRate(recipeCount) * (ClockSpeedDecimal / (RationalNumber)Constants.CLOCK_SPEED_FACTOR) * MachineCount;
+			return CalculateDefaultItemRate(recipeCount) * (ClockSpeedDecimal / (decimal)Constants.CLOCK_SPEED_FACTOR) * MachineCount;
 		}
 
 		private void UpdateControl()
@@ -256,7 +257,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		/// <summary>
 		/// Always positive
 		/// </summary>
-		public override RationalNumber GetRate(Item item, bool isItemProduct)
+		public override decimal GetRate(Item item, bool isItemProduct)
 		{
 			if (isItemProduct)
 			{
@@ -290,7 +291,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		public double GetPowerDraw()
 		{
 			Building building = recipe.building;
-			return building.powerConsumption.ToDouble() * Math.Pow(ClockSpeedDecimal / (double)Constants.CLOCK_SPEED_FACTOR, building.powerConsumptionExponent.ToDouble()) * MachineCount;
+			return (double)building.powerConsumption * Math.Pow(ClockSpeedDecimal / (double)Constants.CLOCK_SPEED_FACTOR, (double)building.powerConsumptionExponent) * MachineCount;
 		}
 
 		protected override void UpdateRatesFrom(Dictionary<ItemCount, bool> rates)
@@ -298,7 +299,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			uint newMachineCount = 0;
 			foreach (KeyValuePair<ItemCount<Item>, bool> entry in rates)
 			{
-				uint potentialMachineCount = (uint)Math.Ceiling((entry.Key.rate / CalculateDefaultItemRate(entry.Key.item, entry.Value)).ToDecimalT());
+				uint potentialMachineCount = (uint)Math.Ceiling(entry.Key.rate / CalculateDefaultItemRate(entry.Key.item, entry.Value));
 				newMachineCount = Math.Max(newMachineCount, potentialMachineCount);
 			}
 			MachineCount = newMachineCount;
@@ -306,7 +307,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			uint newClockSpeedThousandths = 0;
 			foreach (KeyValuePair<ItemCount<Item>, bool> entry in rates)
 			{
-				uint potentialClockSpeedThousandths = (uint)Math.Ceiling((entry.Key.rate / GetRate(entry.Key.item, entry.Value) * Constants.CLOCK_SPEED_PERCENT_FACTOR).ToDecimalT());
+				uint potentialClockSpeedThousandths = (uint)Math.Ceiling(entry.Key.rate / GetRate(entry.Key.item, entry.Value) * Constants.CLOCK_SPEED_PERCENT_FACTOR);
 				newClockSpeedThousandths = Math.Max(newClockSpeedThousandths, potentialClockSpeedThousandths);
 			}
 			ClockSpeedDecimal = newClockSpeedThousandths;

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Immutable;
 
 using VisualSatisfactoryCalculator.model.production;
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
 
 namespace VisualSatisfactoryCalculator.satisfactory.model.production
 {
@@ -17,7 +11,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.model.production
 		public readonly string conversionString;
 		public readonly Building building;
 
-		public Recipe(string id, string displayName, string conversionString, RationalNumber time, Building building, ImmutableDictionary<Item, RationalNumber> ingredients, ImmutableDictionary<Item, RationalNumber> products) : base(time, ingredients, products)
+		public Recipe(string id, string displayName, string conversionString, decimal time, Building building, ImmutableDictionary<Item, decimal> ingredients, ImmutableDictionary<Item, decimal> products) : base(time, ingredients, products)
 		{
 			this.id = id;
 			this.displayName = displayName;

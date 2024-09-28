@@ -1,4 +1,6 @@
-﻿using VisualSatisfactoryCalculator.satisfactory.Utility;
+﻿using System.Windows.Forms;
+
+using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.controls.user
 {
@@ -31,9 +33,10 @@ namespace VisualSatisfactoryCalculator.controls.user
 		private void InitializeComponent()
 		{
 			this.MainPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.NumberControl = new System.Windows.Forms.NumericUpDown();
 			this.ItemButton = new System.Windows.Forms.Button();
-			this.NumberControl = new RationalNumberControl();
 			this.MainPanel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.NumberControl)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// MainPanel
@@ -45,8 +48,18 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.MainPanel.Location = new System.Drawing.Point(0, 0);
 			this.MainPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.MainPanel.Name = "MainPanel";
-			this.MainPanel.Size = new System.Drawing.Size(237, 64);
+			this.MainPanel.Size = new System.Drawing.Size(159, 33);
 			this.MainPanel.TabIndex = 0;
+			// 
+			// NumberControl
+			// 
+			this.NumberControl.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.NumberControl.AutoSize = true;
+			this.NumberControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+			this.NumberControl.Location = new System.Drawing.Point(3, 5);
+			this.NumberControl.Name = "NumberControl";
+			this.NumberControl.Size = new System.Drawing.Size(48, 23);
+			this.NumberControl.TabIndex = 3;
 			// 
 			// ItemButton
 			// 
@@ -54,22 +67,13 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.ItemButton.AutoSize = true;
 			this.ItemButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.ItemButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.ItemButton.Location = new System.Drawing.Point(135, 18);
+			this.ItemButton.Location = new System.Drawing.Point(57, 3);
 			this.ItemButton.Name = "ItemButton";
 			this.ItemButton.Size = new System.Drawing.Size(99, 27);
 			this.ItemButton.TabIndex = 2;
 			this.ItemButton.Text = "<item name>";
 			this.ItemButton.UseVisualStyleBackColor = true;
 			this.ItemButton.Click += new System.EventHandler(this.ItemButton_Click);
-			//
-			// NumberControl
-			//
-			this.NumberControl.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.NumberControl.AutoSize = true;
-			this.NumberControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.NumberControl.Location = new System.Drawing.Point(0, 0);
-			this.NumberControl.Name = "NumberControl";
-			this.NumberControl.TabIndex = 3;
 			// 
 			// ItemRateControl
 			// 
@@ -79,16 +83,18 @@ namespace VisualSatisfactoryCalculator.controls.user
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.Controls.Add(this.MainPanel);
 			this.Name = "ItemRateControl";
-			this.Size = new System.Drawing.Size(237, 64);
+			this.Size = new System.Drawing.Size(159, 33);
 			this.MainPanel.ResumeLayout(false);
 			this.MainPanel.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.NumberControl)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
+
 		}
 
 		#endregion
 		private System.Windows.Forms.FlowLayoutPanel MainPanel;
 		public System.Windows.Forms.Button ItemButton;
-		private RationalNumberControl NumberControl;
+		private NumericUpDown NumberControl;
 	}
 }

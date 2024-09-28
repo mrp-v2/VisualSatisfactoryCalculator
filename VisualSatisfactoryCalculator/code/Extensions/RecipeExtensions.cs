@@ -2,8 +2,6 @@
 using System.Collections.Immutable;
 using System.Linq;
 
-using VisualSatisfactoryCalculator.satisfactory.Interfaces;
-using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
 using VisualSatisfactoryCalculator.satisfactory.model.production;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Extensions

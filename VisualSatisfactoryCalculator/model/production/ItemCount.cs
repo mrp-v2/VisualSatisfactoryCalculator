@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
-
-using VisualSatisfactoryCalculator.satisfactory.Interfaces;
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
-using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.model.production
 {
@@ -14,10 +9,10 @@ namespace VisualSatisfactoryCalculator.model.production
 	[Serializable]
 	public sealed class ItemCount<ItemType> where ItemType : BasicItem
 	{
-		public readonly RationalNumber rate;
+		public readonly decimal rate;
 		public readonly ItemType item;
 
-		public ItemCount(ItemType item, RationalNumber rate)
+		public ItemCount(ItemType item, decimal rate)
 		{
 			this.item = item;
 			this.rate = rate;
@@ -49,17 +44,17 @@ namespace VisualSatisfactoryCalculator.model.production
 			}
 		}
 
-		public static ItemCount<ItemType> operator *(ItemCount<ItemType> rate, RationalNumber multiplier)
+		public static ItemCount<ItemType> operator *(ItemCount<ItemType> rate, decimal multiplier)
 		{
 			return new ItemCount<ItemType>(rate.item, rate.rate * multiplier);
 		}
 
-		public static ItemCount<ItemType> operator +(ItemCount<ItemType> a, RationalNumber b)
+		public static ItemCount<ItemType> operator +(ItemCount<ItemType> a, decimal b)
 		{
 			return new ItemCount<ItemType>(a.item, a.rate + b);
 		}
 
-		public static ItemCount<ItemType> operator -(ItemCount<ItemType> a, RationalNumber b)
+		public static ItemCount<ItemType> operator -(ItemCount<ItemType> a, decimal b)
 		{
 			return new ItemCount<ItemType>(a.item, a.rate - b);
 		}

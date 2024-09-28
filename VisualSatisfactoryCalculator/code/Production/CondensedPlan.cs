@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 
 using VisualSatisfactoryCalculator.code.Utility;
-using VisualSatisfactoryCalculator.satisfactory.DataStorage;
-using VisualSatisfactoryCalculator.satisfactory.Interfaces;
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
-using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.model.production.Item,
 	VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.model.production.Recipe>;
@@ -91,8 +87,8 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		public class CondensedConnection
 		{
 			internal readonly int _id;
-			public readonly Dictionary<int, RationalNumber> consumers = new Dictionary<int, RationalNumber>();
-			public readonly Dictionary<int, RationalNumber> producers = new Dictionary<int, RationalNumber>();
+			public readonly Dictionary<int, decimal> consumers = new Dictionary<int, decimal>();
+			public readonly Dictionary<int, decimal> producers = new Dictionary<int, decimal>();
 			internal readonly string _itemID;
 
 			internal CondensedConnection(Connection connection, CondensingContext context)

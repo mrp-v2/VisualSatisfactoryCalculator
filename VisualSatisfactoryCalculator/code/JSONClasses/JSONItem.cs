@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using VisualSatisfactoryCalculator.model.production;
 using VisualSatisfactoryCalculator.satisfactory.Interfaces;
 using VisualSatisfactoryCalculator.satisfactory.model.production;
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
@@ -50,7 +49,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 			NativeClass = FileInteractor.ActiveNativeClass;
 		}
 
-		public string ToString(RationalNumber count)
+		public string ToString(decimal count)
 		{
 			if (IsFluid)
 			{

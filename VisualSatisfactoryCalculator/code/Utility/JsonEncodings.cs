@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 
 using VisualSatisfactoryCalculator.code.Utility;
 using VisualSatisfactoryCalculator.satisfactory.DataStorage;
-using VisualSatisfactoryCalculator.satisfactory.Interfaces;
 using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
 using VisualSatisfactoryCalculator.satisfactory.model.production;
 

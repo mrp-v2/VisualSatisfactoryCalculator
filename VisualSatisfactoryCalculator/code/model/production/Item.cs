@@ -1,24 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using VisualSatisfactoryCalculator.model.production;
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
+﻿using VisualSatisfactoryCalculator.model.production;
 
 namespace VisualSatisfactoryCalculator.satisfactory.model.production
 {
 	public class Item : BasicItem
 	{
-		public readonly RationalNumber countDisplayFactor;
+		public readonly decimal countDisplayFactor;
 
-		public Item(string id, string displayName, RationalNumber countDisplayFactor) : base(id, displayName)
+		public Item(string id, string displayName, decimal countDisplayFactor) : base(id, displayName)
 		{
 			this.countDisplayFactor = countDisplayFactor;
 		}
 
-		public string ToString(RationalNumber count)
+		public string ToString(decimal count)
 		{
 			return (count / countDisplayFactor) + " " + ToString();
 		}

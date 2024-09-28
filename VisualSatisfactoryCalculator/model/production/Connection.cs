@@ -1,13 +1,7 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-using Newtonsoft.Json.Bson;
-
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.model.production
@@ -20,11 +14,11 @@ namespace VisualSatisfactoryCalculator.model.production
 		/// <summary>
 		/// Steps that produce items flowing into this connection.
 		/// </summary>
-		private readonly Dictionary<StepType, RationalNumber> _producers;
+		private readonly Dictionary<StepType, decimal> _producers;
 		/// <summary>
 		/// Steps that consume items flowing out of this connection.
 		/// </summary>
-		private readonly Dictionary<StepType, RationalNumber> _consumers;
+		private readonly Dictionary<StepType, decimal> _consumers;
 
 		private readonly CachedValue<IEnumerable<StepType>> _steps;
 
@@ -77,8 +71,8 @@ namespace VisualSatisfactoryCalculator.model.production
 		public Connection(ItemType item)
 		{
 			this.item = item;
-			_producers = new Dictionary<StepType, RationalNumber>();
-			_consumers = new Dictionary<StepType, RationalNumber>();
+			_producers = new Dictionary<StepType, decimal>();
+			_consumers = new Dictionary<StepType, decimal>();
 
 			_steps = new CachedValue<IEnumerable<StepType>>(() =>
 			{
@@ -129,7 +123,7 @@ namespace VisualSatisfactoryCalculator.model.production
 			return item.GetHashCode() * _producers.Count * _consumers.Count;
 		}
 
-		public RationalNumber GetRate(StepType step, bool isConsuming)
+		public decimal GetRate(StepType step, bool isConsuming)
 		{
 			if (isConsuming)
 			{
@@ -174,7 +168,7 @@ namespace VisualSatisfactoryCalculator.model.production
 										 HashSet<StepType> toVisit,
 										 out HashSet<StepType> notUpdatedConsumers,
 										 out HashSet<StepType> notUpdatedProducers,
-										 out RationalNumber lockedRate)
+										 out decimal lockedRate)
 		{
 			notUpdatedConsumers = new HashSet<StepType>();
 			notUpdatedProducers = new HashSet<StepType>();
@@ -220,7 +214,7 @@ namespace VisualSatisfactoryCalculator.model.production
 									toVisit,
 									out HashSet<StepType> notUpdatedConsumers,
 									out HashSet<StepType> notUpdatedProducers,
-									out RationalNumber netLockedRate);
+									out decimal netLockedRate);
 				if (notUpdatedConsumers.Count == _consumers.Count && notUpdatedProducers.Count == _producers.Count)
 				{
 					throw new InvalidOperationException(NO_VISITED_NEIGHBORS);
@@ -246,7 +240,7 @@ namespace VisualSatisfactoryCalculator.model.production
 						HashSet<HashSet<StepType>> singleConnectedConsumers = GetSingleConnectedStepGroups(notUpdatedConsumers);
 						if (singleConnectedConsumers.Count == 1)
 						{
-							RationalNumber groupRate = 0;
+							decimal groupRate = 0;
 							foreach (StepType step in notUpdatedConsumers)
 							{
 								groupRate -= step.GetRate(item, false);
@@ -255,7 +249,7 @@ namespace VisualSatisfactoryCalculator.model.production
 							{
 								throw new InvalidOperationException("Cannot update single connected consumer group when the net locked rates has deficiency");
 							}
-							RationalNumber multiplier = netLockedRate / groupRate.AbsoluteValue();
+							decimal multiplier = netLockedRate / Math.Abs(groupRate);
 							foreach (StepType step in notUpdatedConsumers)
 							{
 								_consumers[step] *= multiplier;
@@ -286,7 +280,7 @@ namespace VisualSatisfactoryCalculator.model.production
 						HashSet<HashSet<StepType>> singleConnectedProducers = GetSingleConnectedStepGroups(notUpdatedProducers);
 						if (singleConnectedProducers.Count == 1)
 						{
-							RationalNumber groupRate = 0;
+							decimal groupRate = 0;
 							foreach (StepType step in notUpdatedProducers)
 							{
 								groupRate += step.GetRate(item, true);
@@ -295,7 +289,7 @@ namespace VisualSatisfactoryCalculator.model.production
 							{
 								throw new InvalidOperationException("Cannot update single connected producer group when the net locked rates has excess");
 							}
-							RationalNumber multiplier = netLockedRate.AbsoluteValue() / groupRate;
+							decimal multiplier = Math.Abs(netLockedRate) / groupRate;
 							foreach (StepType step in notUpdatedProducers)
 							{
 								_producers[step] *= multiplier;
@@ -314,7 +308,7 @@ namespace VisualSatisfactoryCalculator.model.production
 					HashSet<HashSet<StepType>> singleConnectedStepGroups = GetSingleConnectedStepGroups(new HashSet<StepType>(notUpdatedProducers.Concat(notUpdatedConsumers)));
 					if (singleConnectedStepGroups.Count == 1)
 					{
-						RationalNumber groupRate = 0;
+						decimal groupRate = 0;
 						foreach (StepType step in notUpdatedProducers)
 						{
 							groupRate += step.GetRate(item, true);
@@ -323,11 +317,11 @@ namespace VisualSatisfactoryCalculator.model.production
 						{
 							groupRate -= step.GetRate(item, false);
 						}
-						if (groupRate.AreSignsEqual(netLockedRate))
+						if ((groupRate > 0) == (netLockedRate > 0))
 						{
 							throw new InvalidOperationException("Cannot adjust single connected step group when group sign and net locked rate sign are equal");
 						}
-						RationalNumber multiplier = netLockedRate.AbsoluteValue() / groupRate.AbsoluteValue();
+						decimal multiplier = Math.Abs(netLockedRate) / Math.Abs(groupRate);
 						StepType singleConsumer = notUpdatedConsumers.First();
 						foreach (StepType step in notUpdatedProducers)
 						{
@@ -375,12 +369,12 @@ namespace VisualSatisfactoryCalculator.model.production
 
 		private void VerifyEqualRates()
 		{
-			RationalNumber producingRate = 0, consumingRate = 0;
-			foreach (RationalNumber rate in _producers.Values)
+			decimal producingRate = 0, consumingRate = 0;
+			foreach (decimal rate in _producers.Values)
 			{
 				producingRate += rate;
 			}
-			foreach (RationalNumber rate in _consumers.Values)
+			foreach (decimal rate in _consumers.Values)
 			{
 				consumingRate += rate;
 			}
@@ -394,7 +388,7 @@ namespace VisualSatisfactoryCalculator.model.production
 		/// Updates the rates of the producers and consumers of this connection, and cascades updates.
 		/// See <see cref="BreadthFirstSearchHandler{ItemType, RecipeType}"/>.
 		/// </summary>
-		public void CascadingSetRates(Dictionary<StepType, RationalNumber> producers, Dictionary<StepType, RationalNumber> consumers)
+		public void CascadingSetRates(Dictionary<StepType, decimal> producers, Dictionary<StepType, decimal> consumers)
 		{
 			if (producers.Keys.Count != _producers.Keys.Count || !producers.Keys.All(key => _producers.ContainsKey(key)))
 			{
@@ -404,11 +398,11 @@ namespace VisualSatisfactoryCalculator.model.production
 			{
 				throw new InvalidOperationException("Consumers do not match connection consumers.");
 			}
-			foreach (KeyValuePair<StepType, RationalNumber> producer in producers)
+			foreach (KeyValuePair<StepType, decimal> producer in producers)
 			{
 				_producers[producer.Key] = producer.Value;
 			}
-			foreach (KeyValuePair<StepType, RationalNumber> consumer in consumers)
+			foreach (KeyValuePair<StepType, decimal> consumer in consumers)
 			{
 				_consumers[consumer.Key] = consumer.Value;
 			}

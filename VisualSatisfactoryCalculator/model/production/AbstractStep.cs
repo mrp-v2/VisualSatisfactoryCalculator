@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.model.production
@@ -44,7 +40,7 @@ namespace VisualSatisfactoryCalculator.model.production
 			ingredients.SetConnectionsChangedListener(_connections.Invalidate);
 		}
 
-		public abstract RationalNumber GetRate(ItemType item, bool isProduct);
+		public abstract decimal GetRate(ItemType item, bool isProduct);
 
 		protected virtual void UpdateRatesFrom(ItemCount<ItemType> rate, bool isProduct)
 		{

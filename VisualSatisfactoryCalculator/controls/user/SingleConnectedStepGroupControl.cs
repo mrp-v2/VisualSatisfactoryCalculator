@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
-using MrpV2.GenericLibrary.code.dictionary.bidirectional.classes;
-
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.model.production;
 
 namespace VisualSatisfactoryCalculator.controls.user
@@ -26,7 +15,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			this.connection = connection;
 			InitializeComponent();
-			RationalNumber netRate = 0;
+			decimal netRate = 0;
 			foreach (AbstractStep<ItemType> step in singleConnectedStepGroup)
 			{
 				if (connection.IsStepConsumer(step))
@@ -60,13 +49,13 @@ namespace VisualSatisfactoryCalculator.controls.user
 			}
 		}
 
-		private void NetGroupRateChanged(RationalNumber oldValue, RationalNumber newValue)
+		private void NetGroupRateChanged(decimal oldValue, decimal newValue)
 		{
 			// TODO
 			throw new NotImplementedException();
 		}
 
-		private void NumberChanged(RationalNumberControl control, RationalNumber oldValue, RationalNumber newValue, bool isProducer)
+		private void NumberChanged(RationalNumberControl control, decimal oldValue, decimal newValue, bool isProducer)
 		{
 			// TODO
 			controlMap[control].CascadingUpdateRatesFrom(new ItemRate<ItemType>(connection.Item, newValue), isProducer);

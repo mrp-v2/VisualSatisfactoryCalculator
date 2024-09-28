@@ -1,37 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 
 using Newtonsoft.Json;
 
-using VisualSatisfactoryCalculator.satisfactory.DataStorage;
-using VisualSatisfactoryCalculator.satisfactory.Extensions;
 using VisualSatisfactoryCalculator.satisfactory.Interfaces;
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
-using VisualSatisfactoryCalculator.satisfactory.Utility;
-using VisualSatisfactoryCalculator.model.production;
-using Util = VisualSatisfactoryCalculator.satisfactory.Utility.Util;
 using VisualSatisfactoryCalculator.satisfactory.model.production;
-using System.Collections.Immutable;
 
 namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 {
 	public class JSONGenerator
 	{
 		public readonly string id;
-		private readonly RationalNumber _powerProduction;
+		private readonly decimal _powerProduction;
 		public readonly string displayName;
-		private readonly RationalNumber _powerConsumptionExponent;
+		private readonly decimal _powerConsumptionExponent;
 		private readonly Fuel[] _fuels;
 
 		private readonly bool _requiresSupplementalResource;
-		private readonly RationalNumber _supplementalToPowerRatio;
+		private readonly decimal _supplementalToPowerRatio;
 
 		[JsonConstructor]
 		public JSONGenerator(string ClassName, bool mRequiresSupplementalResource, decimal mSupplementalToPowerRatio, string mPowerProduction, string mDisplayName, Fuel[] mFuel)
 		{
 			id = ClassName;
-			_powerProduction = RationalNumber.FromDecimalString(mPowerProduction);
+			_powerProduction = decimal.Parse(mPowerProduction);
 			_powerConsumptionExponent = 1;
 			displayName = mDisplayName;
 			_requiresSupplementalResource = mRequiresSupplementalResource;
@@ -39,7 +31,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 			_fuels = mFuel;
 		}
 
-		public static readonly RationalNumber ENERGY_DIVISOR = new RationalNumber(50, 3, true);
+		public static readonly decimal ENERGY_DIVISOR = 50m / 3;
 		public static readonly decimal SUPPLEMENTAL_RESOURCE_FACTOR = 60m;
 
 		public bool EqualID(string id)
@@ -68,7 +60,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 				{
 					continue;
 				}
-				Dictionary<Item, RationalNumber> ingredients = new Dictionary<Item, RationalNumber>()
+				Dictionary<Item, decimal> ingredients = new Dictionary<Item, decimal>()
 				{
 					{ processedItems[fuel.itemID], _powerProduction / itemEnergy / ENERGY_DIVISOR }
 				};
@@ -76,7 +68,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 				{
 					ingredients.Add(processedItems[fuel.supplementalItemID], _powerProduction * _supplementalToPowerRatio * SUPPLEMENTAL_RESOURCE_FACTOR);
 				}
-				Dictionary<Item, RationalNumber> products = new Dictionary<Item, RationalNumber>();
+				Dictionary<Item, decimal> products = new Dictionary<Item, decimal>();
 				if (fuel.byproductItemID.Length > 0)
 				{
 					products.Add(processedItems[fuel.byproductItemID], fuel.byproductAmount);
@@ -91,7 +83,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 			public readonly string itemID;
 			public readonly string supplementalItemID;
 			public readonly string byproductItemID;
-			public readonly RationalNumber byproductAmount;
+			public readonly decimal byproductAmount;
 
 			[JsonConstructor]
 			public Fuel(string mFuelClass, string mSupplementalResourceClass, string mByproduct, string mByproductAmount)
@@ -101,16 +93,16 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 				byproductItemID = mByproduct;
 				if (mByproduct.Length > 0)
 				{
-					byproductAmount = mByproductAmount.Length > 0 ? RationalNumber.FromDecimalString(mByproductAmount) : null;
+					byproductAmount = mByproductAmount.Length > 0 ? decimal.Parse(mByproductAmount) : 0;
 				}
 			}
 		}
 
-		private string MakeRecipeConversionString(Dictionary<Item, RationalNumber> ingredients, Dictionary<Item, RationalNumber> products)
+		private string MakeRecipeConversionString(Dictionary<Item, decimal> ingredients, Dictionary<Item, decimal> products)
 		{
 			string conversionString = "";
 			bool first = true;
-			foreach (KeyValuePair<Item, RationalNumber> pair in ingredients)
+			foreach (KeyValuePair<Item, decimal> pair in ingredients)
 			{
 				if (!first)
 				{
@@ -123,7 +115,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 				conversionString += pair.Key.ToString(pair.Value);
 			}
 			conversionString += " -> ";
-			foreach (KeyValuePair<Item, RationalNumber> pair in ingredients)
+			foreach (KeyValuePair<Item, decimal> pair in ingredients)
 			{
 				conversionString += pair.Key.ToString(pair.Value) + ", ";
 			}

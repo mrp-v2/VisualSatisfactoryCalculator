@@ -2,7 +2,6 @@
 
 using VisualSatisfactoryCalculator.model.production;
 using VisualSatisfactoryCalculator.satisfactory.model.production;
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Production
@@ -20,7 +19,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			}
 		}
 
-		public RationalNumber this[Item item]
+		public decimal this[Item item]
 		{
 			get
 			{
@@ -40,11 +39,11 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			_power = power;
 		}
 
-		public void Add(Item item, RationalNumber rate)
+		public void Add(Item item, decimal rate)
 		{
 			if (item == Constants.MW_ITEM)
 			{
-				_power += rate.ToDouble();
+				_power += (double)rate;
 			}
 			else if (_basicRates.ContainsKey(item))
 			{
@@ -56,7 +55,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			}
 		}
 
-		private void Subtract(Item item, RationalNumber rate)
+		private void Subtract(Item item, decimal rate)
 		{
 			if (_basicRates.ContainsKey(item))
 			{

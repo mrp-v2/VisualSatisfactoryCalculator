@@ -118,8 +118,6 @@
     <Compile Include="model\production\BreadthFirstSearchHandler.cs" />
     <Compile Include="model\production\Connection.cs" />
     <Compile Include="model\production\ItemCount.cs" />
-    <Compile Include="code\Numbers\RationalNumber.cs" />
-    <Compile Include="code\Numbers\PrimeNumberHandler.cs" />
     <Compile Include="code\Production\CondensedPlan.cs" />
     <Compile Include="code\JSONClasses\JSONRecipe.cs" />
     <Compile Include="code\Extensions\GenericExtensions.cs" />
@@ -146,12 +144,6 @@
     </Compile>
     <Compile Include="controls\user\LineControl.Designer.cs">
       <DependentUpon>LineControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="controls\user\RationalNumberControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="controls\user\RationalNumberControl.Designer.cs">
-      <DependentUpon>RationalNumberControl.cs</DependentUpon>
     </Compile>
     <Compile Include="forms\UseSaveFilePrompt.cs">
       <SubType>Form</SubType>
@@ -211,9 +203,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="controls\user\PlanTotalViewControl.resx">
       <DependentUpon>PlanTotalViewControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="controls\user\RationalNumberControl.resx">
-      <DependentUpon>RationalNumberControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="controls\user\SingleConnectedStepGroupControl.resx">
       <DependentUpon>SingleConnectedStepGroupControl.cs</DependentUpon>

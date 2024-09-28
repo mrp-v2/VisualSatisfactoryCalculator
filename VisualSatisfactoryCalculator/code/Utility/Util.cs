@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 
 using VisualSatisfactoryCalculator.satisfactory.Extensions;
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Utility
 {
@@ -26,7 +25,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			return items;
 		}
 
-		public static bool TryBalanceRates<T>(Dictionary<T, (RationalNumber, RationalNumber)> rates, RationalNumber inputTotal, RationalNumber outputTotal, out (RationalNumber, RationalNumber, RationalNumber) multipliers)
+		public static bool TryBalanceRates<T>(Dictionary<T, (decimal, decimal)> rates, decimal inputTotal, decimal outputTotal, out (decimal, decimal, decimal) multipliers)
 		{
 			try
 			{
@@ -48,11 +47,11 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 		/// <param name="inputTotal">The desired amount of output</param>
 		/// <param name="outputTotal">The desired amount of input</param>
 		/// <returns>A Tuple that contains the (input multipluer, output multiplier, paired multiplier)</returns>
-		public static (RationalNumber, RationalNumber, RationalNumber) BalanceRates<T>(Dictionary<T, (RationalNumber, RationalNumber)> rates, RationalNumber inputTotal, RationalNumber outputTotal)
+		public static (decimal, decimal, decimal) BalanceRates<T>(Dictionary<T, (decimal, decimal)> rates, decimal inputTotal, decimal outputTotal)
 		{
-			RationalNumber isolatedInputRate = 0, isolatedOutputRate = 0, pairedInputRate = 0, pairedOutputRate = 0;
+			decimal isolatedInputRate = 0, isolatedOutputRate = 0, pairedInputRate = 0, pairedOutputRate = 0;
 			bool anyPairedRates = false;
-			foreach ((RationalNumber, RationalNumber) tuple in rates.Values)
+			foreach ((decimal, decimal) tuple in rates.Values)
 			{
 				if (tuple.Item1 == 0 || tuple.Item2 == 0)
 				{
@@ -81,45 +80,43 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 				}
 				else if (isolatedInputRate == 0)
 				{
-					RationalNumber pairedMultiplier = inputTotal / pairedInputRate;
-					RationalNumber outputMultiplier = (outputTotal - (pairedOutputRate * pairedMultiplier)) / isolatedOutputRate;
+					decimal pairedMultiplier = inputTotal / pairedInputRate;
+					decimal outputMultiplier = (outputTotal - (pairedOutputRate * pairedMultiplier)) / isolatedOutputRate;
 					return (1, outputMultiplier, pairedMultiplier);
 				}
 				else if (isolatedOutputRate == 0)
 				{
-					RationalNumber pairedMultiplier = outputTotal / pairedOutputRate;
-					RationalNumber inputMultiplier = (inputTotal - (pairedInputRate * pairedMultiplier)) / isolatedInputRate;
+					decimal pairedMultiplier = outputTotal / pairedOutputRate;
+					decimal inputMultiplier = (inputTotal - (pairedInputRate * pairedMultiplier)) / isolatedInputRate;
 					return (inputMultiplier, 1, pairedMultiplier);
 				}
 				else
 				{
-					RationalNumber a = 3 * pairedInputRate * pairedOutputRate, b = -2 * ((pairedInputRate * outputTotal) + (inputTotal * pairedOutputRate)), c = inputTotal * outputTotal;
-					RationalNumber discriminate = (b * b) - (4 * a * c);
-					RationalNumber discriminateSqrt = discriminate.Sqrt();
-					RationalNumber pairedMultiplierA = (-b + discriminateSqrt) / (2 * a), pairedMultiplierB = discriminate > 0 ? (-b - discriminateSqrt) / (2 * a) : pairedMultiplierA;
-					if (!pairedMultiplierA.isPositive && !pairedMultiplierB.isPositive)
+					decimal a = 3 * pairedInputRate * pairedOutputRate, b = -2 * ((pairedInputRate * outputTotal) + (inputTotal * pairedOutputRate)), c = inputTotal * outputTotal;
+					decimal discriminate = (b * b) - (4 * a * c);
+					decimal discriminateSqrt = discriminate.Sqrt();
+					decimal pairedMultiplierA = (-b + discriminateSqrt) / (2 * a), pairedMultiplierB = discriminate > 0 ? (-b - discriminateSqrt) / (2 * a) : pairedMultiplierA;
+					if (pairedMultiplierA < 0 && pairedMultiplierB < 0)
 					{
 						throw new BalancingException("Unable to find a valid multiplier");
 					}
-					else if (!pairedMultiplierB.isPositive)
+					else if (pairedMultiplierB < 0)
 					{
 						pairedMultiplierB = pairedMultiplierA;
 					}
-					else if (!pairedMultiplierA.isPositive)
+					else if (pairedMultiplierA < 0)
 					{
 						pairedMultiplierA = pairedMultiplierB;
 					}
 					else if (pairedMultiplierA > pairedMultiplierB)
 					{
-						RationalNumber temp = pairedMultiplierA;
-						pairedMultiplierA = pairedMultiplierB;
-						pairedMultiplierB = temp;
+						(pairedMultiplierB, pairedMultiplierA) = (pairedMultiplierA, pairedMultiplierB);
 					}
-					bool isMultiplierProductIncreasingAt(RationalNumber point)
+					bool isMultiplierProductIncreasingAt(decimal point)
 					{
 						return (3 * point * point * pairedInputRate * pairedOutputRate) - (2 * point * ((pairedInputRate * outputTotal) + (inputTotal * pairedOutputRate))) + (inputTotal * outputTotal) > 0;
 					}
-					RationalNumber pairedMultiplier;
+					decimal pairedMultiplier;
 					if (pairedMultiplierA == pairedMultiplierB)
 					{
 						pairedMultiplier = pairedMultiplierA;
@@ -150,15 +147,15 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 							throw new BalancingException("Cannot maximize products");
 						}
 					}
-					RationalNumber inputMultiplier = isolatedInputRate != 0 ? (inputTotal - (pairedMultiplier * pairedInputRate)) / isolatedInputRate : 1;
-					RationalNumber outputMultiplier = isolatedOutputRate != 0 ? (outputTotal - (pairedMultiplier * pairedOutputRate)) / isolatedOutputRate : 1;
+					decimal inputMultiplier = isolatedInputRate != 0 ? (inputTotal - (pairedMultiplier * pairedInputRate)) / isolatedInputRate : 1;
+					decimal outputMultiplier = isolatedOutputRate != 0 ? (outputTotal - (pairedMultiplier * pairedOutputRate)) / isolatedOutputRate : 1;
 					return (inputMultiplier, outputMultiplier, pairedMultiplier);
 				}
 			}
 			else
 			{
-				RationalNumber inputMultiplier = isolatedInputRate == 0 ? 1 : inputTotal / isolatedInputRate;
-				RationalNumber outputMultiplier = isolatedOutputRate == 0 ? 1 : outputTotal / isolatedOutputRate;
+				decimal inputMultiplier = isolatedInputRate == 0 ? 1 : inputTotal / isolatedInputRate;
+				decimal outputMultiplier = isolatedOutputRate == 0 ? 1 : outputTotal / isolatedOutputRate;
 				return (inputMultiplier, outputMultiplier, 1);
 			}
 		}

@@ -1,7 +1,5 @@
 ﻿using System;
 
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
-
 namespace VisualSatisfactoryCalculator.satisfactory.Extensions
 {
 	public static class NumberExtensions
@@ -11,18 +9,18 @@ namespace VisualSatisfactoryCalculator.satisfactory.Extensions
 			return Math.Abs(m);
 		}
 
-		public static RationalNumber Sqrt(this RationalNumber x)
+		public static decimal Sqrt(this decimal x)
 		{
 			return x.Sqrt(0);
 		}
 
-		public static RationalNumber Sqrt(this RationalNumber x, RationalNumber epsilon)
+		public static decimal Sqrt(this decimal x, decimal epsilon)
 		{
 			if (x < 0)
 			{
 				throw new OverflowException("Cannot calculate square root from a negative number");
 			}
-			RationalNumber current = (decimal)Math.Sqrt((double)x.ToDecimalT()), previous;
+			decimal current = (decimal)Math.Sqrt((double)x), previous;
 			do
 			{
 				previous = current;
@@ -32,7 +30,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Extensions
 				}
 				current = (previous + (x / previous)) / 2;
 			}
-			while ((previous - current).AbsoluteValue() > epsilon);
+			while (Math.Abs(previous - current) > epsilon);
 			return current;
 		}
 	}

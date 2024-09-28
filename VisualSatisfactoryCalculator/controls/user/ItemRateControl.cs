@@ -2,17 +2,15 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
-using VisualSatisfactoryCalculator.satisfactory.Utility;
 using VisualSatisfactoryCalculator.forms;
-using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
 using VisualSatisfactoryCalculator.satisfactory.model.production;
+using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.controls.user
 {
 	public partial class ItemRateControl : UserControl
 	{
-		public delegate void RateChanged(Item itemUID, RationalNumber oldRate, RationalNumber newRate, bool isProduct);
+		public delegate void RateChanged(Item itemUID, decimal newRate, bool isProduct);
 		public delegate void ItemClicked(Item itemUID, bool isProduct);
 
 		public Item Item { get; }
@@ -28,10 +26,11 @@ namespace VisualSatisfactoryCalculator.controls.user
 			return PlanLayoutMaker.AddParentPoints(this, _panelDepth);
 		}
 
-		public ItemRateControl(MainForm mainForm, Item item, RationalNumber rate, bool isProduct, int panelDepth, RateChanged rateChanged, ItemClicked itemClicked)
+		public ItemRateControl(MainForm mainForm, Item item, decimal rate, bool isProduct, int panelDepth, RateChanged rateChanged, ItemClicked itemClicked)
 		{
 			_initialized = false;
 			InitializeComponent();
+			NumberControl.Maximum = decimal.MaxValue;
 			_mainForm = mainForm;
 			_rateChanged = rateChanged;
 			_itemClicked = itemClicked;
@@ -40,15 +39,15 @@ namespace VisualSatisfactoryCalculator.controls.user
 			IsProduct = isProduct;
 			ItemButton.Text = item.displayName;
 			UpdateRateValue(rate);
-			NumberControl.AddNumberChangedListener(NumberChanged);
+			NumberControl.ValueChanged += NumberChanged;
 		}
 
-		private void NumberChanged(RationalNumber oldValue, RationalNumber newValue)
+		private void NumberChanged(object sender, EventArgs args)
 		{
 			if (Enabled && _initialized)
 			{
 				_mainForm.SuspendDrawing();
-				_rateChanged(Item, oldValue * Item.countDisplayFactor, newValue * Item.countDisplayFactor, IsProduct);
+				_rateChanged(Item, NumberControl.Value * Item.countDisplayFactor, IsProduct);
 				_mainForm.UpdateTotalView();
 				_mainForm.ResumeDrawing();
 			}
@@ -59,14 +58,14 @@ namespace VisualSatisfactoryCalculator.controls.user
 			_itemClicked(Item, IsProduct);
 		}
 
-		public void UpdateRateValue(RationalNumber newRate)
+		public void UpdateRateValue(decimal newRate)
 		{
-			NumberControl.SetNumber(newRate / Item.countDisplayFactor);
+			NumberControl.Value = newRate / Item.countDisplayFactor;
 		}
 
 		public void ToggleInput(bool on)
 		{
-			if (!NumberControl.GetNumber().isNonZero && Enabled)
+			if (NumberControl.Value != 0 && Enabled)
 			{
 				Enabled = false;
 				return;

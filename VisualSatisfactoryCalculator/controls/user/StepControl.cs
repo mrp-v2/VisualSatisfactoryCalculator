@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 
+using VisualSatisfactoryCalculator.forms;
 using VisualSatisfactoryCalculator.satisfactory.Extensions;
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
+using VisualSatisfactoryCalculator.satisfactory.model.production;
 using VisualSatisfactoryCalculator.satisfactory.Production;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
-using VisualSatisfactoryCalculator.forms;
-using VisualSatisfactoryCalculator.model.production;
-using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
-
-using ItemCount = VisualSatisfactoryCalculator.model.production.ItemCount<VisualSatisfactoryCalculator.satisfactory.model.production.Item>;
 
 using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.model.production.Item, VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.model.production.Recipe>;
-using VisualSatisfactoryCalculator.satisfactory.model.production;
+using ItemCount = VisualSatisfactoryCalculator.model.production.ItemCount<VisualSatisfactoryCalculator.satisfactory.model.production.Item>;
 
 namespace VisualSatisfactoryCalculator.controls.user
 {
@@ -81,9 +76,9 @@ namespace VisualSatisfactoryCalculator.controls.user
 			ToggleInput(true);
 		}
 
-		private void RateChanged(Item item, RationalNumber oldRate, RationalNumber newRate, bool isProduct)
+		private void RateChanged(Item item, decimal newRate, bool isProduct)
 		{
-			if (backingStep.GetRate(item, isProduct).AbsoluteValue() != newRate)
+			if (Math.Abs(backingStep.GetRate(item, isProduct)) != newRate)
 			{
 				backingStep.CascadingUpdateRatesFrom(new ItemCount(item, newRate), isProduct);
 			}

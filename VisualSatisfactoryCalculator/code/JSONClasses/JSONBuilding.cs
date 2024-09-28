@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using Newtonsoft.Json;
 
 using VisualSatisfactoryCalculator.satisfactory.Interfaces;
 using VisualSatisfactoryCalculator.satisfactory.model.production;
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
@@ -13,8 +11,8 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 	public class JSONBuilding : IBuilding, IFromJson
 	{
 		public string ID { get; }
-		public RationalNumber PowerConsumption { get; }
-		public RationalNumber PowerConsumptionExponent { get; }
+		public decimal PowerConsumption { get; }
+		public decimal PowerConsumptionExponent { get; }
 		public string DisplayName { get; }
 		public string NativeClass { get; }
 
@@ -22,8 +20,8 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 		public JSONBuilding(string ClassName, string mPowerConsumption, string mPowerConsumptionExponent, string mDisplayName)
 		{
 			ID = ClassName;
-			PowerConsumption = RationalNumber.FromDecimalString(mPowerConsumption);
-			PowerConsumptionExponent = RationalNumber.FromDecimalString(mPowerConsumptionExponent);
+			PowerConsumption = decimal.Parse(mPowerConsumption);
+			PowerConsumptionExponent = decimal.Parse(mPowerConsumptionExponent);
 			DisplayName = mDisplayName;
 			NativeClass = FileInteractor.ActiveNativeClass;
 		}

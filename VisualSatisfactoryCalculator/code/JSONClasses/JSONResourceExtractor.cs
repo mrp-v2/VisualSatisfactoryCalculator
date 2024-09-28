@@ -1,38 +1,31 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using VisualSatisfactoryCalculator.satisfactory.DataStorage;
-using VisualSatisfactoryCalculator.satisfactory.Interfaces;
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
-using VisualSatisfactoryCalculator.satisfactory.Utility;
-using VisualSatisfactoryCalculator.model.production;
-using Util = VisualSatisfactoryCalculator.satisfactory.Utility.Util;
-using VisualSatisfactoryCalculator.satisfactory.model.production;
 using System.Collections.Immutable;
+using System.Linq;
+
+using VisualSatisfactoryCalculator.satisfactory.model.production;
+
+using Util = VisualSatisfactoryCalculator.satisfactory.Utility.Util;
 
 namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 {
 	public class JSONResourceExtractor : JSONBuilding
 	{
-		public static Dictionary<string, RationalNumber> NODE_CYCLE_TIME_DIVISORS = new Dictionary<string, RationalNumber>
+		public static Dictionary<string, decimal> NODE_CYCLE_TIME_DIVISORS = new Dictionary<string, decimal>
 		{
-			{"Impure", new RationalNumber(1, 2, true) }, { "Normal", 1 }, { "Pure", 2 }
+			{"Impure", 0.5m }, { "Normal", 1 }, { "Pure", 2 }
 		};
 
-		private RationalNumber CycleTime { get; }
-		private RationalNumber ItemsPerCycle { get; }
+		private decimal CycleTime { get; }
+		private decimal ItemsPerCycle { get; }
 		private string AllowedResourceForms { get; }
 		private bool OnlySpecificResources { get; }
 		private string[] AllowedResources { get; }
 
 		public JSONResourceExtractor(string ClassName, string mPowerConsumption, string mPowerConsumptionExponent, string mDisplayName, string mExtractCycleTime, string mItemsPerCycle, string mAllowedResourceForms, string mOnlyAllowCertainResources, string mAllowedResources) : base(ClassName, mPowerConsumption, mPowerConsumptionExponent, mDisplayName)
 		{
-			CycleTime = RationalNumber.FromDecimalString(mExtractCycleTime);
-			ItemsPerCycle = RationalNumber.FromDecimalString(mItemsPerCycle);
+			CycleTime = decimal.Parse(mExtractCycleTime);
+			ItemsPerCycle = decimal.Parse(mItemsPerCycle);
 			AllowedResourceForms = mAllowedResourceForms;
 			OnlySpecificResources = bool.Parse(mOnlyAllowCertainResources);
 			AllowedResources = Util.ParseUIDList(mAllowedResources);
@@ -54,7 +47,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 					}
 					foreach (string resourceNodeType in NODE_CYCLE_TIME_DIVISORS.Keys)
 					{
-						Dictionary<Item, RationalNumber> products = new Dictionary<Item, RationalNumber>
+						Dictionary<Item, decimal> products = new Dictionary<Item, decimal>
 						{
 							{ items[resourceItem.id], ItemsPerCycle }
 						};
@@ -87,7 +80,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 								continue;
 							}
 						}
-						Dictionary<Item, RationalNumber> products = new Dictionary<Item, RationalNumber>
+						Dictionary<Item, decimal> products = new Dictionary<Item, decimal>
 						{
 							{ items[resouceItem.id], ItemsPerCycle }
 						};
@@ -100,11 +93,11 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 			}
 		}
 
-		private Recipe MakeRecipe(string id, string displayName, RationalNumber time, Building building, Dictionary<Item, RationalNumber> products)
+		private Recipe MakeRecipe(string id, string displayName, decimal time, Building building, Dictionary<Item, decimal> products)
 		{
 			string conversionString = "";
 			bool first = true;
-			foreach (KeyValuePair<Item, RationalNumber> pair in products)
+			foreach (KeyValuePair<Item, decimal> pair in products)
 			{
 				if (!first)
 				{
@@ -116,7 +109,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 				}
 				conversionString += pair.Key.ToString(pair.Value);
 			}
-			return new Recipe(id, displayName, conversionString, time, building, ImmutableDictionary<Item, RationalNumber>.Empty, products.ToImmutableDictionary());
+			return new Recipe(id, displayName, conversionString, time, building, ImmutableDictionary<Item, decimal>.Empty, products.ToImmutableDictionary());
 		}
 	}
 }

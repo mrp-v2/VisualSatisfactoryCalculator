@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 
-using VisualSatisfactoryCalculator.satisfactory.Numbers;
-using VisualSatisfactoryCalculator.satisfactory.Utility;
-using VisualSatisfactoryCalculator.model.production;
 using VisualSatisfactoryCalculator.satisfactory.JSONClasses;
+using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Interfaces
 {
@@ -26,6 +23,6 @@ namespace VisualSatisfactoryCalculator.satisfactory.Interfaces
 		/// </param>
 		/// <returns></returns>
 		string ToString(JsonEncodings encodings, string format);
-		RationalNumber GetCountFor(JSONItem item, bool isProduct);
+		decimal GetCountFor(JSONItem item, bool isProduct);
 	}
 }
