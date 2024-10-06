@@ -101,7 +101,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 			ImmutableDictionary<Item, decimal> products = GetProducts(items);
 			string conversionString = GetConversionString(ingredients, products);
 			Building building = GetBuilding(buildings);
-			return new Recipe(id, GetDisplayName(conversionString, building), conversionString, _craftTime, building, ingredients, products);
+			return new Recipe(id, _displayName, conversionString, _craftTime, building, ingredients, products);
 		}
 
 		public Building GetBuilding(ImmutableDictionary<string, Building> buildings)
@@ -150,14 +150,6 @@ namespace VisualSatisfactoryCalculator.satisfactory.DataStorage
 				}
 				str += pair.Key.ToString(pair.Value);
 			}
-			return str;
-		}
-
-		protected virtual string GetDisplayName(string conversionString, Building building)
-		{
-			string str = _displayName + ": ";
-			str += conversionString;
-			str += " in " + _craftTime.ToString() + " seconds using a " + building.displayName;
 			return str;
 		}
 	}

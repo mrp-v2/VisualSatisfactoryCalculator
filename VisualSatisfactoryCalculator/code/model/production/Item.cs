@@ -1,4 +1,5 @@
 ﻿using VisualSatisfactoryCalculator.model.production;
+using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.satisfactory.model.production
 {
@@ -13,7 +14,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.model.production
 
 		public string ToString(decimal count)
 		{
-			return (count / countDisplayFactor) + " " + ToString();
+			return (count / countDisplayFactor).ToString("N" + Constants.CLOCK_SPEED_DECIMALS) + " " + ToString();
 		}
 	}
 }

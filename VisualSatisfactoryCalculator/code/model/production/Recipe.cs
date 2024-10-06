@@ -21,7 +21,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.model.production
 
 		public override string ToString()
 		{
-			return displayName;
+			return displayName + ": " + conversionString;
 		}
 	}
 }

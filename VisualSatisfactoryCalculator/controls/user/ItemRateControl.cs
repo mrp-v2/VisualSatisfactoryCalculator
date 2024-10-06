@@ -31,6 +31,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 			_initialized = false;
 			InitializeComponent();
 			NumberControl.Maximum = decimal.MaxValue;
+			NumberControl.DecimalPlaces = Constants.CLOCK_SPEED_DECIMALS;
 			_mainForm = mainForm;
 			_rateChanged = rateChanged;
 			_itemClicked = itemClicked;

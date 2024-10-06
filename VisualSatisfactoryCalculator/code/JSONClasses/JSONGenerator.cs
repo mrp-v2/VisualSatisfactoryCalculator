@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 using VisualSatisfactoryCalculator.satisfactory.Interfaces;
 using VisualSatisfactoryCalculator.satisfactory.model.production;
+using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 {
@@ -115,11 +116,11 @@ namespace VisualSatisfactoryCalculator.satisfactory.JSONClasses
 				conversionString += pair.Key.ToString(pair.Value);
 			}
 			conversionString += " -> ";
-			foreach (KeyValuePair<Item, decimal> pair in ingredients)
+			foreach (KeyValuePair<Item, decimal> pair in products)
 			{
 				conversionString += pair.Key.ToString(pair.Value) + ", ";
 			}
-			conversionString += _powerProduction.ToString() + " MW";
+			conversionString += Constants.MW_ITEM.ToString(_powerProduction);
 			return conversionString;
 		}
 	}

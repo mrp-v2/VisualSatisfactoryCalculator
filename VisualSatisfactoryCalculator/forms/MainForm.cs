@@ -127,7 +127,8 @@ namespace VisualSatisfactoryCalculator.forms
 		{
 			ptvc.ProductsLabel.Text = plan.GetProductsString();
 			double powerDraw = plan.GetPowerDraw();
-			ptvc.PowerDrawLabel.Text = powerDraw > 0 ? $"Power Draw: {powerDraw} MW" : $"Power Production: {-powerDraw} MW";
+			string powerDrawString = (powerDraw > 0 ? powerDraw : -powerDraw).ToString("N" + Constants.CLOCK_SPEED_DECIMALS);
+			ptvc.PowerDrawLabel.Text = powerDraw > 0 ? $"Power Draw: {powerDrawString} MW" : $"Power Production: {powerDrawString} MW";
 			ptvc.MachinesLabel.Text = plan.GetMachinesString();
 			ptvc.IngredientsLabel.Text = plan.GetIngredientsString();
 		}
