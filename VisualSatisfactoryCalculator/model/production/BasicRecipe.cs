@@ -29,25 +29,6 @@ namespace VisualSatisfactoryCalculator.model.production
 			this.products = products;
 		}
 
-		public BasicRecipe(decimal time, IEnumerable<ItemCount<ItemType>> ingredients, IEnumerable<ItemCount<ItemType>> products)
-		{
-			this.time = time;
-			this.ingredients = ingredients.ToImmutableDictionary((rate) =>
-			{
-				return rate.item;
-			}, (rate) =>
-			{
-				return rate.rate;
-			});
-			this.products = products.ToImmutableDictionary((rate) =>
-			{
-				return rate.item;
-			}, (rate) =>
-			{
-				return rate.rate;
-			});
-		}
-
 		public decimal GetCount(ItemType item, bool isProduct)
 		{
 			if (isProduct)

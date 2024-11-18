@@ -15,7 +15,7 @@ namespace VisualSatisfactoryCalculator.model.production
 		protected readonly ConnectionCollection<ItemType, StepType, RecipeType> products;
 		protected readonly ConnectionCollection<ItemType, StepType, RecipeType> ingredients;
 
-		private readonly CachedValue<IEnumerable<Connection<ItemType, StepType, RecipeType>>> _connections;
+		private readonly CachedValue<IEnumerable<Connection<ItemType, StepType, RecipeType>>>.Managed _connections;
 
 		public IEnumerable<Connection<ItemType, StepType, RecipeType>> Connections
 		{
@@ -31,7 +31,7 @@ namespace VisualSatisfactoryCalculator.model.production
 			products = new ConnectionCollection<ItemType, StepType, RecipeType>();
 			ingredients = new ConnectionCollection<ItemType, StepType, RecipeType>();
 
-			_connections = new CachedValue<IEnumerable<Connection<ItemType, StepType, RecipeType>>>(() =>
+			_connections = new CachedValue<IEnumerable<Connection<ItemType, StepType, RecipeType>>>.Managed(() =>
 			{
 				return new HashSet<Connection<ItemType, StepType, RecipeType>>(Enumerable.Concat(products.Connections, ingredients.Connections));
 			});

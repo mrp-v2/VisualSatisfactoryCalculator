@@ -14,10 +14,10 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
 	public class Step : AbstractStep<Item, Step, Recipe>
 	{
-		public readonly CachedValue<bool> hasNormalProductConnections;
-		public readonly CachedValue<IImmutableSet<Connection>> normalIngredientConnections;
-		public readonly CachedValue<ImmutableDictionary<Item, decimal>> productionRates;
-		public readonly CachedValue<ImmutableDictionary<Item, decimal>> consumptionRates;
+		public readonly CachedValue<bool>.Versioned hasNormalProductConnections;
+		public readonly CachedValue<IImmutableSet<Connection>>.Managed normalIngredientConnections;
+		public readonly CachedValue<ImmutableDictionary<Item, decimal>>.Managed productionRates;
+		public readonly CachedValue<ImmutableDictionary<Item, decimal>>.Managed consumptionRates;
 		private uint _machineCount;
 		private uint _clockSpeedDecimal;
 		public uint MachineCount
@@ -110,7 +110,6 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		public void AddProductConnection(Connection connection)
 		{
 			products.AddConnection(connection);
-			hasNormalProductConnections.InvalidateIf(false);
 			productionRates.Invalidate();
 		}
 
@@ -124,7 +123,6 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		public void RemoveProductConnection(Connection connection)
 		{
 			products.RemoveConnection(connection);
-			hasNormalProductConnections.InvalidateIf(true);
 			productionRates.Invalidate();
 		}
 
@@ -137,6 +135,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				{
 					Connection connection = relatedStep.GetProductConnection(item).AddConsumer(this);
 					AddIngredientConnection(connection);
+					CascadeUpdates();
 				}
 				else
 				{
@@ -151,6 +150,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				{
 					Connection connection = relatedStep.GetIngredientConnection(item).AddProducer(this);
 					AddProductConnection(connection);
+					CascadeUpdates();
 				}
 				else
 				{
@@ -167,7 +167,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			_machineCount = 1;
 			_clockSpeedDecimal = Constants.CLOCK_SPEED_PERCENT_FACTOR * 100;
 
-			hasNormalProductConnections = new CachedValue<bool>(() =>
+			hasNormalProductConnections = new CachedValue<bool>.Versioned(Plan.VERSION, () =>
 			{
 				foreach (Connection connection in products.Connections)
 				{
@@ -178,7 +178,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				}
 				return false;
 			});
-			normalIngredientConnections = new CachedValue<IImmutableSet<Connection>>(() =>
+			normalIngredientConnections = new CachedValue<IImmutableSet<Connection>>.Managed(() =>
 			{
 				HashSet<Connection> normalIngredients = new HashSet<Connection>();
 				foreach (Connection connection in ingredients.Connections)
@@ -190,7 +190,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				}
 				return ImmutableHashSet.CreateRange(normalIngredients);
 			});
-			productionRates = new CachedValue<ImmutableDictionary<Item, decimal>>(() =>
+			productionRates = new CachedValue<ImmutableDictionary<Item, decimal>>.Managed(() =>
 			{
 				Dictionary<Item, decimal> rates = new Dictionary<Item, decimal>();
 				foreach (KeyValuePair<Item, decimal> pair in recipe.products)
@@ -199,7 +199,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				}
 				return rates.ToImmutableDictionary();
 			});
-			consumptionRates = new CachedValue<ImmutableDictionary<Item, decimal>>(() =>
+			consumptionRates = new CachedValue<ImmutableDictionary<Item, decimal>>.Managed(() =>
 			{
 				Dictionary<Item, decimal> rates = new Dictionary<Item, decimal>();
 				foreach (KeyValuePair<Item, decimal> pair in recipe.ingredients)

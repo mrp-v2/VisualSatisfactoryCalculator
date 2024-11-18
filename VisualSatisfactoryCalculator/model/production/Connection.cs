@@ -20,7 +20,7 @@ namespace VisualSatisfactoryCalculator.model.production
 		/// </summary>
 		private readonly Dictionary<StepType, decimal> _consumers;
 
-		private readonly CachedValue<IEnumerable<StepType>> _steps;
+		private readonly CachedValue<IEnumerable<StepType>>.Managed _steps;
 
 		/// <summary>
 		/// The steps that are part of this connection.
@@ -74,7 +74,7 @@ namespace VisualSatisfactoryCalculator.model.production
 			_producers = new Dictionary<StepType, decimal>();
 			_consumers = new Dictionary<StepType, decimal>();
 
-			_steps = new CachedValue<IEnumerable<StepType>>(() =>
+			_steps = new CachedValue<IEnumerable<StepType>>.Managed(() =>
 			{
 				return new HashSet<StepType>(Enumerable.Concat(_producers.Keys, _consumers.Keys));
 			});
@@ -163,16 +163,16 @@ namespace VisualSatisfactoryCalculator.model.production
 		/// Identifies which consumers and producers have not been updated yet,
 		/// and the total rate of the already updated consumers and producers.
 		/// </summary>
-		/// <param name="lockedRate">The total rate of the already updated consumers and producers</param>
+		/// <param name="netAlreadyUpdatedRate">The total rate of the already updated consumers and producers</param>
 		private void ProcessVisitedSteps(HashSet<object> visited,
 										 HashSet<StepType> toVisit,
 										 out HashSet<StepType> notUpdatedConsumers,
 										 out HashSet<StepType> notUpdatedProducers,
-										 out decimal lockedRate)
+										 out decimal netAlreadyUpdatedRate)
 		{
 			notUpdatedConsumers = new HashSet<StepType>();
 			notUpdatedProducers = new HashSet<StepType>();
-			lockedRate = 0;
+			netAlreadyUpdatedRate = 0;
 			foreach (StepType step in Steps)
 			{
 				if (visited.Contains(step))
@@ -180,12 +180,12 @@ namespace VisualSatisfactoryCalculator.model.production
 					if (_producers.ContainsKey(step))
 					{
 						_producers[step] = step.GetRate(item, true);
-						lockedRate += _producers[step];
+						netAlreadyUpdatedRate += _producers[step];
 					}
 					if (_consumers.ContainsKey(step))
 					{
 						_consumers[step] = step.GetRate(item, false);
-						lockedRate -= _consumers[step];
+						netAlreadyUpdatedRate -= _consumers[step];
 					}
 				}
 				else
@@ -214,7 +214,7 @@ namespace VisualSatisfactoryCalculator.model.production
 									toVisit,
 									out HashSet<StepType> notUpdatedConsumers,
 									out HashSet<StepType> notUpdatedProducers,
-									out decimal netLockedRate);
+									out decimal netAlreadyUpdatedRate);
 				if (notUpdatedConsumers.Count == _consumers.Count && notUpdatedProducers.Count == _producers.Count)
 				{
 					throw new InvalidOperationException(NO_VISITED_NEIGHBORS);
@@ -227,12 +227,12 @@ namespace VisualSatisfactoryCalculator.model.production
 				{
 					if (notUpdatedConsumers.Count == 1)
 					{
-						if (netLockedRate < 0)
+						if (netAlreadyUpdatedRate < 0)
 						{
 							throw new InvalidOperationException("Unable to update consumer with deficient rate");
 						}
 						StepType remaining = notUpdatedConsumers.First();
-						_consumers[remaining] = netLockedRate;
+						_consumers[remaining] = netAlreadyUpdatedRate;
 						toVisit.Add(remaining);
 					}
 					else
@@ -245,11 +245,11 @@ namespace VisualSatisfactoryCalculator.model.production
 							{
 								groupRate -= step.GetRate(item, false);
 							}
-							if (netLockedRate < 0)
+							if (netAlreadyUpdatedRate < 0)
 							{
 								throw new InvalidOperationException("Cannot update single connected consumer group when the net locked rates has deficiency");
 							}
-							decimal multiplier = netLockedRate / Math.Abs(groupRate);
+							decimal multiplier = netAlreadyUpdatedRate / Math.Abs(groupRate);
 							foreach (StepType step in notUpdatedConsumers)
 							{
 								_consumers[step] *= multiplier;
@@ -267,12 +267,12 @@ namespace VisualSatisfactoryCalculator.model.production
 				{
 					if (notUpdatedProducers.Count == 1)
 					{
-						if (netLockedRate > 0)
+						if (netAlreadyUpdatedRate > 0)
 						{
 							throw new InvalidOperationException("Unable to update producer with excess rate");
 						}
 						StepType remaining = notUpdatedProducers.First();
-						_producers[remaining] = netLockedRate;
+						_producers[remaining] = -netAlreadyUpdatedRate;
 						toVisit.Add(remaining);
 					}
 					else
@@ -285,11 +285,11 @@ namespace VisualSatisfactoryCalculator.model.production
 							{
 								groupRate += step.GetRate(item, true);
 							}
-							if (netLockedRate > 0)
+							if (netAlreadyUpdatedRate > 0)
 							{
 								throw new InvalidOperationException("Cannot update single connected producer group when the net locked rates has excess");
 							}
-							decimal multiplier = Math.Abs(netLockedRate) / groupRate;
+							decimal multiplier = Math.Abs(netAlreadyUpdatedRate) / groupRate;
 							foreach (StepType step in notUpdatedProducers)
 							{
 								_producers[step] *= multiplier;
@@ -317,11 +317,11 @@ namespace VisualSatisfactoryCalculator.model.production
 						{
 							groupRate -= step.GetRate(item, false);
 						}
-						if ((groupRate > 0) == (netLockedRate > 0))
+						if ((groupRate > 0) == (netAlreadyUpdatedRate > 0))
 						{
 							throw new InvalidOperationException("Cannot adjust single connected step group when group sign and net locked rate sign are equal");
 						}
-						decimal multiplier = Math.Abs(netLockedRate) / Math.Abs(groupRate);
+						decimal multiplier = Math.Abs(netAlreadyUpdatedRate) / Math.Abs(groupRate);
 						StepType singleConsumer = notUpdatedConsumers.First();
 						foreach (StepType step in notUpdatedProducers)
 						{

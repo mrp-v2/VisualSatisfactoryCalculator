@@ -1,4 +1,31 @@
-1. Make numbers minimum rate based
+## Multiconnections
+
+- do graph analysis to find normal connected step groups, and organize them into a meta-graph to find component dependencies to use when updating multi-connections
+- graph analysis is only requried for multiconnection update order
+- individual multiconnections can be updated without graph information
+- [ ] Graph analysis in processed plan
+
+### Determining updatability
+
+- graph analysis required
+
+To be editable:
+- all multiconnections connected to must have only one opposite producer/consumer group
+    - Ex. multiple producers with a single consumer
+        - the producer groups can be updated
+        - the consumer group cannot
+
+## TODO List
+
+- [ ] Locking steps
+    - [ ] Lock rates
+        - Locks all rates for all steps
+        - adjust machine count and clock percentage against each other
+    - [ ] Lock machine count
+        - adjust only clock speed when running cascading updates, can still manually change machine count
+- [ ] Somersloop count
+    - adjust output and power consumption
+- [ ] Make numbers minimum rate based
     - [x] Normal connections
     - [ ] Fixed Rate connections
         - might need to change how multi-connections work
@@ -16,7 +43,7 @@
             - [ ] All producers and consumers updated
                 - verify rates are equal, if not, add a orphaned consumer/producer and prompt user about extra/deficient rate
             - when prompting user, add a 'remember this decision for this connection' checkbox for buttons / simple actions?
-2. Convert to Factorio
+- [ ] Convert to Factorio
     - [ ] user inputs
         - [ ] machine tier
         - [ ] machine count interval (can specify # of machines must be a multiple of a number n)

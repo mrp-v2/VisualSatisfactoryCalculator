@@ -1,75 +1,121 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.AccessControl;
+using System.Windows.Forms;
+
+using VisualSatisfactoryCalculator.model.util;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Utility
 {
-	public class CachedValue<T>
+	public abstract class CachedValue<T>
 	{
-		private bool valid;
-		private readonly Func<T> valueProvider;
-		private T value;
-		private EventHandler invalidationCallback;
+		private readonly Func<T> _valueProvider;
+		private T _value;
 
-		public CachedValue(Func<T> valueProvider)
+		private CachedValue(Func<T> valueProvider)
 		{
-			this.valueProvider = valueProvider;
-			valid = false;
-			invalidationCallback = default;
+			_valueProvider = valueProvider;
+			_value = default;
 		}
+
+		private void RecalculateValue()
+		{
+			_value = _valueProvider();
+		}
+
+		protected abstract void EnsureValid();
 
 		public T Get()
 		{
-			if (!valid)
-			{
-				value = valueProvider();
-				valid = true;
-			}
-			return value;
+			EnsureValid();
+			return _value;
 		}
 
-		public void Invalidate()
+		public class Managed : CachedValue<T>
 		{
-			if (valid)
+			private bool _valid;
+			private EventHandler _invalidationCallback;
+
+			public Managed(Func<T> valueProvider) : base(valueProvider)
 			{
-				valid = false;
-				if (invalidationCallback != null)
+				_valid = false;
+				_invalidationCallback = default;
+			}
+
+			protected override void EnsureValid()
+			{
+				if (!_valid)
 				{
-					invalidationCallback(this, EventArgs.Empty);
+					RecalculateValue();
+					_valid = true;
+				}
+			}
+
+			public void Invalidate()
+			{
+				if (_valid)
+				{
+					_valid = false;
+					if (_invalidationCallback != null)
+					{
+						_invalidationCallback(this, EventArgs.Empty);
+					}
+				}
+			}
+
+			public void InvalidateIf(T invalidValue)
+			{
+				if (_valid)
+				{
+					if (_value.Equals(invalidValue))
+					{
+						Invalidate();
+					}
+				}
+			}
+
+			public void InvalidateIf(ICollection<T> invalidValues)
+			{
+				if (_valid)
+				{
+					if (invalidValues.Contains(_value))
+					{
+						Invalidate();
+					}
+				}
+			}
+
+			public void AddInvalidationCallback(EventHandler e)
+			{
+				if (_invalidationCallback == null)
+				{
+					_invalidationCallback = e;
+				}
+				else
+				{
+					_invalidationCallback += e;
 				}
 			}
 		}
 
-		public void InvalidateIf(T invalidValue)
+		public class Versioned : CachedValue<T>
 		{
-			if (valid)
-			{
-				if (value.Equals(invalidValue))
-				{
-					Invalidate();
-				}
-			}
-		}
+			private int _version;
+			private readonly Mutable<int> _reference_version;
 
-		public void InvalidateIf(ICollection<T> invalidValues)
-		{
-			if (valid)
+			public Versioned(Mutable<int> reference, Func<T> valueProvider) : base(valueProvider)
 			{
-				if (invalidValues.Contains(value))
-				{
-					Invalidate();
-				}
+				_version = -1;
+				_reference_version = reference;
 			}
-		}
 
-		public void AddInvalidationCallback(EventHandler e)
-		{
-			if (invalidationCallback == null)
+			protected override void EnsureValid()
 			{
-				invalidationCallback = e;
-			}
-			else
-			{
-				invalidationCallback += e;
+				if (_version != _reference_version.value)
+				{
+					RecalculateValue();
+					_version = _reference_version.value;
+				}
 			}
 		}
 	}

@@ -11,8 +11,8 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
 	public class ProcessedPlan
 	{
-		private readonly HashSet<HashSet<Connection>> _normalConnectionGroups;
-		private readonly HashSet<Connection> _abnormalConnections;
+		private readonly HashSet<HashSet<Connection>> _singlyConnectedGroups;
+		private readonly HashSet<Connection> _multiConnections;
 		private readonly HashSet<Step> _steps;
 		private readonly Dictionary<int, HashSet<Step>> _tierSteps;
 		private readonly HashSet<Connection> _allConnections;
@@ -20,8 +20,8 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		public ProcessedPlan(Plan plan)
 		{
 			_steps = plan.steps;
-			_normalConnectionGroups = new HashSet<HashSet<Connection>>();
-			_abnormalConnections = new HashSet<Connection>();
+			_singlyConnectedGroups = new HashSet<HashSet<Connection>>();
+			_multiConnections = new HashSet<Connection>();
 			_tierSteps = new Dictionary<int, HashSet<Step>>();
 			_allConnections = new HashSet<Connection>();
 			if (_steps.Count > 0)
@@ -31,9 +31,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			}
 		}
 
-		public IEnumerable<Connection> GetAbnormalConnections()
+		public IEnumerable<Connection> GetMultiConnections()
 		{
-			return _abnormalConnections;
+			return _multiConnections;
 		}
 
 		public IEnumerable<Connection> GetAllConnections()
@@ -91,7 +91,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				}
 				if (currentTier == 1)
 				{
-					foreach (Connection connection in _abnormalConnections)
+					foreach (Connection connection in _multiConnections)
 					{
 						ingredientSteps.UnionWith(connection.ProducerSteps);
 					}
@@ -149,7 +149,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 					{
 						case ConnectionType.SINGLE:
 							HashSet<HashSet<Connection>> connectedGroups = new HashSet<HashSet<Connection>>();
-							foreach (HashSet<Connection> connectionGroup in _normalConnectionGroups)
+							foreach (HashSet<Connection> connectionGroup in _singlyConnectedGroups)
 							{
 								foreach (Connection potential in connectionGroup)
 								{
@@ -163,7 +163,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 							switch (connectedGroups.Count)
 							{
 								case 0:
-									_normalConnectionGroups.Add(new HashSet<Connection> { connection });
+									_singlyConnectedGroups.Add(new HashSet<Connection> { connection });
 									break;
 								case 1:
 									connectedGroups.First().Add(connection);
@@ -173,14 +173,14 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 									foreach (HashSet<Connection> group in connectedGroups)
 									{
 										combined.AddRange(group);
-										_normalConnectionGroups.Remove(group);
+										_singlyConnectedGroups.Remove(group);
 									}
-									_normalConnectionGroups.Add(combined);
+									_singlyConnectedGroups.Add(combined);
 									break;
 							}
 							break;
 						case ConnectionType.MULTI:
-							_abnormalConnections.Add(connection);
+							_multiConnections.Add(connection);
 							break;
 					}
 					foreach (Step step in connection.Steps)

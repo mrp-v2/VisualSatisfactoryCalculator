@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 
+using VisualSatisfactoryCalculator.model.util;
 using VisualSatisfactoryCalculator.satisfactory.model.production;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
 
@@ -8,12 +9,14 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 	public class Plan
 	{
 		public readonly HashSet<Step> steps;
-		public readonly CachedValue<ProcessedPlan> processedPlan;
+		public readonly CachedValue<ProcessedPlan>.Managed processedPlan;
+		public static readonly Mutable<int> VERSION = new Mutable<int>();
 
 		public Plan()
 		{
 			steps = new HashSet<Step>();
-			processedPlan = new CachedValue<ProcessedPlan>(() => new ProcessedPlan(this));
+			processedPlan = new CachedValue<ProcessedPlan>.Managed(() => new ProcessedPlan(this));
+			processedPlan.AddInvalidationCallback((sender, args) => VERSION.value++);
 		}
 
 		public RateCollection GetNetRates()

@@ -21,7 +21,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 		private bool _initialized = false;
 		public readonly Dictionary<Item, ItemRateControl> productRateControls = new Dictionary<Item, ItemRateControl>();
 		public readonly Dictionary<Item, ItemRateControl> ingredientRateControls = new Dictionary<Item, ItemRateControl>();
-		public StepControl TopControl { get { return this; } }
+		public StepControl Control { get { return this; } }
 
 		public StepControl(Step backingStep, MainForm mainForm)
 		{

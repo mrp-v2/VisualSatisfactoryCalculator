@@ -32,7 +32,7 @@ namespace VisualSatisfactoryCalculator.model.production
 			do
 			{
 				currentRound = currentRound.Execute(bfsOrigin);
-			} while (currentRound.GetHasNextRound(bfsOrigin));
+			} while (currentRound.HasWork(bfsOrigin));
 			return bfsOrigin.visited;
 		}
 
@@ -45,7 +45,7 @@ namespace VisualSatisfactoryCalculator.model.production
 			do
 			{
 				currentRound = currentRound.Execute(origin);
-			} while (currentRound.GetHasNextRound(origin));
+			} while (currentRound.HasWork(origin));
 		}
 
 		/// <summary>
@@ -69,7 +69,7 @@ namespace VisualSatisfactoryCalculator.model.production
 			/// </summary>
 			public interface IRound
 			{
-				bool GetHasNextRound(OriginType data);
+				bool HasWork(OriginType data);
 				IRound Execute(OriginType data);
 			}
 
@@ -88,9 +88,12 @@ namespace VisualSatisfactoryCalculator.model.production
 				}
 
 				/// <summary>
-				/// Whether this round has another round to execute afterwards.
+				/// Whether this round has work to do.
 				/// </summary>
-				public abstract bool GetHasNextRound(OriginType data);
+				public bool HasWork(OriginType data)
+				{
+					return _toVisit.Count > 0;
+				}
 
 				/// <summary>
 				/// Visits an object, likely updating it somehow.
@@ -135,6 +138,27 @@ namespace VisualSatisfactoryCalculator.model.production
 							}
 						}
 					}
+				}
+
+				public static HashSet<Connection<ItemType, StepType, RecipeType>> GetPriorityMulticonnections(HashSet<object> visited, HashSet<Connection<ItemType, StepType, RecipeType>> multiconnectionsToVisit)
+				{
+					HashSet<Connection<ItemType, StepType, RecipeType>> fewestRemainingStepMulticonnections = new HashSet<Connection<ItemType, StepType, RecipeType>>();
+					uint fewestRemainingSteps = uint.MaxValue;
+					foreach (Connection<ItemType, StepType, RecipeType> multiconnection in multiconnectionsToVisit)
+					{
+						uint remaining = multiconnection.GetNonUpdatedStepCount(visited);
+						if (remaining < fewestRemainingSteps)
+						{
+							fewestRemainingStepMulticonnections.Clear();
+							fewestRemainingSteps = remaining;
+							fewestRemainingStepMulticonnections.Add(multiconnection);
+						}
+						else if (remaining == fewestRemainingSteps)
+						{
+							fewestRemainingStepMulticonnections.Add(multiconnection);
+						}
+					}
+					return fewestRemainingStepMulticonnections;
 				}
 			}
 		}
@@ -189,6 +213,11 @@ namespace VisualSatisfactoryCalculator.model.production
 			{
 				HashSet<Connection<ItemType, StepType, RecipeType>> connections = new HashSet<Connection<ItemType, StepType, RecipeType>>();
 				StepRound.FilterConnections(_origin, new HashSet<object>(), connections, multiconnectionsToVisit);
+				if (connections.Count == 0 && includeMulticonnections)
+				{
+					HashSet<Connection<ItemType, StepType, RecipeType>> priorityMulticonnections = StepRound.GetPriorityMulticonnections(visited, multiconnectionsToVisit);
+					return new ConnectionRound(priorityMulticonnections);
+				}
 				return new ConnectionRound(connections);
 			}
 		}
@@ -219,11 +248,6 @@ namespace VisualSatisfactoryCalculator.model.production
 		{
 			public ConnectionRound(HashSet<Connection<ItemType, StepType, RecipeType>> connections) : base(connections) { }
 
-			public override bool GetHasNextRound(CascadingUpdatesOrigin data)
-			{
-				return nextRound.Count > 0;
-			}
-
 			protected override CascadingUpdatesOrigin.Round<StepType, Connection<ItemType, StepType, RecipeType>> NextRound(CascadingUpdatesOrigin data)
 			{
 				return new StepRound(nextRound);
@@ -232,6 +256,13 @@ namespace VisualSatisfactoryCalculator.model.production
 			protected override void Visit(Connection<ItemType, StepType, RecipeType> obj, CascadingUpdatesOrigin data)
 			{
 				obj.UpdateRatesFrom(data.visited, nextRound);
+				foreach (StepType step in obj.Steps)
+				{
+					if (!data.visited.Contains(step))
+					{
+						nextRound.Add(step);
+					}
+				}
 			}
 		}
 
@@ -241,11 +272,6 @@ namespace VisualSatisfactoryCalculator.model.production
 		private class StepsOnlyRound : BreadthFirstSearchOrigin.Round<StepType, StepType>
 		{
 			public StepsOnlyRound(HashSet<StepType> steps) : base(steps) { }
-
-			public override bool GetHasNextRound(BreadthFirstSearchOrigin data)
-			{
-				return nextRound.Count > 0;
-			}
 
 			protected override BreadthFirstSearchOrigin.Round<StepType, StepType> NextRound(BreadthFirstSearchOrigin data)
 			{
@@ -278,11 +304,6 @@ namespace VisualSatisfactoryCalculator.model.production
 		{
 			public StepRound(HashSet<StepType> steps) : base(steps) { }
 
-			public override bool GetHasNextRound(CascadingUpdatesOrigin data)
-			{
-				return nextRound.Count > 0 || (data.includeMulticonnections && data.multiconnectionsToVisit.Count > 0);
-			}
-
 			protected override CascadingUpdatesOrigin.Round<Connection<ItemType, StepType, RecipeType>, StepType> NextRound(CascadingUpdatesOrigin data)
 			{
 				if (nextRound.Count > 0 || !data.includeMulticonnections)
@@ -291,23 +312,8 @@ namespace VisualSatisfactoryCalculator.model.production
 				}
 				else
 				{
-					HashSet<Connection<ItemType, StepType, RecipeType>> fewestRemainingStepMulticonnections = new HashSet<Connection<ItemType, StepType, RecipeType>>();
-					uint fewestRemainingSteps = uint.MaxValue;
-					foreach (Connection<ItemType, StepType, RecipeType> multiconnection in data.multiconnectionsToVisit)
-					{
-						uint remaining = multiconnection.GetNonUpdatedStepCount(data.visited);
-						if (remaining < fewestRemainingSteps)
-						{
-							fewestRemainingStepMulticonnections.Clear();
-							fewestRemainingSteps = remaining;
-							fewestRemainingStepMulticonnections.Add(multiconnection);
-						}
-						else if (remaining == fewestRemainingSteps)
-						{
-							fewestRemainingStepMulticonnections.Add(multiconnection);
-						}
-					}
-					return new ConnectionRound(fewestRemainingStepMulticonnections);
+					HashSet<Connection<ItemType, StepType, RecipeType>> priorityMulticonnections = GetPriorityMulticonnections(data.visited, data.multiconnectionsToVisit);
+					return new ConnectionRound(priorityMulticonnections);
 				}
 			}
 

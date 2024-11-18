@@ -7,8 +7,6 @@ namespace VisualSatisfactoryCalculator.model.production
 	/// </summary>
 	public sealed class ConnectionCollection<ItemType, StepType, RecipeType> where ItemType : BasicItem where StepType : AbstractStep<ItemType, StepType, RecipeType>
 	{
-		public delegate void OnConnectionChanged();
-
 		private readonly Dictionary<ItemType, Connection<ItemType, StepType, RecipeType>> _connections;
 		private OnConnectionChanged _connectionsChangedListener;
 
