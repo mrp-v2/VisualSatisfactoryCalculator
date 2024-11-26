@@ -257,12 +257,32 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			foreach (Connection connection in ingredients.Connections)
 			{
 				connection.RemoveConsumer(this);
+				if (connection.Type == ConnectionType.INCOMPLETE)
+				{
+					DeleteConnection(connection);
+				}
 			}
 			foreach (Connection connection in products.Connections)
 			{
 				connection.RemoveProducer(this);
+				if (connection.Type == ConnectionType.INCOMPLETE)
+				{
+					DeleteConnection(connection);
+				}
 			}
 			plan.RemoveStep(this);
+		}
+
+		private void DeleteConnection(Connection connection)
+		{
+			foreach (Step step in connection.ConsumerSteps)
+			{
+				step.RemoveIngredientConnection(connection);
+			}
+			foreach (Step step in connection.ProducerSteps)
+			{
+				step.RemoveProductConnection(connection);
+			}
 		}
 
 		public double GetPowerDraw()
