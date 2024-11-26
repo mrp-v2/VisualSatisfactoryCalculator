@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+using VisualSatisfactoryCalculator.model.util;
 using VisualSatisfactoryCalculator.satisfactory.Utility;
+using VisualSatisfactoryCalculator.util.collections;
 
 namespace VisualSatisfactoryCalculator.model.production
 {
@@ -17,6 +19,9 @@ namespace VisualSatisfactoryCalculator.model.production
 
 		private readonly CachedValue<IEnumerable<Connection<ItemType, StepType, RecipeType>>>.Managed _connections;
 
+		private readonly CachedValue<bool>.Versioned _hasSingleConnectionProduct;
+		private readonly CachedValue<IReadOnlySet<Connection<ItemType, StepType, RecipeType>>>.Versioned _singleConnectionIngredients;
+
 		public IEnumerable<Connection<ItemType, StepType, RecipeType>> Connections
 		{
 			get
@@ -25,7 +30,23 @@ namespace VisualSatisfactoryCalculator.model.production
 			}
 		}
 
-		protected AbstractStep(RecipeType recipe)
+		public bool HasSingleConnectionProduct
+		{
+			get
+			{
+				return _hasSingleConnectionProduct.Get();
+			}
+		}
+
+		public IReadOnlySet<Connection<ItemType, StepType, RecipeType>> SingleConnectionIngredients
+		{
+			get
+			{
+				return _singleConnectionIngredients.Get();
+			}
+		}
+
+		protected AbstractStep(Mutable<int> versionSource, RecipeType recipe)
 		{
 			this.recipe = recipe;
 			products = new ConnectionCollection<ItemType, StepType, RecipeType>();
@@ -34,6 +55,30 @@ namespace VisualSatisfactoryCalculator.model.production
 			_connections = new CachedValue<IEnumerable<Connection<ItemType, StepType, RecipeType>>>.Managed(() =>
 			{
 				return new HashSet<Connection<ItemType, StepType, RecipeType>>(Enumerable.Concat(products.Connections, ingredients.Connections));
+			});
+
+			_hasSingleConnectionProduct = new CachedValue<bool>.Versioned(versionSource, () =>
+			{
+				foreach (Connection<ItemType, StepType, RecipeType> connection in products.Connections)
+				{
+					if (connection.Type == ConnectionType.SINGLE)
+					{
+						return true;
+					}
+				}
+				return false;
+			});
+			_singleConnectionIngredients = new CachedValue<IReadOnlySet<Connection<ItemType, StepType, RecipeType>>>.Versioned(versionSource, () =>
+			{
+				ViewableSet<Connection<ItemType, StepType, RecipeType>> singleConnections = new ViewableSet<Connection<ItemType, StepType, RecipeType>>();
+				foreach (Connection<ItemType, StepType, RecipeType> connection in ingredients.Connections)
+				{
+					if (connection.Type == ConnectionType.SINGLE)
+					{
+						singleConnections.Add(connection);
+					}
+				}
+				return singleConnections.ReadOnly;
 			});
 
 			products.SetConnectionsChangedListener(_connections.Invalidate);
@@ -87,10 +132,10 @@ namespace VisualSatisfactoryCalculator.model.production
 		/// </summary>
 		/// <param name="rate"></param>
 		/// <param name="isProduct"></param>
-		public void CascadingUpdateRatesFrom(ItemCount<ItemType> rate, bool isProduct)
+		public void CascadingUpdateRatesFrom(ItemCount<ItemType> rate, bool isProduct, ProcessedPlan<StepType, ItemType, RecipeType> processedPlan)
 		{
 			UpdateRatesFrom(rate, isProduct);
-			BreadthFirstSearchHandler<ItemType, StepType, RecipeType>.CascadeUpdates(This);
+			BreadthFirstSearchHandler<ItemType, StepType, RecipeType>.CascadeUpdates(This, processedPlan);
 		}
 
 		protected abstract StepType This { get; }

@@ -23,9 +23,9 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			DRAWING_CONTEXT = new PlanDrawingContext();
 			int yPosition = panel.GetPreferredSize(new Size()).Height, xPosition = 0;
 			// setup normal connections
-			for (int currentTier = plan.processedPlan.Get().Tiers - 1; currentTier >= 0; currentTier--)
+			for (int currentTier = plan.ProcessedPlan.tierStepsMap.Count - 1; currentTier >= 0; currentTier--)
 			{
-				foreach (Step step in plan.processedPlan.Get().GetStepsInTier(currentTier))
+				foreach (Step step in plan.ProcessedPlan.tierStepsMap[currentTier])
 				{
 					StepControl stepControl = new StepControl(step, mainForm);
 					Dictionary<Step, Item> ingredientControls = new Dictionary<Step, Item>();
@@ -62,7 +62,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 				}
 			}
 			// start placing things
-			foreach (Step step in plan.processedPlan.Get().GetStepsInTier(0))
+			foreach (Step step in plan.ProcessedPlan.tierStepsMap[0])
 			{
 				DRAWING_CONTEXT.stepUIMap[step].Item2.PrePlace();
 			}
@@ -70,13 +70,13 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 			{
 				panel.Controls.Add(DRAWING_CONTEXT.stepUIMap[step].Item1);
 			}
-			foreach (Step step in plan.processedPlan.Get().GetStepsInTier(0))
+			foreach (Step step in plan.ProcessedPlan.tierStepsMap[0])
 			{
 				StepAndIngredientsLayout layout = DRAWING_CONTEXT.stepUIMap[step].Item2;
 				layout.Place(xPosition, yPosition);
 				xPosition += layout.PreferredSize.Width;
 			}
-			foreach (Connection connection in plan.processedPlan.Get().GetMultiConnections())
+			foreach (Connection connection in plan.ProcessedPlan.multiconnections)
 			{
 				foreach (Step step in connection.ProducerSteps)
 				{
@@ -351,7 +351,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Utility
 					line3.Location = AddPoints(line3.Location, new Point(0, height - line3.Location.Y));
 				}
 				Dictionary<Step, Item> ingredientSteps = new Dictionary<Step, Item>();
-				foreach (Connection ingredientConnection in Control.backingStep.normalIngredientConnections.Get())
+				foreach (Connection ingredientConnection in Control.backingStep.SingleConnectionIngredients)
 				{
 					foreach (Step step in ingredientConnection.ProducerSteps)
 					{

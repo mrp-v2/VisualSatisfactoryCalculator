@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace VisualSatisfactoryCalculator.satisfactory.Extensions
+namespace VisualSatisfactoryCalculator.util.extensions
 {
 	internal static class GenericExtensions
 	{

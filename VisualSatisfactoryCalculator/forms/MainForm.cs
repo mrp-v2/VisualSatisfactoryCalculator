@@ -68,8 +68,7 @@ namespace VisualSatisfactoryCalculator.forms
 			if (srp.ShowDialog() == DialogResult.OK)
 			{
 				Step step = new Step(srp.GetSelectedRecipe());
-				plan.steps.Add(step);
-				plan.processedPlan.Invalidate();
+				plan.AddStep(step);
 				PlanUpdated();
 			}
 		}
@@ -182,8 +181,7 @@ namespace VisualSatisfactoryCalculator.forms
 
 		private void ClearStepsButton_Click(object sender, EventArgs e)
 		{
-			plan.steps.Clear();
-			plan.processedPlan.Invalidate();
+			plan.ClearSteps();
 			PlanUpdated();
 		}
 	}

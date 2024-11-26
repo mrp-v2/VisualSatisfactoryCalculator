@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-using VisualSatisfactoryCalculator.satisfactory.Extensions;
+using VisualSatisfactoryCalculator.util.extensions;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Utility
 {

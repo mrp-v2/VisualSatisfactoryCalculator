@@ -22,6 +22,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 		public readonly Dictionary<Item, ItemRateControl> productRateControls = new Dictionary<Item, ItemRateControl>();
 		public readonly Dictionary<Item, ItemRateControl> ingredientRateControls = new Dictionary<Item, ItemRateControl>();
 		public StepControl Control { get { return this; } }
+		private readonly bool _canEdit;
 
 		public StepControl(Step backingStep, MainForm mainForm)
 		{
@@ -49,6 +50,8 @@ namespace VisualSatisfactoryCalculator.controls.user
 			Disposed += OnDisposed;
 			MachineCountNumeric.ValueChanged += MachineCountValueChanged;
 			ClockSpeedNumeric.ValueChanged += ClockSpeedValueChanged;
+			_canEdit = mainForm.plan.ProcessedPlan.stepGroupMap[backingStep].editable;
+			ToggleInput(_canEdit);
 		}
 
 		private void OnDisposed(object sender, EventArgs e)
@@ -80,7 +83,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			if (Math.Abs(backingStep.GetRate(item, isProduct)) != newRate)
 			{
-				backingStep.CascadingUpdateRatesFrom(new ItemCount(item, newRate), isProduct);
+				backingStep.CascadingUpdateRatesFrom(new ItemCount(item, newRate), isProduct, mainForm.plan.ProcessedPlan);
 			}
 		}
 
@@ -97,7 +100,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 						//connection.MergeWith(mainForm.CurrentConnectionFunc());
 						mainForm.currentConnectionIRC = null;
 						mainForm.currentConnectionFunc = null;
-						mainForm.plan.processedPlan.Invalidate();
+						mainForm.plan.InvalidateProcessedPlan();
 						mainForm.PlanUpdated();
 					}
 					else
@@ -131,9 +134,8 @@ namespace VisualSatisfactoryCalculator.controls.user
 				}
 				if (srp.ShowDialog() == DialogResult.OK)
 				{
-					Step ps = new Step(srp.GetSelectedRecipe(), backingStep, item, isProduct);
-					mainForm.plan.steps.Add(ps);
-					mainForm.plan.processedPlan.Invalidate();
+					Step ps = new Step(srp.GetSelectedRecipe(), backingStep, item, isProduct, out bool updateRequired);
+					mainForm.plan.AddStep(ps, updateRequired);
 					mainForm.PlanUpdated();
 				}
 			}
@@ -168,7 +170,7 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			if (Enabled && _initialized)
 			{
-				backingStep.SetMachineCount((uint)MachineCountNumeric.Value);
+				backingStep.SetMachineCount((uint)MachineCountNumeric.Value, mainForm.plan.ProcessedPlan);
 				mainForm.UpdateTotalView();
 			}
 		}
@@ -177,14 +179,14 @@ namespace VisualSatisfactoryCalculator.controls.user
 		{
 			if (Enabled && _initialized)
 			{
-				backingStep.SetClockSpeedThousandths((uint)(ClockSpeedNumeric.Value * Constants.CLOCK_SPEED_PERCENT_FACTOR));
+				backingStep.SetClockSpeedThousandths((uint)(ClockSpeedNumeric.Value * Constants.CLOCK_SPEED_PERCENT_FACTOR), mainForm.plan.ProcessedPlan);
 				mainForm.UpdateTotalView();
 			}
 		}
 
 		private void ToggleInput(bool on)
 		{
-			Enabled = on;
+			Enabled = on && _canEdit;
 		}
 
 		public void FinishInitialization()

@@ -3,7 +3,7 @@
 - do graph analysis to find normal connected step groups, and organize them into a meta-graph to find component dependencies to use when updating multi-connections
 - graph analysis is only requried for multiconnection update order
 - individual multiconnections can be updated without graph information
-- [ ] Graph analysis in processed plan
+- [x] Graph analysis in processed plan
 
 ### Determining updatability
 

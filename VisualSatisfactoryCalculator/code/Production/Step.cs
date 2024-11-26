@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Windows.Forms;
 
 using VisualSatisfactoryCalculator.controls.user;
 using VisualSatisfactoryCalculator.model.production;
@@ -9,13 +10,12 @@ using VisualSatisfactoryCalculator.satisfactory.Utility;
 
 using Connection = VisualSatisfactoryCalculator.model.production.Connection<VisualSatisfactoryCalculator.satisfactory.model.production.Item, VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.model.production.Recipe>;
 using ItemCount = VisualSatisfactoryCalculator.model.production.ItemCount<VisualSatisfactoryCalculator.satisfactory.model.production.Item>;
+using ProcessedPlan = VisualSatisfactoryCalculator.model.production.ProcessedPlan<VisualSatisfactoryCalculator.satisfactory.Production.Step, VisualSatisfactoryCalculator.satisfactory.model.production.Item, VisualSatisfactoryCalculator.satisfactory.model.production.Recipe>;
 
 namespace VisualSatisfactoryCalculator.satisfactory.Production
 {
 	public class Step : AbstractStep<Item, Step, Recipe>
 	{
-		public readonly CachedValue<bool>.Versioned hasNormalProductConnections;
-		public readonly CachedValue<IImmutableSet<Connection>>.Managed normalIngredientConnections;
 		public readonly CachedValue<ImmutableDictionary<Item, decimal>>.Managed productionRates;
 		public readonly CachedValue<ImmutableDictionary<Item, decimal>>.Managed consumptionRates;
 		private uint _machineCount;
@@ -103,7 +103,6 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		public void AddIngredientConnection(Connection connection)
 		{
 			ingredients.AddConnection(connection);
-			normalIngredientConnections.Invalidate();
 			consumptionRates.Invalidate();
 		}
 
@@ -116,7 +115,6 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 		public void RemoveIngredientConnection(Connection connection)
 		{
 			ingredients.RemoveConnection(connection);
-			normalIngredientConnections.Invalidate();
 			consumptionRates.Invalidate();
 		}
 
@@ -126,22 +124,23 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			productionRates.Invalidate();
 		}
 
-		public Step(Recipe recipe, Step relatedStep, Item item, bool isProductOfRelated) : this(recipe)
+		public Step(Recipe recipe, Step relatedStep, Item item, bool isProductOfRelated, out bool updateRequired) : this(recipe)
 		{
-			UpdateRatesFrom(relatedStep.GetRate(item, isProductOfRelated).ToCount(item), !isProductOfRelated);
 			if (isProductOfRelated)
 			{
 				if (relatedStep.HasProductConnectionFor(item))
 				{
 					Connection connection = relatedStep.GetProductConnection(item).AddConsumer(this);
 					AddIngredientConnection(connection);
-					CascadeUpdates();
+					updateRequired = true;
 				}
 				else
 				{
+					UpdateRatesFrom(relatedStep.GetRate(item, isProductOfRelated).ToCount(item), !isProductOfRelated);
 					Connection connection = new Connection(item).AddProducer(relatedStep).AddConsumer(this);
 					AddIngredientConnection(connection);
 					relatedStep.AddProductConnection(connection);
+					updateRequired = false;
 				}
 			}
 			else
@@ -150,46 +149,25 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				{
 					Connection connection = relatedStep.GetIngredientConnection(item).AddProducer(this);
 					AddProductConnection(connection);
-					CascadeUpdates();
+					updateRequired = true;
 				}
 				else
 				{
+					UpdateRatesFrom(relatedStep.GetRate(item, isProductOfRelated).ToCount(item), !isProductOfRelated);
 					Connection connection = new Connection(item).AddConsumer(relatedStep).AddProducer(this);
 					AddProductConnection(connection);
 					relatedStep.AddIngredientConnection(connection);
+					updateRequired = false;
 				}
 			}
 		}
 
-		public Step(Recipe recipe) : base(recipe)
+		public Step(Recipe recipe) : base(Plan.VERSION, recipe)
 		{
 			_control = default;
 			_machineCount = 1;
 			_clockSpeedDecimal = Constants.CLOCK_SPEED_PERCENT_FACTOR * 100;
 
-			hasNormalProductConnections = new CachedValue<bool>.Versioned(Plan.VERSION, () =>
-			{
-				foreach (Connection connection in products.Connections)
-				{
-					if (connection.Type == ConnectionType.SINGLE)
-					{
-						return true;
-					}
-				}
-				return false;
-			});
-			normalIngredientConnections = new CachedValue<IImmutableSet<Connection>>.Managed(() =>
-			{
-				HashSet<Connection> normalIngredients = new HashSet<Connection>();
-				foreach (Connection connection in ingredients.Connections)
-				{
-					if (connection.Type == ConnectionType.SINGLE)
-					{
-						normalIngredients.Add(connection);
-					}
-				}
-				return ImmutableHashSet.CreateRange(normalIngredients);
-			});
 			productionRates = new CachedValue<ImmutableDictionary<Item, decimal>>.Managed(() =>
 			{
 				Dictionary<Item, decimal> rates = new Dictionary<Item, decimal>();
@@ -284,8 +262,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			{
 				connection.RemoveProducer(this);
 			}
-			plan.steps.Remove(this);
-			plan.processedPlan.Invalidate();
+			plan.RemoveStep(this);
 		}
 
 		public double GetPowerDraw()
@@ -314,23 +291,23 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			UpdateControl();
 		}
 
-		public void SetMachineCount(uint machineCount)
+		public void SetMachineCount(uint machineCount, ProcessedPlan processedPlan)
 		{
 			MachineCount = machineCount;
 			UpdateControl();
-			CascadeUpdates();
+			CascadeUpdates(processedPlan);
 		}
 
-		public void SetClockSpeedThousandths(uint clockSpeedThousandths)
+		public void SetClockSpeedThousandths(uint clockSpeedThousandths, ProcessedPlan processedPlan)
 		{
 			ClockSpeedDecimal = clockSpeedThousandths;
 			UpdateControl();
-			CascadeUpdates();
+			CascadeUpdates(processedPlan);
 		}
 
-		private void CascadeUpdates()
+		private void CascadeUpdates(ProcessedPlan processedPlan)
 		{
-			BreadthFirstSearchHandler<Item, Step, Recipe>.CascadeUpdates(this);
+			BreadthFirstSearchHandler<Item, Step, Recipe>.CascadeUpdates(this, processedPlan);
 		}
 	}
 }

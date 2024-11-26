@@ -23,7 +23,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 				context._stepIDs.Add(step, id++);
 			}
 			id = 0;
-			foreach (Connection connection in plan.processedPlan.Get().GetAllConnections())
+			foreach (Connection connection in plan.ProcessedPlan.connections)
 			{
 				context._connectionIDs.Add(connection, id++);
 			}
@@ -31,7 +31,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			{
 				_steps.Add(new CondensedStep(step, context));
 			}
-			foreach (Connection connection in plan.processedPlan.Get().GetAllConnections())
+			foreach (Connection connection in plan.ProcessedPlan.connections)
 			{
 				_connections.Add(new CondensedConnection(connection, context));
 			}
@@ -45,7 +45,7 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			{
 				Step step = new Step(encodings.recipes[condensedStep._recipeID], condensedStep._machineCount, condensedStep._clockSpeedDecimal);
 				context.stepIDs.Add(condensedStep._id, step);
-				plan.steps.Add(step);
+				plan.AddStep(step);
 			}
 			foreach (CondensedConnection condensedConnection in _connections)
 			{
