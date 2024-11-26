@@ -49,8 +49,25 @@ namespace VisualSatisfactoryCalculator.satisfactory.Production
 			}
 			foreach (CondensedConnection condensedConnection in _connections)
 			{
-				throw new NotImplementedException();
-				//new Connection(condensedConnection, context, _steps);
+				Dictionary<Step, decimal> consumers = new Dictionary<Step, decimal>();
+				foreach (KeyValuePair<int, decimal> consumer in condensedConnection.consumers)
+				{
+					consumers.Add(context.stepIDs[consumer.Key], consumer.Value);
+				}
+				Dictionary<Step, decimal> producers = new Dictionary<Step, decimal>();
+				foreach (KeyValuePair<int, decimal> producer in condensedConnection.producers)
+				{
+					producers.Add(context.stepIDs[producer.Key], producer.Value);
+				}
+				Connection connection = Connection.CreateConnectionUnsafe(consumers, producers, encodings.items[condensedConnection._itemID]);
+				foreach (KeyValuePair<int, decimal> consumer in condensedConnection.consumers)
+				{
+					context.stepIDs[consumer.Key].AddIngredientConnection(connection);
+				}
+				foreach (KeyValuePair<int, decimal> producer in condensedConnection.producers)
+				{
+					context.stepIDs[producer.Key].AddProductConnection(connection);
+				}
 			}
 			return plan;
 		}

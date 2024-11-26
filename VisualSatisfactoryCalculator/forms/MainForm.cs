@@ -84,7 +84,10 @@ namespace VisualSatisfactoryCalculator.forms
 			ptvc = new PlanTotalViewControl();
 			UpdateTotalView();
 			PlanPanel.Controls.Add(ptvc);
-			PlanLayoutMaker.LayoutSteps(this, PlanPanel, plan);
+			if (plan.steps.Count > 0)
+			{
+				PlanLayoutMaker.LayoutSteps(this, PlanPanel, plan);
+			}
 			ResumeDrawing();
 		}
 

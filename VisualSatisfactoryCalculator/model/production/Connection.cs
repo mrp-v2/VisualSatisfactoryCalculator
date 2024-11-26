@@ -81,6 +81,20 @@ namespace VisualSatisfactoryCalculator.model.production
 			});
 		}
 
+		public static Connection<ItemType, StepType, RecipeType> CreateConnectionUnsafe(Dictionary<StepType, decimal> consumerRates, Dictionary<StepType, decimal> producerRates, ItemType item)
+		{
+			Connection<ItemType, StepType, RecipeType> connection = new Connection<ItemType, StepType, RecipeType>(item);
+			foreach (KeyValuePair<StepType, decimal> entry in consumerRates)
+			{
+				connection._consumers.Add(entry.Key, entry.Value);
+			}
+			foreach (KeyValuePair<StepType, decimal> entry in producerRates)
+			{
+				connection._producers.Add(entry.Key, entry.Value);
+			}
+			return connection;
+		}
+
 		public Connection<ItemType, StepType, RecipeType> AddProducer(StepType step)
 		{
 			_producers.Add(step, step.GetRate(item, true));
